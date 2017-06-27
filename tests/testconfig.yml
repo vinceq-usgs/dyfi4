@@ -1,0 +1,16 @@
+mail:
+    to: alerts@server.gov
+    operator: operator@server.gov
+    smtp: smtp.server.gov
+    mailbin: /usr/bin/mail
+
+db:
+    # type is either mysql or sqlite3
+    type: sqlite3
+    files: 
+        event: ./db/event.db
+        maps: ./db/maps.db
+        extended: ./db/__EXTENDED__.db
+        
+    
+
