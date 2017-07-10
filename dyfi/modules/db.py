@@ -5,7 +5,7 @@ Db
 
 """
 
-from modules.rawDbSqlite import RawDb
+from .rawDbSqlite import RawDb
 
 # To use MySQL, switch the top line with this:
 #import modules.rawDbMySQL as rawdb

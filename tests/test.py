@@ -4,7 +4,7 @@ import pytest
 import os.path
 import geojson
 
-from modules import Config,Db,Event,Maps,Entries
+from dyfi.modules import Config,Db,Event,Maps,Entries
 
 testid='ci37511872'
 

@@ -9,10 +9,10 @@ import json
 import os
 from collections import OrderedDict
 
-import modules.file as File
-from modules.plotmap import PlotMap
-from modules.plotgraph import PlotGraph
-import modules.productContents as Contents
+import .file as File
+from .plotmap import PlotMap
+from .plotgraph import PlotGraph
+import .productContents as Contents
 
 class Products:
     """

@@ -6,7 +6,7 @@ Entries
     
 """
 
-from modules.aggregate import aggregate
+from .aggregate import aggregate
 
 
 class Entries():

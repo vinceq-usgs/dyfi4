@@ -14,8 +14,8 @@ import matplotlib.ticker as Ticker
 import matplotlib.pyplot as Pyplot
 from matplotlib.patches import Polygon,Circle
 
-from modules.thirdparty.gmtcolormap import GMTColorMap
-import modules.ipes as ipes
+from .thirdparty.gmtcolormap import GMTColorMap
+import .ipes as ipes
 
 # TODO: Make PlotGraph a subclass of Product
 # TODO: Make dist_vs_intensity, time_vs_nresp subclasses of PlotGraph
