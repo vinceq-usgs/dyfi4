@@ -13,8 +13,11 @@ from matplotlib.patches import Polygon,Circle
 from matplotlib.collections import PatchCollection
 from mpl_toolkits.basemap import Basemap
 
+from . import backgroundImage as BackgroundImage
+print(dir(BackgroundImage))
+from . import GMTColorMap
 from .thirdparty.gmtcolormap import GMTColorMap
-import .backgroundImage as BackgroundImage
+from .thirdparty.utm import from_latlon,to_latlon,OutOfRangeError
 
 
 class PlotMap:

@@ -9,12 +9,9 @@ Aggregate
 
 import math
 import geojson
-import sys
 
-print(sys.path)
 from . import cdi
-print(sys.path)
-from .utm import from_latlon,to_latlon,OutOfRangeError
+from .thirdparty.utm import from_latlon,to_latlon,OutOfRangeError
 
 PRECISION=4  # Maximum precision of lat/lon coordinates of output
 

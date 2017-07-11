@@ -15,7 +15,7 @@ import matplotlib.pyplot as Pyplot
 from matplotlib.patches import Polygon,Circle
 
 from .thirdparty.gmtcolormap import GMTColorMap
-import .ipes as ipes
+from . import ipes
 
 # TODO: Make PlotGraph a subclass of Product
 # TODO: Make dist_vs_intensity, time_vs_nresp subclasses of PlotGraph
