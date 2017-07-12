@@ -30,3 +30,8 @@ install:
 
 # command to run tests
 script: pytest tests/test.py
+
+# Now run codecov
+after_success:
+    - pip install codecov 
+    - codecov
