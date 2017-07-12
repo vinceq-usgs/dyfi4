@@ -1,28 +1,34 @@
-#! /usr/bin/env python3
+# To run this test, you must be at the package root directory and run:
+# pytest tests/test.py
 
-import pytest
-import os.path
-import geojson
-
-from dyfi.modules import Config,Db,Event,Maps,Entries
+from .context import dyfi
 
 testid='ci37511872'
 
 def test_config():
-    conf=Config('./testconfig.yml')
+    from dyfi import Config
+    import os
+
+    conf=Config('tests/testconfig.yml')
     assert('mailbin' in conf.mail)
     assert(os.path.isfile(conf.mail['mailbin']))
 
 
 def test_db():
-    db=Db(Config('./testconfig.yml'))
+    from dyfi import Config,Db
+
+    db=Db(Config('tests/testconfig.yml'))
     data=db.loadEvent('ci37511872')
     assert(isinstance(data['lat'],float))
     assert(isinstance(data['lon'],float))
     assert(isinstance(data['mag'],float))
 
 def test_event():
-    db=Db(Config('./testconfig.yml'))
+    from dyfi import Config,Db,Event
+    import geojson
+    import pytest
+
+    db=Db(Config('tests/testconfig.yml'))
     event=Event(db.loadEvent(testid))
     geo=event.toGeoJSON()
     assert(isinstance(geo,geojson.Feature))
@@ -36,7 +42,9 @@ def test_event():
 
     
 def test_map():
-    db=Db(Config('./testconfig.yml'))
+    from dyfi import Config,Db,Maps
+
+    db=Db(Config('tests/testconfig.yml'))
     maps=Maps(db.loadMaps(testid))
     print(maps)
     assert(len(maps.maplist)>0)

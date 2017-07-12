@@ -4,13 +4,15 @@ mail:
     smtp: smtp.server.gov
     mailbin: /usr/bin/mail
 
+# Tests must be run in the package root directory
+# Hence test databases should be specified from package root
 db:
     # type is either mysql or sqlite3
     type: sqlite3
     files: 
-        event: ./db/event.db
-        maps: ./db/maps.db
-        extended: ./db/__EXTENDED__.db
+        event: tests/db/event.db
+        maps: tests/db/maps.db
+        extended: tests/db/__EXTENDED__.db
         
     
 
