@@ -27,13 +27,15 @@ before_install:
 install: 
   - pip install .
   - pip install -r requirements.txt
+  - pip install pytest-cov
 
 # command to run tests
-script: pytest tests/test.py
+script: pytest --cov=dyfi tests/test.py
 
 # Now run codecov
 after_success:
-    - pip install codecov 
+    - pip install codecov codacy-coverage
     - codecov
     - coverage xml
+    - python-codacy-coverage -r coverage.xml
     - bash <(curl -s https://codecov.io/bash)
