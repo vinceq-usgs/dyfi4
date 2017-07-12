@@ -9,6 +9,6 @@ setup(name='dyfi',
       author='Vince Quitoriano',
       author_email='vinceq@usgs.gov',
       url='',
-      packages=['dyfi','dyfi/modules','dyfi/modules/thirdparty','dyfi/modules/thirdparty/utm'],
-      scripts = ['dyfi/dyfi.py']
+      packages=['dyfi']
+      scripts = ['dyfi.py']
 )
