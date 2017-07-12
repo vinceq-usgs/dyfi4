@@ -1,6 +1,15 @@
 Introduction to Did You Feel It? (DYFI) 
 ---------------------------------------
 
+|Travis| |CodeCov|
+
+.. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=master
+    :target: https://travis-ci.org/vinceq-usgs/dyfi4
+    :alt: Travis Build Status
+.. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/vinceq-usgs/dyfi4
+    :alt: Code Coverage Status
+
 `Did You Feel It? (DYFI)` collects information from people who felt an earthquake and creates a map that shows the felt level of shaking in the area around the epicenter.
 
 DYFI was developed to tap the abundant information available about earthquakes from the people who experience them. By taking advantage of the vast number of Internet users, we can get a more complete description of what people experienced, the effects of an earthquake, and the extent of damage. 
