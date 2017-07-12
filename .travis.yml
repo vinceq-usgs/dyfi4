@@ -1,5 +1,5 @@
-sudo: false
 language: python
+sudo: false
 python:
   - "3.5"
 #  - "3.6"
@@ -8,6 +8,19 @@ addons:
   apt:
     packages:
 #    - libgeos-dev
+#    - proj4
+
+# Need this rigmarole just to install PROJ.4 for Cartopy
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libproj-dev proj-bin proj-data
+  - sudo apt-get install -y python-pyproj
+  - sudo apt-get install -y libc6
+  - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj9_4.9.2-2_amd64.deb 
+  - sudo dpkg -i libproj9_4.9.2-2_amd64.deb 
+  - wget http://es.archive.ubuntu.com/ubuntu/pool/universe/p/proj/libproj-dev_4.9.2-2_amd64.deb
+  - sudo dpkg -i libproj-dev_4.9.2-2_amd64.deb
 
 # command to install dependencies
 install: 
@@ -15,4 +28,4 @@ install:
   - pip install -r requirements.txt
 
 # command to run tests
-script: pytest
+script: pytest tests/test.py
