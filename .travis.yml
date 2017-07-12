@@ -35,3 +35,5 @@ script: coverage pytest tests/test.py
 after_success:
     - pip install codecov 
     - codecov
+    - coverage xml
+    - bash <(curl -s https://codecov.io/bash)
