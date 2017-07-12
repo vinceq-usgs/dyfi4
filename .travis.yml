@@ -6,6 +6,11 @@ python:
 #  - "pypy"
 #  - "pypy3"
 
+addons:
+  apt:
+    packages:
+    - libgeos-dev
+
 # command to install dependencies
 install: 
   - pip install .
