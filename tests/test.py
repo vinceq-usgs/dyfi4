@@ -10,8 +10,13 @@ def test_config():
     import os
 
     conf=Config('tests/testconfig.yml')
+
+    # conf should have at least 'db' and 'mail' fields
+    allkeys=list(conf)
+    assert(len(allkeys)>=2)
+    assert(str(conf))
     assert('mailbin' in conf.mail)
-    print('Not checking if mailbin is a valid command')
+    #Not checking if mailbin is a valid command
     #assert(os.path.isfile(conf.mail['mailbin']))
 
 

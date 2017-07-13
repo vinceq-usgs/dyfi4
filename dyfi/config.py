@@ -21,7 +21,7 @@ class Config:
 
     Usage:
     
-    from config import Config
+    from dyfi import Config
     config=Config(someyamlfile)
     config=Config() # defaults to ./config.yml
     
@@ -46,7 +46,9 @@ class Config:
         return iter(self.hash.keys())
     
     def __repr__(self):
-        for section,vals in self.hash.items():
-            print(section,':')
-            print(vals)
+        output=''
+        for section,val in self.hash.items():
+            output=output+'section'+':\n'
+            output=output+(str(val))
 
+        return output
