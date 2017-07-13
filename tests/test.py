@@ -51,6 +51,9 @@ def test_db():
     with pytest.raises(NameError) as testBadTable:
       entries=db.loadEntries(evid='ci37511872',table='2099')
     assert 'getcursor could not find table' in str(testBadTable.value)
+    with pytest.raises(NameError) as testBadTable:
+      entries=db.loadEntries(evid='ci37511872',table='1999,2000')
+    assert 'Cannot handle string' in str(testBadTable.value)
 
 def test_event():
     from dyfi import Config,Db,Event

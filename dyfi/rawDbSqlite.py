@@ -59,7 +59,7 @@ class RawDb:
         results=[]
 
         if ',' in tables:
-            raise nameError('Cannot handle string')
+            raise NameError('Cannot handle string')
 
         if isinstance(tables,str):
             tables=[tables]
@@ -109,23 +109,6 @@ class RawDb:
         return results
         
 
-    def getExtendedTablesByTable(self,table):
-        # Handle 'latest', 'all', or year
-        
-        if table=='all':
-            return self.exttables
-        
-        if table.isdigit():
-            newtable='extended_'+table
-            if newtable in self.exttables:
-                return newtable
-            else:
-                raise NameError('db.getExtendedTablesByTable got bad table',newtable)
-
-        if table=='pre':
-            return 'extended_pre'
- 
-        
     def update(self,table,query,changes):
         
         c=self.getcursor(table)

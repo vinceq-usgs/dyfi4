@@ -16,4 +16,5 @@ db.json
 tmp.*
 data/*
 *.swp
-
+Makefile
+.coverage
