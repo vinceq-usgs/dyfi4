@@ -30,7 +30,6 @@ class RawDb:
         
     def getcursor(self,table):
         
-        
         if table in self.cursors:
             return self.cursors[table]
         
@@ -112,9 +111,6 @@ class RawDb:
 
     def getExtendedTablesByTable(self,table):
         # Handle 'latest', 'all', or year
-        
-        if table=='latest':
-            return self.latesttable
         
         if table=='all':
             return self.exttables

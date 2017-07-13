@@ -40,7 +40,7 @@ class Db:
     """
     
     # TODO: generalize this for all available years
-    EXT_MINYR=2003;
+    EXT_MINYR=2015;
     EXT_MAXYR=2016;
 
     def __init__(self,config):
@@ -125,18 +125,23 @@ class Db:
         """
 
         # TODO: Handle Event object, evid, datetime, or querytext
-        # also handle table='extended_2016', 2016, 'latest', or 'all
+        # also handle table='extended_2016', 2016, 'latest', or 'all'
 
         # First, figure out which tables to check
-        
-        if not table:
-
+      
+        if table: 
+          if table=='latest':
+            table=self.latesttable
+          elif table=='all':
+            table=self.exttables
+          elif 'extended_'+table in self.exttables:
+            table='extended_'+table
+            
+        elif not table:
             if eventdatetime:
                 table=self.getExtendedTablesByDatetime(eventdatetime)
-
             elif event:
                 table=self.getExtendedTablesByDatetime(event.eventdatetime)
-
             else:
                 print('WARNING: db.loadEntries using latest table only')
                 table=self.latesttable
