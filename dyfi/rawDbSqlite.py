@@ -8,6 +8,7 @@ rawdb
 """
 
 import sqlite3
+import re
 
 intcolumns=['nresponses','newresponses']
 floatcolumns=['lat','lon','mag',
@@ -109,10 +110,7 @@ class RawDb:
         return results
         
 
-    def update(self,table,query,changes):
-        
-        c=self.getcursor(table)
-        query='UPDATE %s SET %s WHERE %s' % (table,setstring,clause)
-        c.execute(query)
-        
-        return c.rowcount
+    def execute(self,text):
+
+        print('ERROR: database raw execute is unsafe, not implemented')
+        exit()

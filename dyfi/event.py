@@ -166,7 +166,3 @@ class Event:
                 rawlist.append({column:val})
 
         return json.dumps(rawlist)
-
-    
-        
-        

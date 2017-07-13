@@ -30,30 +30,33 @@ def test_config():
 
 
 def test_db():
-    from dyfi import Config,Db
+  from dyfi import Config,Db
+  testid='ci37511872' 
 
-    
-    db=Db(Config('tests/testconfig.yml'))
-    data=db.loadEvent('ci37511872')
-    assert(isinstance(data['lat'],float))
-    assert(isinstance(data['lon'],float))
-    assert(isinstance(data['mag'],float))
+  db=Db(Config('tests/testconfig.yml'))
+  data=db.loadEvent(testid)
+  assert(isinstance(data['lat'],float))
+  assert(isinstance(data['lon'],float))
+  assert(isinstance(data['mag'],float))
 
-    entries=db.loadEntries('ci37511872')
-    assert(len(entries)>9)
+  entries=db.loadEntries(testid)
+  assert(len(entries)>9)
 
-    entries=db.loadEntries(evid='ci37511872',table='latest')
-    assert(len(entries)>0)
-    entries=db.loadEntries(evid='ci37511872',table='2015')
-    assert(len(entries)==0)
-    entries=db.loadEntries(evid='ci37511872',table='all')
-    assert(len(entries)>0)
-    with pytest.raises(NameError) as testBadTable:
-      entries=db.loadEntries(evid='ci37511872',table='2099')
-    assert 'getcursor could not find table' in str(testBadTable.value)
-    with pytest.raises(NameError) as testBadTable:
-      entries=db.loadEntries(evid='ci37511872',table='1999,2000')
-    assert 'Cannot handle string' in str(testBadTable.value)
+  entries=db.loadEntries(evid=testid,table='latest')
+  assert(len(entries)>0)
+  entries=db.loadEntries(evid=testid,table='2015')
+  assert(len(entries)==0)
+  entries=db.loadEntries(evid=testid,table='all')
+  assert(len(entries)>0)
+  with pytest.raises(NameError) as testBadTable:
+    entries=db.loadEntries(evid=testid,table='2099')
+  assert 'getcursor could not find table' in str(testBadTable.value)
+  with pytest.raises(NameError) as testBadTable:
+    entries=db.loadEntries(evid=testid,table='1999,2000')
+  assert 'Cannot handle string' in str(testBadTable.value)
+  with pytest.raises(SystemExit):
+    db.rawStatement('select * from event where eventid="%s"' % testid)
+
 
 def test_event():
     from dyfi import Config,Db,Event

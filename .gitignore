@@ -16,5 +16,6 @@ db.json
 tmp.*
 data/*
 *.swp
-Makefile
+codecov.yml
 .coverage
+coverage.xml
