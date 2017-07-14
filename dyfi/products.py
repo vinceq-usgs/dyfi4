@@ -79,10 +79,11 @@ class Products:
         # TODO: Use map parameters from DB table
         self.maps=None
         self.rawentries=rawentries
-        
+ 
         self.evid=event.eventid
-        self.productDir='data/' . self.evid
+        self.productDir='data/' + self.evid
         self.products=[]        
+        self.productFiles=[]
         self.data={}
 
         
@@ -271,7 +272,7 @@ class Products:
     
     def __repr__(self):
         if len(self.productFiles)<1:
-            return
+            return 'No products'
         
         for name in self.productFiles:
             text='Product:['+','.join(self.productFiles)+']'

@@ -17,7 +17,7 @@ import argparse
 
 from dyfi import Config,Db,Event,Maps,Entries,Products
 
-def main():
+def main(args=None):
 
     print('--------------------')
     print('Starting dyfi.py: ',time.asctime(time.localtime()))
@@ -39,8 +39,11 @@ def main():
         '--configfile',action='store',default='./config.yml',
         help='Specify config file'
     )
-    
-    args=parser.parse_args()
+  
+    if not args: 
+      args=parser.parse_args()
+    print(repr(args))
+
     evid=args.evid
 
     # Load config file
@@ -73,7 +76,6 @@ def main():
     )
     productlist=products.create()
     print(productlist)
-    
     
     print('Done with',evid)
             

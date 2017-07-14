@@ -10,5 +10,5 @@ setup(name='dyfi',
       author_email='vinceq@usgs.gov',
       url='',
       packages=['dyfi'],
-      scripts=['dyfi.py']
+      scripts=['bin/rundyfi.py']
 )

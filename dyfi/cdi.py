@@ -49,15 +49,15 @@ def calculate(pts):
     """
 
     # Make a list, if not already one
-    if not isinstance(entries,list):
-        entries=[pts]
+    if not isinstance(pts,list):
+        pts=[pts]
         
     totalByIndex={} 
     for index in cdiWeights:
         indexTotal=0
         indexCount=0
         
-        for entry in entries:
+        for entry in pts:
 
             if index=='damage' and 'd_text' in entry.__dict__:
                 val=getDamageFromText(entry.d_text)
