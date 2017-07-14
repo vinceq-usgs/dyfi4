@@ -65,6 +65,7 @@ def test_event():
     
 def test_entries():
   import geojson
+  import datetime
   from dyfi import Config,Db,Event
 
   db=Db(Config('tests/testconfig.yml'))
@@ -100,14 +101,26 @@ def test_entries():
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
-  feature=db.row2geojson(entries[0])
+  entries=db.loadEntries(startdatetime='1990',
+    querytext='eventid="%s"' % testid)
+  assert len(entries)>0
+
+  entries=db.loadEntries(startdatetime=datetime.datetime(2016,1,1),
+    querytext='eventid="%s"' % testid)
+  assert len(entries)>0
+
+  testentry=entries[0]
+  testentry['orig_id']=''
+  feature=db.row2geojson(testentry)
   coords=list(geojson.utils.coords(feature))
-  print(coords)
   assert len(coords)==1 
   assert isinstance(coords[0][0],float)
   assert isinstance(coords[0][1],float)
 
-
+  testentry['lat']=None
+  feature=db.row2geojson(testentry)
+ 
+ 
 def test_map():
     from dyfi import Config,Db,Maps
 
@@ -118,6 +131,7 @@ def test_map():
     
     for mapid,thismap in maps.maplist.items():
         assert thismap.eventid==testid
+        assert 'Map' in str(thismap)
     
     # Test an event with no maps entry
     maps=Maps(db.loadMaps('blank'))

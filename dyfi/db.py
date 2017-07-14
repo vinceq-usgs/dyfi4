@@ -186,21 +186,19 @@ class Db:
         
         self.statement=text
         print('db.rawStatement:',text)
-        # TODO: rawdb.execute is broken, fix
-        results=self.rawdb.execute(text)
-        return results
+        return self.rawdb.execute(text)
         
-    
     def timeago(self,t):
         t0=datetime.datetime.now()
         tdelta=datetime.timedelta(minutes=t)
         tnew=t0-tdelta
         return(tnew)
 
+
     def row2geojson(self,row):
         lat=row['latitude']
         lon=row['longitude']
-        if not lat or not lon:
+        if not lat or not lon: # pragma: no cover
             print('Unable to get lat/lon for this row')
             return
         pt=geojson.Point((lon,lat))
