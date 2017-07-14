@@ -63,7 +63,9 @@ def test_event():
   attr=event.eventdatetime
   event.process_timestamp=now
 
-  assert(testid in repr(event))
+  with pytest.raises(NameError) as badAttr:
+    print(event.invalidcolumn)
+  assert 'bad column' in str(badAttr.value) 
 
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:

@@ -30,7 +30,7 @@ install:
   - pip install pytest-cov
 
 # command to run tests
-script: pytest --cov=dyfi tests/test.py
+script: pytest --cov=dyfi tests/test.py tests/test_run.py
 
 # Now run codecov
 after_success:

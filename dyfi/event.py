@@ -88,7 +88,7 @@ class Event:
         print('Event.update: disabled for now')
         return
    
-    # Generic getattr and settr methods for parameters 
+    # Generic getattr method for parameters (no setattr)
 
     def __getattr__(self,name):
         if name not in self.columns:
@@ -96,15 +96,8 @@ class Event:
             
         if name in self.__dict__:
             return self.__dict__[name]
-                
-    def __setattr(self,name,val):
-        if name not in self.columns:
-            raise NameError('ERROR: Event got bad column' +name)
-
-        if name in self.columns:
-            self.__dict__[name]=val
-            return val
-
+    
+            
     def addProduct(self,product):
         """
         
