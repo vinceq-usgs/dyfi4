@@ -71,7 +71,10 @@ class PlotMap:
 
         self.fig=Pyplot.figure(dpi=250)
         self.ax=self.fig.add_subplot(111)
-        
+       
+        print('Skipping plotmap')
+        return filename
+ 
         # epsg=3857 to match NatGeo_World_Map
 #        m=Basemap(projection='merc',
 #                  llcrnrlat=self.south,

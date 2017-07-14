@@ -1,7 +1,7 @@
 """
 
-Product
-=======
+Products
+========
 
 """
 
@@ -115,8 +115,8 @@ class Products:
             self.createGraphProducts(ptype,dtypes)
             
         elif ptype=='contents':
-            contents=Contents.createXML(self.event,productdir)
-            self.loadProduct(contents)
+            contents=Contents.createXML(self.event,productdir,'contents.xml')
+            print('WARNING: must add contents to product list')
             
         # Add other product types here
         
@@ -187,9 +187,6 @@ class Products:
                                                    
             self.addProduct(plot.save(filename))
             self.addProduct(self.saveGeoJSON(dtype,dataset))
-            raise NameError('Processing '+dtype)
-
-
 
             
     def createStaticMaps(self):
@@ -237,9 +234,11 @@ class Products:
         """
         
         filename=self.productDir+'/'+'dyfi_'+producttype+'.geojson'
-                
-        with open(filename, 'w') as outfile:
-            json.dump(dataset,outfile,indent=2)
+
+        try:
+          json.dump(rawentries,open(filename,'w'),indent=2)
+        except:
+          print('WARNING: Could not convert',producttype,'to JSON')
         
         return filename
     

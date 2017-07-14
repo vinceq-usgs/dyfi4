@@ -53,7 +53,6 @@ class Entries():
         self.aggregated[name]=aggregated
         return aggregated
         
-        
 class Entry():
     """
 

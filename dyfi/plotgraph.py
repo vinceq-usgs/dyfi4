@@ -53,6 +53,9 @@ class PlotGraph:
             self.getDataDistance()
         
         elif graphtype=='time_vs_responses':
+            print('time_vs_responses graph not yet implemented')
+            return
+
             self.getDataTime()
             
         else:
@@ -255,7 +258,10 @@ class PlotGraph:
         
         
     def save(self,filename,showPlot=None):
-        
+
+        print("Skipping plotgraph.")       
+        return filename
+ 
         self.fig=Pyplot.figure(dpi=250)
         ax=self.fig.add_subplot(111)
         self.ax=ax

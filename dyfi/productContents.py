@@ -131,7 +131,7 @@ FORMAT_TYPES = OrderedDict((
 ))
 
 
-def createXML(event,productdir,outputfilebasename):
+def createXML(event,productdir,outputfilebasename='contents.xml'):
     
     """
     :synopsis: The XML creator function.
@@ -154,7 +154,7 @@ def createXML(event,productdir,outputfilebasename):
     for ptype,pdata in PRODUCT_TYPES.items():
         basename=ptype
         if ptype[0]=='_':
-            basename=event.evid+ptype
+            basename=event.eventid+ptype
 
         # Create XML node but don't attach it yet
         
