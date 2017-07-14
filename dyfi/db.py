@@ -5,6 +5,7 @@ Db
 
 """
 
+import warnings
 from .rawDbSqlite import RawDb
 
 # To use MySQL, switch the top line with this:
@@ -70,8 +71,8 @@ class Db:
         if not results:
             return
 
-        if len(results)>1:
-            print('WARNING: loadEvent found multiple rows! Using the first.')
+        if len(results)>1: # pragma: no cover
+            warnings.warn(UserWarning('Multiple events found, using only the first'))
             
         results=results[0]
         return results
@@ -101,7 +102,7 @@ class Db:
 
     
     def loadEntries(self,evid=None,event=None,
-                    table=None,eventdatetime=None,
+                    table=None,startdatetime=None,
                     querytext=None):
         """
         
@@ -109,7 +110,7 @@ class Db:
         :param str evid: optional eventid
         :param Event event: optional Event object
         :param table: optional table or comma-delimited table or list of tables
-        :param datetime: optional datetime to start search
+        :param startdatetime: optional datetime to start search
         :param str querytext: optional clause(s)
         :returns: list of entries suitable for aggregation
 
@@ -124,9 +125,6 @@ class Db:
         Each item in the return list is a dict of entries from the extended tables, plus an additional key `table` that contains the name of the source extended table (see :py:obj:`query`).         
         """
 
-        # TODO: Handle Event object, evid, datetime, or querytext
-        # also handle table='extended_2016', 2016, 'latest', or 'all'
-
         # First, figure out which tables to check
       
         if table: 
@@ -138,8 +136,8 @@ class Db:
             table='extended_'+table
             
         elif not table:
-            if eventdatetime:
-                table=self.getExtendedTablesByDatetime(eventdatetime)
+            if startdatetime:
+                table=self.getExtendedTablesByDatetime(startdatetime)
             elif event:
                 table=self.getExtendedTablesByDatetime(event.eventdatetime)
             else:
@@ -160,8 +158,8 @@ class Db:
         if evid:
             myclauses.append('eventid="%s"' % (evid))
             
-        if eventdatetime:
-            myclauses.append('eventdatetime>="%s"' % (eventdatetime))
+        if startdatetime:
+            myclauses.append('time_now>="%s"' % (startdatetime))
             
         # Finally, combine queries
 

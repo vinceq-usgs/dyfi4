@@ -112,5 +112,4 @@ class RawDb:
 
     def execute(self,text):
 
-        print('ERROR: database raw execute is unsafe, not implemented')
-        exit()
+        raise RuntimeError('database raw execute is unsafe, not implemented')

@@ -65,13 +65,8 @@ class Map():
 
         self.rawdata=rawdata
         for column in rawdata:
-            if column in self.columns or '__' in column:
-                self.__dict__[column]=rawdata[column]
-            else:
-                print('WARNING: Map: Unknown column',column)
-                pass
-                
-                
+            self.__dict__[column]=rawdata[column]
+ 
     def __str__(self):
         text='Map %s %s "%s"' % (self.subid,self.mapid,self.name)
         return text    
