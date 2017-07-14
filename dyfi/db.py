@@ -226,9 +226,13 @@ class Db:
         
         """
         
-        year=''
+        year=None
         if isinstance(date,str):
+          try: 
             year=int(date[0:4])
+          except:
+            year=None
+
         elif isinstance(date,int):
             year=date
         elif hasattr(date,'year'):
@@ -245,7 +249,8 @@ class Db:
     
 # End of function defs
 
-if __name__=='__main__':
+# Not tested yet
+if __name__=='__main__': # pragma: no cover
     import argparse
     parser=argparse.ArgumentParser(
         description='Access the DYFI database.'

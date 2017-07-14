@@ -101,13 +101,17 @@ def test_entries():
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
-  entries=db.loadEntries(startdatetime='1990',
+  entries=db.loadEntries(startdatetime=1990,
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
   entries=db.loadEntries(startdatetime=datetime.datetime(2016,1,1),
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
+
+  with pytest.raises(NameError) as testBadTable:
+    db.loadEntries(startdatetime='Stardate 1312.4')
+  assert 'Bad year' in str(testBadTable.value)
 
   testentry=entries[0]
   testentry['orig_id']=''
@@ -126,7 +130,6 @@ def test_map():
 
     db=Db(Config('tests/testconfig.yml'))
     maps=Maps(db.loadMaps(testid))
-    print(maps)
     assert len(maps.maplist)>0
     
     for mapid,thismap in maps.maplist.items():
