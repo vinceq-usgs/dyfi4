@@ -43,9 +43,10 @@ def test_db():
 
 
 def test_event():
-  from dyfi import Config,Db,Event
   import geojson
   import pytest
+  import datetime
+  from dyfi import Config,Db,Event
 
   db=Db(Config('tests/testconfig.yml'))
   event=Event(db.loadEvent(testid))
@@ -56,6 +57,13 @@ def test_event():
   geo=event.toGeoJSON()
   assert isinstance(geo,geojson.Feature)
   assert geo.properties['mag']==3.0
+
+  # Test attributes
+  now=datetime.datetime.now()
+  attr=event.eventdatetime
+  event.process_timestamp=now
+
+  assert(testid in repr(event))
 
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:

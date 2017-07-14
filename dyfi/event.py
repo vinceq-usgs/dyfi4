@@ -5,12 +5,13 @@ Event
         
 """
 
+import json
 import geojson
 
 class Event:
     """
     
-    :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires a :py:obj:`db` connection to access the database `event` table.
+    :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires an object holds data from the Db.loadEvent method.
     
     Creating an `Event` object will create a :py:obj:`db` instance 
     and load  event data from the database,
@@ -24,10 +25,6 @@ class Event:
     .. data:: columns
     
     A list of all the columns in the event table.
-    
-    .. attribute:: db
-    
-    A reference to the :py:obj:`db` object created by this instance.
     
     .. attribute:: raw
     
@@ -53,7 +50,8 @@ class Event:
             raise NameError('Event: Cannot create Event with no data')
             
         self.raw=rawdata
-        
+        self.entries=None
+ 
         for column in self.columns:
             if column in rawdata:
                 self.__dict__[column]=rawdata[column]
@@ -79,7 +77,7 @@ class Event:
         return feature
 
                 
-    def update(self):
+    def update(self): # pragma: no cover
         """
     
         :synopsis: Save the contents of this Event object to the DB event table.
@@ -89,31 +87,9 @@ class Event:
    
         print('Event.update: disabled for now')
         return
-    
-    def entryList(self,force=False):
-        """
-     
-        :synopsis: Get a list of raw entries from the database.
-        :param bool force: (optional) If true, reload even if previously accessed.
-        :returns: List of :py:obj:`entry` objects.
-    
-        """
-        
-        if self.entrylist and not force:
-            return self.entrylist
+   
+    # Generic getattr and settr methods for parameters 
 
-        entrylist=[]
-        rawentries=self.db.entryListQuery()
-        for raw in rawentries:
-            entry=Entry(raw)
-            entrylist.append(entry)
-
-        self.entrylist=entrylist
-        return entrylist
-
-
-    # Generic getattr and settr methods for parameters
-    
     def __getattr__(self,name):
         if name not in self.columns:
             raise NameError('ERROR: Event got bad column '+name)
