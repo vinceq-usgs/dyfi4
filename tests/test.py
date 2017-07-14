@@ -59,9 +59,10 @@ def test_event():
   assert geo.properties['mag']==3.0
 
   # Test attributes
-  now=datetime.datetime.now()
-  attr=event.eventdatetime
-  event.process_timestamp=now
+  attr=event.process_timestamp
+  assert attr!=testid
+
+  assert testid in repr(event)
 
   with pytest.raises(NameError) as badAttr:
     print(event.invalidcolumn)
