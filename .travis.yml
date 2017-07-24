@@ -7,7 +7,7 @@ python:
 addons:
   apt:
     packages:
-     - pov-wkhtmltopdf
+#     - pov-wkhtmltopdf
 #    - libgeos-dev
 #    - proj4
 
