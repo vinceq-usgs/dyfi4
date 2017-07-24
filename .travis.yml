@@ -12,9 +12,15 @@ addons:
 #    - proj4
 
 before_install:
+  - sudo add-apt-repository ppa:pov/wkhtmltopdf
   - sudo apt-get -qq update
-  - sudo apt-get install -y python-pyproj
-  - sudo apt-get install -y libc6
+#  - sudo apt-get install -y python-pyproj
+#  - sudo apt-get install -y libc6
+  - sudo apt-get install -y wkhtmltopdf
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
 # For mock mail service
   - sudo apt-get install -y -qq postfix
 
