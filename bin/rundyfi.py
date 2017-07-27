@@ -15,6 +15,7 @@ if the '-push' flag is used.
 import time
 import argparse
 
+from context import dyfi
 from dyfi import Config,Db,Event,Maps,Entries,Products
 
 def main(args=None):
