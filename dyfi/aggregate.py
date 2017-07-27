@@ -75,7 +75,6 @@ def aggregate(entries,producttype):
         print('ERROR: aggregate got unknown type',producttype)
                     
     npts=len(entries)
-    print(entries)
     print('aggregate: Got',npts,'entries, aggregating.')
 
     # Loop through each entry. For each entry, figure out which bin it belongs

@@ -37,7 +37,6 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     
     mlogr = mag * logr
     ii = C[1] + C[2]*mag + C[3]*logr + C[4]*R + C[5]*B + C[6]*mlogr
-    print(mag,r,ii)
     if not fine:
         if ii > 1.0 and ii < 2.0:
             ii = 2.0

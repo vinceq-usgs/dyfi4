@@ -70,7 +70,6 @@ class RawDb:
             if tableresults:
                 results.extend(tableresults)
             
-        print('DEBUG: rawDbSqlite.query got',len(results),'results')
         return results
         
         

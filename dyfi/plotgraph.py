@@ -309,8 +309,6 @@ class PlotGraph:
             :param m: A map object returned by Cartopy
         """
 
-        print(ax)
-
         for dataset in datasets:
             thisclass=dataset['class']
             thisdata=dataset['data']
@@ -332,8 +330,6 @@ class PlotGraph:
                 ax.scatter(x,y,c='blue',s=100,label=thislegend,edgecolors='black',zorder=2)
                 
             elif 'estimated' in thisclass:
-                print(x)
-                print(y)
                 ax.plot(x,y,label=thislegend)
 
                 
