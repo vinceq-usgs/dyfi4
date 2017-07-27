@@ -1,0 +1,3 @@
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --screenshot file:///Users/Vinceq/repos/dyfi4/leaflet/$1
+
+mv screenshot.png $1.png
