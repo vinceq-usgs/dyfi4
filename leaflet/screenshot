@@ -1,3 +1,8 @@
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --screenshot file:///Users/Vinceq/repos/dyfi4/leaflet/$1
+#cp ../data/$1/dyfi_geo_10km.geojson tmp.geojson
+#echo 'data=' > data.js
+#cat tmp.geojson >> data.js
 
-mv screenshot.png $1.png
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --screenshot file:///Users/Vinceq/repos/dyfi4/leaflet/viewer.html
+
+#rm tmp.geojson
+

@@ -1,4 +1,4 @@
-var data={
+var data10km = {
   "type": "FeatureCollection",
   "id": "geo_10km",
   "features": [
@@ -1894,3 +1894,16 @@ var data={
     }
   ]
 };
+
+var eventEpicenter = {
+  "type": "Feature",
+  "id": "ci37511872",
+  "geometry": {
+    "coordinates": [ -117.907, 33.953 ],
+    "type": "Point"
+  },
+  "properties": {
+    "depth": 3.8
+  }
+}
+
