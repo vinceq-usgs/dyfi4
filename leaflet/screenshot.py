@@ -1,17 +1,27 @@
 #! /usr/bin/env python3
 
 """
-screenshot
-==========
+screenshot.py
+=============
 
 Command line tool to create a .png static image from DYFI
-aggregated GeoJSON data
+aggregated GeoJSON data.
+
+Usage: leaflet/screenshot.py eventid [dyfi_geo_10km.jpg]
+
+This creates the file 
+- leaflet/screenshot.png 
+and saves a copy to
+- data/eventid/dyfi_geo_10km.jpg
 
 """
 
 import argparse
 import json
 from geojson import Feature,Point
+import subprocess
+import os
+import shutil
 
 from context import dyfi
 from dyfi import Db,Config,Event
@@ -26,6 +36,10 @@ def main(args=None):
         help='Event ID'
     )
     parser.add_argument(
+        'file',type=str,nargs='?',default='dyfi_geo_10km.geojson',
+        help='GeoJSON input file'
+    )
+    parser.add_argument(
         '--configfile',action='store',default='./config.yml',
         help='Specify config file'
     )
@@ -34,6 +48,7 @@ def main(args=None):
       args=parser.parse_args()
 
     evid=args.evid
+    inputfile=args.file
 
     config=Config(args.configfile)
     db=Db(config)
@@ -56,7 +71,7 @@ def main(args=None):
 
     # Save output
 
-    infile='data/'+evid+'/dyfi_geo_10km.geojson'
+    infile='data/'+evid+'/'+inputfile
     with open('leaflet/data.js','w') as f:
       f.write('var eventEpicenter=')
       f.write(json.dumps(eventGeoJSON))
@@ -66,15 +81,25 @@ def main(args=None):
       with open(infile,'r') as inf:
         f.write(inf.read())
       
-"""
-#cp ../data/$1/dyfi_geo_10km.geojson tmp.geojson
-#echo 'data=' > data.js
-#cat tmp.geojson >> data.js
+      command=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+'--headless',
+'--disable-gpu', 
+'--screenshot',
+'file:///Users/Vinceq/repos/dyfi4/leaflet/viewer.html']
 
-/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --screenshot file:///Users/Vinceq/repos/dyfi4/leaflet/viewer.html
+      tmpfile='screenshot.png'
+      if os.path.isfile(tmpfile):
+        os.unlink(tmpfile)
 
-#rm tmp.geojson
-"""
+      subprocess.call(command)
+      if not os.path.isfile(tmpfile):
+        print('ERROR: Could not create',tmpfile)
+        exit()
+
+      pngfile='data/'+evid+'/'+inputfile.replace('geojson','png')
+      shutil.copyfile(tmpfile,pngfile)
+      print('Created file',pngfile)
+
 
 
 if __name__=='__main__':
