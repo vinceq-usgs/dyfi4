@@ -63,7 +63,7 @@
         };
 
         function getFillColor(intensity) {
-          ii = parseInt(intensity);
+          ii = parseInt(intensity+0.01);
           ii = (ii < 1)? 1 : ii;
           return colorsCdi[ii];
         }
@@ -75,7 +75,7 @@
               fillColor = getFillColor(intensity);
             }
             if (nresp = feature.properties.nresp) {
-              fillOpacity = nresp >= 5 ? 1.0 : 0.1;
+              fillOpacity = nresp >= 5 ? 1.0 : 0.7;
             }
             return {
                 stroke: true,
