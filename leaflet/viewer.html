@@ -94,7 +94,7 @@
 
         var starIcon = L.icon({
 	    iconUrl: 'icons/star.png',
-	    iconSize:     [12, 12] // size of the icon
+	    iconSize:     [18, 18] // size of the icon
 	});
 
 	L.geoJSON(eventEpicenter, {
@@ -102,12 +102,17 @@
                 lnlat={'lat':latlng['lng'],
                        'lng':latlng['lat'],
                 };
-                return L.marker(lnlat, {icon: starIcon});
-            },
-            onEachFeature: onEachFeature
-	}).bindPopup(function (layer) {
-	    return layer.feature.id;
-	}).addTo(map);
+                popupContent='';
+                p=feature.properties;
+                for (var name in p) {
+                   popupContent+=name+': '+p[name]+'<br>\n'
+                };
+                return L.marker(
+                  lnlat, 
+                  {icon: starIcon}
+                ).bindPopup(popupContent);
+            }
+        }).addTo(map);
 
 
 </script>
