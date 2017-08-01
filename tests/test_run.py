@@ -12,4 +12,4 @@ def test_run():
   from bin import rundyfi
 
   rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
- 
+
