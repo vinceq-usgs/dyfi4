@@ -70,11 +70,10 @@ def createFromGeoJSON(inputfile,outputfile,config):
     os.remove(pngfile)
 
   try:
-    subprocess.run(command,cwd=leafletdir)
+    subprocess.run(command,cwd=leafletdir) 
     shutil.copyfile(pngfile,outputfile)
     return outputfile
 
   except:
-    print('Could not create',pngfile)
     return
 

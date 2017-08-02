@@ -47,11 +47,9 @@ def main(args=None):
 
     inputfile=args.input
     outputfile=args.output
-    print('Creating image file from GeoJSON file',inputfile,'to',outputfile)
 
     if staticMap.createFromGeoJSON(inputfile,outputfile=outputfile,
       config=args.configfile):
-
       print('Success, created',outputfile)
 
     else:

@@ -25,5 +25,6 @@ executables:
       - /Applications/Google Chrome.app/Contents/MacOS/Google Chrome  
       - --headless
       - --disable-gpu
-      - --file://__ABSPATH__/viewer.html 
+      - --screenshot
+      - file://__ABSPATH__/viewer.html 
 
