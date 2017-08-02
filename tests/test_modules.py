@@ -156,8 +156,8 @@ def test_staticmap():
     import os
     from dyfi import Config,staticMap
 
-    infile='./data/%s/dyfi_geo_10km.geojson' % testid
-    outfile='./data/%s/dyfi_geo_10km.png' % testid
+    infile='tests/data/dyfi_geo_10km.geojson'
+    outfile='tests/data/dyfi_geo_10km.png'
 
     config=Config('tests/testconfig.yml')
     output=staticMap.createFromGeoJSON(infile,outfile,config)
