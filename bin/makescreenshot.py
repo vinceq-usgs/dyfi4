@@ -1,18 +1,15 @@
 #! /usr/bin/env python3
 
 """
-screenshot.py
+makescreenshot.py
 =============
 
 Command line tool to create a .png static image from DYFI
 aggregated GeoJSON data.
 
-Usage: leaflet/screenshot.py eventid [dyfi_geo_10km.jpg]
-
-This creates the file 
-- leaflet/screenshot.png 
-and saves a copy to
-- data/eventid/dyfi_geo_10km.jpg
+Usage: 
+bin/makescreenshot.py GeoJSON file --output file.png
+This attempts to create an image file from a GeoJSON file.
 
 """
 
@@ -22,9 +19,10 @@ from geojson import Feature,Point
 import subprocess
 import os
 import shutil
+import sys
 
-from context import dyfi
-from dyfi import Db,Config,Event
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from dyfi import Db,Event,staticMap
 
 def main(args=None):
 
@@ -32,12 +30,12 @@ def main(args=None):
         description='Create static image .png files for a given event'
     )
     parser.add_argument(
-        'evid',type=str,
-        help='Event ID'
+        'input',type=str,
+        help='GeoJSON file'
     )
     parser.add_argument(
-        'file',type=str,nargs='?',default='dyfi_geo_10km.geojson',
-        help='GeoJSON input file'
+        'output',type=str,nargs='?',default='screenshot.png',
+        help='output (default is screenshot.png)'
     )
     parser.add_argument(
         '--configfile',action='store',default='./config.yml',
@@ -47,60 +45,19 @@ def main(args=None):
     if not args:
       args=parser.parse_args()
 
-    evid=args.evid
-    inputfile=args.file
+    inputfile=args.input
+    outputfile=args.output
+    print('Creating image file from GeoJSON file',inputfile,'to',outputfile)
 
-    config=Config(args.configfile)
-    db=Db(config)
-    event=Event(db.loadEvent(evid))
-    if not event:
-        raise NameError('No data for event '+evid)
+    if staticMap.createFromGeoJSON(inputfile,outputfile=outputfile,
+      config=args.configfile):
 
-    # Create event GeoJSON
+      print('Success, created',outputfile)
 
-    geometry=Point((event.lon,event.lat))
-    props=event.toGeoJSON().properties
- 
-    eventGeoJSON = Feature(geometry=geometry)
-    for key,val in event.toGeoJSON().properties.items():  
-      eventGeoJSON['properties'][key]=val 
+    else:
+        print('ERROR: Could not create',outputfile)
 
-    # Copy geocoded GeoJSON
-
-    # Create data.js file and run Chrome
-
-    # Save output
-
-    infile='data/'+evid+'/'+inputfile
-    with open('leaflet/data.js','w') as f:
-      f.write('var eventEpicenter=')
-      f.write(json.dumps(eventGeoJSON))
-      f.write('\n\n')
-      f.write('var data10km=')
-
-      with open(infile,'r') as inf:
-        f.write(inf.read())
-      
-      command=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-'--headless',
-'--disable-gpu', 
-'--screenshot',
-'file:///Users/Vinceq/repos/dyfi4/leaflet/viewer.html']
-
-      tmpfile='screenshot.png'
-      if os.path.isfile(tmpfile):
-        os.unlink(tmpfile)
-
-      subprocess.call(command)
-      if not os.path.isfile(tmpfile):
-        print('ERROR: Could not create',tmpfile)
-        exit()
-
-      pngfile='data/'+evid+'/'+inputfile.replace('geojson','png')
-      shutil.copyfile(tmpfile,pngfile)
-      print('Created file',pngfile)
-
-
+    exit()
 
 if __name__=='__main__':
   main()

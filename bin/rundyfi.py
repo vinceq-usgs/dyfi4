@@ -14,8 +14,11 @@ if the '-push' flag is used.
 """
 import time
 import argparse
+import os
+import sys
 
-from context import dyfi
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
+
 from dyfi import Config,Db,Event,Maps,Entries,Products
 
 def main(args=None):

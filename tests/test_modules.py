@@ -153,11 +153,15 @@ def test_map():
 
 
 def test_staticmap():
-    from dyfi import staticMap
-    infile='./data/%/dyfi_geo_10km.geojson' % testid
-    outfile='./data/%/dyfi_geo_10km.png' % testid
+    import os
+    from dyfi import Config,staticMap
 
-    output=staticMap.createFromGeoJSON(infile,outfile)
+    infile='./data/%s/dyfi_geo_10km.geojson' % testid
+    outfile='./data/%s/dyfi_geo_10km.png' % testid
+
+    config=Config('tests/testconfig.yml')
+    output=staticMap.createFromGeoJSON(infile,outfile,config)
+    assert(output)
     assert(os.path.isfile(output))
 
 
