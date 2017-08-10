@@ -19,3 +19,5 @@ data/*
 codecov.yml
 .coverage
 coverage.xml
+leaflet/data.js
+*.orig
