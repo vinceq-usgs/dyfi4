@@ -161,7 +161,7 @@ def test_staticmap():
 
     config=Config('tests/testconfig.yml')
     output=staticMap.createFromGeoJSON(infile,outfile,config)
-    assert(output)
     assert(os.path.isfile(output))
+    assert(os.path.getsize(output)>=100000)
 
 
