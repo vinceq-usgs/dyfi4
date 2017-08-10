@@ -57,11 +57,16 @@ def createFromGeoJSON(inputfile,outputfile,config):
   # a GeoJSON file but with VAR= to make it valid JavaScript.
   # This is a lot easier than dealing with browser CORS shenanigans.
 
-  with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.staticMap.',suffix='.js',dir=leafletdir) as tmp:
+  tmpfilename=None
+  with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.staticMap.',suffix='.js',dir=leafletdir,delete=False) as tmp:
+    tmpfilename=tmp.name
     input=open(inputfile,'r')
     tmp.write('data='+input.read()+';\n')
-    shutil.copyfile(tmp.name,leafletdatafile)
 
+  if not tmpfilename:
+    return
+
+  shutil.move(tmpfilename,leafletdatafile)
   command=config.executables['screenshot']
   command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
     for line in command]
