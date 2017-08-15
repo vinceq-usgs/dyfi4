@@ -8,9 +8,6 @@ Command line tool to create products for a given event.
 This will also run the 'push' tool to send products to PDL
 if the '-push' flag is used.
 
-# NOTE: Do not geocode here. Geocoding should be done from
-# command line or 'event' daemon.
-
 """
 import time
 import argparse
@@ -19,7 +16,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
 
-from dyfi import Config,Db,Event,Maps,Entries,Products
+from dyfi import DyfiContainer
 
 def main(args=None):
 
@@ -29,7 +26,7 @@ def main(args=None):
     # Handle arguments
     
     parser=argparse.ArgumentParser(
-        description='Create DYFI products for a given event'
+        description='Create DYFI products for a given event ID'
     )
     parser.add_argument(
         'evid',type=str,
@@ -38,6 +35,10 @@ def main(args=None):
     parser.add_argument(
         '--push',action='store_true',
         help='Push event products to PDL'
+    )
+    parser.add_argument(
+        '--redo',action='store_true',
+        help='Redo all products even if they exist'
     )
     parser.add_argument(
         '--configfile',action='store',default='./config.yml',
@@ -50,37 +51,12 @@ def main(args=None):
 
     evid=args.evid
 
-    # Load config file
-    config=Config(args.configfile)
-    
-    # Open database connection
-    db=Db(config)
-    
-    # Load data from database
-    event=Event(db.loadEvent(evid))
+    # Load event
+    container=DyfiContainer(evid)
 
-    if not event:
+    if not container:
         raise NameError('No data for event '+evid)
 
-    # Load map params
-    maps=Maps(db.loadMaps(evid))
-    if not maps.maplist:
-        print('WARNING: No maps found for this event, using defaults')
-        
-    # Load entries
-    rawentries=Entries(db.loadEntries(event=event))
-        
-    # Create products
-    # contents.xml should be created in createProducts
-
-    products=Products(
-        event=event,
-        maps=maps,
-        rawentries=rawentries
-    )
-    productlist=products.create()
-    print(productlist)
-    
     print('Done with',evid)
             
 

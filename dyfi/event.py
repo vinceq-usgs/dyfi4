@@ -8,14 +8,12 @@ Event
 import json
 import geojson
 
+from .db import Db
+
 class Event:
     """
     
-    :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires an object holds data from the Db.loadEvent method.
-    
-    Creating an `Event` object will create a :py:obj:`db` instance 
-    and load  event data from the database,
-    and also load the :py:obj:`entry` list from the database.
+    :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
     
     .. note:: 
         Access the data in this object with the keys in 
@@ -30,12 +28,6 @@ class Event:
     
     A reference to the raw database output of the event data.
     
-    .. attribute:: products
-    
-    A dict of productnames and refs to the :py:obj:`product` 
-    objects created for this event.
-    
-    
 """
 
     columns=['eventid','region','source','mag','lat','lon','depth',
@@ -44,17 +36,24 @@ class Event:
              'createdtime','process_timestamp','orig_id']
 
     
-    def __init__(self,rawdata):
+    def __init__(self,data,config=None):
 
-        if not rawdata:
-            raise NameError('Event: Cannot create Event with no data')
-            
-        self.raw=rawdata
-        self.entries=None
+        if not data:
+            raise NameError('Event: Cannot create evid with no data')
+       
+        if isinstance(data,str):
+          evid=data
+          db=Db(config)
+          data=db.loadEvent(evid)
+
+        else:
+          evid=data['eventid']
+    
+        self.raw=data
  
         for column in self.columns:
-            if column in rawdata:
-                self.__dict__[column]=rawdata[column]
+            if column in data:
+                self.__dict__[column]=data[column]
 
                 
     def toGeoJSON(self):
@@ -85,7 +84,7 @@ class Event:
         
         """
    
-        print('Event.update: disabled for now')
+        print('TODO: Event.update: disabled for now')
         return
    
     # Generic getattr method for parameters (no setattr)
@@ -98,34 +97,9 @@ class Event:
             return self.__dict__[name]
     
             
-    def addProduct(self,product):
-        """
-        
-        :synopsis: Attach a `product` to this event
-        :param product: A :py:obj:`product` object
-        :return: None
-        
-        Keep a list of Product objects attached to this product.
-        
-        .. note:: This will overwrite any previous Product objects of the same product type.
-        
-        """
-        
-        type=product.productType
-        self.products[type]=product
-
-    def getProducts(self):
-        """
-        
-        :synopsis: Get all products for this event
-        :return: dict of product types and products
-        
-        """
-        
-        return self.products
-        
     def __str__(self):
         return 'M%s %s %s' % (self.mag,self.loc,self.eventdatetime)
+
   
     def __repr__(self):
         rawlist=[]

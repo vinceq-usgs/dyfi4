@@ -75,6 +75,7 @@ def createFromGeoJSON(inputfile,outputfile,config):
     os.remove(pngfile)
 
   try:
+    print(' '.join(command))
     subprocess.run(command,cwd=leafletdir) 
     shutil.copyfile(pngfile,outputfile)
     return outputfile
