@@ -71,7 +71,7 @@ def test_event():
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:
     event=Event(db.loadEvent('blank'))
-  assert str(exception.value)=='Event: Cannot create Event with no data'
+  assert str(exception.value)=='Event: Cannot create evid with no data'
 
     
 def test_entries():
