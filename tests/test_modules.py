@@ -152,16 +152,3 @@ def test_map():
     assert maps.maplist=={}
 
 
-def test_staticmap():
-    import os
-    from dyfi import Config,staticMap
-
-    infile='tests/data/dyfi_geo_10km.geojson'
-    outfile='tests/data/dyfi_geo_10km.png'
-
-    config=Config('tests/testconfig.yml')
-    output=staticMap.createFromGeoJSON(infile,outfile,config)
-    assert(os.path.isfile(output))
-    assert(os.path.getsize(output)>=100000)
-
-

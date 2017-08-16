@@ -20,15 +20,20 @@ directories:
     data: data
     leaflet: leaflet
 
-executables:
-    screenshot: 
+# Use google chrome headless
+#executables:
+#    screenshot: 
       # Use this for Mac; alias does not work for subprocess.run
       #- /Applications/Google Chrome.app/Contents/MacOS/Google Chrome  
       #- --headless
       #- --disable-gpu
       #- --screenshot
       #- file://__ABSPATH__/viewer.html 
-      - phantomjs
       #- file://__ABSPATH__/capture.js
+
+# Use phantomjs
+executables:
+    screenshot: 
+      - phantomjs
       - __ABSPATH__/capture.js
 

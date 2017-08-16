@@ -20,12 +20,17 @@ directories:
     data: data
     leaflet: leaflet
 
-# Travis uses 'google-chrome-stable'
+# Using chrome headless on Travis
+#executables:
+#    screenshot: 
+#      - google-chrome-stable
+#      - --headless
+#      - --disable-gpu
+#      - --screenshot
+#      - file://__ABSPATH__/viewer.html 
+
+# Using phantomjs on Travis
 executables:
     screenshot: 
-      - google-chrome-stable
-      - --headless
-      - --disable-gpu
-      - --screenshot
-      - file://__ABSPATH__/viewer.html 
-
+      - phantomjs
+      - capture.js
