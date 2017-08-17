@@ -9,7 +9,7 @@ import json
 import os
 from collections import OrderedDict
 
-from .plotmap import PlotMap
+#from .plotmap import PlotMap
 from .plotgraph import PlotGraph
 from . import productContents as Contents
 
@@ -146,12 +146,12 @@ class Products:
 
             # TODO: Use map params
 
-            plot=PlotMap(
-                event=self.event,
-                data=dataset)
+#            plot=PlotMap(
+#                event=self.event,
+#                data=dataset)
 
-            self.addProduct(plot.save(filename))
-            self.addProduct(self.saveGeoJSON(dtype,dataset))
+#            self.addProduct(plot.save(filename))
+#            self.addProduct(self.saveGeoJSON(dtype,dataset))
    
     
     def createGraphProducts(self,producttype,productlist):

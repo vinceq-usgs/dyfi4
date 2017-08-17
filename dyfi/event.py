@@ -38,17 +38,17 @@ class Event:
     
     def __init__(self,data,config=None):
 
-        if not data:
-            raise NameError('Event: Cannot create evid with no data')
-       
         if isinstance(data,str):
           evid=data
           db=Db(config)
           data=db.loadEvent(evid)
 
-        else:
+        elif isinstance(data,dict):
           evid=data['eventid']
     
+        if not data:
+            raise NameError('Event: Cannot create evid with no data')
+       
         self.raw=data
  
         for column in self.columns:
@@ -92,11 +92,8 @@ class Event:
     def __getattr__(self,name):
         if name not in self.columns:
             raise NameError('ERROR: Event got bad column '+name)
-            
-        if name in self.__dict__:
-            return self.__dict__[name]
-    
-            
+           
+ 
     def __str__(self):
         return 'M%s %s %s' % (self.mag,self.loc,self.eventdatetime)
 

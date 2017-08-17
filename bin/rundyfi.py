@@ -52,6 +52,7 @@ def main(args=None):
     evid=args.evid
 
     # Load event
+    # TODO: Add directives like --create, --redo, --push
     container=DyfiContainer(evid)
 
     if not container:

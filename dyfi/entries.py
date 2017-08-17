@@ -21,7 +21,7 @@ class Entries():
 
     """
 
-    def __init__(self,rawlist,config='config.yml'):
+    def __init__(self,rawlist,config=None):
 
         self.entriesdict={}
         self.entrieslist=[]

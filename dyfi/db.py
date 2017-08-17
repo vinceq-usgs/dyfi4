@@ -44,7 +44,7 @@ class Db:
     EXT_MINYR=2015;
     EXT_MAXYR=2016;
 
-    def __init__(self,config):
+    def __init__(self,config=None):
 
         self.rawdb=RawDb(config.db)
         self.params=config.db
