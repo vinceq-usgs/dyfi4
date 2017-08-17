@@ -11,5 +11,8 @@ def test_run():
   from argparse import Namespace
   from bin import rundyfi
 
+  with pytest.raises(NameError) as testBadTable:
+    rundyfi.main(Namespace(evid='blank',configfile='./tests/testconfig.yml'))
+
   rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
 

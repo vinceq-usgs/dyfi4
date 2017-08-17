@@ -11,12 +11,26 @@ def test_staticmap():
     from dyfi import Config,staticMap
 
     infile='tests/data/dyfi_geo_10km.geojson'
+    blankfile='tests/data/blank.geojson'
     outfile='tests/data/dyfi_geo_10km.png'
 
     config=Config('tests/testconfig.yml')
+
+    # Test that old PNG file is properly removed
+    screenshotfile='leaflet/screenshot.png' 
+    with open(screenshotfile,'w') as tmp:
+      tmp.write('Test output')
+
+    output=staticMap.createFromGeoJSON(blankfile,outfile,config)
+    assert output==None
+    assert not os.path.isfile(screenshotfile)
+
+    output=staticMap.createFromGeoJSON(blankfile,'/bad_directory',config)
+    assert output==None
+ 
     output=staticMap.createFromGeoJSON(infile,outfile,config,verbose=True)
-    assert(output)
-    assert(os.path.isfile(output))
-    assert(os.path.getsize(output)>=100000)
+    assert output==outfile
+    assert os.path.isfile(output)
+    assert os.path.getsize(output)>=100000
 
 

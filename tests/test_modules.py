@@ -41,7 +41,6 @@ def test_db():
   pasttime=db.timeago(3)
   assert pasttime.year>1990
 
-
 def test_event():
   import geojson
   import pytest
@@ -60,8 +59,7 @@ def test_event():
 
   # Test attributes
   attr=event.process_timestamp
-  assert attr!=testid
-
+  assert isinstance(attr,str)
   assert testid in repr(event)
 
   with pytest.raises(NameError) as badAttr:
@@ -150,5 +148,13 @@ def test_map():
     # Test an event with no maps entry
     maps=Maps(db.loadMaps('blank'))
     assert maps.maplist=={}
+
+
+def test_container():
+  from dyfi import DyfiContainer
+  with pytest.raises(NameError) as badAttr:
+    container=DyfiContainer('blank')
+  assert 'Cannot create evid' in str(badAttr.value) 
+  
 
 

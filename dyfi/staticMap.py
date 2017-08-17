@@ -36,7 +36,7 @@ def createFromEvent(event):
   # Save output
 
 
-def createFromGeoJSON(inputfile,outputfile,config,verbose=False):
+def createFromGeoJSON(inputfile,outputfile,config=None,verbose=False):
 
   """
   :synopsis: Create static image map from Event object
@@ -46,15 +46,14 @@ def createFromGeoJSON(inputfile,outputfile,config,verbose=False):
 
   """
 
-  if isinstance(config,str):
-    from .config import Config
-    config=Config(config)
- 
   leafletdir=config.directories['leaflet'] 
   leafletdatafile='%s/data.js' % leafletdir
   pngfile='%s/screenshot.png' % leafletdir
 
-  # This creates a data.js file in the leaflet directory which is just
+  if os.path.isfile(pngfile):
+    os.remove(pngfile)
+
+ # This creates a data.js file in the leaflet directory which is just
   # a GeoJSON file but with VAR= to make it valid JavaScript.
   # This is a lot easier than dealing with browser CORS shenanigans.
 
@@ -64,12 +63,15 @@ def createFromGeoJSON(inputfile,outputfile,config,verbose=False):
       print('Created tmpfile',tmp.name)
 
     tmpfilename=tmp.name
-    input=open(inputfile,'r')
-    tmp.write('data='+input.read()+';\n')
-    if verbose:
-      print('Reading inputfile',inputfile)
+    with open(inputfile,'r') as input:
+      tmp.write('data='+input.read()+';\n')
 
-  if not tmpfilename:
+      if verbose:
+        print('Reading inputfile',inputfile)
+
+  if (not tmpfilename 
+      or not os.path.isfile(tmpfilename) 
+      or os.path.getsize(tmpfilename)<10):
     return
 
   shutil.move(tmpfilename,leafletdatafile)
@@ -82,9 +84,6 @@ def createFromGeoJSON(inputfile,outputfile,config,verbose=False):
   if verbose:
     print('Command:')
     print(' '.join(command))
-
-  if os.path.isfile(pngfile):
-    os.remove(pngfile)
 
   try:
     print(' '.join(command))
