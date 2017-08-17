@@ -6,7 +6,7 @@ python:
 #  - "3.6"
 
 addons:
-  chrome: stable
+#  chrome: stable
   apt:
     packages:
 #     - pov-wkhtmltopdf
