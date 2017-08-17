@@ -56,6 +56,17 @@ class Entries():
         aggregated=aggregate(self.entrieslist,name)
         self.aggregated[name]=aggregated
         return aggregated
+
+
+    # TODO: Make this into GeoJSON representation
+    def __repr__(self):
+        text=''
+        for entry in self.entrieslist:
+          text+=repr(entry)+'\n'
+                
+        text='Entries('+text[:-1]+')'
+        return text    
+
         
 class Entry():
     """

@@ -139,11 +139,23 @@ def test_dbentries():
 
  
 def test_entries():
-  from dyfi import Config,Entries
+  from dyfi import Config,Entries,Db
+  config=Config(configfile) 
 
-  config=Config(configfile)
-  entries=Entries(testid,config=config)
+  # Test loading Entries with raw data 
+  
+  rawentries=Db(config).loadEntries(testid)
+  entries=Entries(testid,rawentries=rawentries)
   assert len(entries)>9
+
+  # Test loading Entries with eventid
+  entries=Entries(testid,config=config)
+
+  count=0
+  for entry in entries:
+    count+=1
+  assert len(entries)==count
+  assert 'Entries(' in repr(entries)
 
  
 def test_map():
