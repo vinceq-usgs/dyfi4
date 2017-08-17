@@ -5,12 +5,13 @@ import pytest
 from .context import dyfi
 
 testid='ci37511872'
+configfile='tests/testconfig.yml'
 
 def test_config():
     from dyfi import Config
     import os
 
-    conf=Config('tests/testconfig.yml')
+    conf=Config(configfile)
 
     # conf should have at least 'db' and 'mail' fields
     assert len(list(conf))>=2
@@ -32,7 +33,7 @@ def test_config():
 def test_db():
   from dyfi import Config,Db
 
-  db=Db(Config('tests/testconfig.yml'))
+  db=Db(Config(configfile))
   raw=db.loadEvent(testid)
   assert isinstance(raw['lat'],float)
   assert isinstance(raw['lon'],float)
@@ -47,8 +48,14 @@ def test_event():
   import datetime
   from dyfi import Config,Db,Event
 
-  db=Db(Config('tests/testconfig.yml'))
+  config=Config(configfile)
+  db=Db(config)
   event=Event(db.loadEvent(testid))
+  assert isinstance(event.lat,float)
+  assert isinstance(event.lon,float)
+  assert isinstance(event.mag,float)
+
+  event=Event(testid,config=config)
   assert isinstance(event.lat,float)
   assert isinstance(event.lon,float)
   assert isinstance(event.mag,float)
@@ -72,32 +79,29 @@ def test_event():
   assert str(exception.value)=='Event: Cannot create evid with no data'
 
     
-def test_entries():
+def test_dbentries():
   import geojson
   import datetime
-  from dyfi import Config,Db,Event
+  from dyfi import Db,Config,Event
 
-  db=Db(Config('tests/testconfig.yml'))
-  entries=db.loadEntries(testid)
-  assert len(entries)>9
-
+  db=Db(Config(configfile))
   entries=db.loadEntries(evid=testid,table='latest')
   assert len(entries)>0
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
   assert len(entries)>0
-  with pytest.raises(NameError) as testBadTable:
+  with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='2099')
-  assert 'getcursor could not find table' in str(testBadTable.value)
+  assert 'getcursor could not find table' in str(exception.value)
 
-  with pytest.raises(NameError) as testBadTable:
+  with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='1999,2000')
-  assert 'Cannot handle string' in str(testBadTable.value)
+  assert 'Cannot handle string' in str(exception.value)
 
-  with pytest.raises(RuntimeError) as testBadTable:
+  with pytest.raises(RuntimeError) as exception:
     db.rawStatement('select * from event where eventid="%s"' % testid)
-  assert 'unsafe' in str(testBadTable.value)
+  assert 'database raw execute is unsafe' in str(exception.value)
 
   # Test loading entries by event object
   event=Event(db.loadEvent(testid))
@@ -132,12 +136,20 @@ def test_entries():
 
   testentry['lat']=None
   feature=db.row2geojson(testentry)
+
  
+def test_entries():
+  from dyfi import Config,Entries
+
+  config=Config(configfile)
+  entries=Entries(testid,config=config)
+  assert len(entries)>9
+
  
 def test_map():
     from dyfi import Config,Db,Maps
 
-    db=Db(Config('tests/testconfig.yml'))
+    db=Db(Config(configfile))
     maps=Maps(db.loadMaps(testid))
     assert len(maps.maplist)>0
     

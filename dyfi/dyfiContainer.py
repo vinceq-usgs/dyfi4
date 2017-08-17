@@ -24,6 +24,6 @@ class DyfiContainer:
 
         config=Config(configfile) 
         self.event=Event(evid,config=config)
-#        self.entries=Entries(evid,config=config)
+        self.entries=Entries(evid,config=config)
 #        self.products=Products(evid,config=config)
 

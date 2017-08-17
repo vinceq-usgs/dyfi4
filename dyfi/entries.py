@@ -7,7 +7,7 @@ Entries
 """
 
 from .aggregate import aggregate
-
+from .db import Db
 
 class Entries():
     """
@@ -17,21 +17,25 @@ class Entries():
 
     .. data:: entries
 
-        A list of Map objects.
+        A list of Entry objects.
 
     """
 
-    def __init__(self,rawlist,config=None):
+    # TODO: Capability of handling raw entries instead of evid
+    def __init__(self,evid,rawentries=None,config=None):
 
+        self.evid=evid
         self.entriesdict={}
         self.entrieslist=[]
         self.aggregated={}
 
-        if not rawlist:
-            self.entries=entries
-            return
+        if not rawentries:
+            db=Db(config)
+            rawentries=db.loadEntries(evid)
 
-        for row in rawlist:
+        self.entries=rawentries
+
+        for row in rawentries:
             entry=Entry(row)
             subid='%s,%s' % (entry.subid,entry.table)
             self.entriesdict[subid]=entry
@@ -39,8 +43,8 @@ class Entries():
     
     def __len__(self):        
         return len(self.entrieslist)
-
-    
+   
+ 
     def __iter__(self):
         return self.entrieslist.__iter__()
 
