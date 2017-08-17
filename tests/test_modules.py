@@ -152,9 +152,13 @@ def test_map():
 
 def test_container():
   from dyfi import DyfiContainer
-  with pytest.raises(NameError) as badAttr:
-    container=DyfiContainer('blank')
-  assert 'Cannot create evid' in str(badAttr.value) 
+
+  # Note that individual packages will raise their own exceptions
+  # no need to test here
+
+  #with pytest.raises(NameError) as badAttr:
+  #  container=DyfiContainer('blank')
+  #assert 'Cannot create evid' in str(badAttr.value) 
   
 
 

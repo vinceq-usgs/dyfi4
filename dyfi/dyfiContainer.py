@@ -22,9 +22,6 @@ class DyfiContainer:
 
     def __init__(self,evid,configfile='config.yml'):
 
-        if not evid:
-            raise NameError('Event: Cannot create evid with no data')
-      
         config=Config(configfile) 
         self.event=Event(evid,config=config)
 #        self.entries=Entries(evid,config=config)
