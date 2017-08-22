@@ -1,0 +1,28 @@
+# List of all product types and formats
+# Note that event and entries are available to all products and
+# don't need to be specified
+
+- name: dyfi_geo_1km
+  dataset: geo_1km
+  format: geojson,png
+
+- name: dyfi_geo_10km
+  dataset: geo_10km
+  format: geojson,png
+
+- name: dyfi_plot_atten
+  type: graph
+  dataset: geo_10km
+  format: json
+
+- name: dyfi_plot_numresp
+  type: graph
+  format: json
+
+# Special format that uses this file to generate contents.xml
+# This must be made last, since it checks the event directory for files
+- name: contents.xml
+  type: contents
+  format: xml
+
+

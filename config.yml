@@ -37,3 +37,7 @@ executables:
       - phantomjs
       - __ABSPATH__/capture.js
 
+
+products:
+    file: lib/products.yml
+
