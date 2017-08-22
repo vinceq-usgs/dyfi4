@@ -9,9 +9,10 @@ import json
 import os
 import yaml
 
-#from .plotmap import PlotMap
-from .plotgraph import PlotGraph
-from . import productContents as Contents
+from .graph import Graph
+from .contents import Contents
+from .config import Config
+from . import staticMap 
 
 class Products:
     """
@@ -94,7 +95,7 @@ class Products:
             data=Contents(self.dir)
 
         elif type=='graph':
-            data=Graph(name=name,event=self.events,data=data)
+            data=Graph(name=name,event=self.event,data=dataset)
 
         elif data:
             pass
@@ -104,8 +105,9 @@ class Products:
 
         # Now create multiple formats of data
         count=0
-        formats=format.split(',') if (',' in format) else (format)
+        formats=format.split(',') if (',' in format) else [format]
         for format in formats:
+            print('format is',format)
             product=Product(dir=self.dir,data=data,name=name).create(format)
             if product:
                 self.products.append(product)
@@ -156,6 +158,7 @@ class Product:
         data=self.data
 
         filename=self.dir+'/'+self.name+'.'+format
+        product=None
         print('Writing:',filename)
 
         if format=='json':
@@ -166,7 +169,6 @@ class Product:
             with open(filename,'w') as f:
                 f.write(product)
                
-
         elif format=='geojson':
             if hasattr(data,'toGeoJSON'):            
               product=data.toGeoJSON()
@@ -175,17 +177,32 @@ class Product:
             with open(filename,'w') as f:
                 f.write(product)
 
+        elif format=='xml':
+            if hasattr(data,'toXML'):            
+              product=data.toXML()
+            else:
+               raise NameError('Cannot save '+self.name+' as format '+format)
+
         elif format=='png':
             if hasattr(data,'toImage'):            
               product=data.toImage()
+            elif 'type' in data and data['type']=='FeatureCollection':
+              filename=self.makeGeoJSONImage(filename)
             else:
-              product={}
+              raise NameError('Cannot save '+self.name+' as format '+format)
 
         else:
             raise NameError('Unknown format '+format)
 
-
         self.filename=filename
-        self.product=product
+        if product:
+            self.product=product
         return self
 
+
+    def makeGeoJSONImage(self,filename):
+
+        config=Config()
+        inputfile=self.dir+'/'+self.name+'.geojson'
+        filename=staticMap.createFromGeoJSON(inputfile,filename,config=config)
+        return filename

@@ -144,6 +144,7 @@ def aggregate(entries,producttype):
         print('AggregateGeo: Ignored %i pts' % ignored)
     print('AggregateGeo: Max CDI: %s' % maxcdi)
 
+    featurecollection.name=producttype
     return featurecollection
 
 

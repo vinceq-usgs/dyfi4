@@ -1,26 +1,22 @@
 """
 
-plotgraph
+graph
 ====
 
 """
 
+import json
 import math
 import numpy as np
 from geopy.distance import great_circle
 from statistics import mean,median,stdev
 
-import matplotlib.ticker as Ticker
-import matplotlib.pyplot as Pyplot
-from matplotlib.patches import Polygon,Circle
-
 from .thirdparty.gmtcolormap import GMTColorMap
 from . import ipes
 
-# TODO: Make PlotGraph a subclass of Product
-# TODO: Make dist_vs_intensity, time_vs_nresp subclasses of PlotGraph
+# TODO: Make dist_vs_intensity, time_vs_nresp subclasses of Graph
 
-class PlotGraph:
+class Graph:
     """
         :synopsis: Create a static graph
         :param str filename: The filename to create
@@ -45,10 +41,13 @@ class PlotGraph:
         }
         
         
-    def __init__(self,event,graphtype,data,title=None,showPlot=False):
+    def __init__(self,name,event,data):
+
         self.event=event
         self.rawdata=data
-  
+
+        return
+ 
         if graphtype=='dist_vs_intensity':
             self.getDataDistance()
         
@@ -59,7 +58,7 @@ class PlotGraph:
             self.getDataTime()
             
         else:
-            raise NameError('ERROR: PlotGraph got unknown graph type'+graphtype) 
+            raise NameError('ERROR: Graph got unknown graph type'+graphtype) 
 
         if title:
             self.title=title
@@ -104,7 +103,7 @@ class PlotGraph:
         d.append(scatterdata)
         d.extend(self.getMeanMedianData(scatterdata))
         if hasattr(self.event,'mag'):
-            d.extend(self.getIpeData(PlotGraph.ipelist))
+            d.extend(self.getIpeData(Graph.ipelist))
 
         return d
             
@@ -185,7 +184,7 @@ class PlotGraph:
             else:
                 bindata[xbin]=[y]
 
-        print('PlotGraph: Got %i pts into %i bins' % (
+        print('Graph: Got %i pts into %i bins' % (
                 len(scatterdata['data']),len(bindata)))
 
         means=[]
@@ -242,7 +241,7 @@ class PlotGraph:
         max_x=self.params['max_x']
 
         xspace=np.logspace(
-            np.log10(min_x),np.log10(max_x),num=PlotGraph.NBINS
+            np.log10(min_x),np.log10(max_x),num=Graph.NBINS
         )
         self.distBins=xspace
         return xspace
@@ -259,7 +258,7 @@ class PlotGraph:
         
     def save(self,filename,showPlot=None):
 
-        print("Skipping plotgraph.")       
+        print("Skipping save.")       
         return filename
  
         self.fig=Pyplot.figure(dpi=250)
@@ -380,12 +379,16 @@ class PlotGraph:
         return m
         """
         
-    
+   
+    def toJSON(self):
+      return json.dumps({})
+
+ 
     # Below these are class methods
 
     def distanceData(event,data):
         print('Graph labels:')
-        print(PlotGraph.graphLabels)
+        print(Graph.graphLabels)
 
         datasets=[]
         x_vs_y=[]
@@ -410,9 +413,6 @@ class PlotGraph:
         
         ipecounter=0
  
-        exit()
-            
-    
     
     def degreelines(a,b):
         aint=int(a)

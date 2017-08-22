@@ -130,17 +130,29 @@ FORMAT_TYPES = OrderedDict((
     ('kmz','application/vnd.google-earth.kmz')
 ))
 
+class Contents:
 
+    def __init__(self,dir):
+        self.dir=dir
+
+        return
+
+
+    def toXML(self):
+        return
+ 
+
+"""
 def createXML(event,productdir,outputfilebasename='contents.xml'):
     
-    """
     :synopsis: The XML creator function.
     :param event: An :ref:`Event` object
     :param str productdir: Product directory to look for files
     :param str outputfilebasename: Usually :file:`contents.xml`
     :returns: Filename of the product created.
     
-    """
+
+    #TODO: *** MAKE THIS INTO A CONTENTS CLASS ***
 
     outputfilename=productdir+'/'+outputfilebasename
     writer=open(outputfilename,'w')
@@ -200,4 +212,5 @@ def createXML(event,productdir,outputfilebasename='contents.xml'):
     return(outputfilename)
 
 
+"""
             

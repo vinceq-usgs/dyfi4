@@ -3,7 +3,6 @@
 Entries
 =======
 
-    
 """
 
 from .aggregate import aggregate
@@ -25,43 +24,42 @@ class Entries():
     def __init__(self,evid,rawentries=None,config=None):
 
         self.evid=evid
-        self.entriesdict={}
-        self.entrieslist=[]
-        self.aggregated={}
+        self.entries=[]
 
         if not rawentries:
             db=Db(config)
             rawentries=db.loadEntries(evid)
 
-        self.entries=rawentries
-
+        count=0
         for row in rawentries:
             entry=Entry(row)
             subid='%s,%s' % (entry.subid,entry.table)
-            self.entriesdict[subid]=entry
-            self.entrieslist.append(entry)
+            self.entries.append(entry)
+            count+=1
+            
     
-    def __len__(self):        
-        return len(self.entrieslist)
+    def aggregate(self,name,force=False):
+        return aggregate(self.entries,name)
+
+
+    def __len__(self):
+        return len(self.entries)
    
  
     def __iter__(self):
-        return self.entrieslist.__iter__()
+        return self.entries.__iter__()
 
     
-    def aggregate(self,name,force=False):
-        if name in self.aggregated and not force:
-            return self.aggregated[name]
-
-        aggregated=aggregate(self.entrieslist,name)
-        self.aggregated[name]=aggregated
-        return aggregated
+    def __str__(self):
+        text='[Entries: evid:%s, responses:%i]' % (
+            self.evid,len(self.rawdata))
+        return text
 
 
     # TODO: Make this into GeoJSON representation
     def __repr__(self):
         text=''
-        for entry in self.entrieslist:
+        for entry in self.entries:
           text+=repr(entry)+'\n'
                 
         text='Entries('+text[:-1]+')'
@@ -118,12 +116,19 @@ class Entry():
 
     def __init__(self,rawdata):
 
-        for column in rawdata:
+        for column,val in rawdata.items():
             if column in Entry.columns or '__' in column:
-                self.__dict__[column]=rawdata[column]
+                self.__dict__[column]=val
             else:
                 print('WARNING: Entry: Unknown column',column)
-                                
+
+
+    def __str__(self):
+        text='[Entry: subid:%s, intensity:%s]' % (
+            self.subid,self.user_cdi)
+        return text
+
+ 
     def __repr__(self):
         text=''
         for column in ('subid','user_cdi'):
@@ -132,14 +137,5 @@ class Entry():
                 text=text+column+':'+val+','
                 
         text='Entry('+text[:-1]+')'
-        return text    
+        return text
 
-                
-                
-                
-                
-        
-                
-
-                
-        

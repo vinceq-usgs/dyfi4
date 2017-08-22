@@ -174,6 +174,13 @@ def test_map():
     assert maps.maplist=={}
 
 
+def test_products():
+  from dyfi import Config,Event,Entries,Products
+
+  config=Config(configfile)
+  products=Products(Event(testid,config=config),Entries(testid,config=config))
+ 
+
 def test_container():
   from dyfi import DyfiContainer
 

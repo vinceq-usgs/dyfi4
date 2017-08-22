@@ -151,7 +151,6 @@ class Db:
         if querytext:
             myclauses.append(querytext)
 
-        print('Got event',event)
         if event and not evid:
             evid=event.eventid
 
