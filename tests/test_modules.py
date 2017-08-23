@@ -56,6 +56,7 @@ def test_event():
   assert isinstance(event.mag,float)
 
   event=Event(testid,config=config)
+  assert 'Event' in str(event)
   assert isinstance(event.lat,float)
   assert isinstance(event.lon,float)
   assert isinstance(event.mag,float)
@@ -156,6 +157,10 @@ def test_entries():
     count+=1
   assert len(entries)==count
   assert 'Entries(' in repr(entries)
+  assert 'Entries' in str(entries)
+
+  # TODO: test single entry
+  # TODO: test if entry has a missing column required by CDI calculation
 
  
 def test_map():
