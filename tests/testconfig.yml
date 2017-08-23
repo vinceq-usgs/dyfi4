@@ -34,3 +34,7 @@ executables:
     screenshot: 
       - phantomjs
       - capture.js
+
+products:
+    file: lib/products.yml
+

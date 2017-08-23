@@ -22,7 +22,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from dyfi import Db,Event,staticMap
+from dyfi import Db,Event,staticMap,Config
 
 def main(args=None):
 
@@ -49,7 +49,7 @@ def main(args=None):
     outputfile=args.output
 
     if staticMap.createFromGeoJSON(inputfile,outputfile=outputfile,
-      config=args.configfile):
+      config=Config(args.configfile)):
       print('Success, created',outputfile)
 
     else:

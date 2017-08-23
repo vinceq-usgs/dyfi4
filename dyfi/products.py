@@ -11,7 +11,6 @@ import yaml
 
 from .graph import Graph
 from .contents import Contents
-from .config import Config
 from . import staticMap 
 
 class Products:
@@ -108,7 +107,7 @@ class Products:
         formats=format.split(',') if (',' in format) else [format]
         for format in formats:
             print('format is',format)
-            product=Product(dir=self.dir,data=data,name=name).create(format)
+            product=Product(dir=self.dir,data=data,name=name,config=self.config).create(format)
             if product:
                 self.products.append(product)
                 count+=1
@@ -148,10 +147,11 @@ class Products:
     
 class Product:
 
-    def __init__(self,dir,data,name):
+    def __init__(self,dir,data,name,config=None):
         self.data=data
         self.dir=dir
         self.name=name
+        self.config=config
 
 
     def create(self,format):
@@ -202,7 +202,6 @@ class Product:
 
     def makeGeoJSONImage(self,filename):
 
-        config=Config()
         inputfile=self.dir+'/'+self.name+'.geojson'
-        filename=staticMap.createFromGeoJSON(inputfile,filename,config=config)
+        filename=staticMap.createFromGeoJSON(inputfile,filename,config=self.config)
         return filename
