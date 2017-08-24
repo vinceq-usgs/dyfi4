@@ -95,7 +95,7 @@ class Event:
            
  
     def __str__(self):
-        return '[Event: %s M%s %s %s]' % (self.evid,self.mag,self.loc,self.eventdatetime)
+        return '[Event: %s M%s %s %s]' % (self.eventid,self.mag,self.loc,self.eventdatetime)
 
   
     def __repr__(self):

@@ -156,7 +156,7 @@ def test_entries():
   for entry in entries:
     count+=1
   assert len(entries)==count
-  assert 'Entries(' in repr(entries)
+  assert 'Entries[' in repr(entries)
   assert 'Entries' in str(entries)
 
   # TODO: test single entry
