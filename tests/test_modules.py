@@ -163,6 +163,9 @@ def test_entries():
   assert 'Entries' in str(entries)
 
   # test single entry
+
+  badentry={'subid':1,'table':'extended_pre','badcolumn':0}
+  badentries=Entries(testid,rawentries=[badentry],config=config)
   single=[x for x in entries if x.subid=='4279149'][0]
   assert '[Entry:' in str(single)
   entries=Entries(testid,rawentries=[single],config=config)
