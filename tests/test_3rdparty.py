@@ -61,4 +61,5 @@ def test_utm():
     assert utm.from_latlon(80,21)[2]==33
     assert utm.from_latlon(80,33)[2]==35
     assert utm.from_latlon(80,42)[2]==37
+    assert utm.latitude_to_zone_letter(-81)==None
 
