@@ -1,5 +1,5 @@
 # To run this test, you must be at the package root directory and run:
-# pytest tests/test.py
+# pytest tests/test_modules.py
 
 import pytest
 from .context import dyfi
