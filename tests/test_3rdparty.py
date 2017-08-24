@@ -39,7 +39,7 @@ def test_utm():
     assert 'zone letter out of range' in str(exception.value)
 
     coords=utm.to_latlon(100000,0,1,zone_letter='C')
-    assert coords==(24297961.66845766, 3361639877625.4453)
+    assert abs(coords[0]-24297961)<1 and abs(coords[1]-3361639877625)<1
 
     # from_latlon tests
 
