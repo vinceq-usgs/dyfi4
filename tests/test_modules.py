@@ -141,6 +141,8 @@ def test_dbentries():
  
 def test_entries():
   from dyfi import Config,Entries,Db
+  from dyfi import cdi
+
   config=Config(configfile) 
 
   # Test loading Entries with raw data 
@@ -155,12 +157,23 @@ def test_entries():
   count=0
   for entry in entries:
     count+=1
+
   assert len(entries)==count
   assert 'Entries[' in repr(entries)
   assert 'Entries' in str(entries)
 
-  # TODO: test single entry
-  # TODO: test if entry has a missing column required by CDI calculation
+  # test single entry
+  single=[x for x in entries if x.subid=='4279149'][0]
+  assert '[Entry:' in str(single)
+  entries=Entries(testid,rawentries=[single],config=config)
+
+  user_cdi=cdi.calculate(single)
+  assert user_cdi>=2 or user_cdi==1
+  
+  # : test if entry has a missing required column 
+  single.__dict__.pop('felt')
+  single.__dict__['badcolumn']=1
+  assert cdi.calculate(single)!=user_cdi
 
  
 def test_map():
