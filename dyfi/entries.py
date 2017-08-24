@@ -21,22 +21,25 @@ class Entries():
     """
 
     # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid,rawentries=None,config=None):
+    def __init__(self,evid,rawentries=None,config=None,load=True):
 
         self.evid=evid
         self.entries=[]
 
-        if not rawentries:
+        if rawentries==None and load==True:
             db=Db(config)
             rawentries=db.loadEntries(evid)
 
         count=0
         for row in rawentries:
-            entry=Entry(row)
+            if isinstance(row,Entry):
+                entry=row
+            else:
+                entry=Entry(row)
             subid='%s,%s' % (entry.subid,entry.table)
             self.entries.append(entry)
             count+=1
-            
+        
     
     def aggregate(self,name,force=False):
         return aggregate(self.entries,name)
@@ -52,7 +55,7 @@ class Entries():
     
     def __str__(self):
         text='[Entries: evid:%s, responses:%i]' % (
-            self.evid,len(self.rawdata))
+            self.evid,len(self.entries))
         return text
 
 
@@ -62,7 +65,7 @@ class Entries():
         for entry in self.entries:
           text+=repr(entry)+'\n'
                 
-        text='Entries('+text[:-1]+')'
+        text='Entries['+text[:-1]+']'
         return text    
 
         

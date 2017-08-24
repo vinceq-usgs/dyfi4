@@ -7,5 +7,5 @@ from .dyfiContainer import DyfiContainer
 from .event import Event
 from .maps import Maps
 from .entries import Entry,Entries
-from .products import Products
+from .products import Products,Product
 from .graph import Graph

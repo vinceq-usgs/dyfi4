@@ -147,17 +147,23 @@ class Products:
     
 class Product:
 
-    def __init__(self,dir,data,name,config=None):
+    def __init__(self,dir,data,name,filename=None,config=None):
         self.data=data
         self.dir=dir
         self.name=name
         self.config=config
+        self.filename=filename
+        print(data)
 
 
     def create(self,format):
         data=self.data
 
-        filename=self.dir+'/'+self.name+'.'+format
+        if self.filename:
+            filename=self.filename
+        else:
+            filename=self.dir+'/'+self.name+'.'+format
+
         product=None
         print('Writing:',filename)
 
@@ -173,6 +179,7 @@ class Product:
             if hasattr(data,'toGeoJSON'):            
               product=data.toGeoJSON()
             else:
+              print(data)
               product=json.dumps(data)
             with open(filename,'w') as f:
                 f.write(product)
@@ -200,8 +207,9 @@ class Product:
         return self
 
 
-    def makeGeoJSONImage(self,filename):
+    def makeGeoJSONImage(self,filename,inputfile=None):
 
-        inputfile=self.dir+'/'+self.name+'.geojson'
+        if not inputfile:
+            inputfile=self.dir+'/'+self.name+'.geojson'
         filename=staticMap.createFromGeoJSON(inputfile,filename,config=self.config)
         return filename
