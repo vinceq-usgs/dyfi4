@@ -15,6 +15,29 @@
 			width: 800px;
 			height: 600px;
 		}
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }                            
 	</style>
 
 	
@@ -39,12 +62,12 @@
 
 	function onEachFeature(feature, layer) {
 		var popupContent = feature.id;
-                if(ii = feature.properties.intensity) {
+        if (ii = feature.properties.intensity) {
                   popupContent += "<br>Intensity: "+ii;
-                }
-                if(nresp = feature.properties.nresp) {
+        }
+        if (nresp = feature.properties.nresp) {
                   popupContent += "<br>Responses: "+nresp;
-                }
+        }
 		layer.bindPopup(popupContent);
 	}
 
@@ -53,75 +76,98 @@
 	    iconSize:     [18, 18] // size of the icon
 	});
 
-         var colorsCdi = {
-          9 : '#ec2516',
-          8 : '#ff701f',
-          7 : '#fdca2c',
-          6 : '#f7f835',
-          5 : '#95f879',
-          4 : '#7efbdf',
-          3 : '#82f9fb',
-          2 : '#dfe6fe',
-          1 : 'white',
+    var colorsCdi = {
+      9 : '#ec2516',
+      8 : '#ff701f',
+      7 : '#fdca2c',
+      6 : '#f7f835',
+      5 : '#95f879',
+      4 : '#7efbdf',
+      3 : '#82f9fb',
+      2 : '#dfe6fe',
+      1 : 'white',
+    };
+
+    function getFillColor(intensity) {
+      ii = parseInt(intensity+0.01);
+      ii = (ii < 1)? 1 : ii;
+      return colorsCdi[ii];
+    }
+
+    function geocodedStyle(feature,layer) {
+        fillColor = "#ffffff";
+        fillOpacity = 0.1;
+        if (intensity = feature.properties.intensity) {
+          fillColor = getFillColor(intensity);
+        }
+        if (nresp = feature.properties.nresp) {
+          fillOpacity = nresp >= 5 ? 1.0 : 0.7;
+        }
+        return {
+            stroke: true,
+            color: "grey",
+            weight: 0.5,
+            fill: true,
+            fillColor: fillColor,
+            fillOpacity: fillOpacity,
+        }
+    }
+
+    var eventEpicenter;
+    geocodedLayer=L.geoJSON(data, {
+        filter: function(feature) {
+            if (feature.properties.name=="Epicenter") {
+                eventEpicenter=feature;
+                return 0;
+            }
+            else { return 1 };
+        },
+        onEachFeature: onEachFeature,
+        style: geocodedStyle,
+        }).addTo(map);
+
+    if (eventEpicenter) {
+        var latlng=eventEpicenter.geometry.coordinates;
+        var lnlat={'lat':latlng['lng'],
+            'lng':latlng['lat'],
+        };
+        popupContent='';
+        p=eventEpicenter.properties;
+        for (var name in p) {
+            popupContent+=name+': '+p[name]+'<br>\n'
         };
 
-        function getFillColor(intensity) {
-          ii = parseInt(intensity+0.01);
-          ii = (ii < 1)? 1 : ii;
-          return colorsCdi[ii];
-        }
+        epicenterLayer=L.marker(
+            {'lat':latlng[1],'lng':latlng[0]},
+            {icon: starIcon}
+        ).bindPopup(popupContent).addTo(map);
+    }
 
-        function geocodedStyle(feature,layer) {
-            fillColor = "#ffffff";
-            fillOpacity = 0.1;
-            if (intensity = feature.properties.intensity) {
-              fillColor = getFillColor(intensity);
-            }
-            if (nresp = feature.properties.nresp) {
-              fillOpacity = nresp >= 5 ? 1.0 : 0.7;
-            }
-            return {
-                stroke: true,
-                color: "grey",
-                weight: 0.5,
-                fill: true,
-                fillColor: fillColor,
-                fillOpacity: fillOpacity,
-            }
-        }
+    if (!(typeof eventEpicenter === 'undefined')) {
+        centerCoords = eventEpicenter.geometry.coordinates;
+        map.setView(centerCoords.reverse(),7);
+        
+    } else {
+          map.fitBounds(geocodedLayer.getBounds());
+    }
 
-	geocodedLayer=L.geoJSON(data, {
-		onEachFeature: onEachFeature,
-                style: geocodedStyle,
-    	}).addTo(map);
+    // A very basic legend
 
-      
-        if (!typeof eventEpicenter === 'undefined') {
-	  epicenterLayer=L.geoJSON(eventEpicenter, {
-            pointToLayer: function (feature, latlng) {
-                lnlat={'lat':latlng['lng'],
-                       'lng':latlng['lat'],
-                };
-                popupContent='';
-                p=feature.properties;
-                for (var name in p) {
-                   popupContent+=name+': '+p[name]+'<br>\n'
-                };
-                return L.marker(
-                  lnlat, 
-                  {icon: starIcon}
-                ).bindPopup(popupContent);
-            }
-          }).addTo(map);
-        }
+    var legend = L.control({position: 'bottomright'});
+    legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = ['I','II','III','IV','V','VI','VII','VIII','IX+'],
+        labels = [];
 
-        if (!typeof eventEpicenter === 'undefined') {
-              centerCoords = eventEpicenter.geometry.coordinates;
-	      map.setView(centerCoords.reverse(),7);
-            
-        } else {
-              map.fitBounds(geocodedLayer.getBounds());
+    for (var i = 1; i < grades.length; i++) {
+        color=getFillColor(i);
+        div.innerHTML +=
+            '<i style="background:' + color + '"> </i> ' +
+            grades[i] + '</br>\n';
         }
+        return div;
+    };
+    legend.addTo(map);
 
 </script>
 
