@@ -8,7 +8,7 @@ testid='ci37511872'
 
 def test_staticmap():
     import os
-    from dyfi import Config,staticMap
+    from dyfi import Config,Map
 
     infile='tests/data/dyfi_geo_10km.geojson'
     blankfile='tests/data/blank.geojson'
@@ -21,14 +21,14 @@ def test_staticmap():
     with open(screenshotfile,'w') as tmp:
       tmp.write('Test output')
 
-    output=staticMap.createFromGeoJSON(blankfile,outfile,config)
+    output=Map.GeoJSONtoImage(blankfile,outfile,config)
     assert output==None
     assert not os.path.isfile(screenshotfile)
 
-    output=staticMap.createFromGeoJSON(blankfile,'/bad_directory',config)
+    output=Map.GeoJSONtoImage(blankfile,'/bad_directory',config)
     assert output==None
  
-    output=staticMap.createFromGeoJSON(infile,outfile,config,verbose=True)
+    output=Map.GeoJSONtoImage(infile,outfile,config,verbose=True)
     assert output==outfile
     assert os.path.isfile(output)
     assert os.path.getsize(output)>=100000

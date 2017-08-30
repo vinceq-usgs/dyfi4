@@ -8,4 +8,5 @@ from .event import Event
 from .maps import Maps
 from .entries import Entry,Entries
 from .products import Products,Product
+from .map import Map
 from .graph import Graph

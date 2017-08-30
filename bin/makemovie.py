@@ -21,13 +21,13 @@ import apng
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from dyfi import Db,Event,staticMap,Config,Entries,Product
+from dyfi import Db,Event,Config,Entries,Products,Product,Map
 
 class Movie:
 
     def __init__(self,args):
 
-        self.dir='movie'
+        self.dir='./movie'
         self.framefiles=[]
         os.makedirs(self.dir,exist_ok=True)
 
@@ -70,26 +70,28 @@ class Movie:
             newentries=Entries(evid,rawentries=newentries,config=config,load=False)
             nentries=len(newentries)
             print('This frame has',nentries,'entries.')
-            aggregated=newentries.aggregate(args.type)
 
-            if nentries>0:
-                product=Product(dir=self.dir,data=aggregated,filename=inputfile,config=config,name=args.type)
-                print('Made Product, now saving to',inputfile)
-                print(product.create('geojson'))
-                print('Created geojson.')
+            mapParams={'name':'dyfi_geo_10km','dataset':'geo_10km'}
 
-                outputfile=staticMap.createFromGeoJSON(inputfile,outputfile,config=config)
-                product.filename=outputfile
-                self.framefiles.append(outputfile)
-                os.remove(inputfile)
+            # Create aggregated dataset
+            products=Products(event,newentries,config=config)
+            products.create(mapParams)
 
+            # Create geojson
+            prod=Product(products).create('geojson',inputfile)
+            print('Made Product and saved to',inputfile)
+
+            # Create PNG
+            if not prod.data.toImage(inputfile,outputfile):
+                raise NameError('Could not create '+outputfile)
+
+            self.framefiles.append(outputfile)
+            os.remove(inputfile)
+
+        # Finished all frames
         outputfile='movie/%s.apng' % evid
         self.filename=self.splice(outputfile)
         return 
-
-
-    def partial_geosjon(self,args):
-        pass
 
 
     def splice(self,outputfile):
@@ -98,9 +100,9 @@ class Movie:
 
         files=self.framefiles
         apng.APNG.from_files(files,delay=500).save(outputfile)
-        for file in files:
-            os.remove(file)
-        return outputfile
+#        for file in files:
+#            os.remove(file)
+#        return outputfile
 
 
 def main(args=None):

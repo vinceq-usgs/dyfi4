@@ -11,7 +11,7 @@ import yaml
 
 from .graph import Graph
 from .contents import Contents
-from . import staticMap 
+from .map import Map
 
 class Products:
     """
@@ -34,10 +34,6 @@ class Products:
     .. attribute:: event
     
     A reference to the Event object for this product.
-
-    .. attribute:: maps
-    
-    A reference to the Maps object which provides custom parameters for this product. (Not yet implemented)
 
     .. attribute:: entries
     
@@ -77,37 +73,28 @@ class Products:
 
         count=0
         for p in self.allProducts:
-            count+=self.create(**p)
+            count+=self.create(p)
         return count
 
 
-    def create(self,name=None,type=None,dataset=None,format=None):
-        print('Making:',name,type,dataset,format)
+    def create(self,p):
+        self.name=p['name']
+        self.dataset=p['dataset'] if 'dataset' in p else None
+        self.type=p['type'] if 'type' in p else None
 
-        if dataset:
-            data=self.getDataset(dataset)
-
-        # Set working directory 
-        os.makedirs(self.dir,exist_ok=True)
-
-        if type=='contents':
-            data=Contents(self.dir)
-
-        elif type=='graph':
-            data=Graph(name=name,event=self.event,data=dataset)
-
-        elif data:
-            pass
-
-        else:
-            raise nameError('Cannot create blank product')
+        self.data=[]
+        if self.dataset:
+            self.data=self.getDataset(self.dataset)
 
         # Now create multiple formats of data
         count=0
-        formats=format.split(',') if (',' in format) else [format]
+        if 'format' not in p:
+            return count
+
+        formats=p['format'].split(',')
+        
         for format in formats:
-            print('format is',format)
-            product=Product(dir=self.dir,data=data,name=name,config=self.config).create(format)
+            product=Product(self).create(format)
             if product:
                 self.products.append(product)
                 count+=1
@@ -118,15 +105,19 @@ class Products:
     def getDataset(self,name):
 
         # Reuse precomputed data if possible
-        matches=[x for x in self.data if x.name==name]
-
-        if len(matches)>0:
-            return matches[0]
+        if self.data:
+            matches=[x for x in self.data if x.name==name]
+            if len(matches)>0:
+                return matches[0]
 
         print('Creating dataset',name)
 
-        if 'geo' in name:
-           data=self.entries.aggregate(name)
+        if 'geo_' in name:
+            data=self.entries.aggregate(name)
+            data=Map(self,name,data)
+
+        elif type=='graph':
+            pass
 
         else:
             raise NameError('Unknown data type '+name)
@@ -147,25 +138,29 @@ class Products:
     
 class Product:
 
-    def __init__(self,dir,data,name,filename=None,config=None):
-        self.data=data
-        self.dir=dir
-        self.name=name
-        self.config=config
+    def __init__(self,parent,data=None):
+        self.parent=parent
+
+        self.dir=parent.dir
+        self.name=parent.name
+        self.config=parent.config
+        
+        if data:
+            self.data=data
+        elif hasattr(parent,'data'):
+            self.data=parent.data
+
+
+    def create(self,format,filename=None):
+
+        name=self.name
+        if not filename:
+            filename='%s/%s.%s' % (self.parent.dir,name,format)
+
         self.filename=filename
-        print(data)
+        print('Product:create:',filename)
 
-
-    def create(self,format):
         data=self.data
-
-        if self.filename:
-            filename=self.filename
-        else:
-            filename=self.dir+'/'+self.name+'.'+format
-
-        product=None
-        print('Writing:',filename)
 
         if format=='json':
             if hasattr(data,'toJSON'):            
@@ -179,7 +174,6 @@ class Product:
             if hasattr(data,'toGeoJSON'):            
               product=data.toGeoJSON()
             else:
-              print(data)
               product=json.dumps(data)
             with open(filename,'w') as f:
                 f.write(product)
@@ -192,9 +186,7 @@ class Product:
 
         elif format=='png':
             if hasattr(data,'toImage'):            
-              product=data.toImage()
-            elif 'type' in data and data['type']=='FeatureCollection':
-              filename=self.makeGeoJSONImage(filename)
+                product=data.toImage()
             else:
               raise NameError('Cannot save '+self.name+' as format '+format)
 
@@ -211,5 +203,5 @@ class Product:
 
         if not inputfile:
             inputfile=self.dir+'/'+self.name+'.geojson'
-        filename=staticMap.createFromGeoJSON(inputfile,filename,config=self.config)
+        filename=Map.createFromGeoJSON(inputfile,filename,config=self.config)
         return filename
