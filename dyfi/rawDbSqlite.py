@@ -45,11 +45,11 @@ class RawDb:
             raise NameError('getcursor could not find table '+table)
 
             
-        print('Connecting to file',tablefile)
+        print('RawDb: Connecting to file',tablefile)
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
         cursor=connector.cursor()
-        print('Creating cursor for',table)
+        print('RawDb: Creating cursor for',table)
         self.cursors[table]=cursor
         
         return cursor
@@ -80,7 +80,7 @@ class RawDb:
         if clause:
             query+=' WHERE '+clause
 
-        print(query)
+        print('RawDb:',query)
         c.execute(query)
 
         results=[]

@@ -141,7 +141,7 @@ class Db:
             elif event:
                 table=self.getExtendedTablesByDatetime(event.eventdatetime)
             else:
-                print('WARNING: db.loadEntries using latest table only')
+                print('Db: WARNING: db.loadEntries using latest table only')
                 table=self.latesttable
             
         # Second, figure out which eventid to query
@@ -184,7 +184,7 @@ class Db:
         """
         
         self.statement=text
-        print('db.rawStatement:',text)
+        print('Db: rawStatement:',text)
         return self.rawdb.execute(text)
         
     def timeago(self,t):
@@ -198,7 +198,7 @@ class Db:
         lat=row['latitude']
         lon=row['longitude']
         if not lat or not lon: # pragma: no cover
-            print('Unable to get lat/lon for this row')
+            print('Db: Unable to get lat/lon for this row')
             return
         pt=geojson.Point((lon,lat))
         props={}
@@ -261,7 +261,7 @@ if __name__=='__main__': # pragma: no cover
     parser.add_argument('--extended',type=str,nargs='?',
         help="Extended query with geojson output. Add a comma-separated list of columns as output or leave blank for all columns.")
     args=parser.parse_args()
-    print('Opening Db with',args.dbfile)
+    print('Db: opening with',args.dbfile)
 
     db=Db(args.dbfile)
     if args.extended:

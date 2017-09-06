@@ -63,7 +63,7 @@ def aggregate(entries,producttype):
         elif '10km' in producttype:
             resolutionMeters=10000
         else:
-            print('ERROR: aggregate got unknown type',producttype)
+            print('Aggregate: ERROR: got unknown type',producttype)
             exit()
             
     elif 'zip' in producttype:
@@ -72,10 +72,10 @@ def aggregate(entries,producttype):
         resolutionMeters=0
         
     else:
-        print('ERROR: aggregate got unknown type',producttype)
+        print('Aggregate: ERROR: got unknown type',producttype)
                     
     npts=len(entries)
-    print('aggregate: Got',npts,'entries, aggregating.')
+    print('Aggregate: Got',npts,'entries, aggregating.')
 
     # Loop through each entry. For each entry, figure out which bin it belongs
     
@@ -138,11 +138,11 @@ def aggregate(entries,producttype):
 
     # TODO: Add featurecollection properties maxIntensity, nresp
     
-    print('AggregateGeo: %i pts into %i locations' %
+    print('Aggregate: %i pts into %i locations' %
           (npts,len(features)))
     if ignored:
-        print('AggregateGeo: Ignored %i pts' % ignored)
-    print('AggregateGeo: Max CDI: %s' % maxcdi)
+        print('Aggregate: Ignored %i pts' % ignored)
+    print('Aggregate: Max CDI: %s' % maxcdi)
 
     featurecollection.name=producttype
     return featurecollection
@@ -171,7 +171,7 @@ def getUtmLocation(entry,span):
             span=1000
             
     if not lat or not lon:
-        print('WARNING: getUtmLocation: subid',
+        print('Aggregate: WARNING: getUtmLocation: subid',
               entry.subid,'has no lat/lon coordinates')        
         return
     
