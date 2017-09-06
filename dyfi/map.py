@@ -22,13 +22,14 @@ class Map:
 
     """
 
-    def __init__(self,products,name,data):
-        self.event=products.event
-        self.config=products.config
-        self.dir=products.dir
-        self.name=name
+    def __init__(self,name,event,data,config,dir=None):
 
-        event=self.event
+        self.name=name
+        self.event=event
+        self.data=data
+        self.config=config
+        self.dir=dir
+
         data=copy.deepcopy(data)
        
         # Add epicenter data
@@ -47,56 +48,36 @@ class Map:
         data['features'].append(epicenter)
         self.data=data
 
-    def toGeoJSON(self):
-        return json.dumps(self.data)
 
-    def createFromEvent(event):
+    def toGeoJSON(self,filename=None):
 
-        """
-        :synopsis: Create static image maps from Event object
-        :param event: Event object
-        :returns: none
-
-        """
-
- 
-        # Create temporary GeoJSON file from Event object
-
-        geometry=Point((event.lon,event.lat))
-        props=event.toGeoJSON().properties
-
-        eventGeoJSON = Feature(geometry=geometry)
-        for key,val in event.toGeoJSON().properties.items():  
-            eventGeoJSON['properties'][key]=val 
-
-        # Copy geocoded GeoJSON
-
-        # Create data.js file and run Chrome
-
-        # Save output
+        text=json.dumps(self.data)
+        if filename:
+            with open(filename,'w') as f:
+                f.write(text)
+        return text
 
 
-    def toImage(self,inputfile=None,outputfile=None,config=None):
+    def toImage(self):
+      
+        dir=self.dir
+        name=self.name
+        inputfile='%s/dyfi_%s.geojson' % (dir,name)
+        outputfile='%s/dyfi_%s.png' % (dir,name)
+
+        return Map.GeoJSONtoImage(inputfile,outputfile,self.config)
+
+
+    def GeoJSONtoImage(inputfile,outputfile,config):
 
         """
         :synopsis: Create static image map from Event object
         :returns: none
         """
 
-        if isinstance(self,Map):
-            if not config:
-                config=self.config
-            dir=self.dir
-            name=self.name
-
         leafletdir=config.directories['leaflet'] 
         leafletdatafile='%s/data.js' % leafletdir
         pngfile='%s/screenshot.png' % leafletdir
-        if not inputfile:
-            inputfile='%s/%s.geojson' % (dir,name)
-        if not outputfile:
-            outputfile='%s/%s.png' % (dir,name)
-
         if os.path.isfile(pngfile):
             os.remove(pngfile)
 
@@ -120,19 +101,20 @@ class Map:
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
 
+        print(' '.join(command))
+        out=open(leafletdir+'/tmp.stdout.txt','wb')
+        err=open(leafletdir+'/tmp.stderr.txt','wb')
+        print('Map.GeoJSONtoImage: Running subprocess...')
         try:
-            print(' '.join(command))
-            out=open('leaflet/tmp.stdout.txt','wb')
-            err=open('leaflet/tmp.stderr.txt','wb')
-            print('Map.toImage: Running subprocess...')
-            subprocess.call(command,cwd=leafletdir,stdout=out,stderr=err,timeout=10)
-            print('...Done.')
-
-            shutil.copyfile(pngfile,outputfile)
-            out.close
-            err.close
-            return outputfile
-
+            subprocess.call(command,cwd=leafletdir,stdout=out,stderr=err,timeout=30)
         except:
             raise NameError('Something wrong with subprocess call!') 
+
+        print('...Done.')
+
+        shutil.copyfile(pngfile,outputfile)
+        out.close
+        err.close
+        return outputfile
+
 

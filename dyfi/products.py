@@ -16,45 +16,14 @@ from .map import Map
 class Products:
     """
     
-    :synopsis: Handle product generation for an event. This calls other product generators like :py:obj:`Contents` and :py:obj:`PlotMap`.
+    :synopsis: Handle product generation for an event. This calls other product generators like :py:obj:`Contents` and :py:obj:`Map`.
     :param event: :py:obj:`Event` object
-    :param str name: type of product (e.g. 'geo_1km', 'zip')
-    
-        self.maps=None
-        self.entries=entries
-        
-        self.evid=event.eventid
-        self.productDir=product dir
-        self.products=[]        
-
-    .. attribute:: evid
-    
-    The event ID for this product.
-    
-    .. attribute:: event
-    
-    A reference to the Event object for this product.
-
-    .. attribute:: entries
-    
-    A reference to the Entries object for this product.
-
-    .. attribute:: productDir
-    
-    The location for output files (from :py:obj:`getProductDir`).
-
-    .. attribute:: products
-    
-    The list of product filenames.
-    
-    .. attribute:: data
-    
-    A dict of processed data. Each key is the name of the dataset and each value is a reference to the data.
-    
-    """
    
+    TODO
+
+    """
  
-    def __init__(self,event,entries,config=None):
+    def __init__(self,event,entries,config):
         self.event=event
         self.maps=None
         self.entries=entries
@@ -73,31 +42,36 @@ class Products:
 
         count=0
         for p in self.allProducts:
-            count+=self.create(p)
+            created=self.create(p)
+            if created:
+                count+=created
+                
         return count
 
 
+    # Create a particular Product object using the parameters in p
+    # This will compute the data specified in p['dataset'], if necessary
+
     def create(self,p):
-        self.name=p['name']
-        self.dataset=p['dataset'] if 'dataset' in p else None
-        self.type=p['type'] if 'type' in p else None
 
-        self.data=[]
-        if self.dataset:
-            self.data=self.getDataset(self.dataset)
+        name=p['name'] if 'name' in p else None
+        type=p['type'] if 'type' in p else None
+        dataset=p['dataset'] if 'dataset' in p else None
 
-        # Now create multiple formats of data
+        if type=='graph' or type=='contents':
+            return 0
+
         count=0
         if 'format' not in p:
             return count
 
-        formats=p['format'].split(',')
-        
-        for format in formats:
-            product=Product(self).create(format)
-            if product:
-                self.products.append(product)
-                count+=1
+        product=Product(self,**p)
+        if not product:
+            return 0
+
+        if product.create(p['format']):
+            self.products.append(product)
+            count+=1
 
         return count
    
@@ -105,19 +79,19 @@ class Products:
     def getDataset(self,name):
 
         # Reuse precomputed data if possible
-        if self.data:
-            matches=[x for x in self.data if x.name==name]
-            if len(matches)>0:
-                return matches[0]
 
-        print('Creating dataset',name)
+        matches=[x for x in self.data if x.name==name]
+        if len(matches):
+            return matches[0]
+
+        print('Products: Creating dataset',name)
 
         if 'geo_' in name:
             data=self.entries.aggregate(name)
-            data=Map(self,name,data)
+            data=Map(name=name,event=self.event,data=data,config=self.config,dir=self.dir)
 
         elif type=='graph':
-            pass
+            data=Graph(name=name,event=self.event,data=data)
 
         else:
             raise NameError('Unknown data type '+name)
@@ -127,38 +101,46 @@ class Products:
 
  
     def __repr__(self):
-        if len(self.productFiles)<1:
-            return 'No products'
+        text='Products:[' 
        
-        text='' 
+        if len(self.productFiles)<1:
+            return text+']'
+     
+        names=[]
         for product in self.products:
-            text+='Product:['+product.filename+']'
-            return text
+            names.append('Product:['+product.name+']')
 
-    
+        return text+','.join(names)+']'
+   
+
 class Product:
 
-    def __init__(self,parent,data=None):
-        self.parent=parent
+    def __init__(self,parent,name,dataset=None,type=None,format=None):
 
+        self.parent=parent
         self.dir=parent.dir
-        self.name=parent.name
+
+        self.name=name
         self.config=parent.config
         
-        if data:
-            self.data=data
-        elif hasattr(parent,'data'):
-            self.data=parent.data
+        if dataset:
+            self.data=parent.getDataset(dataset)
+
+        if format:
+            print('Product: creating name',name)
+            print('Product: creating format',format)
+            self.create(format)
 
 
     def create(self,format,filename=None):
 
+        print('Product:create: format',format,'filename:',filename)
         name=self.name
         if not filename:
             filename='%s/%s.%s' % (self.parent.dir,name,format)
 
         self.filename=filename
-        print('Product:create:',filename)
+        print('Product:create: filename',filename)
 
         data=self.data
 
@@ -185,7 +167,7 @@ class Product:
                raise NameError('Cannot save '+self.name+' as format '+format)
 
         elif format=='png':
-            if hasattr(data,'toImage'):            
+            if hasattr(data,'toImage'):
                 product=data.toImage()
             else:
               raise NameError('Cannot save '+self.name+' as format '+format)
@@ -198,10 +180,3 @@ class Product:
             self.product=product
         return self
 
-
-    def makeGeoJSONImage(self,filename,inputfile=None):
-
-        if not inputfile:
-            inputfile=self.dir+'/'+self.name+'.geojson'
-        filename=Map.createFromGeoJSON(inputfile,filename,config=self.config)
-        return filename
