@@ -4,11 +4,21 @@
 
 - name: dyfi_geo_1km
   dataset: geo_1km
-  format: geojson,png
+  format: geojson
+
+- name: map_geo_1km
+  dataset: geo_1km
+  type: map
+  format: png
 
 - name: dyfi_geo_10km
   dataset: geo_10km
-  format: geojson,png
+  format: geojson
+
+- name: map_geo_10km
+  dataset: geo_10km
+  type: map
+  format: png
 
 - name: dyfi_plot_atten
   type: graph
