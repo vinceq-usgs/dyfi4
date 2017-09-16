@@ -26,11 +26,11 @@ class Map:
 
         self.name=name
         self.event=event
-        self.data=data
         self.config=config
         self.dir=dir
 
         data=copy.deepcopy(data)
+        self.data=data
        
         # Add epicenter data
         epicenter={
@@ -101,16 +101,16 @@ class Map:
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
 
-        print(' '.join(command))
         out=open(leafletdir+'/tmp.stdout.txt','wb')
         err=open(leafletdir+'/tmp.stderr.txt','wb')
-        print('Map.GeoJSONtoImage: Running subprocess...')
+        print('Map.GeoJSONtoImage: Running subprocess with command:')
+        print(' '.join(command))
         try:
             subprocess.call(command,cwd=leafletdir,stdout=out,stderr=err,timeout=30)
         except:
             raise NameError('Something wrong with subprocess call!') 
 
-        print('...Done.')
+        print('Map.GeoJSONtoImage: ...Done.')
 
         shutil.copyfile(pngfile,outputfile)
         out.close

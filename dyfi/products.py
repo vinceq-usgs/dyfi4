@@ -65,14 +65,16 @@ class Products:
         if 'format' not in p:
             return count
 
+        format=p['format']
+        print('Products.create: Creating',format)
         product=Product(self,**p)
-        if not product:
-            return 0
 
-        if product.create(p['format']):
+        if product:
             self.products.append(product)
             count+=1
-
+        else:
+            print('Products.create: Oops, did not create.')
+     
         return count
    
 
@@ -84,13 +86,14 @@ class Products:
         if len(matches):
             return matches[0]
 
-        print('Products: Creating dataset',name)
 
         if 'geo_' in name:
+            print('Products.getDataset:',name)
             data=self.entries.aggregate(name)
             data=Map(name=name,event=self.event,data=data,config=self.config,dir=self.dir)
 
         elif type=='graph':
+            print('Products.getDataset:',name)
             data=Graph(name=name,event=self.event,data=data)
 
         else:
@@ -127,20 +130,18 @@ class Product:
             self.data=parent.getDataset(dataset)
 
         if format:
-            print('Product: creating name',name)
-            print('Product: creating format',format)
+            print('Product.init',name,', format',format)
             self.create(format)
 
 
     def create(self,format,filename=None):
 
-        print('Product:create: format',format,'filename:',filename)
         name=self.name
         if not filename:
             filename='%s/%s.%s' % (self.parent.dir,name,format)
 
         self.filename=filename
-        print('Product:create: filename',filename)
+        print('Product.create: format',format,'filename:',filename)
 
         data=self.data
 
