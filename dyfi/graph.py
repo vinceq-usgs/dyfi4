@@ -45,6 +45,8 @@ class Graph:
         
     def __init__(self,name,event,data,config=None,dir=None,title=None):
 
+        print('Graph: Creating',name,'object.')
+
         self.name=name
         self.event=event
         self.config=config
@@ -284,7 +286,7 @@ class Graph:
     
     def toJSON(self):
         print('Graph.toJSON:')
-        return json.dumps(self.data,sort_keys=True,indent=4)
+        return json.dumps(self.data,sort_keys=True,indent=2)
 
  
     def getColor(self,intensity):

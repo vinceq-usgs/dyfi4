@@ -24,10 +24,14 @@ class Map:
 
     def __init__(self,name,event,data,config,dir=None):
 
+        print('Map: Creating',name,'object.')
         self.name=name
         self.event=event
         self.config=config
         self.dir=dir
+
+        if not dir:
+            self.dir='data/'+event.eventid
 
         data=copy.deepcopy(data)
         self.data=data
@@ -58,12 +62,13 @@ class Map:
         return text
 
 
+    # Called by Product with format 'png'
     def toImage(self):
       
-        dir=self.dir
-        name=self.name
-        inputfile='%s/dyfi_%s.geojson' % (dir,name)
-        outputfile='%s/dyfi_%s.png' % (dir,name)
+        dataName=self.data['name']
+
+        inputfile='%s/dyfi_%s.geojson' % (self.dir,dataName)
+        outputfile='%s/dyfi_%s.png' % (self.dir,dataName)
 
         return Map.GeoJSONtoImage(inputfile,outputfile,self.config)
 

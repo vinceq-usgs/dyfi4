@@ -133,7 +133,7 @@ class Product:
             func=Map
 
         if func:
-            self.data=func(name=name,event=parent.event,data=self.data,config=self.config)
+            self.data=func(name=name,event=parent.event,data=self.data,config=self.config,dir=self.dir)
 
         if format:
             print('Product.init',name,', format',format)
