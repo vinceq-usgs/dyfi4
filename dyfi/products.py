@@ -51,6 +51,7 @@ class Products:
 
     # Create a particular Product object using the parameters in p
     # This will compute the data specified in p['dataset'], if necessary
+    # Creating a Product object also creates the thing specified by 'format'
 
     def create(self,p):
 
@@ -58,7 +59,7 @@ class Products:
         type=p['type'] if 'type' in p else None
         dataset=p['dataset'] if 'dataset' in p else None
 
-        if type=='graph' or type=='contents':
+        if type=='contents':
             return 0
 
         count=0
@@ -90,11 +91,6 @@ class Products:
         if 'geo_' in name:
             print('Products.getDataset:',name)
             data=self.entries.aggregate(name)
-            data=Map(name=name,event=self.event,data=data,config=self.config,dir=self.dir)
-
-        elif type=='graph':
-            print('Products.getDataset:',name)
-            data=Graph(name=name,event=self.event,data=data)
 
         else:
             raise NameError('Unknown data type '+name)
@@ -125,9 +121,19 @@ class Product:
 
         self.name=name
         self.config=parent.config
+        self.data=None
         
         if dataset:
             self.data=parent.getDataset(dataset)
+
+        func=None
+        if type=='graph':
+            func=Graph
+        elif type=='map':
+            func=Map
+
+        if func:
+            self.data=func(name=name,event=parent.event,data=self.data,config=self.config)
 
         if format:
             print('Product.init',name,', format',format)
@@ -138,7 +144,7 @@ class Product:
 
         name=self.name
         if not filename:
-            filename='%s/%s.%s' % (self.parent.dir,name,format)
+            filename='%s/%s.%s' % (self.dir,name,format)
 
         self.filename=filename
         print('Product.create: format',format,'filename:',filename)

@@ -8,6 +8,8 @@ graph
 import json
 import math
 import numpy as np
+import copy
+
 from geopy.distance import great_circle
 from statistics import mean,median,stdev
 
@@ -41,57 +43,48 @@ class Graph:
         }
         
         
-    def __init__(self,name,event,data):
+    def __init__(self,name,event,data,config=None,dir=None,title=None):
 
+        self.name=name
         self.event=event
-        self.rawdata=data
+        self.config=config
+        self.dir=dir
+        self.rawdata=copy.deepcopy(data)
+        self.data=None
+        self.datasets=None
+        self.title=None
 
-        return
- 
-        if graphtype=='dist_vs_intensity':
+        if 'plot_atten' in name:
             self.getDataDistance()
         
-        elif graphtype=='time_vs_responses':
-            print('time_vs_responses graph not yet implemented')
-            return
-
+        elif 'plot_numresp' in name:
             self.getDataTime()
             
         else:
-            raise NameError('ERROR: Graph got unknown graph type'+graphtype) 
+            raise NameError('ERROR: Graph got unknown graph type '+name) 
 
-        if title:
-            self.title=title
-        else:
-            self.title=self.getTitle()
+        self.title=title if title else self.getTitle()
 
-        try:
-            self.colors=GMTColorMap.loadFromCPT('./lib/mmi.cpt')
-        except:
-            self.colors=None
-            print('WARNING: Could not load MMI colors')
         
-    def getColor(self,intensity):
-        if not self.colors:
-            return 0
-        hexcolor=self.colors.getHexColor(intensity)
-        return hexcolor[0]
-        
-        
+
     def getDataDistance(self):
         event=self.event
         rawdata=self.rawdata
-        
+      
+        print('Graph.getDataDistance:')
+
         d=[]
         self.datasets=d
-        
+       
         self.params={
-            'aggregatetype':rawdata.id,
+            'aggregatetype':rawdata['id'],
             'min_x':1,
             'max_x':1000,
             'min_y':1,
             'max_y':10
         }
+
+        # This is not used right now
         if hasattr(rawdata,'min_x'):
             self.params['min_x']=rawdata.min_x
         if hasattr(rawdata,'max_x'):
@@ -103,15 +96,21 @@ class Graph:
         d.append(scatterdata)
         d.extend(self.getMeanMedianData(scatterdata))
         if hasattr(self.event,'mag'):
-            d.extend(self.getIpeData(Graph.ipelist))
+            d.extend(self.getIpeData())
 
-        return d
+        self.data={
+            'datasets':d,
+            'xlabel':'Hypocentral distance (km)',
+            'ylabel':'Intensity (MMI)',
+            'title':'Intensity vs. Distance Plot'
+        }
             
             
     def getScatterData(self):
         event=self.event
         rawdata=self.rawdata
-        
+    
+        print('Graph.getScatterData:')
         if hasattr(rawdata,'scatterdata'):
             return rawdata.scatterdata
 
@@ -134,13 +133,18 @@ class Graph:
             'class':'scatterplot1',
             'data':xydata
             }
+
         return scatterdata
         
 
-    def getIpeData(self,ipelist):
+    def getIpeData(self,ipelist=None):
         mag=self.event.mag
         min_x=self.params['min_x']
         max_x=self.params['max_x']
+
+        print('Graph.getIpeData:')
+        if not ipelist:
+            ipelist=self.ipelist
 
         multipleipes=[]
         
@@ -155,8 +159,8 @@ class Graph:
                 num=50
                 )
             
-            ipedata=[{'x':float('%.4f' % (x)),
-                      'y':float('%.4f' % (ipe(mag,x,fine=True)))
+            ipedata=[{'x':float('%.2f' % (x)),
+                      'y':float('%.2f' % (ipe(mag,x,fine=True)))
                       } for x in xspace]
             
             dataset={
@@ -172,6 +176,8 @@ class Graph:
     def getMeanMedianData(self,scatterdata):
 
         # Create distance bins in log space and fill them
+        print('Graph.getMeanMedianData:')
+
         xspace=self.getDistBins()
         bindata={}
         for pt in scatterdata['data']:
@@ -198,10 +204,10 @@ class Graph:
                 
             # Create median dataset
             medianpt={
-                'x':xcenter,
-                'y':median(ydata),
-                'min_x':xspace[n-1],
-                'max_x':xspace[n]
+                'x':round(xcenter,1),
+                'y':round(median(ydata),2),
+                'min_x':round(xspace[n-1],1),
+                'max_x':round(xspace[n],1)
                 }
             medians.append(medianpt)
             
@@ -211,12 +217,13 @@ class Graph:
                 y_stdev=stdev(ydata)
             else:
                 y_stdev=0
+
             meanpt={
-               'x':xcenter,
-                'y':mean(ydata),
-                'min_x':xspace[n-1],
-                'max_x':xspace[n],
-                'stdev':y_stdev
+               'x':round(xcenter,2),
+                'y':round(mean(ydata),1),
+                'min_x':round(xspace[n-1],2),
+                'max_x':round(xspace[n],1),
+                'stdev':round(y_stdev,1)
                 }
             means.append(meanpt)
                           
@@ -234,6 +241,7 @@ class Graph:
     
     def getDistBins(self):
         
+        print('Graph.getDistBins:')
         if hasattr(self,'distBins'):
             return self.distBins
         
@@ -241,13 +249,15 @@ class Graph:
         max_x=self.params['max_x']
 
         xspace=np.logspace(
-            np.log10(min_x),np.log10(max_x),num=Graph.NBINS
+            np.log10(min_x),np.log10(max_x),num=self.NBINS
         )
         self.distBins=xspace
         return xspace
 
 
     def getTitle(self):
+
+        print('Graph.getTitle:')       
         event=self.event
         line1='USGS DYFI: %s' % (event.loc)
         line2='ID:%s' % (event.eventid)
@@ -256,15 +266,7 @@ class Graph:
         return title
         
         
-    def save(self,filename,showPlot=None):
-
-        print("Skipping save.")       
-        return filename
- 
-        self.fig=Pyplot.figure(dpi=250)
-        ax=self.fig.add_subplot(111)
-        self.ax=ax
-
+    def getTicks(self):
         # TODO: Make these configurable
         
         min_x=self.params['min_x']
@@ -276,122 +278,29 @@ class Graph:
         # This changes the ticks on the log scale
         xticks=[1,5,10,20,50,100,200,500,1000,2000,5000,10000]
         xticks=[x for x in xticks if x>=min_x and x<=max_x]
-        self.ax.set_xticks(xticks)
-        self.ax.get_xaxis().set_major_formatter(Ticker.ScalarFormatter())
-        
-        # Plot title(s)
-        if isinstance(self.title,str):
-            Pyplot.title(self.title,size='medium')
-        else:
-            title=Pyplot.suptitle(self.title[0],size='small',y=0.96)
-            Pyplot.title(self.title[1],size='xx-small')
-        
-        self.plotData(self.ax,self.datasets)
-        ax.legend(loc='upper right',fontsize=10)
-        
-        if showPlot:
-            try:
-                Pyplot.show()
-
-            except:
-                pass
-
-        Pyplot.savefig(filename,dpi=250)
-        Pyplot.close()
         
         return filename
      
     
-    def plotData(self,ax,datasets):
-        """
-            :synopsis:
-            :param m: A map object returned by Cartopy
-        """
-
-        for dataset in datasets:
-            thisclass=dataset['class']
-            thisdata=dataset['data']
-            thislegend=dataset['legend']
-            x=[d['x'] for d in thisdata]
-            y=[d['y'] for d in thisdata]
-
-            if 'scatterplot' in thisclass:
-                color=[self.getColor(y) for y in y]
-                ax.scatter(x,y,c=color,label=thislegend,edgecolors='none')
-                
-            elif 'mean' in thisclass:
-                yerror=[d['stdev'] for d in thisdata]
-                ax.errorbar(x,y,yerr=yerror,fmt='none',ecolor='black',
-                            label='Std.dev in bin',barsabove=False,zorder=1)
-                ax.scatter(x,y,c='red',s=100,label=thislegend,edgecolors='black',zorder=3)
-
-            elif 'median' in thisclass:
-                ax.scatter(x,y,c='blue',s=100,label=thislegend,edgecolors='black',zorder=2)
-                
-            elif 'estimated' in thisclass:
-                ax.plot(x,y,label=thislegend)
-
-                
-            else:
-                print('Unknown class',thisclass,'in plotData.')
-                exit()
-
-                
-                
-        """
-        for pt in data.features:
-
-            featuretype=pt.geometry.type
-            
-
-            if featuretype=='Point':
-                coords=pt.geometry.coordinates
-                coords=Plot.transform([coords],m)
-                poly=Circle(coords[0],
-                             fill=True,radius=10000)
-
-            elif featuretype=='Polygon':
-                coords=pt.geometry.coordinates[0]
-                coords=PlotMap.transform(coords,m)
-                poly=Polygon(np.array(coords),
-                             closed=True)
-            patches.append(poly)
-
-            if 'intensity' in pt.properties:
-                intensity=pt.properties['intensity']
-            elif 'cdi' in pt.properties:
-                intensity=pt.properties['cdi']
-            else:
-                intensity=9
-                    
-            col=self.getColor(intensity)
-            colors.append(col)
-
-        if patches:
-            coll=PatchCollection(
-                patches,zorder=4,
-                edgecolor='k',
-                linewidth=0.2
-            )
-            coll.set_facecolor(colors)
-            self.ax.add_collection(coll)
-
-        return m
-        """
-        
-   
     def toJSON(self):
-      return json.dumps({})
+        print('Graph.toJSON:')
+        return json.dumps(self.data,sort_keys=True,indent=4)
 
  
-    # Below these are class methods
+    def getColor(self,intensity):
+        if not self.colors:
+            return 0
+        hexcolor=self.colors.getHexColor(intensity)
+        return hexcolor[0]
+        
+        
+  # Below these are class methods
 
     def distanceData(event,data):
         print('Graph labels:')
-        print(Graph.graphLabels)
 
         datasets=[]
-        x_vs_y=[]
+        dist_vs_int=[]
         
         reporteddata=[]        
         for loc in data:
@@ -400,14 +309,14 @@ class Graph:
                 (event.latitude,event.longitude),
                 loc.properties['center'])
             pt={
-                'x':x,
-                'y':y
+                'x':round(x,2),
+                'y':round(x,1),
                 }
-            x_vs_y.append(pt)
+            dist_vs_int.append(pt)
         
         datasets.append({
                 'legend':'All reported data',
-                'data':x_vs_y,
+                'data':dist_vs_int,
                 'class':'scatterplot1'
                 })
         
