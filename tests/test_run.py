@@ -33,8 +33,9 @@ def test_run():
     with pytest.raises(NameError) as exception:
         rundyfi.main(Namespace(evid='blank',configfile='./tests/testconfig.yml'))
 
-    #container=rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
+    container=rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
 
-    #products=container.products
-    #assert len(products.products)==7
-    #assert 'Products' in str(products)
+    products=container.products
+    assert len(products.products)==7
+    assert 'Products' in str(products)
+
