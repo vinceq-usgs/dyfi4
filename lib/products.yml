@@ -32,7 +32,7 @@
 
 # Special format that uses this file to generate contents.xml
 # This must be made last, since it checks the event directory for files
-- name: contents.xml
+- name: contents
   type: contents
   format: xml
 

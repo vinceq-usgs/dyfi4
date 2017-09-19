@@ -74,8 +74,6 @@ class Graph:
         event=self.event
         rawdata=self.rawdata
       
-        print('Graph.getDataDistance:')
-
         d=[]
         self.datasets=d
        
@@ -113,7 +111,6 @@ class Graph:
         event=self.event
         rawdata=self.rawdata
     
-        print('Graph.getScatterData:')
         if hasattr(rawdata,'scatterdata'):
             return rawdata.scatterdata
 
@@ -145,7 +142,6 @@ class Graph:
         min_x=self.params['min_x']
         max_x=self.params['max_x']
 
-        print('Graph.getIpeData:')
         if not ipelist:
             ipelist=self.ipelist
 
@@ -179,7 +175,6 @@ class Graph:
     def getMeanMedianData(self,scatterdata):
 
         # Create distance bins in log space and fill them
-        print('Graph.getMeanMedianData:')
 
         xspace=self.getDistBins()
         bindata={}
@@ -244,7 +239,6 @@ class Graph:
     
     def getDistBins(self):
         
-        print('Graph.getDistBins:')
         if hasattr(self,'distBins'):
             return self.distBins
         
@@ -260,7 +254,6 @@ class Graph:
 
     def getTitle(self):
 
-        print('Graph.getTitle:')       
         event=self.event
         line1='USGS DYFI: %s' % (event.loc)
         line2='ID:%s' % (event.eventid)
@@ -292,8 +285,6 @@ class Graph:
         event=self.event
         rawdata=self.rawdata
      
-        print('Graph.getDataTime:')
-
         d=[]
         self.datasets=d
         eventTime=event.eventDateTime
@@ -366,7 +357,6 @@ class Graph:
 # Methods for all Graph objects
 
     def toJSON(self):
-        print('Graph.toJSON:')
         return json.dumps(self.data,sort_keys=True,indent=2)
 
  

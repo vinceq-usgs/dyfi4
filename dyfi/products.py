@@ -56,18 +56,14 @@ class Products:
     def create(self,p):
 
         name=p['name'] if 'name' in p else None
-        type=p['type'] if 'type' in p else None
+        dataType=p['type'] if 'type' in p else None
         dataset=p['dataset'] if 'dataset' in p else None
-
-        if type=='contents':
-            return 0
 
         count=0
         if 'format' not in p:
             return count
 
         format=p['format']
-        print('Products.create: Creating',format)
         product=Product(self,**p)
 
         if product:
@@ -79,24 +75,25 @@ class Products:
         return count
    
 
-    def getDataset(self,name):
+    def getDataset(self,dataType):
 
+        print('Products.getDataset: Getting',dataType)
         # Reuse precomputed data if possible
 
-        matches=[x for x in self.data if x.name==name]
+        matches=[x for x in self.data if 
+            (hasattr(x,'name') and x.name==dataType) or
+            ('name' in x and x['name']==dataType)]
         if len(matches):
             return matches[0]
 
-        if 'geo_' in name:
-            print('Products.getDataset:',name)
-            data=self.entries.aggregate(name)
+        if 'geo_' in dataType:
+            data=self.entries.aggregate(dataType)
 
-        elif 'time' in name:
-            print('Products.getDataset:',name)
-            data=self.entries.getTimes(name)
+        elif 'time' in dataType:
+            data=self.entries.getTimes(dataType)
 
         else:
-            raise NameError('Unknown data type '+name)
+            raise NameError('Unknown data type '+dataType)
 
         self.data.append(data)
         return data
@@ -126,7 +123,7 @@ class Product:
         self.name=name
         self.config=parent.config
         self.data=None
-        
+       
         if dataset:
             self.data=parent.getDataset(dataset)
 
@@ -135,13 +132,13 @@ class Product:
             func=Graph
         elif type=='map':
             func=Map
+        elif type=='contents':
+            self.data=Contents(event=parent.event,dir=self.dir)
 
         if func:
-            print('Product: running object',func.__name__)
             self.data=func(name=name,event=parent.event,data=self.data,config=self.config,dir=self.dir)
 
         if format:
-            print('Product: creating',name,', format',format)
             self.create(format)
 
 
@@ -152,40 +149,36 @@ class Product:
             filename='%s/%s.%s' % (self.dir,name,format)
 
         self.filename=filename
-        print('Product.create: format',format,'filename:',filename)
 
         data=self.data
+        product=None
 
         if format=='json':
             if hasattr(data,'toJSON'):            
                 product=data.toJSON()
             else:
                 product=json.dumps(data)
-            with open(filename,'w') as f:
-                f.write(product)
                
         elif format=='geojson':
             if hasattr(data,'toGeoJSON'):            
-              product=data.toGeoJSON()
+                product=data.toGeoJSON()
             else:
               product=json.dumps(data)
-            with open(filename,'w') as f:
-                f.write(product)
 
         elif format=='xml':
             if hasattr(data,'toXML'):            
-              product=data.toXML()
-            else:
-               raise NameError('Cannot save '+self.name+' as format '+format)
+                product=data.toXML()
 
         elif format=='png':
             if hasattr(data,'toImage'):
                 product=data.toImage()
-            else:
-              raise NameError('Cannot save '+self.name+' as format '+format)
 
-        else:
-            raise NameError('Unknown format '+format)
+        if not product:
+            raise NameError('Cannot save '+self.name+' as format '+format)
+
+        if isinstance(product,str):
+            with open(filename,'w') as f:
+                f.write(product)
 
         self.filename=filename
         if product:
