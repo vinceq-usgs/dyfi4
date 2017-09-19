@@ -27,6 +27,7 @@
 
 - name: dyfi_plot_numresp
   type: graph
+  dataset: time
   format: json
 
 # Special format that uses this file to generate contents.xml

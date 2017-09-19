@@ -43,7 +43,7 @@ class Graph:
         }
         
         
-    def __init__(self,name,event,data,config=None,dir=None,title=None):
+    def __init__(self,name,event,data,config=None,dir=None,title=None,parent=None):
 
         print('Graph: Creating',name,'object.')
 
@@ -66,8 +66,9 @@ class Graph:
             raise NameError('ERROR: Graph got unknown graph type '+name) 
 
         self.title=title if title else self.getTitle()
-
         
+# Methods for plot_atten
+# TODO: Put this in separate function
 
     def getDataDistance(self):
         event=self.event
@@ -284,6 +285,86 @@ class Graph:
         return filename
      
     
+# Methods for plot_numresp
+# TODO: Put this in separate function
+
+    def getDataTime(self):
+        event=self.event
+        rawdata=self.rawdata
+     
+        print('Graph.getDataTime:')
+
+        d=[]
+        self.datasets=d
+        eventTime=event.eventDateTime
+
+        # This is not used right now
+        self.params={
+            'aggregatetype':rawdata['id'],
+        }
+        if hasattr(rawdata,'min_x'):
+            self.params['min_x']=rawdata.min_x
+        if hasattr(rawdata,'max_x'):
+            self.params['max_x']=rawdata.max_x
+
+        count=0
+        for time in rawdata['data']:
+            dTime=(time-eventTime).total_seconds()
+            count+=1
+
+            if len(d)>0 and d[-1]['t_seconds']==dTime:
+                continue
+
+            pt={
+                'x':None,
+                'y':count,
+                't_seconds':dTime,
+                't_absolute':time.strftime('%Y-%m-%dT%H:%M:%S')
+            }
+            d.append(pt)
+
+        if len(d)<1:
+            bounds=self.getTimebounds(0)
+        else:
+            bounds=self.getTimeBounds(d[-1]['t_seconds'])
+
+        prefUnit=bounds['prefUnit']
+        prefConversion=bounds['prefConversion']
+
+        for pt in d:
+            pt['x']=round(pt['t_seconds']/prefConversion,2)
+
+        self.data={
+            'datasets':{
+                'class':'histogram',
+                'data':d
+            },
+            'xlabel':'Time since earthquake (%s)' % prefUnit,
+            'ylabel':'Number of responses',
+            'title':'Responses vs. Time Plot',
+            'preferred_unit':prefUnit,
+            'preferred_conversion':prefConversion,
+            'eventid':event.eventid
+        }
+          
+    def getTimeBounds(self,t):
+
+        if t<120:
+            unit='minutes'
+            conversion=60
+
+        else:
+            unit='hours'
+            conversion=3600
+
+        return {
+            'prefUnit':unit,
+            'prefConversion':conversion
+        }
+
+
+# Methods for all Graph objects
+
     def toJSON(self):
         print('Graph.toJSON:')
         return json.dumps(self.data,sort_keys=True,indent=2)

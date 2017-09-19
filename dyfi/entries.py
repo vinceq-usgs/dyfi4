@@ -7,6 +7,7 @@ Entries
 
 from .aggregate import aggregate
 from .db import Db
+import datetime
 
 class Entries():
     """
@@ -43,6 +44,26 @@ class Entries():
     
     def aggregate(self,name,force=False):
         return aggregate(self.entries,name)
+
+
+    def getTimes(self,name,force=False):
+        entries=self.entries
+
+        times=[]
+        for entry in entries:
+            entryTime=entry.time_now
+            dTime=datetime.datetime.strptime(entryTime,
+                '%Y-%m-%d %H:%M:%S')
+            dTime.replace(tzinfo=datetime.timezone.utc)
+            times.append(dTime)
+
+        data={
+            'id':'numresp',
+            'name':name,
+            'data':times
+        }
+        return data
+
 
 
     def __len__(self):

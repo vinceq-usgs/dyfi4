@@ -9,6 +9,7 @@ import json
 import geojson
 
 from .db import Db
+import datetime
 
 class Event:
     """
@@ -86,10 +87,19 @@ class Event:
    
         print('TODO: Event.update: disabled for now')
         return
-   
+ 
+
     # Generic getattr method for parameters (no setattr)
 
     def __getattr__(self,name):
+
+        if name=='eventDateTime':
+            dTime=self.eventdatetime
+            tFormat='%Y-%m-%d %H:%M:%S'
+            dTime=datetime.datetime.strptime(dTime,tFormat)
+            dTime.replace(tzinfo=datetime.timezone.utc)
+            return dTime
+
         if name not in self.columns:
             raise NameError('ERROR: Event got bad column '+name)
            

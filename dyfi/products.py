@@ -87,10 +87,13 @@ class Products:
         if len(matches):
             return matches[0]
 
-
         if 'geo_' in name:
             print('Products.getDataset:',name)
             data=self.entries.aggregate(name)
+
+        elif 'time' in name:
+            print('Products.getDataset:',name)
+            data=self.entries.getTimes(name)
 
         else:
             raise NameError('Unknown data type '+name)
@@ -116,6 +119,7 @@ class Product:
 
     def __init__(self,parent,name,dataset=None,type=None,format=None):
 
+        print('Product: initializing',name)
         self.parent=parent
         self.dir=parent.dir
 
@@ -133,10 +137,11 @@ class Product:
             func=Map
 
         if func:
+            print('Product: running object',func.__name__)
             self.data=func(name=name,event=parent.event,data=self.data,config=self.config,dir=self.dir)
 
         if format:
-            print('Product.init',name,', format',format)
+            print('Product: creating',name,', format',format)
             self.create(format)
 
 
