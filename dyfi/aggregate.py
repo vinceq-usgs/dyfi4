@@ -57,6 +57,7 @@ def aggregate(entries,producttype):
     if 'geo' in producttype:
         aggregatetype='geo'
         aggregator=getUtmLocation
+
         if '1km' in producttype:
             resolutionMeters=1000
 
@@ -73,8 +74,9 @@ def aggregate(entries,producttype):
         """
 
     else:
-        ValueError('Aggregate: got unknown type '+producttype)
-                    
+        raise ValueError('Aggregate: got unknown type '+producttype)
+        
+    print('aggregate: producttype is',producttype)
     npts=len(entries)
     print('Aggregate: Got',npts,'entries, aggregating.')
 

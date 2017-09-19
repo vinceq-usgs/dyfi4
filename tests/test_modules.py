@@ -180,11 +180,7 @@ def test_entries():
   # Test aggregate
 
   with pytest.raises(ValueError) as exception:
-      data=aggregate(entries,'11km')
-  assert 'unknown type' in str(exception.value)
-
-  with pytest.raises(ValueError) as exception:
-      data=aggregate(entries,'badaggregate')
+      data=aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
 
  
