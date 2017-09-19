@@ -59,6 +59,7 @@ def main(args=None):
         raise NameError('No data for event '+evid)
 
     print('Done with',evid)
+    return container
             
 
 if __name__=='__main__':

@@ -55,10 +55,6 @@ class Products:
 
     def create(self,p):
 
-        name=p['name'] if 'name' in p else None
-        dataType=p['type'] if 'type' in p else None
-        dataset=p['dataset'] if 'dataset' in p else None
-
         count=0
         if 'format' not in p:
             return count
@@ -69,8 +65,6 @@ class Products:
         if product:
             self.products.append(product)
             count+=1
-        else:
-            print('Products.create: Oops, did not create.')
      
         return count
    
@@ -102,7 +96,7 @@ class Products:
     def __repr__(self):
         text='Products:[' 
        
-        if len(self.productFiles)<1:
+        if len(self.products)<1:
             return text+']'
      
         names=[]
@@ -153,17 +147,13 @@ class Product:
         data=self.data
         product=None
 
-        if format=='json':
+        if format=='json' or format=='geojson':
             if hasattr(data,'toJSON'):            
                 product=data.toJSON()
-            else:
-                product=json.dumps(data)
-               
-        elif format=='geojson':
-            if hasattr(data,'toGeoJSON'):            
+            elif hasattr(data,'toGeoJSON'):            
                 product=data.toGeoJSON()
             else:
-              product=json.dumps(data)
+                product=json.dumps(data)
 
         elif format=='xml':
             if hasattr(data,'toXML'):            
@@ -171,12 +161,13 @@ class Product:
 
         elif format=='png':
             if hasattr(data,'toImage'):
-                product=data.toImage()
+                data.toImage()
+                product='FILE'
 
         if not product:
             raise NameError('Cannot save '+self.name+' as format '+format)
 
-        if isinstance(product,str):
+        if isinstance(product,str) and product!='FILE':
             with open(filename,'w') as f:
                 f.write(product)
 

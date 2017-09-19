@@ -65,12 +65,14 @@ def aggregate(entries,producttype):
         else:
             print('Aggregate: ERROR: got unknown type',producttype)
             exit()
-            
+
+        """
     elif 'zip' in producttype:
         aggregatetype='zip'
         aggregator=getZipLocation
         resolutionMeters=0
-        
+        """
+
     else:
         print('Aggregate: ERROR: got unknown type',producttype)
                     
@@ -108,9 +110,11 @@ def aggregate(entries,producttype):
         if aggregatetype=='geo':
             geometry=getUtmCoordinatesFromString(location,resolutionMeters)        
 
+            """
         elif aggregatetype=='zip':
             geometry=getZipCoordinates(location)
-            
+            """
+
         else:
             continue
 
@@ -246,9 +250,9 @@ def getUtmCoordinatesFromString(utm,span):
     
     return ({'center':center,'bounds':bounds})
 
-    
+"""
+
 def getZipLocation(entry,resolution):
-    """
     
     :synopsis: Find the ZIP code of an entry.
     :param entry: The :py:obj:`Entry` object to locate
@@ -262,7 +266,6 @@ def getZipLocation(entry,resolution):
     
     Finally, if neither exists, create a 'city' circle instead.
     
-    """
     
     if entry.zip:
         return entry.zip
@@ -272,7 +275,6 @@ def getZipLocation(entry,resolution):
     
     
 def getZipCoordinates(location):
-    """
     
     :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
     :param str utm: A UTM string
@@ -288,12 +290,12 @@ def getZipCoordinates(location):
     bounds  A GeoJSON Polygon object
     ======  ========================= 
 
-    """
 
     # TODO: Look up ZIP code or cityid coordinates
     # Disabled for now
     return
     
+"""
 
 #----------------------------------
 # Utility functions

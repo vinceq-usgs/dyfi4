@@ -70,9 +70,9 @@ def test_event():
   assert isinstance(attr,str)
   assert testid in repr(event)
 
-  with pytest.raises(NameError) as badAttr:
+  with pytest.raises(NameError) as exception:
     print(event.invalidcolumn)
-  assert 'bad column' in str(badAttr.value) 
+  assert 'bad column' in str(exception.value) 
 
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:
@@ -123,9 +123,9 @@ def test_dbentries():
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
-  with pytest.raises(NameError) as testBadTable:
+  with pytest.raises(NameError) as exception:
     db.loadEntries(startdatetime='Stardate 1312.4')
-  assert 'Bad year' in str(testBadTable.value)
+  assert 'Bad year' in str(exception.value)
 
   testentry=entries[0]
   testentry['orig_id']=''
@@ -179,7 +179,7 @@ def test_entries():
   assert cdi.calculate(single)!=user_cdi
 
  
-def test_map():
+def test_maps():
     from dyfi import Config,Db,Maps
 
     db=Db(Config(configfile))
@@ -196,14 +196,31 @@ def test_map():
 
 
 def test_products():
-  from dyfi import Config,Event,Entries,Products
+  from dyfi import Config,Event,Entries,Products,Product
 
   config=Config(configfile)
   products=Products(
     Event(testid,config=config),
     Entries(testid,config=config),
     config=config)
- 
+
+  assert 'Products:' in str(products)
+  # Test product with no format
+  assert Product(products,name='test',dataset='time')
+
+  with pytest.raises(NameError) as exception:
+      Product(products,name='blank',dataset='bad')
+  assert 'Unknown data type' in str(exception.value) 
+
+  with pytest.raises(NameError) as exception:
+      Product(products,name='test',format='bad')
+  assert 'Cannot save' in str(exception.value) 
+
+  # Test Map object codecov: blank directory, GeoJSON output
+  products.dir==None
+  product=Product(products,name='testmap',dataset='geo_10km',type='map')
+  assert type(product.data.toGeoJSON())==str
+
 
 def test_container():
   from dyfi import DyfiContainer

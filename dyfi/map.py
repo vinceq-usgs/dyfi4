@@ -52,7 +52,9 @@ class Map:
         data['features'].append(epicenter)
         self.data=data
 
-
+    # This creates the map used for static images, not the
+    # actual GeoJSON data. Hence it's only used for
+    # debugging.
     def toGeoJSON(self,filename=None):
 
         text=json.dumps(self.data)

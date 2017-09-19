@@ -86,10 +86,10 @@ class Graph:
         }
 
         # This is not used right now
-        if hasattr(rawdata,'min_x'):
-            self.params['min_x']=rawdata.min_x
-        if hasattr(rawdata,'max_x'):
-            self.params['max_x']=rawdata.max_x
+        #if hasattr(rawdata,'min_x'):
+        #    self.params['min_x']=rawdata.min_x
+        #if hasattr(rawdata,'max_x'):
+        #    self.params['max_x']=rawdata.max_x
             
         # Add scatter data from aggregated entries
 
@@ -261,22 +261,6 @@ class Graph:
         title=[line1,line2]
         return title
         
-        
-    def getTicks(self):
-        # TODO: Make these configurable
-        
-        min_x=self.params['min_x']
-        max_x=self.params['max_x']
-        ax.set_xlim([min_x,max_x])
-        ax.set_ylim([1,9])
-        ax.semilogx(subsx=None)
-
-        # This changes the ticks on the log scale
-        xticks=[1,5,10,20,50,100,200,500,1000,2000,5000,10000]
-        xticks=[x for x in xticks if x>=min_x and x<=max_x]
-        
-        return filename
-     
     
 # Methods for plot_numresp
 # TODO: Put this in separate function
@@ -290,13 +274,13 @@ class Graph:
         eventTime=event.eventDateTime
 
         # This is not used right now
-        self.params={
-            'aggregatetype':rawdata['id'],
-        }
-        if hasattr(rawdata,'min_x'):
-            self.params['min_x']=rawdata.min_x
-        if hasattr(rawdata,'max_x'):
-            self.params['max_x']=rawdata.max_x
+        #self.params={
+        #    'aggregatetype':rawdata['id'],
+        #}
+        #if hasattr(rawdata,'min_x'):
+        #    self.params['min_x']=rawdata.min_x
+        #if hasattr(rawdata,'max_x'):
+        #    self.params['max_x']=rawdata.max_x
 
         count=0
         for time in rawdata['data']:
@@ -360,58 +344,3 @@ class Graph:
         return json.dumps(self.data,sort_keys=True,indent=2)
 
  
-    def getColor(self,intensity):
-        if not self.colors:
-            return 0
-        hexcolor=self.colors.getHexColor(intensity)
-        return hexcolor[0]
-        
-        
-  # Below these are class methods
-
-    def distanceData(event,data):
-        print('Graph labels:')
-
-        datasets=[]
-        dist_vs_int=[]
-        
-        reporteddata=[]        
-        for loc in data:
-            y=loc.properties['intensity']
-            x=great_circle(
-                (event.latitude,event.longitude),
-                loc.properties['center'])
-            pt={
-                'x':round(x,2),
-                'y':round(x,1),
-                }
-            dist_vs_int.append(pt)
-        
-        datasets.append({
-                'legend':'All reported data',
-                'data':dist_vs_int,
-                'class':'scatterplot1'
-                })
-        
-        ipecounter=0
- 
-    
-    def degreelines(a,b):
-        aint=int(a)
-        bint=int(b+0.5)
-        step=1
-        if bint-aint>5:
-            step=2
-        if bint-aint>13:
-            step=5
-        return range(aint,bint,step)
-        
-
-    def transform(coords,m):
-        newcoords=[]
-        for pt in coords:
-            x,y=m(pt[0],pt[1])
-            newcoords.append([x,y])
-            
-        return newcoords
-    
