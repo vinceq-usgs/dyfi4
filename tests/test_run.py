@@ -21,8 +21,12 @@ def test_aggregate():
     assert abs(latlon[1]-(-117))<0.1
 
     with pytest.raises(ValueError) as exception:
-        aggregate.main(Namespace(lat=91,lon=-117))
+        aggregate.main(Namespace(lat=91,lon=-117,span='geo_1km'))
     assert 'Latitude out of bounds' in str(exception.value)
+
+    with pytest.raises(TypeError) as exception:
+        aggregate.main(Namespace(lat=None,lon=None,span='geo_1km'))
+    assert 'must be a string or a number' in str(exception.value)
 
 
 def test_run():

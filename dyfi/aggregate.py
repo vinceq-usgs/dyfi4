@@ -63,8 +63,7 @@ def aggregate(entries,producttype):
         elif '10km' in producttype:
             resolutionMeters=10000
         else:
-            print('Aggregate: ERROR: got unknown type',producttype)
-            exit()
+            ValueError('Aggregate: got unknown type '+producttype)
 
         """
     elif 'zip' in producttype:
@@ -74,7 +73,7 @@ def aggregate(entries,producttype):
         """
 
     else:
-        print('Aggregate: ERROR: got unknown type',producttype)
+        ValueError('Aggregate: got unknown type '+producttype)
                     
     npts=len(entries)
     print('Aggregate: Got',npts,'entries, aggregating.')
@@ -107,16 +106,13 @@ def aggregate(entries,producttype):
         # This returns a dict with 'bounds' (type Polygon or Point) 
         # and 'center' (type Point)
 
+        geometry=None
         if aggregatetype=='geo':
             geometry=getUtmCoordinatesFromString(location,resolutionMeters)        
-
             """
         elif aggregatetype=='zip':
             geometry=getZipCoordinates(location)
             """
-
-        else:
-            continue
 
         if not geometry:
             continue
@@ -165,24 +161,23 @@ def getUtmLocation(entry,span):
     
     """
     
-    lat=entry.latitude
-    lon=entry.longitude
-    
     if isinstance(span,str):
-        if span=='geo_10km':
-            span=10000
-        else:
+        if span=='geo_1km':
             span=1000
-            
-    if not lat or not lon:
-        print('Aggregate: WARNING: getUtmLocation: subid',
-              entry.subid,'has no lat/lon coordinates')        
+        else:
+            span=10000
+    
+    try:
+        lat=float(entry.latitude)
+        lon=float(entry.longitude)
+    except TypeError:
         return
     
     try: 
         loc=from_latlon(lat,lon)
     except OutOfRangeError:
         return
+
     if not loc: 
         return
 

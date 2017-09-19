@@ -140,8 +140,7 @@ def test_dbentries():
 
  
 def test_entries():
-  from dyfi import Config,Entries,Db
-  from dyfi import cdi
+  from dyfi import Config,Entries,Db,cdi,aggregate
 
   config=Config(configfile) 
 
@@ -178,6 +177,16 @@ def test_entries():
   single.__dict__['badcolumn']=1
   assert cdi.calculate(single)!=user_cdi
 
+  # Test aggregate
+
+  with pytest.raises(ValueError) as exception:
+      data=aggregate(entries,'11km')
+  assert 'unknown type' in str(exception.value)
+
+  with pytest.raises(ValueError) as exception:
+      data=aggregate(entries,'badaggregate')
+  assert 'unknown type' in str(exception.value)
+
  
 def test_maps():
     from dyfi import Config,Db,Maps
@@ -196,32 +205,64 @@ def test_maps():
 
 
 def test_products():
-  from dyfi import Config,Event,Entries,Products,Product
+    from dyfi import Config,Event,Entries,Products,Product,Map,Graph
 
-  config=Config(configfile)
-  products=Products(
-    Event(testid,config=config),
-    Entries(testid,config=config),
-    config=config)
+    config=Config(configfile)
+    event=Event(testid,config=config)
+    entries=Entries(testid,config=config)
 
-  # Test product with no format
-  assert Product(products,name='test',dataset='time')
+    products=Products(event,entries,config)
 
-  with pytest.raises(NameError) as exception:
-      Product(products,name='blank',dataset='bad')
-  assert 'Unknown data type' in str(exception.value) 
+    assert str(products)=='Products:[]'
 
-  with pytest.raises(NameError) as exception:
-      Product(products,name='test',format='bad')
-  assert 'Cannot save' in str(exception.value) 
+    # Test product with no format
+    assert Product(products,name='test',dataset='time')
 
-  # Test Map object codecov: blank directory, GeoJSON output
-  products.dir==None
-  product=Product(products,name='testmap',dataset='geo_10km',type='map')
-  product=product.create('geojson',filename='tests/testProduct.geojson')
+    with pytest.raises(NameError) as exception:
+        Product(products,name='blank',dataset='bad')
+    assert 'Unknown data type' in str(exception.value) 
 
-  # Test blank product
-  assert products.create({})==0
+    with pytest.raises(NameError) as exception:
+        Product(products,name='test',format='bad')
+    assert 'Cannot save' in str(exception.value) 
+
+    # Test Map object codecov: blank directory, GeoJSON output
+    products.dir==None
+    product=Product(products,name='testmap',dataset='geo_10km',type='map')
+    product.create('geojson','tests/testProduct.geojson')
+    map=product.data
+    assert type(map).__name__=='Map'
+
+    # Test Map without directory
+    data=map.data
+    map=Map('test_geo_10km',event,data,config)
+    assert map.toGeoJSON(filename='tests/testMap.geojson')
+
+    # Test blank product
+    assert products.create({})==0
+
+    # Test graph functions
+
+    with pytest.raises(NameError) as exception:
+        graph=Graph('badtype',event=event,data=None,config=config)
+    assert 'Graph got unknown graph type' in str(exception.value) 
+
+    # Test when redoing graph data
+    data=entries.aggregate('geo_10km')
+    graph=Graph('plot_atten',event=event,data=data,config=config,dir='test')
+    graph.getDataDistance()
+
+    # Test time graph
+
+    data=entries.getTimes('plot_numresp')
+    graph=Graph('plot_numresp',event=event,data=data,config=config,dir='test')
+
+    # Test no time data
+
+    data['data']=[]
+    graph=Graph('plot_numresp',event=event,data=data,config=config,dir='test')
+    assert graph.data['preferred_unit']=='minutes'
+
 
 def test_container():
   from dyfi import DyfiContainer

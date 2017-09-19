@@ -287,11 +287,7 @@ class Graph:
             dTime=(time-eventTime).total_seconds()
             count+=1
 
-            if len(d)>0 and d[-1]['t_seconds']==dTime:
-                continue
-
             pt={
-                'x':None,
                 'y':count,
                 't_seconds':dTime,
                 't_absolute':time.strftime('%Y-%m-%dT%H:%M:%S')
@@ -299,7 +295,7 @@ class Graph:
             d.append(pt)
 
         if len(d)<1:
-            bounds=self.getTimebounds(0)
+            bounds=self.getTimeBounds(0)
         else:
             bounds=self.getTimeBounds(d[-1]['t_seconds'])
 

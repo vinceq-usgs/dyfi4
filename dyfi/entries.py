@@ -57,13 +57,13 @@ class Entries():
             dTime.replace(tzinfo=datetime.timezone.utc)
             times.append(dTime)
 
+        times.sort()
         data={
             'id':'numresp',
             'name':name,
             'data':times
         }
         return data
-
 
 
     def __len__(self):
