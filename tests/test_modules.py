@@ -218,6 +218,7 @@ def test_products():
   # Test Map object codecov: blank directory, GeoJSON output
   products.dir==None
   product=Product(products,name='testmap',dataset='geo_10km',type='map')
+  product.dir=='test'
   product=product.create('geojson')
   product.data.toGeoJSON(filename='tests/testMap.geojson')
 
