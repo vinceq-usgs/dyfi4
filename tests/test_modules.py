@@ -204,7 +204,6 @@ def test_products():
     Entries(testid,config=config),
     config=config)
 
-  assert 'Products:' in str(products)
   # Test product with no format
   assert Product(products,name='test',dataset='time')
 
@@ -219,8 +218,11 @@ def test_products():
   # Test Map object codecov: blank directory, GeoJSON output
   products.dir==None
   product=Product(products,name='testmap',dataset='geo_10km',type='map')
-  assert type(product.data.toGeoJSON())==str
+  product=product.create('geojson')
+  product.data.toGeoJSON(filename='tests/testMap.geojson')
 
+  # Test blank product
+  assert products.create({})==0
 
 def test_container():
   from dyfi import DyfiContainer

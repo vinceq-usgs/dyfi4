@@ -340,7 +340,7 @@ def myCeil(x,multiple):
 
 #-----------------------------
 
-if __name__=='__main__':
+def main(args=None):
     import argparse
 
     parser=argparse.ArgumentParser(
@@ -351,31 +351,33 @@ if __name__=='__main__':
                         help='longitude')
     parser.add_argument('span', type=str,default='geo_1km',nargs='?', 
                         help='UTM span (default 1km)')
-    args=parser.parse_args()
+    if not args:
+        args=parser.parse_args()
 
-    if ' ' in args.lat:
-        print('Parsing '+args.lat+' as UTM string.')
+    if isinstance(args.lat,str) and ' ' in args.lat:
         coords=args.lat.split(' ')
         e=float(coords[0])
         n=float(coords[1])
         zn=int(coords[2])
         latlon=to_latlon(e,n,zn,coords[3])
-        print('latlon of this UTM string is:')
-        print(latlon)
-        exit()
+        print('latlon of this UTM string is:',latlon)
+        return(latlon)
 
     args.lat=float(args.lat)
     args.lon=float(args.lon)
     if args.lat>90 or args.lat<-90:
-        print('Latitude out of bounds (inputs must be lat lon [span])')
-        exit()
+        raise ValueError('Latitude out of bounds (inputs must be lat lon [span])')
     
-    from modules.entries import Entry
+    from dyfi import Entry
     agg=getUtmLocation(
         Entry({'latitude':args.lat,'longitude':args.lon}),
         args.span)
     
-    print('UTM for this lat/lon pair (span:'+args.span+') is:')
-    print(agg)
+    print('UTM for this lat/lon pair (span:'+args.span+') is:',agg)
+    return agg
+
+
+if __name__=='__main__':
+    main()
 
 
