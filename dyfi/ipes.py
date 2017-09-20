@@ -10,6 +10,8 @@ import math
 
 C = (0,0.309,1.864,-1.672,-0.00219,1.77,-0.383)
 
+# Atkinson, Worden, and Wald 2014.
+# See https://doi.org/10.1785/0120140178
 
 def aww2014wna(mag,r,inverse=False,fine=False):
     """
@@ -19,11 +21,8 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     If inverse is true, returns mag = f(intensity,r)
     """
     
-    R = math.sqrt(r**2 + 14**2)
-    if R<1:
-        B = math.log(1/50,10)
-    else:
-        B = math.log(R/50,10)
+    R=math.sqrt(r**2 + 14**2)
+    B=max(0,math.log(R/50,10))
                     
     logr = math.log(R,10) if R > 1 else 0
     
@@ -44,6 +43,8 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     return ii
     
     
+# Atkinson, Worden, and Wald 2014.
+# See https://doi.org/10.1785/0120140178
 def aww2014ena(mag,r,inverse=False,fine=False):
     """
     Implementation of Atkinson, Worden, Wald (2014)
@@ -52,22 +53,13 @@ def aww2014ena(mag,r,inverse=False,fine=False):
     If inverse is true, returns mag = f(intensity,r)
     """
 
-    R = math.sqrt(r**2 + 14**2)
-    if R > 50:
-        B = 0
-    elif R<1:
-        B = math.log(1/50,10)
-    else:
-        B = math.log(R/50,10)
+    R=math.sqrt(r**2 + 14**2)
+    B=math.log(R/50,10)
+    if B<0:
+        B=0
                     
     logr = math.log(R,10) if R > 1 else 0
-
-    if r < 1: 
-        e1 = 1/50
-    else: 
-        e1 = min(r,150)/50
-
-    ecorr = 0.7 + 0.001*r + max(0,0.8*math.log(e1))
+    ecorr = 0.7 + 0.001*r + max(0,0.8*math.log(min(r,150)/50))
     
     if inverse:
         # For inverse problem, input is intensity, output is mag

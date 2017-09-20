@@ -47,9 +47,9 @@ Usage:
         ['/bin/mail','-s',msgsubj,msgto],
         stdin=PIPE,universal_newlines=True
     )
-    mailer.communicate(p['text'])
-    
-    print(mailer)
+
+    # Pending setup of mail in Travis, disable check for this.
+    mailer.communicate(p['text']) # pragma: no cover
 
 
 def main(args=None):
