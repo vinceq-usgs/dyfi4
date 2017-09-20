@@ -20,9 +20,7 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     """
     
     R = math.sqrt(r**2 + 14**2)
-    if R > 50:
-        B = 0
-    elif R<1:
+    if R<1:
         B = math.log(1/50,10)
     else:
         B = math.log(R/50,10)
