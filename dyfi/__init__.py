@@ -1,4 +1,3 @@
-from .thirdparty.gmtcolormap import GMTColorMap
 from .thirdparty import utm 
 
 from .config import Config

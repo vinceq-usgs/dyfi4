@@ -13,7 +13,6 @@ import copy
 from geopy.distance import great_circle
 from statistics import mean,median,stdev
 
-from .thirdparty.gmtcolormap import GMTColorMap
 from . import ipes
 
 # TODO: Make dist_vs_intensity, time_vs_nresp subclasses of Graph

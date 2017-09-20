@@ -30,3 +30,10 @@ def test_ipe():
     assert 6.4<func(7,10,inverse=True)<6.5
 
 
+def test_mail():
+    from dyfi import mail
+
+    with pytest.raises(FileNotFoundError) as exception:
+        mail.dyfimail({'text':'sample mail'})
+    assert 'No such file or directory' in str(exception.value)
+
