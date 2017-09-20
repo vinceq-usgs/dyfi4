@@ -51,8 +51,10 @@ Usage:
     
     print(mailer)
 
-if __name__=='__main__':
+
+def main(args=None):
     import argparse
+
     parser=argparse.ArgumentParser(
         description='Access the DYFI main function.'
     )
@@ -62,9 +64,10 @@ if __name__=='__main__':
         '--to',type=str,
         help="Recipient (default is DEFAULT_RECIPIENT)"
     )
-    parser.add_argument('text',type=str,
+    parser.add_argument('--text',type=str,
                         help="Body of message")
-    args=parser.parse_args()
+
+    args=parser.parse_args(args)
 
     p={}
     if args.subject:
@@ -73,4 +76,10 @@ if __name__=='__main__':
         p['to']=args.to
     p['text']=args.text
     dyfimail(p)
+
+
+if __name__=='__main__':
+    main(sys.argv[1:])  # pragma: no cover
+
+
 

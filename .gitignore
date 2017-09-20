@@ -20,5 +20,13 @@ codecov.yml
 .coverage
 coverage.xml
 leaflet/data.js
+leaflet/screenshot.png
 *.orig
 tests/test*
+tests/*.geojson
+tests/*.png
+tests/data/*.png
+testdyfi
+screenshot.png
+setup_env.sh.disabled
+
