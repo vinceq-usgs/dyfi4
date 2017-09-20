@@ -246,7 +246,7 @@ def test_products():
     # Test when redoing graph data
     data=entries.aggregate('geo_10km')
     graph=Graph('plot_atten',event=event,data=data,config=config,dir='test')
-    graph.getDataDistance()
+    graph.getScatterData()
 
     # Test time graph
 

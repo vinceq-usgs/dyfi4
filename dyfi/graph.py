@@ -110,9 +110,10 @@ class Graph:
     def getScatterData(self):
         event=self.event
         rawdata=self.rawdata
-    
-        if hasattr(rawdata,'scatterdata'):
-            return rawdata.scatterdata
+   
+        datasets=[x for x in self.datasets if x['id']=='scatterdata']
+        if len(datasets)>0:
+            return datasets[0]
 
         epicenter=(event.lat,event.lon)
         xydata=[]
@@ -129,6 +130,7 @@ class Graph:
             xydata.append(pt)
 
         scatterdata={
+            'id':'scatterdata',
             'legend':'Aggregated %s data' % (rawdata.id),
             'class':'scatterplot1',
             'data':xydata
@@ -163,6 +165,7 @@ class Graph:
                       } for x in xspace]
             
             dataset={
+                'id':'ipe_'+ipe.name,
                 'legend':ipe.name,
                 'class':'estimated_'+str(counter),
                 'data':ipedata
@@ -226,11 +229,13 @@ class Graph:
             means.append(meanpt)
                           
         return [{
+            'id':'meanBinned',
             'legend':'Mean intensity in bin',
             'class':'mean',
             'data':means
             },
                 {
+            'id':'medianBinned',
             'legend':'Median intensity in bin',
             'class':'median',
             'data':medians
