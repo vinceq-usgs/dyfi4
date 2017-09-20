@@ -33,7 +33,7 @@ def test_aggregate():
 
 def test_run():
     from bin import rundyfi
-    return
+
     os.makedirs('data/'+testid,exist_ok=True)
 
     with pytest.raises(NameError) as exception:

@@ -180,6 +180,8 @@ def test_entries():
 
   # Test aggregate
 
+  assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
+
   with pytest.raises(ValueError) as exception:
       data=aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
@@ -261,6 +263,7 @@ def test_products():
     graph=Graph('plot_atten',event=event,data=data,config=config,dir='test')
     graph.getScatterData()
     graph.getDistBins()
+    assert 'data' in graph.toJSON()
 
     # Test time graph
 

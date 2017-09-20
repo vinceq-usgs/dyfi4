@@ -21,3 +21,4 @@ codecov.yml
 coverage.xml
 leaflet/data.js
 *.orig
+tests/test*
