@@ -161,8 +161,11 @@ def test_entries():
   assert 'Entries[' in repr(entries)
   assert 'Entries' in str(entries)
 
-  # test single entry
+  # test that entering Entry entries still works
+  testentries=Entries(testid,rawentries=entries.entries,config=config)
+  assert len(testentries)==count
 
+  # test single entry
   badentry={'subid':1,'table':'extended_pre','badcolumn':0}
   badentries=Entries(testid,rawentries=[badentry],config=config)
   assert len(badentries)==1
@@ -173,7 +176,6 @@ def test_entries():
   assert user_cdi>=2 or user_cdi==1
 
   # : test if entry has a missing required column 
-  
   single.__dict__.pop('felt')
   single.__dict__['badcolumn']=1
   assert cdi.calculate(single)!=user_cdi
@@ -216,6 +218,7 @@ def test_maps():
 
 
 def test_products():
+    import copy
     from dyfi import Config,Event,Entries,Products,Product,Map,Graph
 
     config=Config(configfile)
@@ -237,7 +240,7 @@ def test_products():
         Product(products,name='test',format='bad')
     assert 'Cannot save' in str(exception.value) 
 
-    # Test Map object codecov: blank directory, GeoJSON output
+    # Test Map blank directory, GeoJSON output
     products.dir==None
     product=Product(products,name='testmap',dataset='geo_10km',type='map')
     product.create('geojson','tests/testProduct.geojson')
@@ -248,6 +251,12 @@ def test_products():
     data=map.data
     map=Map('test_geo_10km',event,data,config)
     assert map.toGeoJSON(filename='tests/testMap.geojson')
+
+    badconfig=copy.deepcopy(config)
+    badconfig.executables['screenshot']='badexec'
+    with pytest.raises(NameError) as exception:
+        Map.GeoJSONtoImage('tests/testMap.geojson','tests/testMap.png',badconfig)
+    assert 'subprocess call' in str(exception.value)
 
     # Test blank product
     assert products.create({})==0
