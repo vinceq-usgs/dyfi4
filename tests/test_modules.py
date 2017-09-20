@@ -165,14 +165,15 @@ def test_entries():
 
   badentry={'subid':1,'table':'extended_pre','badcolumn':0}
   badentries=Entries(testid,rawentries=[badentry],config=config)
+  assert len(badentries)==1
+
   single=[x for x in entries if x.subid=='4279149'][0]
   assert '[Entry:' in str(single)
-  entries=Entries(testid,rawentries=[single],config=config)
-
   user_cdi=cdi.calculate(single)
   assert user_cdi>=2 or user_cdi==1
-  
+
   # : test if entry has a missing required column 
+  
   single.__dict__.pop('felt')
   single.__dict__['badcolumn']=1
   assert cdi.calculate(single)!=user_cdi
@@ -182,6 +183,18 @@ def test_entries():
   with pytest.raises(ValueError) as exception:
       data=aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
+
+  assert isinstance(aggregate.getUtmLocation(single,'1km'),str)
+
+  # Test bad lat/lon values
+
+  single.latitude=None
+  assert aggregate.getUtmLocation(single,'1km')==None
+
+  with pytest.raises(ValueError) as exception:
+      single.latitude='badvalue'
+      aggregate.getUtmLocation(single,'1km')
+  assert 'could not convert string' in str(exception.value)
 
  
 def test_maps():
@@ -247,6 +260,7 @@ def test_products():
     data=entries.aggregate('geo_10km')
     graph=Graph('plot_atten',event=event,data=data,config=config,dir='test')
     graph.getScatterData()
+    graph.getDistBins()
 
     # Test time graph
 

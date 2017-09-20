@@ -119,8 +119,11 @@ def aggregate(entries,producttype):
             geometry=getZipCoordinates(location)
             """
 
-        if not geometry:
-            continue
+        # Catchall if from_latlon created a valid UTM string
+        # from a latlon, but to_latlon could not create a
+        # bounding box.
+        if not geometry:  
+            continue # pragma: no cover
             
         props={
             'nresp':len(entries),
@@ -167,7 +170,7 @@ def getUtmLocation(entry,span):
     """
     
     if isinstance(span,str):
-        if span=='geo_1km':
+        if span=='geo_1km' or span=='1km':
             span=1000
         else:
             span=10000
@@ -183,8 +186,10 @@ def getUtmLocation(entry,span):
     except OutOfRangeError:
         return
 
+    # Catchall if valid lat/lon could not create a
+    # valid location
     if not loc: 
-        return
+        return # pragma: no cover
 
     x,y,zonenum,zoneletter=loc
     x0=myFloor(x,span)
@@ -351,8 +356,8 @@ def main(args=None):
                         help='longitude')
     parser.add_argument('span', type=str,default='geo_1km',nargs='?', 
                         help='UTM span (default 1km)')
-    if not args:
-        args=parser.parse_args()
+
+    args=parser.parse_args(args)
 
     if isinstance(args.lat,str) and ' ' in args.lat:
         coords=args.lat.split(' ')
@@ -378,6 +383,6 @@ def main(args=None):
 
 
 if __name__=='__main__':
-    main()
+    main(sys.argv[1:]) # pragma: no cover
 
 
