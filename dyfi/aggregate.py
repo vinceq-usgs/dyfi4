@@ -54,17 +54,20 @@ def aggregate(entries,producttype):
     
     # producttype is either 'geo_1km', '10km', or 'zip'
     
+    aggregator=None
+
     if 'geo' in producttype:
         aggregatetype='geo'
         aggregator=getUtmLocation
 
-        if '1km' in producttype:
+        if '_1km' in producttype or producttype=='1km':
             resolutionMeters=1000
 
-        elif '10km' in producttype:
+        elif '_10km' in producttype or producttype=='10km':
             resolutionMeters=10000
+
         else:
-            ValueError('Aggregate: got unknown type '+producttype)
+            aggregator=None
 
         """
     elif 'zip' in producttype:
@@ -73,7 +76,7 @@ def aggregate(entries,producttype):
         resolutionMeters=0
         """
 
-    else:
+    if not aggregator:
         raise ValueError('Aggregate: got unknown type '+producttype)
         
     print('aggregate: producttype is',producttype)
