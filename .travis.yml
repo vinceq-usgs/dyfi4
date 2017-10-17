@@ -51,5 +51,5 @@ after_success:
     - pip install codecov 
     - codecov
     - coverage xml
-#    - python-codacy-coverage -r coverage.xml
+    - python-codacy-coverage -r coverage.xml
     - bash <(curl -s https://codecov.io/bash)
