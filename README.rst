@@ -67,3 +67,8 @@ HISTORY
 V4.01: Rewrite modules for more modularity
 
 
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/cc5a3a34ef56478e897414ab5472d5dc
+   :alt: Codacy Badge
+   :target: https://www.codacy.com/app/vinceq-usgs/dyfi4?utm_source=github.com&utm_medium=referral&utm_content=vinceq-usgs/dyfi4&utm_campaign=badger
