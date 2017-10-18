@@ -21,7 +21,7 @@ def main():
     args=parser.parse_args()
     infile=args.infile
     name=args.name or infile
-    
+
     print('Creating graph %s from %s' % (name,infile))
 
     dictdata=[]

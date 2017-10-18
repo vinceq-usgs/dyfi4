@@ -9,11 +9,7 @@ Usage:
 """
 
 import argparse
-import json
-from geojson import Feature,Point
-import subprocess
 import os
-import shutil
 import sys
 import datetime
 import copy
@@ -21,7 +17,7 @@ import apng
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from dyfi import Db,Event,Config,Entries,Products,Product,Map
+from dyfi import Event,Config,Entries,Products,Product
 
 class Movie:
 
@@ -65,7 +61,7 @@ class Movie:
             for entry in allentries:
                 entrytime=datetime.datetime.strptime(entry.time_now,'%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc)
                 if entrytime<=lasttime:
-                    newentries.append(entry) 
+                    newentries.append(entry)
 
             newentries=Entries(evid,rawentries=newentries,config=config,load=False)
             nentries=len(newentries)
@@ -91,7 +87,7 @@ class Movie:
         # Finished all frames
         outputfile='movie/%s.apng' % evid
         self.filename=self.splice(outputfile)
-        return 
+        return
 
 
     def splice(self,outputfile):
@@ -130,7 +126,8 @@ def main(args=None):
     args=parser.parse_args()
 
     print('Making movie for',args.evid)
-    movie=Movie(args)
+    Movie(args)
+        
     exit()
 
 

@@ -35,8 +35,8 @@ def aggregate(entries,producttype):
     nresp   Total number of responses included
     maxint  Largest intensity among all locations
     ======  ========================================
-    
-    Each Feature in the FeatureCollection has the attribute: 
+
+    Each Feature in the FeatureCollection has the attribute:
     'id' = [UTM string]
     
     and the following properties:
@@ -188,7 +188,7 @@ def getUtmLocation(entry,span):
 
     # Catchall if valid lat/lon could not create a
     # valid location
-    if not loc: 
+    if not loc:
         return # pragma: no cover
 
     x,y,zonenum,zoneletter=loc

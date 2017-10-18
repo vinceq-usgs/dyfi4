@@ -43,7 +43,7 @@ def main(args=None):
         '--configfile',action='store',default='./config.yml',
         help='Specify config file'
     )
-  
+ 
     if not args:
       args=parser.parse_args()
     print(repr(args))

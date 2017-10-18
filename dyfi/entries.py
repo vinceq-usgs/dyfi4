@@ -39,8 +39,7 @@ class Entries():
                 entry=Entry(row)
             self.entries.append(entry)
             count+=1
-        
-    
+
     def aggregate(self,name,force=False):
         return aggregate(self.entries,name)
 
@@ -91,10 +90,10 @@ class Entries():
 class Entry():
     """
 
-    :synopsis: Class for handling user questionnaire responses. 
+    :synopsis: Class for handling user questionnaire responses.
     :param dict rawdata: raw data from one row of an extended table
 
-    .. warning:: 
+    .. warning::
         An Entry object contains raw data and may have PII
         or invalid location data. DO NOT EXPORT `Entry` OBJECTS!
 

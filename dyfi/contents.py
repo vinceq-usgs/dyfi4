@@ -150,7 +150,7 @@ An OrderedDict of the available formats and their corresponding MIME types.
                 basename=event.eventid+ptype
 
             # Create XML node but don't attach it yet
-            
+
             filenode=xml.createElement('file')
             filenode.setAttribute('title',pdata['title'])
             filenode.setAttribute('id',pdata['id'])

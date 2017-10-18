@@ -2,7 +2,6 @@
 # pytest tests/test_modules.py
 
 import pytest
-from .context import dyfi
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
@@ -44,8 +43,6 @@ def test_db():
 
 def test_event():
   import geojson
-  import pytest
-  import datetime
   from dyfi import Config,Db,Event
 
   config=Config(configfile)
@@ -72,14 +69,13 @@ def test_event():
 
   with pytest.raises(NameError) as exception:
     print(event.invalidcolumn)
-  assert 'bad column' in str(exception.value) 
+  assert 'bad column' in str(exception.value)
 
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:
     event=Event(db.loadEvent('blank'))
   assert str(exception.value)=='Event: Cannot create evid with no data'
 
-    
 def test_dbentries():
   import geojson
   import datetime
@@ -131,7 +127,7 @@ def test_dbentries():
   testentry['orig_id']=''
   feature=db.row2geojson(testentry)
   coords=list(geojson.utils.coords(feature))
-  assert len(coords)==1 
+  assert len(coords)==1
   assert isinstance(coords[0][0],float)
   assert isinstance(coords[0][1],float)
 
@@ -142,9 +138,9 @@ def test_dbentries():
 def test_entries():
   from dyfi import Config,Entries,Db,cdi,aggregate
 
-  config=Config(configfile) 
+  config=Config(configfile)
 
-  # Test loading Entries with raw data 
+  # Test loading Entries with raw data
   
   rawentries=Db(config).loadEntries(testid)
   entries=Entries(testid,rawentries=rawentries)
@@ -153,9 +149,7 @@ def test_entries():
   # Test loading Entries with eventid
   entries=Entries(testid,config=config)
 
-  count=0
-  for entry in entries:
-    count+=1
+  count=len(entries)
 
   assert len(entries)==count
   assert 'Entries[' in repr(entries)
@@ -175,7 +169,7 @@ def test_entries():
   user_cdi=cdi.calculate(single)
   assert user_cdi>=2 or user_cdi==1
 
-  # : test if entry has a missing required column 
+  # : test if entry has a missing required column
   single.__dict__.pop('felt')
   single.__dict__['badcolumn']=1
   assert cdi.calculate(single)!=user_cdi
@@ -185,7 +179,7 @@ def test_entries():
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
 
   with pytest.raises(ValueError) as exception:
-      data=aggregate.aggregate(entries,'geo_11km')
+      aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
 
   assert isinstance(aggregate.getUtmLocation(single,'1km'),str)
@@ -208,7 +202,7 @@ def test_maps():
     maps=Maps(db.loadMaps(testid))
     assert len(maps.maplist)>0
     
-    for mapid,thismap in maps.maplist.items():
+    for thismap in maps.maplist.values():
         assert thismap.eventid==testid
         assert 'Map' in str(thismap)
     
@@ -234,23 +228,23 @@ def test_products():
 
     with pytest.raises(NameError) as exception:
         Product(products,name='blank',dataset='bad')
-    assert 'Unknown data type' in str(exception.value) 
+    assert 'Unknown data type' in str(exception.value)
 
     with pytest.raises(NameError) as exception:
         Product(products,name='test',format='bad')
-    assert 'Cannot save' in str(exception.value) 
+    assert 'Cannot save' in str(exception.value)
 
     # Test Map blank directory, GeoJSON output
-    products.dir==None
+    products.dir=None
     product=Product(products,name='testmap',dataset='geo_10km',type='map')
     product.create('geojson','tests/testProduct.geojson')
-    map=product.data
-    assert type(map).__name__=='Map'
+    myMap=product.data
+    assert type(myMap).__name__=='Map'
 
     # Test Map without directory
-    data=map.data
-    map=Map('test_geo_10km',event,data,config)
-    assert map.toGeoJSON(filename='tests/testMap.geojson')
+    data=myMap.data
+    myMap=Map('test_geo_10km',event,data,config)
+    assert myMap.toGeoJSON(filename='tests/testMap.geojson')
 
     badconfig=copy.deepcopy(config)
     badconfig.executables['screenshot']='badexec'
@@ -265,7 +259,7 @@ def test_products():
 
     with pytest.raises(NameError) as exception:
         graph=Graph('badtype',event=event,data=None,config=config)
-    assert 'Graph got unknown graph type' in str(exception.value) 
+    assert 'Graph got unknown graph type' in str(exception.value)
 
     # Test when redoing graph data
     data=entries.aggregate('geo_10km')
@@ -287,14 +281,14 @@ def test_products():
 
 
 def test_container():
-  from dyfi import DyfiContainer
+  assert True
 
   # Note that individual packages will raise their own exceptions
   # no need to test here
 
   #with pytest.raises(NameError) as badAttr:
   #  container=DyfiContainer('blank')
-  #assert 'Cannot create evid' in str(badAttr.value) 
+  #assert 'Cannot create evid' in str(badAttr.value)
   
 
 

@@ -12,7 +12,7 @@ class Config:
 
     :synopsis: Handle DYFI configuration options.
     :param str configfile: YAML file with configuration options
-    
+
     .. attribute:: hash
         
         Dict of configuration sections suitable for __iter__.

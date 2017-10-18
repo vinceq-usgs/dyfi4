@@ -17,7 +17,7 @@ class Products:
 
     :synopsis: Handle product generation for an event. This calls other product generators like :py:obj:`Contents` and :py:obj:`Map`.
     :param event: :py:obj:`Event` object
-   
+
     TODO
 
     """

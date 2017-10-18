@@ -3,7 +3,6 @@
 # pytest tests/test_aux.py
 
 import pytest
-from .context import dyfi
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
@@ -11,7 +10,7 @@ configfile='tests/testconfig.yml'
 def test_aggregate():
     from dyfi import aggregate
 
-    aggregate.myCeil(17,10)==20
+    assert aggregate.myCeil(17,10)==20
 
 
 def test_ipe():

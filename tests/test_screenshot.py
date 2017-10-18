@@ -1,8 +1,5 @@
 # To run this test, you must be at the package root directory and run:
-# pytest tests/test.py
-
-import pytest
-from .context import dyfi
+# pytest tests/test_screenshot.py
 
 testid='ci37511872'
 
@@ -17,7 +14,7 @@ def test_staticmap():
     config=Config('tests/testconfig.yml')
 
     # Test that old PNG file is properly removed
-    screenshotfile='leaflet/screenshot.png' 
+    screenshotfile='leaflet/screenshot.png'
     with open(screenshotfile,'w') as tmp:
       tmp.write('Test output')
 

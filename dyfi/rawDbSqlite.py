@@ -15,7 +15,7 @@ floatcolumns=['lat','lon','mag',
               'lat_offset','lon_offset','lat_span','lon_span']
 
 class RawDb:
-    
+
     """
     
     :synopsis: Open a Sqlite connection.

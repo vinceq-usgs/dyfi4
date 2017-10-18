@@ -1,12 +1,9 @@
 # To run this test, you must be at the package root directory and run:
-# pytest tests/test.py
+# pytest tests/test_run.py
 
 import pytest
-import sys
 import os
 from argparse import Namespace
-
-from .context import bin
 
 testid='us10006u0q'
 
@@ -38,6 +35,7 @@ def test_run():
 
     with pytest.raises(NameError) as exception:
         rundyfi.main(Namespace(evid='blank',configfile='./tests/testconfig.yml'))
+    assert 'Cannot create evid' in str(exception.value)
 
     container=rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
 

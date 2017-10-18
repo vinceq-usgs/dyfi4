@@ -66,7 +66,6 @@ class Map:
 
     # Called by Product with format 'png'
     def toImage(self):
-      
         dataName=self.data['name']
 
         inputfile='%s/dyfi_%s.geojson' % (self.dir,dataName)

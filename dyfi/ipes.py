@@ -19,7 +19,7 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     Returns intensity = f(mag,r)
     If inverse is true, returns mag = f(intensity,r)
     """
-    
+
     R=math.sqrt(r**2 + 14**2)
     B=max(0,math.log(R/50,10))
                     

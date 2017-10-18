@@ -24,7 +24,7 @@ class Graph:
         :param Event event: An Event object
         :param dict mapparams: A dict of params from a eventMap
         :param dict data: Aggregated data in GeoJSON format
-        
+
     """
         
     NBINS=10 # Number of bins for mean and median data plots
@@ -320,7 +320,7 @@ class Graph:
             'eventid':event.eventid
         }
 
-    @classmethod      
+    @classmethod
     def getTimeBounds(cls,t):
 
         if t<120:

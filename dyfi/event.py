@@ -2,7 +2,7 @@
 
 Event
 =====
-        
+
 """
 
 import json
@@ -16,9 +16,9 @@ class Event:
     
     :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
     
-    .. note:: 
-        Access the data in this object with the keys in 
-        :py:obj:`columns` as attributes, e.g. `event.evid`, 
+    .. note::
+        Access the data in this object with the keys in
+        :py:obj:`columns` as attributes, e.g. `event.evid`,
         `event.region`, etc.
 
     .. data:: columns
@@ -76,8 +76,8 @@ class Event:
         
         return feature
 
-                
-    def update(self): # pragma: no cover
+    @classmethod
+    def update(cls): # pragma: no cover
         """
     
         :synopsis: Save the contents of this Event object to the DB event table.

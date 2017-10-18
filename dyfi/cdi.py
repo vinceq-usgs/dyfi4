@@ -33,7 +33,7 @@ cdiDamageValues=OrderedDict([
 
 def calculate(pts):
     """
-    
+
     :synopsis: Calculate the intensity for one entry, or list of entries.
     :param list pts: Single :py:obj:`entry` or list of entries in an aggregated area
     :returns: float

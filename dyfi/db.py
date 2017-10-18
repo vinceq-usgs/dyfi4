@@ -13,14 +13,11 @@ from .rawDbSqlite import RawDb
 
 import geojson
 import datetime
-import json
-import sys
-
 
 class Db:
     """
-    
-    :synopsis: Open a connection to access the DYFI database. 
+
+    :synopsis: Open a connection to access the DYFI database.
     :param config: Optional Config object
  
     This connection is required to run any database queries.
@@ -35,7 +32,7 @@ class Db:
         The name of the latest extended table
         (should be the current year, e.g. "extended_2016").
         
-    .. note:: To change to the database implementation to MySQL, 
+    .. note:: To change to the database implementation to MySQL,
     see the heading of the :code:`db.py` module.
                   
     """
@@ -57,7 +54,7 @@ class Db:
     def loadEvent(self,evid):
         """
         
-        :synopsis: Get data for an event. 
+        :synopsis: Get data for an event.
         :param str evid: event ID, e.g. 'us1000abcd'
         :returns: dict suitable for input to an :py:obj:`Event` instance
         
@@ -81,10 +78,10 @@ class Db:
     def loadMaps(self,evid):
         """
 
-        :synopsis: Get a list of maps for an event. 
-        :returns: list of rows suitable for input to an :py:obj:`Maps` instance 
+        :synopsis: Get a list of maps for an event.
+        :returns: list of rows suitable for input to an :py:obj:`Maps` instance
         
-        This is mostly a wrapper to :py:obj:`query`. 
+        This is mostly a wrapper to :py:obj:`query`.
         
         Each item in the return list is a dict with keys
         being columns to the maps table.
@@ -115,19 +112,19 @@ class Db:
         :returns: list of entries suitable for aggregation
 
         This is mostly a wrapper to :py:obj:`query`. It also
-        figures out which extended tables to search, 
+        figures out which extended tables to search,
         depending on the date of the event, using
         :py:obj:`getExtendedTablesByDatetime`.
             
         The optional query parameter is a string of SQL `WHERE` clauses
         (e.g. 'suspect=0 OR suspect is null').
             
-        Each item in the return list is a dict of entries from the extended tables, plus an additional key `table` that contains the name of the source extended table (see :py:obj:`query`).         
+        Each item in the return list is a dict of entries from the extended tables, plus an additional key `table` that contains the name of the source extended table (see :py:obj:`query`).
         """
 
         # First, figure out which tables to check
       
-        if table: 
+        if table:
           if table=='latest':
             table=self.latesttable
           elif table=='all':
@@ -186,15 +183,16 @@ class Db:
         self.statement=text
         print('Db: rawStatement:',text)
         return self.rawdb.execute(text)
-        
-    def timeago(self,t):
+
+    @classmethod
+    def timeago(cls,t):
         t0=datetime.datetime.now()
         tdelta=datetime.timedelta(minutes=t)
         tnew=t0-tdelta
         return(tnew)
 
-
-    def row2geojson(self,row):
+    @classmethod
+    def row2geojson(cls,row):
         lat=row['latitude']
         lon=row['longitude']
         if not lat or not lon: # pragma: no cover
@@ -205,7 +203,7 @@ class Db:
         for key,val in row.items():
             if key=='latitude' or key=='longitude':
                 continue
-            if val=='null' or val=='': 
+            if val=='null' or val=='':
                 val=None
             props[key]=val
         feature=geojson.Feature(geometry=pt,properties=props)
@@ -227,9 +225,9 @@ class Db:
         
         year=None
         if isinstance(date,str):
-          try: 
+          try:
             year=int(date[0:4])
-          except:
+          except ValueError:
             year=None
 
         elif isinstance(date,int):

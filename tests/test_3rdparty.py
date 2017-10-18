@@ -2,7 +2,6 @@
 # pytest tests/test_3rdparty.py
 
 import pytest
-from .context import dyfi
 testid='ci37511872'
 configfile='tests/testconfig.yml'
 
