@@ -37,12 +37,12 @@ class Maps():
 class Map():
     """
 
-    :synopsis: Handle parameters for a single map. 
+    :synopsis: Handle parameters for a single map.
     :param dict rawdata: raw data from one row of the maplist table
     
     .. note::
         Access the data in this object with the keys in 
-        `Maplist.columns` as attributes,  e.g. `maplist.eventid` 
+        `Maplist.columns` as attributes,  e.g. `maplist.eventid`
         or `maplist.lat_offset`.
         
     .. data:: columns

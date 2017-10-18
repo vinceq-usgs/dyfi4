@@ -38,7 +38,7 @@ def aggregate(entries,producttype):
 
     Each Feature in the FeatureCollection has the attribute:
     'id' = [UTM string]
-    
+
     and the following properties:
     
     ==========  ==========================================

@@ -26,7 +26,7 @@ class Graph:
         :param dict data: Aggregated data in GeoJSON format
 
     """
-        
+
     NBINS=10 # Number of bins for mean and median data plots
     ipelist=[ipes.aww2014wna,ipes.aww2014ena]
     graphLabels={

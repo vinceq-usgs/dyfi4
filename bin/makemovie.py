@@ -127,7 +127,7 @@ def main(args=None):
 
     print('Making movie for',args.evid)
     Movie(args)
-        
+
     exit()
 
 
