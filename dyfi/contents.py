@@ -27,7 +27,7 @@ An OrderedDict of the available formats and their corresponding MIME types.
             "id":"cityMap",
             "caption":"Map of responses by city or ZIP code"
         }),
-      ("_ciim_geo",{ 
+      ("_ciim_geo",{
             "title":"DYFI Geocoded Map",
             "id":"geoMap",
             "caption":"Map of responses by geocoded location",
@@ -132,16 +132,16 @@ An OrderedDict of the available formats and their corresponding MIME types.
         ('kmz','application/vnd.google-earth.kmz')
     ))
 
-    def __init__(self,event,dir):
+    def __init__(self,event,eventDir):
 
         self.event=event
-        self.dir=dir
+        self.dir=eventDir
         self.data=minidom.Document()
 
         xml=self.data
         root=xml.appendChild(xml.createElement('contents'))
         root.appendChild(xml.createComment('Full listing of files'))
-        
+
         # Iterate through all product types and file types
 
         for ptype,pdata in self.PRODUCT_TYPES.items():
@@ -165,7 +165,7 @@ An OrderedDict of the available formats and their corresponding MIME types.
                 else:
                     fullname=basename+'.'+filext
 
-                pathname=dir+'/'+fullname
+                pathname=eventDir+'/'+fullname
                 if not os.path.isfile(pathname):
                     continue
 

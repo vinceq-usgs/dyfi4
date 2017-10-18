@@ -1,5 +1,5 @@
 """
-rawdb
+rawDbSqlite
 =====
 
 .. note:: There are two versions of this module: :file:`rawDbSqlite.py` and :file:`rawDbMysql.py`. Change the header section of :file:`Db.py` to point to the correct implementation and make sure your :file:`db.json` file has the correct login information.
@@ -8,14 +8,13 @@ rawdb
 """
 
 import sqlite3
-import re
 
 intcolumns=['nresponses','newresponses']
 floatcolumns=['lat','lon','mag',
               'latitude','longitude',
               'lat_offset','lon_offset','lat_span','lon_span']
 
-class RawDb:    
+class RawDb:
     
     """
     
@@ -110,5 +109,6 @@ class RawDb:
         
 
     def execute(self,text):
-
+        print('Attempting execute with',self)
         raise RuntimeError('database raw execute is unsafe, not implemented')
+

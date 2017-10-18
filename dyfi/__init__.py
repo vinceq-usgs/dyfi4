@@ -1,5 +1,4 @@
-from .thirdparty import utm 
-
+from .thirdparty import utm
 from .config import Config
 from .db import Db
 from .dyfiContainer import DyfiContainer

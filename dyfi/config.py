@@ -1,11 +1,10 @@
 """
 Config
 ======
-    
+
 """
 
 import yaml
-from types import SimpleNamespace
 
 class Config:
 
@@ -32,7 +31,7 @@ class Config:
     def __init__(self,file='./config.yml'):
 
         with open(file,'r') as f:
-            configs=yaml.load(f)
+            configs=yaml.safe_load(f)
 
         self.hash={}
 
@@ -47,7 +46,7 @@ class Config:
     
     def __repr__(self):
         output=''
-        for section,val in self.hash.items():
+        for val in self.hash.values():
             output=output+'section'+':\n'
             output=output+(str(val))
 

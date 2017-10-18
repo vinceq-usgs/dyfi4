@@ -27,7 +27,7 @@ def aggregate(entries,producttype):
 
     The return value is a `GeoJSON` FeatureCollection with
     the following properties:
-    
+
     ======  ========================================
     key     value
     ======  ========================================
@@ -108,12 +108,12 @@ def aggregate(entries,producttype):
     maxcdi=0
     for location,entries in rawresults.items():
 
-        # This returns a dict with 'bounds' (type Polygon or Point) 
+        # This returns a dict with 'bounds' (type Polygon or Point)
         # and 'center' (type Point)
 
         geometry=None
         if aggregatetype=='geo':
-            geometry=getUtmCoordinatesFromString(location,resolutionMeters)        
+            geometry=getUtmCoordinatesFromString(location,resolutionMeters)
             """
         elif aggregatetype=='zip':
             geometry=getZipCoordinates(location)
@@ -122,7 +122,7 @@ def aggregate(entries,producttype):
         # Catchall if from_latlon created a valid UTM string
         # from a latlon, but to_latlon could not create a
         # bounding box.
-        if not geometry:  
+        if not geometry:
             continue # pragma: no cover
             
         props={
@@ -136,7 +136,7 @@ def aggregate(entries,producttype):
         )
         thiscdi=cdi.calculate(entries)
         if thiscdi>maxcdi:
-            maxcdi=thiscdi 
+            maxcdi=thiscdi
          
         pt.properties['intensity']=thiscdi
         features.append(pt)
@@ -181,7 +181,7 @@ def getUtmLocation(entry,span):
     except TypeError:
         return
     
-    try: 
+    try:
         loc=from_latlon(lat,lon)
     except OutOfRangeError:
         return
@@ -208,12 +208,12 @@ def getUtmCoordinatesFromString(utm,span):
     
     The return value has two keys:
 
-    ======  ========================= 
+    ======  =========================
     key     value
-    ======  ========================= 
+    ======  =========================
     center  A GeoJSON Point object
     bounds  A GeoJSON Polygon object
-    ======  ========================= 
+    ======  =========================
 
     """
     
@@ -350,11 +350,11 @@ def main(args=None):
 
     parser=argparse.ArgumentParser(
         description='Get UTM aggregation from lat/lon pair, or lat/lon from UTM string.')
-    parser.add_argument('lat', type=str, 
+    parser.add_argument('lat', type=str,
                         help='latitude OR UTM string')
-    parser.add_argument('lon', type=float,nargs='?', 
+    parser.add_argument('lon', type=float,nargs='?',
                         help='longitude')
-    parser.add_argument('span', type=str,default='geo_1km',nargs='?', 
+    parser.add_argument('span', type=str,default='geo_1km',nargs='?',
                         help='UTM span (default 1km)')
 
     args=parser.parse_args(args)

@@ -2,11 +2,8 @@
 
 DyfiContainer
 =============
-        
-"""
 
-import json
-import geojson
+"""
 
 from .config import Config
 from .event import Event
@@ -22,7 +19,7 @@ class DyfiContainer:
 
     def __init__(self,evid,configfile='config.yml'):
 
-        config=Config(configfile) 
+        config=Config(configfile)
         self.event=Event(evid,config=config)
         self.entries=Entries(evid,config=config)
         self.products=Products(self.event,self.entries,config=config)

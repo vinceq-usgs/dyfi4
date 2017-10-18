@@ -17,7 +17,6 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     """
     Implementation of Atkinson, Worden, Wald (2014)
     Returns intensity = f(mag,r)
-    
     If inverse is true, returns mag = f(intensity,r)
     """
     
@@ -29,7 +28,7 @@ def aww2014wna(mag,r,inverse=False,fine=False):
     if inverse:
         # For inverse problem, input is intensity, output is mag
         ii = mag
-        mag = (ii - C[1] - C[3]*logr - C[4]*R - C[5]*B) / (C[2] + C[6]*logr) 
+        mag = (ii - C[1] - C[3]*logr - C[4]*R - C[5]*B) / (C[2] + C[6]*logr)
         return mag
     
     mlogr = mag * logr
@@ -65,7 +64,7 @@ def aww2014ena(mag,r,inverse=False,fine=False):
         # For inverse problem, input is intensity, output is mag
         ii = mag
         mag = (ii - C[1] - ecorr - C[3]*logr - C[4]*R - C[5]*B) \
-            / (C[2] + C[6]*logr) 
+            / (C[2] + C[6]*logr)
         return mag
     
     mlogr = mag * logr

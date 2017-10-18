@@ -6,7 +6,6 @@ Products
 """
 
 import json
-import os
 import yaml
 
 from .graph import Graph
@@ -15,7 +14,7 @@ from .map import Map
 
 class Products:
     """
-    
+
     :synopsis: Handle product generation for an event. This calls other product generators like :py:obj:`Contents` and :py:obj:`Map`.
     :param event: :py:obj:`Event` object
    
@@ -31,11 +30,11 @@ class Products:
  
         self.evid=event.eventid
         self.dir='data/' + self.evid
-        self.products=[]        
+        self.products=[]
         self.data=[]
 
         with open(config.products['file']) as f:
-          self.allProducts=yaml.load(f)
+          self.allProducts=yaml.safe_load(f)
 
         
     def createAll(self):
@@ -59,7 +58,6 @@ class Products:
         if 'format' not in p:
             return count
 
-        format=p['format']
         product=Product(self,**p)
 
         if product:
@@ -74,7 +72,7 @@ class Products:
         print('Products.getDataset: Getting',dataType)
         # Reuse precomputed data if possible
 
-        matches=[x for x in self.data if 
+        matches=[x for x in self.data if
             (hasattr(x,'name') and x.name==dataType) or
             ('name' in x and x['name']==dataType)]
         if len(matches):
@@ -94,7 +92,7 @@ class Products:
 
  
     def __repr__(self):
-        text='Products:[' 
+        text='Products:['
        
         if len(self.products)<1:
             return text+']'
@@ -127,45 +125,45 @@ class Product:
         elif type=='map':
             func=Map
         elif type=='contents':
-            self.data=Contents(event=parent.event,dir=self.dir)
+            self.data=Contents(event=parent.event,eventDir=self.dir)
 
         if func:
-            self.data=func(name=name,event=parent.event,data=self.data,config=self.config,dir=self.dir)
+            self.data=func(name=name,event=parent.event,data=self.data,config=self.config,eventDir=self.dir)
 
         if format:
             self.create(format)
 
 
-    def create(self,format,filename=None):
+    def create(self,productFormat,filename=None):
 
         name=self.name
         if not filename:
-            filename='%s/%s.%s' % (self.dir,name,format)
+            filename='%s/%s.%s' % (self.dir,name,productFormat)
 
         self.filename=filename
 
         data=self.data
         product=None
 
-        if format=='json' or format=='geojson':
-            if hasattr(data,'toJSON'):            
+        if productFormat=='json' or productFormat=='geojson':
+            if hasattr(data,'toJSON'):
                 product=data.toJSON()
-            elif hasattr(data,'toGeoJSON'):            
+            elif hasattr(data,'toGeoJSON'):
                 product=data.toGeoJSON()
             else:
                 product=json.dumps(data)
 
-        elif format=='xml':
-            if hasattr(data,'toXML'):            
+        elif productFormat=='xml':
+            if hasattr(data,'toXML'):
                 product=data.toXML()
 
-        elif format=='png':
+        elif productFormat=='png':
             if hasattr(data,'toImage'):
                 data.toImage()
                 product='FILE'
 
         if not product:
-            raise NameError('Cannot save '+self.name+' as format '+format)
+            raise NameError('Cannot save '+self.name+' as format '+productFormat)
 
         if isinstance(product,str) and product!='FILE':
             with open(filename,'w') as f:

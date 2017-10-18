@@ -6,7 +6,6 @@ import csv
 from modules import PlotGraph
 
 def main():
-    
     parser=argparse.ArgumentParser(
         description='Create a dist_vs_int graph from a CSV file'
     )
@@ -72,4 +71,4 @@ def getGraphData(dictdata):
     
 if __name__=='__main__':
     main()
-    
+

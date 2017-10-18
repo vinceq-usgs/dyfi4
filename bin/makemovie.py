@@ -33,8 +33,8 @@ class Movie:
 
         evid=args.evid
         inputfile='data/%s/dyfi_%s.geojson' % (evid,args.type)
-        with open(inputfile,'r') as f:
-            data=json.load(f)
+        #with open(inputfile,'r') as f:
+        #    data=json.load(f)
 
         config=Config()
         event=Event(evid,config=config)

@@ -22,20 +22,20 @@ class Map:
 
     """
 
-    def __init__(self,name,event,data,config,dir=None):
+    def __init__(self,name,event,data,config,eventDir=None):
 
         print('Map: Creating',name,'object.')
         self.name=name
         self.event=event
         self.config=config
-        self.dir=dir
+        self.dir=eventDir
 
-        if not dir:
+        if not eventDir:
             self.dir='data/'+event.eventid
 
         data=copy.deepcopy(data)
         self.data=data
-       
+
         # Add epicenter data
         epicenter={
             'type':'Feature',
@@ -82,7 +82,7 @@ class Map:
         :returns: none
         """
 
-        leafletdir=config.directories['leaflet'] 
+        leafletdir=config.directories['leaflet']
         leafletdatafile='%s/data.js' % leafletdir
         pngfile='%s/screenshot.png' % leafletdir
         if os.path.isfile(pngfile):
@@ -95,11 +95,11 @@ class Map:
         tmpfilename=None
         with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
             tmpfilename=tmp.name
-            with open(inputfile,'r') as input:
-                tmp.write('data='+input.read()+';\n')
+            with open(inputfile,'r') as jsonText:
+                tmp.write('data='+jsonText.read()+';\n')
 
-        if (not tmpfilename 
-            or not os.path.isfile(tmpfilename) 
+        if (not tmpfilename
+            or not os.path.isfile(tmpfilename)
             or os.path.getsize(tmpfilename)<10):
             return
 
@@ -108,20 +108,20 @@ class Map:
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
 
-        out=open(leafletdir+'/tmp.stdout.txt','wb')
-        err=open(leafletdir+'/tmp.stderr.txt','wb')
-        print('Map.GeoJSONtoImage: Running subprocess with command:')
-        print(' '.join(command))
-        try:
-            subprocess.call(command,cwd=leafletdir,stdout=out,stderr=err,timeout=30)
-        except:
-            raise NameError('Something wrong with subprocess call!') 
+        with open(leafletdir+'/log.stdout.txt','wb') as logOut,open(leafletdir+'/log.stderr.txt','wb') as logErr:
 
-        print('Map.GeoJSONtoImage: ...Done.')
+            print('Map.GeoJSONtoImage: Running subprocess with command:')
+            print(' '.join(command))
 
-        shutil.copyfile(pngfile,outputfile)
-        out.close
-        err.close
+            try:
+                subprocess.call(command,cwd=leafletdir,stdout=logOut,stderr=logErr,timeout=30)
+            except:
+                raise NameError('Something wrong with subprocess call!')
+
+            print('Map.GeoJSONtoImage: ...Done.')
+
+            shutil.copyfile(pngfile,outputfile)
+
         return outputfile
 
 

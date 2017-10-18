@@ -21,7 +21,7 @@ from collections import OrderedDict
 
 cdiWeights={'felt':5,'motion':1,'reaction':1,'stand':2,
             'shelf':5,'picture':2,'furniture':3,'damage':5}
-    
+
 cdiDamageValues=OrderedDict([
     (0,['_none']),
     (0.5,['_crackmin','_crackwindows']),
@@ -52,7 +52,7 @@ def calculate(pts):
     if not isinstance(pts,list):
         pts=[pts]
         
-    totalByIndex={} 
+    totalByIndex={}
     for index in cdiWeights:
         indexTotal=0
         indexCount=0
@@ -71,19 +71,21 @@ def calculate(pts):
             # Indices with no value are not counted at all. They DO NOT have zero value!
             try:
                 val=float(val)
-            except:
+            except ValueError:
                 if val is None:
                     continue
                 # Values might have additional text. Ignore it.
                 if ' ' in val:
                     val=val.split(' ')[0]
                 val=float(val)
-                
+            except TypeError:
+                continue
+
             indexTotal+=val
             indexCount+=1
 
             
-        if indexCount: 
+        if indexCount:
             totalByIndex[index]=indexTotal/indexCount
 
     cws=0
@@ -91,11 +93,11 @@ def calculate(pts):
         cws += totalByIndex[index] * cdiWeights[index]
         
 
-    if cws <= 0: 
+    if cws <= 0:
         return 1
 
     cdi=math.log(cws) * 3.3996 - 4.3781
-    if cdi < 2: 
+    if cdi < 2:
         return 2
     
     return round(cdi,1)

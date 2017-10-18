@@ -269,7 +269,7 @@ def test_products():
 
     # Test when redoing graph data
     data=entries.aggregate('geo_10km')
-    graph=Graph('plot_atten',event=event,data=data,config=config,dir='test')
+    graph=Graph('plot_atten',event=event,data=data,config=config,eventDir='test')
     graph.getScatterData()
     graph.getDistBins()
     assert 'data' in graph.toJSON()
@@ -277,12 +277,12 @@ def test_products():
     # Test time graph
 
     data=entries.getTimes('plot_numresp')
-    graph=Graph('plot_numresp',event=event,data=data,config=config,dir='test')
+    graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
 
     # Test no time data
 
     data['data']=[]
-    graph=Graph('plot_numresp',event=event,data=data,config=config,dir='test')
+    graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
     assert graph.data['preferred_unit']=='minutes'
 
 

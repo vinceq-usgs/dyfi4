@@ -1,5 +1,4 @@
 from distutils.core import setup
-import os.path
 
 # Copied from usgs/pager repo, not yet tested
 

@@ -11,7 +11,7 @@ import datetime
 
 class Entries():
     """
-      
+
     :synopsis: Handle a collection of entries and aggregation.
     :param list rawdata: a list of raw data from the extended DB table
 
@@ -37,7 +37,6 @@ class Entries():
                 entry=row
             else:
                 entry=Entry(row)
-            subid='%s,%s' % (entry.subid,entry.table)
             self.entries.append(entry)
             count+=1
         
@@ -87,22 +86,21 @@ class Entries():
           text+=repr(entry)+'\n'
                 
         text='Entries['+text[:-1]+']'
-        return text    
+        return text
 
-        
 class Entry():
     """
 
     :synopsis: Class for handling user questionnaire responses. 
     :param dict rawdata: raw data from one row of an extended table
-    
+
     .. warning:: 
-        An Entry object contains raw data and may have PII 
+        An Entry object contains raw data and may have PII
         or invalid location data. DO NOT EXPORT `Entry` OBJECTS!
 
     .. note::
-        Access the data in this object with the keys in 
-        `Entry.columns` as attributes,  e.g. `entries.eventid` 
+        Access the data in this object with the keys in
+        `Entry.columns` as attributes,  e.g. `entries.eventid`
         or `event.felt`.
         
     .. data:: columns

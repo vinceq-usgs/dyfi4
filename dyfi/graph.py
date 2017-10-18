@@ -42,14 +42,14 @@ class Graph:
         }
         
         
-    def __init__(self,name,event,data,config=None,dir=None,title=None,parent=None):
+    def __init__(self,name,event,data,config=None,eventDir=None,title=None,parent=None):
 
         print('Graph: Creating',name,'object.')
 
         self.name=name
         self.event=event
         self.config=config
-        self.dir=dir
+        self.dir=eventDir
         self.rawdata=copy.deepcopy(data)
         self.data=None
         self.datasets=None
@@ -62,7 +62,7 @@ class Graph:
             self.getDataTime()
             
         else:
-            raise NameError('ERROR: Graph got unknown graph type '+name) 
+            raise NameError('ERROR: Graph got unknown graph type '+name)
 
         self.title=title if title else self.getTitle()
         
@@ -70,7 +70,6 @@ class Graph:
 # TODO: Put this in separate function
 
     def getDataDistance(self):
-        event=self.event
         rawdata=self.rawdata
       
         d=[]
@@ -183,7 +182,7 @@ class Graph:
         for pt in scatterdata['data']:
             x=pt['x']
             y=pt['y']
-            xbin=int(np.digitize(pt['x'],xspace))
+            xbin=int(np.digitize(x,xspace))
 
             if xbin in bindata:
                 bindata[xbin].append(y)
@@ -242,7 +241,6 @@ class Graph:
 
     
     def getDistBins(self):
-        
         if hasattr(self,'distBins'):
             return self.distBins
         
@@ -321,8 +319,9 @@ class Graph:
             'preferred_conversion':prefConversion,
             'eventid':event.eventid
         }
-          
-    def getTimeBounds(self,t):
+
+    @classmethod      
+    def getTimeBounds(cls,t):
 
         if t<120:
             unit='minutes'

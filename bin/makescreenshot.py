@@ -7,22 +7,18 @@ makescreenshot.py
 Command line tool to create a .png static image from DYFI
 aggregated GeoJSON data.
 
-Usage: 
+Usage:
 bin/makescreenshot.py GeoJSON file --output file.png
 This attempts to create an image file from a GeoJSON file.
 
 """
 
 import argparse
-import json
-from geojson import Feature,Point
-import subprocess
 import os
-import shutil
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from dyfi import Db,Event,Map,Config
+from dyfi import Config,Map
 
 def main(args=None):
 
