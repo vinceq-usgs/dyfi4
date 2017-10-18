@@ -1,7 +1,7 @@
 Introduction to Did You Feel It? (DYFI) 
 ---------------------------------------
 
-|Travis| |CodeCov|
+|Travis| |CodeCov| |Codacy|
 
 .. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=master
     :target: https://travis-ci.org/vinceq-usgs/dyfi4
@@ -9,6 +9,9 @@ Introduction to Did You Feel It? (DYFI)
 .. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/vinceq-usgs/dyfi4
     :alt: Code Coverage Status
+.. |Codacy| image:: https://api.codacy.com/project/badge/Grade/cc5a3a34ef56478e897414ab5472d5dc    
+    :target: https://www.codacy.com/app/vinceq-usgs/dyfi4?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=vinceq-usgs/dyfi4&amp;utm_campaign=Badge_Grade
+    :alt: Codacy Grade
 
 `Did You Feel It? (DYFI)` collects information from people who felt an earthquake and creates a map that shows the felt level of shaking in the area around the epicenter.
 
