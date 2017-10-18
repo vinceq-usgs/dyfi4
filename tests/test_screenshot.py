@@ -24,7 +24,7 @@ def test_staticmap():
 
     output=Map.GeoJSONtoImage(blankfile,'/bad_directory',config)
     assert output==None
- 
+
     output=Map.GeoJSONtoImage(infile,outfile,config)
     assert output==outfile
     assert os.path.isfile(output)

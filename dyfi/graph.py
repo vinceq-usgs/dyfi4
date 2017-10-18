@@ -57,24 +57,24 @@ class Graph:
 
         if 'plot_atten' in name:
             self.getDataDistance()
-        
+
         elif 'plot_numresp' in name:
             self.getDataTime()
-            
+
         else:
             raise NameError('ERROR: Graph got unknown graph type '+name)
 
         self.title=title if title else self.getTitle()
-        
+
 # Methods for plot_atten
 # TODO: Put this in separate function
 
     def getDataDistance(self):
         rawdata=self.rawdata
-      
+
         d=[]
         self.datasets=d
-       
+
         self.params={
             'aggregatetype':rawdata['id'],
             'min_x':1,
@@ -88,7 +88,7 @@ class Graph:
         #    self.params['min_x']=rawdata.min_x
         #if hasattr(rawdata,'max_x'):
         #    self.params['max_x']=rawdata.max_x
-            
+
         # Add scatter data from aggregated entries
 
         scatterdata=self.getScatterData()
@@ -103,12 +103,12 @@ class Graph:
             'ylabel':'Intensity (MMI)',
             'title':'Intensity vs. Distance Plot'
         }
-            
-            
+
+
     def getScatterData(self):
         event=self.event
         rawdata=self.rawdata
-   
+
         datasets=[x for x in self.datasets if x['id']=='scatterdata']
         if len(datasets)>0:
             return datasets[0]
@@ -135,7 +135,7 @@ class Graph:
             }
 
         return scatterdata
-        
+
 
     def getIpeData(self,ipelist=None):
         mag=self.event.mag
@@ -146,22 +146,22 @@ class Graph:
             ipelist=self.ipelist
 
         multipleipes=[]
-        
+
         counter=0
         for ipe in ipelist:
             counter+=1
-            
+
             ipedata=[]
             xspace=np.logspace(
                 np.log10(min_x),
                 np.log10(max_x),
                 num=50
                 )
-            
+
             ipedata=[{'x':float('%.2f' % (x)),
                       'y':float('%.2f' % (ipe(mag,x,fine=True)))
                       } for x in xspace]
-            
+
             dataset={
                 'id':'ipe_'+ipe.name,
                 'legend':ipe.name,
@@ -169,10 +169,10 @@ class Graph:
                 'data':ipedata
             }
             multipleipes.append(dataset)
-        
+
         return multipleipes
 
-    
+
     def getMeanMedianData(self,scatterdata):
 
         # Create distance bins in log space and fill them
@@ -200,7 +200,7 @@ class Graph:
 
             xcenter=math.sqrt(xspace[n-1]*xspace[n])
             ydata=bindata[n]
-                
+
             # Create median dataset
             medianpt={
                 'x':round(xcenter,1),
@@ -209,9 +209,9 @@ class Graph:
                 'max_x':round(xspace[n],1)
                 }
             medians.append(medianpt)
-            
+
             # Create mean dataset
-            
+
             if len(ydata)>1:
                 y_stdev=stdev(ydata)
             else:
@@ -225,7 +225,7 @@ class Graph:
                 'stdev':round(y_stdev,1)
                 }
             means.append(meanpt)
-                          
+
         return [{
             'id':'meanBinned',
             'legend':'Mean intensity in bin',
@@ -239,11 +239,11 @@ class Graph:
             'data':medians
             }]
 
-    
+
     def getDistBins(self):
         if hasattr(self,'distBins'):
             return self.distBins
-        
+
         min_x=self.params['min_x']
         max_x=self.params['max_x']
 
@@ -259,18 +259,18 @@ class Graph:
         event=self.event
         line1='USGS DYFI: %s' % (event.loc)
         line2='ID:%s' % (event.eventid)
-                                                 
+
         title=[line1,line2]
         return title
-        
-    
+
+
 # Methods for plot_numresp
 # TODO: Put this in separate function
 
     def getDataTime(self):
         event=self.event
         rawdata=self.rawdata
-     
+
         d=[]
         self.datasets=d
         eventTime=event.eventDateTime
@@ -342,4 +342,4 @@ class Graph:
     def toJSON(self):
         return json.dumps(self.data,sort_keys=True,indent=2)
 
- 
+

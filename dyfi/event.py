@@ -36,7 +36,7 @@ class Event:
              'max_intensity','code_version','event_version',
              'createdtime','process_timestamp','orig_id']
 
-    
+
     def __init__(self,data,config=None):
 
         if isinstance(data,str):
@@ -46,17 +46,17 @@ class Event:
 
         elif isinstance(data,dict):
           evid=data['eventid']
-    
+
         if not data:
             raise NameError('Event: Cannot create evid with no data')
-       
+
         self.raw=data
- 
+
         for column in self.columns:
             if column in data:
                 self.__dict__[column]=data[column]
 
-                
+
     def toGeoJSON(self):
         props={}
         rawdata=self.raw
@@ -67,27 +67,27 @@ class Event:
                 longitude=val
             else:
                 props[key]=val
-        
+
         feature=geojson.Feature(
             geometry=geojson.Point((latitude,longitude)),
             properties=props,
             id=rawdata['eventid']
             )
-        
+
         return feature
 
     @classmethod
     def update(cls): # pragma: no cover
         """
-    
+
         :synopsis: Save the contents of this Event object to the DB event table.
         :returns: none
-        
+
         """
-   
+
         print('TODO: Event.update: disabled for now')
         return
- 
+
 
     # Generic getattr method for parameters (no setattr)
 
@@ -102,12 +102,12 @@ class Event:
 
         if name not in self.columns:
             raise NameError('ERROR: Event got bad column '+name)
-           
- 
+
+
     def __str__(self):
         return '[Event: %s M%s %s %s]' % (self.eventid,self.mag,self.loc,self.eventdatetime)
 
-  
+
     def __repr__(self):
         rawlist=[]
         for column in self.columns:

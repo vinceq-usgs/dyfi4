@@ -19,7 +19,7 @@ class Db:
 
     :synopsis: Open a connection to access the DYFI database.
     :param config: Optional Config object
- 
+
     This connection is required to run any database queries.
     The database is currently implemented in SQLite.
 
@@ -50,14 +50,14 @@ class Db:
         self.latesttable=self.exttables[-1]
         self.event=''
 
-           
+
     def loadEvent(self,evid):
         """
-        
+
         :synopsis: Get data for an event.
         :param str evid: event ID, e.g. 'us1000abcd'
         :returns: dict suitable for input to an :py:obj:`Event` instance
-        
+
         This is mostly a wrapper to :py:obj:`query`.
 
         """
@@ -70,22 +70,22 @@ class Db:
 
         if len(results)>1: # pragma: no cover
             warnings.warn(UserWarning('Multiple events found, using only the first'))
-            
+
         results=results[0]
         return results
-    
-    
+
+
     def loadMaps(self,evid):
         """
 
         :synopsis: Get a list of maps for an event.
         :returns: list of rows suitable for input to an :py:obj:`Maps` instance
-        
+
         This is mostly a wrapper to :py:obj:`query`.
-        
+
         Each item in the return list is a dict with keys
         being columns to the maps table.
-        
+
         """
 
         table='maps'
@@ -97,12 +97,12 @@ class Db:
         # We expect multiple rows
         return results
 
-    
+
     def loadEntries(self,evid=None,event=None,
                     table=None,startdatetime=None,
                     querytext=None):
         """
-        
+
         :synopsis: Search the extended tables for entries matching a query.
         :param str evid: optional eventid
         :param Event event: optional Event object
@@ -115,15 +115,15 @@ class Db:
         figures out which extended tables to search,
         depending on the date of the event, using
         :py:obj:`getExtendedTablesByDatetime`.
-            
+
         The optional query parameter is a string of SQL `WHERE` clauses
         (e.g. 'suspect=0 OR suspect is null').
-            
+
         Each item in the return list is a dict of entries from the extended tables, plus an additional key `table` that contains the name of the source extended table (see :py:obj:`query`).
         """
 
         # First, figure out which tables to check
-      
+
         if table:
           if table=='latest':
             table=self.latesttable
@@ -131,7 +131,7 @@ class Db:
             table=self.exttables
           elif 'extended_'+table in self.exttables:
             table='extended_'+table
-            
+
         elif not table:
             if startdatetime:
                 table=self.getExtendedTablesByDatetime(startdatetime)
@@ -140,9 +140,9 @@ class Db:
             else:
                 print('Db: WARNING: db.loadEntries using latest table only')
                 table=self.latesttable
-            
+
         # Second, figure out which eventid to query
-     
+
         myclauses=[]
 
         if querytext:
@@ -153,33 +153,33 @@ class Db:
 
         if evid:
             myclauses.append('eventid="%s"' % (evid))
-            
+
         if startdatetime:
             myclauses.append('time_now>="%s"' % (startdatetime))
-            
+
         # Finally, combine queries
 
         if myclauses:
             querytext=' AND '.join(myclauses)
-            
+
         results=self.rawdb.query(table,querytext)
         return results
-               
-                
+
+
     def rawStatement(self,text):
         """
-        
+
         :synopsis: Simplest SQL query with the raw query string, no formatting.
-        
+
         :param str text: SQL query string
         :returns: list
-        
+
         Use this in case an application needs to do low-level SQL operations.
-        
+
         The return value is a list of table rows, where each row is a dict.
-       
+
         """
-        
+
         self.statement=text
         print('Db: rawStatement:',text)
         return self.rawdb.execute(text)
@@ -209,10 +209,10 @@ class Db:
         feature=geojson.Feature(geometry=pt,properties=props)
         return(feature)
 
-    
+
     def getExtendedTablesByDatetime(self,date):
         """
-        
+
         :synopsis: Get a list of extended tables for a given date.
         :param date: any date
         :param type: datetime or str or int
@@ -220,9 +220,9 @@ class Db:
 
         Use this method to determine which extended tables
         to search for entries associated to an event.
-        
+
         """
-        
+
         year=None
         if isinstance(date,str):
           try:
@@ -234,16 +234,16 @@ class Db:
             year=date
         elif hasattr(date,'year'):
             year=date.year
-            
+
         if not year:
             raise NameError('ERROR: getExtendedTablesByDatetime: Bad year in '+date)
-                    
+
         if year<self.EXT_MINYR:
             return self.exttables
-        
+
         return self.exttables[(year-self.EXT_MINYR+1)::]
 
-    
+
 # End of function defs
 
 # Not tested yet
@@ -279,7 +279,4 @@ if __name__=='__main__': # pragma: no cover
         results=db.rawStatement(args.query)
 
     print(results)
-
-
-    
 
