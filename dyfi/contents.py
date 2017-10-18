@@ -174,9 +174,9 @@ An OrderedDict of the available formats and their corresponding MIME types.
 
             if not found:
                 continue
-            
+
             # Some files were found. Attach node now.
-           
+
             root.appendChild(filenode)
 
             for filetype in found:

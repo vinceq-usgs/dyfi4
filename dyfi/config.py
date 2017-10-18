@@ -14,18 +14,18 @@ class Config:
     :param str configfile: YAML file with configuration options
 
     .. attribute:: hash
-        
+
         Dict of configuration sections suitable for __iter__.
-        
+
 
     Usage:
-    
+
     from dyfi import Config
     config=Config(someyamlfile)
     config=Config() # defaults to ./config.yml
-    
+
     recipient=config.mail['to']
-    
+
 """
 
     def __init__(self,file='./config.yml'):
@@ -41,9 +41,11 @@ class Config:
             self.hash[key]=val
             setattr(self,key,val)
 
+
     def __iter__(self):
         return iter(self.hash.keys())
-    
+
+
     def __repr__(self):
         output=''
         for val in self.hash.values():

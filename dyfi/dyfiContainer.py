@@ -14,7 +14,7 @@ class DyfiContainer:
     """
 
     :synopsis: Class for handling DyfiContainer objects. This holds all DYFI data about a particular earthquake (event data, entries, aggregated intensities, and products).
-    
+
     """
 
     def __init__(self,evid,configfile='config.yml'):

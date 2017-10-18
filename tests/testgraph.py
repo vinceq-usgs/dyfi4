@@ -43,7 +43,7 @@ class Simple:
 
 def getEventData(name):
     event=Simple()
-    
+
     return event
 
 def getGraphData(dictdata):

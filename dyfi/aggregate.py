@@ -40,7 +40,7 @@ def aggregate(entries,producttype):
     'id' = [UTM string]
 
     and the following properties:
-    
+
     ==========  ==========================================
     key         value
     ==========  ==========================================
@@ -49,11 +49,11 @@ def aggregate(entries,producttype):
     nresp       number of responses in this location
     intensity   aggregated intensity for this location
     ==========  ==========================================
- 
+
     """
-    
+
     # producttype is either 'geo_1km', '10km', or 'zip'
-    
+
     aggregator=None
 
     if 'geo' in producttype:
@@ -78,27 +78,27 @@ def aggregate(entries,producttype):
 
     if not aggregator:
         raise ValueError('Aggregate: got unknown type '+producttype)
-        
+
     print('aggregate: producttype is',producttype)
     npts=len(entries)
     print('Aggregate: Got',npts,'entries, aggregating.')
 
     # Loop through each entry. For each entry, figure out which bin it belongs
-    
+
     rawresults={}
     ignored=0
     for entry in entries:
         location=aggregator(entry,resolutionMeters)
-        
+
         # location is now either a UTM or ZIP (string)
         # TODO: Filter based on precision of the input coords
         if not location:
             ignored=ignored+1
             continue
-        
+
         if location not in rawresults:
             rawresults[location]=[]
-            
+
         rawresults[location].append(entry)
 
     # Now each location has geographic information.
@@ -124,7 +124,7 @@ def aggregate(entries,producttype):
         # bounding box.
         if not geometry:
             continue # pragma: no cover
-            
+
         props={
             'nresp':len(entries),
             'center':geometry['center']
@@ -137,7 +137,7 @@ def aggregate(entries,producttype):
         thiscdi=cdi.calculate(entries)
         if thiscdi>maxcdi:
             maxcdi=thiscdi
-         
+
         pt.properties['intensity']=thiscdi
         features.append(pt)
 
@@ -145,7 +145,7 @@ def aggregate(entries,producttype):
         features=features,id=producttype)
 
     # TODO: Add featurecollection properties maxIntensity, nresp
-    
+
     print('Aggregate: %i pts into %i locations' %
           (npts,len(features)))
     if ignored:
@@ -158,29 +158,29 @@ def aggregate(entries,producttype):
 
 def getUtmLocation(entry,span):
     """
-    
+
     :synopsis: Find the UTM location for an entry.
     :param entry: The :py:obj:`entry` object to locate
     :param str res: 'geo_10km', 'geo_1km', or the size of the UTM box in meters
     :return: UTM string with the correct resolution
-    
+
     This will NOT filter the location based on
     precision of the input coordinates.
-    
+
     """
-    
+
     if isinstance(span,str):
         if span=='geo_1km' or span=='1km':
             span=1000
         else:
             span=10000
-    
+
     try:
         lat=float(entry.latitude)
         lon=float(entry.longitude)
     except TypeError:
         return
-    
+
     try:
         loc=from_latlon(lat,lon)
     except OutOfRangeError:
@@ -200,12 +200,12 @@ def getUtmLocation(entry,span):
 
 def getUtmCoordinatesFromString(utm,span):
     """
-    
+
     :synopsis: Get the bounding polygon and center from a UTM string.
     :param str utm: A UTM string
     :param str span: The size of the UTM box in meters
     :return: dict
-    
+
     The return value has two keys:
 
     ======  =========================
@@ -216,14 +216,14 @@ def getUtmCoordinatesFromString(utm,span):
     ======  =========================
 
     """
-    
+
     x,y,zone,zoneletter=utm.split()
     x=int(x)
     y=int(y)
     zone=int(zone)
 
     # Compute bounds
-    
+
     # Need to reverse-tuple here because to_latlon returns
     # lat/lon and geojson requires lon/lat
 
@@ -234,16 +234,16 @@ def getUtmCoordinatesFromString(utm,span):
         x=round(x,PRECISION)
         y=round(y,PRECISION)
         return (y,x)
-    
+
     p1=_sanitize(to_latlon(x,y,zone,zoneletter))
     p2=_sanitize(to_latlon(x,y+span,zone,zoneletter))
     p3=_sanitize(to_latlon(x+span,y+span,zone,zoneletter))
     p4=_sanitize(to_latlon(x+span,y,zone,zoneletter))
 
     bounds=geojson.Polygon([[p1,p2,p3,p4,p1]])
-    
+
     # Compute center
-    
+
     cx=int(x)+span/2
     cy=int(y)+span/2
     clat,clon=to_latlon(cx,cy,zone,zoneletter)
@@ -252,54 +252,54 @@ def getUtmCoordinatesFromString(utm,span):
     clon=round(clon,PRECISION)
 
     center=geojson.Point((clon,clat))
-    
+
     return ({'center':center,'bounds':bounds})
 
 """
 
 def getZipLocation(entry,resolution):
-    
+
     :synopsis: Find the ZIP code of an entry.
     :param entry: The :py:obj:`Entry` object to locate
     :param resolution: (ignored)
     :return: The ZIP code (in str format)
-    
+
     This reads the 'zip' attribute of the Entry object.
-    If that is blank, it checks for a :code:`citydb` that has 
+    If that is blank, it checks for a :code:`citydb` that has
     the :code:`zip` database.
     If it is, then this returns the :code:`cityid` value.
-    
+
     Finally, if neither exists, create a 'city' circle instead.
-    
-    
+
+
     if entry.zip:
         return entry.zip
-    
+
     if entry.citydb:
         return '%s:%s' % (entry.citydb,entry.cityid)
-    
-    
+
+
 def getZipCoordinates(location):
-    
+
     :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
     :param str utm: A UTM string
     :param str span: The size of the UTM box in meters
     :return: dict
-    
+
     The return value has two keys:
 
-    ======  ========================= 
+    ======  =========================
     key     value
-    ======  ========================= 
+    ======  =========================
     center  A GeoJSON Point object
     bounds  A GeoJSON Polygon object
-    ======  ========================= 
+    ======  =========================
 
 
     # TODO: Look up ZIP code or cityid coordinates
     # Disabled for now
     return
-    
+
 """
 
 #----------------------------------
@@ -308,36 +308,36 @@ def getZipCoordinates(location):
 
 def myFloor(x,multiple):
     """
-    
+
     :synopsis: Round down to a multiple of 10/100/etc.
     :param float x: A number
     :param int multiple: Power of 10 indicating how many places to round
     :returns: int
-    
+
     This emulates the `math.floor` function but
     rounding down more than 1 (i.e. 10, 100, 1000...)
 
     For example, myFloor(1975,100) returns 1900.
-   
+
     """
-    
+
     y=x/multiple
     return int(math.floor(y) * multiple)
 
 
 def myCeil(x,multiple):
     """
-    
+
     :synopsis: Round up to a multiple of 10/100/etc.
     :param float x: A number
     :param int multiple: Power of 10 indicating how many places to round
     :returns: int
-    
+
     This emulates the `math.ceil` function but
     rounding to more than 1 (i.e. 10, 100, 1000...)
 
     For example, myCeil(1975,100) returns 2000.
-    
+
     """
 
     return int(math.ceil(x/multiple) * multiple)
@@ -372,12 +372,12 @@ def main(args=None):
     args.lon=float(args.lon)
     if args.lat>90 or args.lat<-90:
         raise ValueError('Latitude out of bounds (inputs must be lat lon [span])')
-    
+
     from dyfi import Entry
     agg=getUtmLocation(
         Entry({'latitude':args.lat,'longitude':args.lon}),
         args.span)
-    
+
     print('UTM for this lat/lon pair (span:'+args.span+') is:',agg)
     return agg
 

@@ -22,21 +22,21 @@ class Db:
  
     This connection is required to run any database queries.
     The database is currently implemented in SQLite.
-    
+
     .. data:: exttables
-    
+
         A list of all the extended tables.
-    
+
     .. data:: latesttable
-    
+
         The name of the latest extended table
         (should be the current year, e.g. "extended_2016").
-        
+
     .. note:: To change to the database implementation to MySQL,
     see the heading of the :code:`db.py` module.
-                  
+
     """
-    
+
     # TODO: generalize this for all available years
     EXT_MINYR=2015;
     EXT_MAXYR=2016;

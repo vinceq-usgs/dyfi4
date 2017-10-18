@@ -17,22 +17,22 @@ floatcolumns=['lat','lon','mag',
 class RawDb:
 
     """
-    
+
     :synopsis: Open a Sqlite connection.
     :param str dbparams: The name of a Config object (see config.py).
-    
+
     """
     def __init__(self,dbparams):
-        
+
         self.dbfiles=dbparams['files']
         self.cursors={}
 
-        
+
     def getcursor(self,table):
-        
+
         if table in self.cursors:
             return self.cursors[table]
-        
+
         if 'extended' in table:
             tablefile=self.dbfiles['extended']
             tablefile=tablefile.replace('__EXTENDED__',table)
@@ -43,17 +43,17 @@ class RawDb:
         else:
             raise NameError('getcursor could not find table '+table)
 
-            
+
         print('RawDb: Connecting to file',tablefile)
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
         cursor=connector.cursor()
         print('RawDb: Creating cursor for',table)
         self.cursors[table]=cursor
-        
+
         return cursor
-        
-        
+
+
     def query(self,tables,clause):
 
         results=[]
@@ -63,15 +63,15 @@ class RawDb:
 
         if isinstance(tables,str):
             tables=[tables]
-            
+
         for table in tables:
             tableresults=self.querySingleTable(table,clause)
             if tableresults:
                 results.extend(tableresults)
-            
+
         return results
-        
-        
+
+
     def querySingleTable(self,table,clause):
 
         c=self.getcursor(table)
@@ -87,7 +87,7 @@ class RawDb:
             # Sqlite data is a Row object, this is how you
             # turn it into a dict:
             rowdict=dict(zip(row.keys(),row))
-            
+
             # Now convert certain columns to float or int
             for col,val in rowdict.items():
                 if val is None:
@@ -96,7 +96,7 @@ class RawDb:
                     rowdict[col]=int(val)
                 elif col in floatcolumns:
                     rowdict[col]=float(val)
-            
+
             # Now make a list
             rowdict['table']=table
             results.append(rowdict)
@@ -106,7 +106,7 @@ class RawDb:
 
         # results is now a list of dicts
         return results
-        
+
 
     def execute(self,text):
         print('Attempting execute with',self)

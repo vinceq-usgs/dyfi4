@@ -43,7 +43,7 @@ def main(args=None):
         '--configfile',action='store',default='./config.yml',
         help='Specify config file'
     )
- 
+
     if not args:
       args=parser.parse_args()
     print(repr(args))
@@ -59,7 +59,7 @@ def main(args=None):
 
     print('Done with',evid)
     return container
-            
+
 
 if __name__=='__main__':
     main()

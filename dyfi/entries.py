@@ -71,7 +71,7 @@ class Entries():
     def __iter__(self):
         return self.entries.__iter__()
 
-    
+
     def __str__(self):
         text='[Entries: evid:%s, responses:%i]' % (
             self.evid,len(self.entries))
@@ -83,7 +83,7 @@ class Entries():
         text=''
         for entry in self.entries:
           text+=repr(entry)+'\n'
-                
+
         text='Entries['+text[:-1]+']'
         return text
 
@@ -101,17 +101,17 @@ class Entry():
         Access the data in this object with the keys in
         `Entry.columns` as attributes,  e.g. `entries.eventid`
         or `event.felt`.
-        
+
     .. data:: columns
-    
+
         A list of all the columns in the extended tables.
-        
+
     .. data:: cdicolumns
-    
+
         A subset of extended columns used for intensity calculation.
 
     """
-    
+
     columns=[
         'subid','eventid','orig_id','suspect',
         'region','usertime','time_now',
@@ -149,14 +149,14 @@ class Entry():
             self.subid,self.user_cdi)
         return text
 
- 
+
     def __repr__(self):
         text=''
         for column in ('subid','user_cdi'):
             if column in self.__dict__:
                 val=str(self.__dict__[column])
                 text=text+column+':'+val+','
-                
+
         text='Entry('+text[:-1]+')'
         return text
 

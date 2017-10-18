@@ -21,13 +21,13 @@ class Products:
     TODO
 
     """
- 
+
     def __init__(self,event,entries,config):
         self.event=event
         self.maps=None
         self.entries=entries
         self.config=config
- 
+
         self.evid=event.eventid
         self.dir='data/' + self.evid
         self.products=[]
@@ -36,7 +36,7 @@ class Products:
         with open(config.products['file']) as f:
           self.allProducts=yaml.safe_load(f)
 
-        
+
     def createAll(self):
 
         count=0
@@ -44,7 +44,7 @@ class Products:
             created=self.create(p)
             if created:
                 count+=created
-                
+
         return count
 
 
@@ -63,9 +63,9 @@ class Products:
         if product:
             self.products.append(product)
             count+=1
-     
+
         return count
-   
+
 
     def getDataset(self,dataType):
 
@@ -90,19 +90,19 @@ class Products:
         self.data.append(data)
         return data
 
- 
+
     def __repr__(self):
         text='Products:['
-       
+
         if len(self.products)<1:
             return text+']'
-     
+
         names=[]
         for product in self.products:
             names.append('Product:['+product.name+']')
 
         return text+','.join(names)+']'
-   
+
 
 class Product:
 
@@ -115,7 +115,7 @@ class Product:
         self.name=name
         self.config=parent.config
         self.data=None
-       
+
         if dataset:
             self.data=parent.getDataset(dataset)
 

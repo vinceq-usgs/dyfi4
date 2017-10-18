@@ -40,8 +40,8 @@ class Graph:
             'ylabel':'Time (sec)',
             }
         }
-        
-        
+
+
     def __init__(self,name,event,data,config=None,eventDir=None,title=None,parent=None):
 
         print('Graph: Creating',name,'object.')
