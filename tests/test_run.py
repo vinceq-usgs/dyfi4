@@ -29,7 +29,7 @@ def test_aggregate():
 
 
 def test_run():
-    from bin import rundyfi
+    from app import rundyfi
 
     os.makedirs('data/'+testid,exist_ok=True)
 
