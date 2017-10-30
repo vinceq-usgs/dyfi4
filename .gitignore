@@ -29,4 +29,4 @@ tests/data/*.png
 testdyfi
 screenshot.png
 setup_env.sh.disabled
-
+log.*
