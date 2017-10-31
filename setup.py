@@ -9,5 +9,5 @@ setup(name='dyfi',
       author_email='vinceq@usgs.gov',
       url='',
       packages=['dyfi'],
-      scripts=['app/rundyfi.py','app/makescreenshot.py','makemovie.py']
+      scripts=['app/rundyfi.py','app/makescreenshot.py','app/makemovie.py']
 )
