@@ -15,8 +15,7 @@ import datetime
 import copy
 import apng
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
 from dyfi import Event,Config,Entries,Products,Product
 
 class Movie:
