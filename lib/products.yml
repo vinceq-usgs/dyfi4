@@ -8,7 +8,7 @@
 
 - name: map_geo_1km
   dataset: geo_1km
-  pType: map
+  type: map
   format: png
 
 - name: dyfi_geo_10km
@@ -17,23 +17,23 @@
 
 - name: map_geo_10km
   dataset: geo_10km
-  pType: map
+  type: map
   format: png
 
 - name: dyfi_plot_atten
-  pType: graph
+  type: graph
   dataset: geo_10km
   format: json
 
 - name: dyfi_plot_numresp
-  pType: graph
+  type: graph
   dataset: time
   format: json
 
 # Special format that uses this file to generate contents.xml
 # This must be made last, since it checks the event directory for files
 - name: contents
-  pType: contents
+  type: contents
   format: xml
 
 

@@ -231,12 +231,12 @@ def test_products():
     assert 'Unknown datatype' in str(exception.value)
 
     with pytest.raises(NameError) as exception:
-        Product(products,name='test',format='bad')
+        Product(products,name='test',productFormat='bad')
     assert 'Cannot save' in str(exception.value)
 
     # Test Map blank directory, GeoJSON output
     products.dir=None
-    product=Product(products,name='testmap',dataset='geo_10km',pType='map')
+    product=Product(products,name='testmap',dataset='geo_10km',productType='map')
     product.create('geojson','tests/testProduct.geojson')
     myMap=product.data
     assert type(myMap).__name__=='Map'

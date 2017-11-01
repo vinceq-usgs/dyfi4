@@ -50,15 +50,24 @@ class Products:
 
     # Create a particular Product object using the parameters in p
     # This will compute the data specified in p['dataset'], if necessary
-    # Creating a Product object also creates the thing specified by 'format'
+    # Creating a Product object also creates the thing specified by 'productFormat'
 
     def create(self,p):
 
         count=0
-        if 'format' not in p:
+        params=dict()
+        for k,v in p.items():
+            if k=='type':
+                params['productType']=v
+            elif k=='format':
+                params['productFormat']=v
+            else:
+                 params[k]=v
+
+        if 'productFormat' not in params:
             return count
 
-        product=Product(self,**p)
+        product=Product(self,**params)
 
         if product:
             self.products.append(product)
@@ -106,7 +115,7 @@ class Products:
 
 class Product:
 
-    def __init__(self,parent,name,dataset=None,pType=None,format=None):
+    def __init__(self,parent,name,dataset=None,productType=None,productFormat=None):
 
         print('Product: initializing',name)
         self.parent=parent
@@ -120,18 +129,18 @@ class Product:
             self.data=parent.getDataset(dataset)
 
         func=None
-        if pType=='graph':
+        if productType=='graph':
             func=Graph
-        elif pType=='map':
+        elif productType=='map':
             func=Map
-        elif pType=='contents':
+        elif productType=='contents':
             self.data=Contents(event=parent.event,eventDir=self.dir)
 
         if func:
             self.data=func(name=name,event=parent.event,data=self.data,config=self.config,eventDir=self.dir)
 
-        if format:
-            self.create(format)
+        if productFormat:
+            self.create(productFormat)
 
 
     def create(self,productFormat,filename=None):
