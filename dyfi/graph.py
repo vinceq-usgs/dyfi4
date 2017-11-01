@@ -242,7 +242,8 @@ class Graph:
 
     def getDistBins(self):
         if hasattr(self,'distBins'):
-            return self.distBins
+            bins=self.distBins
+            return bins
 
         min_x=self.params['min_x']
         max_x=self.params['max_x']
