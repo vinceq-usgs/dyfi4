@@ -228,7 +228,7 @@ def test_products():
 
     with pytest.raises(NameError) as exception:
         Product(products,name='blank',dataset='bad')
-    assert 'Unknown data type' in str(exception.value)
+    assert 'Unknown datatype' in str(exception.value)
 
     with pytest.raises(NameError) as exception:
         Product(products,name='test',format='bad')
@@ -236,7 +236,7 @@ def test_products():
 
     # Test Map blank directory, GeoJSON output
     products.dir=None
-    product=Product(products,name='testmap',dataset='geo_10km',type='map')
+    product=Product(products,name='testmap',dataset='geo_10km',pType='map')
     product.create('geojson','tests/testProduct.geojson')
     myMap=product.data
     assert type(myMap).__name__=='Map'

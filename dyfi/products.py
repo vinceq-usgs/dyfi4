@@ -85,7 +85,7 @@ class Products:
             data=self.entries.getTimes(dataType)
 
         else:
-            raise NameError('Unknown data type '+dataType)
+            raise NameError('Unknown datatype '+dataType)
 
         self.data.append(data)
         return data
@@ -106,7 +106,7 @@ class Products:
 
 class Product:
 
-    def __init__(self,parent,name,dataset=None,type=None,format=None):
+    def __init__(self,parent,name,dataset=None,pType=None,format=None):
 
         print('Product: initializing',name)
         self.parent=parent
@@ -120,11 +120,11 @@ class Product:
             self.data=parent.getDataset(dataset)
 
         func=None
-        if type=='graph':
+        if pType=='graph':
             func=Graph
-        elif type=='map':
+        elif pType=='map':
             func=Map
-        elif type=='contents':
+        elif pType=='contents':
             self.data=Contents(event=parent.event,eventDir=self.dir)
 
         if func:
