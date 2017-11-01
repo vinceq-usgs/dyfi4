@@ -136,10 +136,11 @@ An OrderedDict of the available formats and their corresponding MIME types.
 
         self.event=event
         self.dir=eventDir
-        self.data=minidom.Document()
+        self.data=minidom.parseString('<?xml version="1.0"?><contents />')
 
         xml=self.data
-        root=xml.appendChild(xml.createElement('contents'))
+        #root=xml.appendChild(xml.createElement('contents'))
+        root=xml.childNodes[0]
         root.appendChild(xml.createComment('Full listing of files'))
 
         # Iterate through all product types and file types
