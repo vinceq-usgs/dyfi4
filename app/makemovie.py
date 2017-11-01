@@ -74,7 +74,7 @@ class Movie:
             products.create(mapParams)
 
             # Create geojson
-            prod=Product(products).create('geojson',inputfile)
+            prod=Product(products,'geo10km snapshot').create('geojson',inputfile)
             print('Made Product and saved to',inputfile)
 
             # Create PNG

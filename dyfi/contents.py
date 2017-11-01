@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import os.path
-import xml.dom.minidom as minidom
+import defusedxml.minidom as minidom
 
 class Contents:
 
