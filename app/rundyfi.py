@@ -57,7 +57,7 @@ def main(args=None):
         raise NameError('No data for event '+evid)
 
     contents=Contents(container)
-    print(contents.toXML(save=True))
+    file=contents.toXML(save=True)
 
     # TODO: Push should be a separate object
     #Push.push(contents)

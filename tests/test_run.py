@@ -43,3 +43,8 @@ def test_run():
     assert len(products.products)==6
     assert 'Products' in str(products)
 
+    from dyfi import Contents
+    contents=Contents(container)
+    data=contents.toXML(save=False)
+    assert 'dyfi_geo_10km.png' in data
+

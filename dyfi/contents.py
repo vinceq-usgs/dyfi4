@@ -195,13 +195,11 @@ An OrderedDict of the available formats and their corresponding MIME types.
 
         data=self.data.toprettyxml(indent='  ',newl='\n')
         if not save and not filename:
-            print('Contents: not saving')
             return(data)
 
         if not filename:
             filename=self.dir+'/contents.xml'
 
-        print('Contents: Saving to',filename)
         with open(filename,'w') as f:
             f.write(data)
 
