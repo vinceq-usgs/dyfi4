@@ -191,12 +191,19 @@ An OrderedDict of the available formats and their corresponding MIME types.
         # Now self.data is filled
 
 
-    def toXML(self):
+    def toXML(self,save=None,filename=None):
 
-        data=self.data.toprettyxml(
-            indent='  ',
-            newl='\n')
+        data=self.data.toprettyxml(indent='  ',newl='\n')
+        if not save and not filename:
+            print('Contents: not saving')
+            return(data)
 
-        return(data)
+        if not filename:
+            filename=self.dir+'/contents.xml'
 
+        print('Contents: Saving to',filename)
+        with open(filename,'w') as f:
+            f.write(data)
+
+        return filename
 

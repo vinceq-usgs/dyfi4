@@ -40,6 +40,6 @@ def test_run():
     container=rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
 
     products=container.products
-    assert len(products.products)==7
+    assert len(products.products)==6
     assert 'Products' in str(products)
 

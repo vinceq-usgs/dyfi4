@@ -220,7 +220,6 @@ def test_products():
     entries=Entries(testid,config=config)
 
     products=Products(event,entries,config)
-
     assert str(products)=='Products:[]'
 
     # Test product with no format
@@ -281,12 +280,12 @@ def test_products():
 
 
 def test_container():
-  assert True
+  from dyfi import DyfiContainer
 
   # Note that individual packages will raise their own exceptions
   # no need to test here
 
-  #with pytest.raises(NameError) as badAttr:
-  #  container=DyfiContainer('blank')
-  #assert 'Cannot create evid' in str(badAttr.value)
+  with pytest.raises(NameError) as badAttr:
+    container=DyfiContainer('blank')
+  assert 'Cannot create evid' in str(badAttr.value)
 
