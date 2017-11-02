@@ -132,12 +132,12 @@ An OrderedDict of the available formats and their corresponding MIME types.
         ('kmz','application/vnd.google-earth.kmz')
     ))
 
-    def __init__(self,event,eventDir):
+    def __init__(self,container):
 
-        self.event=event
-        self.dir=eventDir
+        self.event=container.event
+        self.dir=container.products.dir
+
         self.data=minidom.parseString('<?xml version="1.0"?><contents />')
-
         xml=self.data
         #root=xml.appendChild(xml.createElement('contents'))
         root=xml.childNodes[0]
@@ -148,7 +148,7 @@ An OrderedDict of the available formats and their corresponding MIME types.
         for ptype,pdata in self.PRODUCT_TYPES.items():
             basename=ptype
             if ptype[0]=='_':
-                basename=event.eventid+ptype
+                basename=self.event.eventid+ptype
 
             # Create XML node but don't attach it yet
 
@@ -166,7 +166,7 @@ An OrderedDict of the available formats and their corresponding MIME types.
                 else:
                     fullname=basename+'.'+filext
 
-                pathname=eventDir+'/'+fullname
+                pathname=self.dir+'/'+fullname
                 if not os.path.isfile(pathname):
                     continue
 

@@ -9,7 +9,6 @@ import json
 import yaml
 
 from .graph import Graph
-from .contents import Contents
 from .map import Map
 
 class Products:
@@ -133,8 +132,6 @@ class Product:
             func=Graph
         elif productType=='map':
             func=Map
-        elif productType=='contents':
-            self.data=Contents(event=parent.event,eventDir=self.dir)
 
         if func:
             self.data=func(name=name,event=parent.event,data=self.data,config=self.config,eventDir=self.dir)

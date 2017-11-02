@@ -23,6 +23,5 @@ class DyfiContainer:
         self.event=Event(evid,config=config)
         self.entries=Entries(evid,config=config)
         self.products=Products(self.event,self.entries,config=config)
-
         self.products.createAll()
 

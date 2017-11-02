@@ -15,7 +15,7 @@ import os
 import sys
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-from dyfi import DyfiContainer
+from dyfi import DyfiContainer,Contents
 
 def main(args=None):
 
@@ -55,6 +55,11 @@ def main(args=None):
 
     if not container:
         raise NameError('No data for event '+evid)
+
+    contents=Contents(container)
+
+    # TODO: Push should be a separate object
+    #Push.push(contents)
 
     print('Done with',evid)
     return container
