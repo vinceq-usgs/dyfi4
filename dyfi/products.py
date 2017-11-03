@@ -159,10 +159,6 @@ class Product:
             else:
                 product=json.dumps(data)
 
-        elif productFormat=='xml':
-            if hasattr(data,'toXML'):
-                product=data.toXML()
-
         elif productFormat=='png':
             if hasattr(data,'toImage'):
                 data.toImage()

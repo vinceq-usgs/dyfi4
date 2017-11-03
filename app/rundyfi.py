@@ -56,8 +56,7 @@ def main(args=None):
     if not container:
         raise NameError('No data for event '+evid)
 
-    contents=Contents(container)
-    file=contents.toXML(save=True)
+    Contents(container).toXML(save=True)
 
     # TODO: Push should be a separate object
     #Push.push(contents)
