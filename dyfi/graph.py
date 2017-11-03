@@ -54,6 +54,7 @@ class Graph:
         self.data=None
         self.datasets=None
         self.title=None
+        self.distBins=None
 
         if 'plot_atten' in name:
             self.getDataDistance()
@@ -241,7 +242,7 @@ class Graph:
 
 
     def getDistBins(self):
-        if hasattr(self,'distBins'):
+        if self.distBins != None:
             bins=self.distBins
             return bins
 
