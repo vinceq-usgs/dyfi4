@@ -69,11 +69,11 @@ def calculate(pts):
                 val=entry.__dict__[index]
 
             # Indices with no value are not counted at all. They DO NOT have zero value!
+            if val is None:
+                 continue
             try:
                 val=float(val)
             except ValueError:
-                if val is None:
-                    continue
                 # Values might have additional text. Ignore it.
                 if ' ' in val:
                     val=val.split(' ')[0]
