@@ -242,7 +242,7 @@ class Graph:
 
 
     def getDistBins(self):
-        if self.distBins != None:
+        if self.distBins is not None:
             bins=self.distBins
             return bins
 
