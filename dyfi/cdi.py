@@ -78,8 +78,6 @@ def calculate(pts):
                 if ' ' in val:
                     val=val.split(' ')[0]
                 val=float(val)
-            except TypeError:
-                continue
 
             indexTotal+=val
             indexCount+=1
