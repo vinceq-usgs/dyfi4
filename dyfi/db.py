@@ -1,27 +1,22 @@
-"""
-
-Db
-==
-
-"""
+# To use MySQL, switch the top line with this:
+#import modules.rawDbMySQL as rawdb
 
 import warnings
 from .rawDbSqlite import RawDb
-
-# To use MySQL, switch the top line with this:
-#import modules.rawDbMySQL as rawdb
 
 import geojson
 import datetime
 
 class Db:
     """
-
-    :synopsis: Open a connection to access the DYFI database.
-    :param config: Optional Config object
+    
+    :synopsis: Open a connection to access the DYFI database
+    :param config: (optional) :py:class:`Config` object
 
     This connection is required to run any database queries.
-    The database is currently implemented in SQLite.
+    The database is currently implemented in SQLite. (Subject to change)
+
+    .. note:: To change to the database implementation to MySQL, see the heading of the :code:`db.py` module.
 
     .. data:: exttables
 
@@ -32,12 +27,22 @@ class Db:
         The name of the latest extended table
         (should be the current year, e.g. "extended_2016").
 
-    .. note:: To change to the database implementation to MySQL,
-    see the heading of the :code:`db.py` module.
+    .. data:: EXT_MINYR
+
+       The year of the earliest named extended table. Previous entries are contained in the table 'extended_pre'.
+
+    .. data:: EXT_MINYR
+    
+       The year of the latest defined extended table. 
 
     """
 
-    # TODO: generalize this for all available years
+    # TODO: 
+    # create table 'extended' with up to two years of latest entries
+    # automatically calculate tables: ...2014,2015,extended
+    # calculate MAXYR automatically
+    # when searching dates, get the correct tables automatically
+
     EXT_MINYR=2015;
     EXT_MAXYR=2016;
 
@@ -54,17 +59,18 @@ class Db:
     def loadEvent(self,evid):
         """
 
-        :synopsis: Get data for an event.
+        :synopsis: Read database for an event
         :param str evid: event ID, e.g. 'us1000abcd'
         :returns: dict suitable for input to an :py:obj:`Event` instance
 
-        This is mostly a wrapper to :py:obj:`query`.
+        This is mostly a wrapper to the `RawDb` :py:obj:`query` method.
 
         """
 
         table='event'
-        clause="eventid='"+str(evid)+"'"
-        results=self.rawdb.query(table,clause)
+        clause='eventid=?'
+        print('table:',table,'clause:',clause,'evid:',evid)
+        results=self.rawdb.query(table,clause,evid)
         if not results:
             return
 
@@ -89,8 +95,8 @@ class Db:
         """
 
         table='maps'
-        clause="eventid='"+str(evid)+"'"
-        results=self.rawdb.query(table,clause)
+        clause='eventid=?'
+        results=self.rawdb.query(table,clause,evid)
         if not results:
             return
 
@@ -104,12 +110,14 @@ class Db:
         """
 
         :synopsis: Search the extended tables for entries matching a query.
-        :param str evid: optional eventid
-        :param Event event: optional Event object
-        :param table: optional table or comma-delimited table or list of tables
+        :param str evid: (optional) eventid
+        :param Event event: (optional) Event object
+        :param table: (optional) table or tables
         :param startdatetime: optional datetime to start search
         :param str querytext: optional clause(s)
         :returns: list of entries suitable for aggregation
+
+        The :param:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables.
 
         This is mostly a wrapper to :py:obj:`query`. It also
         figures out which extended tables to search,
@@ -144,7 +152,7 @@ class Db:
         # Second, figure out which eventid to query
 
         myclauses=[]
-
+        mysubs=[]
         if querytext:
             myclauses.append(querytext)
 
@@ -152,17 +160,20 @@ class Db:
             evid=event.eventid
 
         if evid:
-            myclauses.append('eventid="%s"' % (evid))
+            myclauses.append('eventid=?')
+            mysubs.append(evid)
 
         if startdatetime:
-            myclauses.append('time_now>="%s"' % (startdatetime))
+            myclauses.append('time_now>=?')
+            mysubs.append(startdatetime)
 
         # Finally, combine queries
 
         if myclauses:
             querytext=' AND '.join(myclauses)
 
-        results=self.rawdb.query(table,querytext)
+
+        results=self.rawdb.query(table,querytext,mysubs)
         return results
 
 
@@ -184,12 +195,14 @@ class Db:
         print('Db: rawStatement:',text)
         return self.rawdb.execute(text)
 
+
     @classmethod
     def timeago(cls,t):
         t0=datetime.datetime.now()
         tdelta=datetime.timedelta(minutes=t)
         tnew=t0-tdelta
         return(tnew)
+
 
     @classmethod
     def row2geojson(cls,row):
@@ -214,8 +227,7 @@ class Db:
         """
 
         :synopsis: Get a list of extended tables for a given date.
-        :param date: any date
-        :param type: datetime or str or int
+        :param date: any date, e.g. "2017-01-01"
         :returns: list of extended table names (extended_*)
 
         Use this method to determine which extended tables
@@ -243,40 +255,4 @@ class Db:
 
         return self.exttables[(year-self.EXT_MINYR+1)::]
 
-
-# End of function defs
-
-# Not tested yet
-if __name__=='__main__': # pragma: no cover
-    import argparse
-    parser=argparse.ArgumentParser(
-        description='Access the DYFI database.'
-    )
-    parser.add_argument('query',type=str,nargs='?',
-        help="SQL query (raw query, if no --extended)")
-    parser.add_argument('--dbfile',type=str,nargs='?',default=None,
-        help="db.json file with database settings")
-    parser.add_argument('--extended',type=str,nargs='?',
-        help="Extended query with geojson output. Add a comma-separated list of columns as output or leave blank for all columns.")
-    args=parser.parse_args()
-    print('Db: opening with',args.dbfile)
-
-    db=Db(args.dbfile)
-    if args.extended:
-        if not args.query:
-            args.query=args.extended
-            args.extended=True
-
-        table='all'
-        if isinstance(args.extended,str):
-            table=args.extended
-        results=db.extquery('*',table,args.query)
-        for row in results:
-            print(row.properties['table'],':',str(row.properties['subid']))
-        exit()
-
-    else:
-        results=db.rawStatement(args.query)
-
-    print(results)
 

@@ -92,9 +92,11 @@ def test_dbentries():
     entries=db.loadEntries(evid=testid,table='2099')
   assert 'getcursor could not find table' in str(exception.value)
 
+  #  with pytest.raises(NameError) as exception:
+
   with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='1999,2000')
-  assert 'Cannot handle string' in str(exception.value)
+  assert 'getcursor could not find table' in str(exception.value)
 
   with pytest.raises(RuntimeError) as exception:
     db.rawStatement('select * from event where eventid="%s"' % testid)
@@ -182,16 +184,23 @@ def test_entries():
       aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
 
-  assert isinstance(aggregate.getUtmLocation(single,'1km'),str)
+  assert isinstance(aggregate.getUtmForEntry(single,'1km'),str)
+
+  utmstring='500000 3650000 11 S'
+  assert aggregate.getUtmFromCoordinates(33,-117,'geo_10km')==utmstring
+  poly=aggregate.getUtmPolyFromString(utmstring,10000)
+  lonlat=poly['center']['coordinates']
+  assert abs(lonlat[1]-33)<0.1
+  assert abs(lonlat[0]-(-117))<0.1
 
   # Test bad lat/lon values
 
   single.latitude=None
-  assert aggregate.getUtmLocation(single,'1km')==None
+  assert aggregate.getUtmForEntry(single,'1km')==None
 
   with pytest.raises(ValueError) as exception:
       single.latitude='badvalue'
-      aggregate.getUtmLocation(single,'1km')
+      aggregate.getUtmForEntry(single,'1km')
   assert 'could not convert string' in str(exception.value)
 
 
@@ -279,6 +288,20 @@ def test_products():
     assert graph.data['preferred_unit']=='minutes'
 
 
+def test_cdi():
+  from dyfi import cdi
+
+  assert cdi.getDamageFromText('_none')==0
+  assert cdi.getDamageFromText('_crackmin')==0.5
+  assert cdi.getDamageFromText('_crackwallfew')==0.75
+  assert cdi.getDamageFromText('_crackwall')==1
+  assert cdi.getDamageFromText('_crackwallfew _crackwall')==1
+  assert cdi.getDamageFromText('_crack')==None
+  assert cdi.getDamageFromText('_masonryfell')==2
+  assert cdi.getDamageFromText('_crackmin _pipe')==2
+  assert cdi.getDamageFromText('_crackmin _crackwall _wall _chim')==3
+
+
 def test_container():
   from dyfi import DyfiContainer
 
@@ -286,6 +309,6 @@ def test_container():
   # no need to test here
 
   with pytest.raises(NameError) as badAttr:
-    container=DyfiContainer('blank')
+    DyfiContainer('blank')
   assert 'Cannot create evid' in str(badAttr.value)
 

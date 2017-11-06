@@ -1,6 +1,6 @@
 """
 rawDbSqlite
-=====
+===========
 
 .. note:: There are two versions of this module: :file:`rawDbSqlite.py` and :file:`rawDbMysql.py`. Change the header section of :file:`Db.py` to point to the correct implementation and make sure your :file:`db.json` file has the correct login information.
 
@@ -43,7 +43,6 @@ class RawDb:
         else:
             raise NameError('getcursor could not find table '+table)
 
-
         print('RawDb: Connecting to file',tablefile)
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
@@ -54,33 +53,59 @@ class RawDb:
         return cursor
 
 
-    def query(self,tables,clause):
+    def query(self,tables,clause,subs):
+        """
+
+        :synopsis: Query the database, splitting multiple tables if necessary
+        :param tables: table or list of tables to query, see below
+        :returns: list of rows returned by query
+
+        The :param:`tables` parameter accepts a single table, a comma-separated list of tables, or a list of tables. It calls :method:`querySingleTable` on each table, then concatenates the results into a single list.
+
+        """
 
         results=[]
 
-        if ',' in tables:
-            raise NameError('Cannot handle string')
-
         if isinstance(tables,str):
-            tables=[tables]
+            tables=tables.split(',')
 
         for table in tables:
-            tableresults=self.querySingleTable(table,clause)
+            tableresults=self.querySingleTable(table,clause,subs)
             if tableresults:
                 results.extend(tableresults)
 
         return results
 
 
-    def querySingleTable(self,table,clause):
+    def querySingleTable(self,table,clause,subs=None):
+        """
+
+        :synopsis: Query a single table of the database
+        :param str tabl: table to be queried
+        :returns: list of rows returned by query
+
+        Table can be a string name ('extended_2017') or year ('2017')
+        """
+      
+        try:
+            year=float(table)
+            table='extended_'+year
+        except:
+            pass
 
         c=self.getcursor(table)
         query='SELECT * FROM '+table
         if clause:
             query+=' WHERE '+clause
 
+        if isinstance(subs,str):
+            subs=[subs]
+
+#        subs=[str(x) for x in subs]
         print('RawDb:',query)
-        c.execute(query)
+#        if subs is not None:
+#            print('RawDb:',','.join(subs))
+        c.execute(query,subs)
 
         results=[]
         for row in c:
