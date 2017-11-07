@@ -41,6 +41,9 @@ class Movie:
 
     def __init__(self,args):
 
+        sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+        from dyfi import Event,Config,Entries,Products,Product
+
         self.dir='./movie'
         self.framefiles=[]
         os.makedirs(self.dir,exist_ok=True)
@@ -92,10 +95,16 @@ class Movie:
             products.create(mapParams)
 
             # Create geojson
-            prod=Product(products,'geo10km snapshot').create('geojson',inputfile)
+            prod=Product(products,'geo10km snapshot',dataset='geo_10km').create('geojson',inputfile)
             print('Made Product and saved to',inputfile)
 
             # Create PNG
+
+            for k,v in prod.__dict__.items():
+                if '__' not in k:
+                    print(k,':',v)
+
+
             if not prod.data.toImage(inputfile,outputfile):
                 raise NameError('Could not create '+outputfile)
 
@@ -121,10 +130,6 @@ class Movie:
 
 def main(args):
 
-    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Event,Config,Entries,Products,Product
-
-
     print('Making movie for',args.evid)
     Movie(args)
 
@@ -132,6 +137,7 @@ def main(args):
 
 
 if __name__=='__main__':
+
     args=parser.parse_args()
     main(args)
 

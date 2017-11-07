@@ -130,11 +130,11 @@ def aggregate(entries,producttype):
 
         pt=geojson.Feature(
             id=location,
-            geometry=geometry['bounds'],
+            geometry=bounds,
             properties={
                 'location':location,
                 'nresp':nresp,
-                'center':geometry['center'],
+                'center':center,
                 'intensity':thiscdi
             }
         )
