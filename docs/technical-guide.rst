@@ -16,8 +16,8 @@ Earthquake events
 User responses
 ..............
 
-Aggregation
------------
+UTM-based Aggregation
+---------------------
 
 Creating dynamic products
 -------------------------
@@ -28,4 +28,6 @@ Creating static products
 Exporting to the web
 --------------------
 
+contents.xml
+............
 

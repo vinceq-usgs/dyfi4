@@ -15,8 +15,27 @@ import datetime
 import copy
 import apng
 
-sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-from dyfi import Event,Config,Entries,Products,Product
+parser=argparse.ArgumentParser(
+    prog='app/makemovie.py',
+    description='Create movie frames for a given event'
+)
+parser.add_argument(
+    'evid',type=str,
+    help='Event ID'
+)
+parser.add_argument(
+    'tmax',type=int,nargs='?',default=60,
+    help='Length of movie in minutes (default 60)'
+)
+parser.add_argument(
+    'framelength',type=float,nargs='?',default=60,
+    help='Time of each frame, in seconds (default 60)'
+)
+parser.add_argument(
+    'type',type=str,nargs='?',default='geo_10km',
+    help='Type of aggregation (default geo_10km)'
+)
+
 
 class Movie:
 
@@ -100,29 +119,11 @@ class Movie:
 #        return outputfile
 
 
-def main(args=None):
+def main(args):
 
-    parser=argparse.ArgumentParser(
-        description='Create movie frames for a given event'
-    )
-    parser.add_argument(
-        'evid',type=str,
-        help='Event ID'
-    )
-    parser.add_argument(
-        'tmax',type=int,nargs='?',default=60,
-        help='Length of movie in minutes (default 60)'
-    )
-    parser.add_argument(
-        'framelength',type=float,nargs='?',default=60,
-        help='Time of each frame, in seconds (default 60)'
-    )
-    parser.add_argument(
-        'type',type=str,nargs='?',default='geo_10km',
-        help='Type of aggregation (default geo_10km)'
-    )
+    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+    from dyfi import Event,Config,Entries,Products,Product
 
-    args=parser.parse_args()
 
     print('Making movie for',args.evid)
     Movie(args)
@@ -131,7 +132,8 @@ def main(args=None):
 
 
 if __name__=='__main__':
-    main()
+    args=parser.parse_args()
+    main(args)
 
 
 

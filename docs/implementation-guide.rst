@@ -4,11 +4,11 @@ Implementation Guide
 Installation
 ------------
 
+requirements.txt
+
 Python modules:
 
-- Matplotlib
-
-- Basemap
+UTM
 
 Implementation notes
 --------------------

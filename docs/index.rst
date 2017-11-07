@@ -19,12 +19,20 @@ Contents:
    technical-guide.rst
    implementation-guide.rst
 
+Commands and modules
+--------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   app
+
 *For advanced users only:*
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   modules.rst
+   dyfi
    
 Indices and tables
 ==================

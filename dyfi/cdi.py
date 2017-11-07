@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-Cdi
----
-
-:synopsis: Utilities to compute and manipulate intensity. Input is an entry or a list of entries inside an aggregated area, such as a UTM box, or ZIP code. For details, see: https://earthquake.usgs.gov/data/dyfi/background.php#app1
+A collection of functions to compute and manipulate intensity. For details, see the :ref:`Scientific Guide`.
 
 .. data:: cdiWeights
 
@@ -12,7 +9,7 @@ Cdi
 
 .. data:: cdiDamageValues
 
-    An OrderedDict of damage values and which d_text strings correspond to those values.
+    An OrderedDict of damage values and the d_text strings correspond to those values.
 
 """
 
@@ -31,16 +28,16 @@ cdiDamageValues=OrderedDict([
     (3,['_move','_chim','_found','_collapse','_porch','_majormodernchim','_tiltedwall'])
     ])
 
-def calculate(pts):
+def calculate(entries):
     """
 
-    :synopsis: Calculate the intensity for one entry, or list of entries.
-    :param list pts: Single :py:obj:`entry` or list of entries in an aggregated area
+    :synopsis: Calculate the intensity for one entry, or list of entries
+    :param list entries: Single :py:class:`Entry` object or list of entries in an aggregated area
     :returns: float
 
-    If given a single entry instead of list, calculate the decimal intensity for that
-    entry. Note that intensity is defined over an area, not a point. "Point" intensities
-    should be used as estimates or debugging only.
+    If given a single entry instead of list, calculate the decimal intensity for that entry. 
+    
+    .. note:: Intensity is defined over an area, not a point. "Point intensities" should be used as estimates or for debugging only.
 
     A computed value less than or equal to zero is considered intensity I (unfelt).
     A computed value greater than zero is considered at least intensity II (felt).
@@ -49,35 +46,36 @@ def calculate(pts):
     """
 
     # Make a list, if not already one
-    if not isinstance(pts,list):
-        pts=[pts]
+    if not isinstance(entries,list):
+        entries=[entries]
 
     totalByIndex={}
     for index in cdiWeights:
         indexTotal=0
         indexCount=0
 
-        for entry in pts:
-
+        for entry in entries:
             if index=='damage' and 'd_text' in entry.__dict__:
                 val=getDamageFromText(entry.d_text)
 
             elif index not in entry.__dict__:
                 val=None
-
             else:
                 val=entry.__dict__[index]
 
-            # Indices with no value are not counted at all. They DO NOT have zero value!
+            # Indices with no value are not counted. 
+            # They DO NOT have zero value!
             if val is None:
                  continue
+
+            # Values might have additional text. Ignore it.
+            if isinstance(val,str) and ' ' in val:
+                    val=val.split(' ')[0]
+
             try:
                 val=float(val)
             except ValueError:
-                # Values might have additional text. Ignore it.
-                if ' ' in val:
-                    val=val.split(' ')[0]
-                val=float(val)
+                continue
 
             indexTotal+=val
             indexCount+=1
@@ -100,12 +98,15 @@ def calculate(pts):
 
     return round(cdi,1)
 
+
 def getDamageFromText(d_text):
     """
 
-    :synopsis: Calculate the damage value given a damage string.
-    :param list pts: A damage string, see :py:obj:`cdiDamageValues` for allowed values
+    :synopsis: Convert a damage string to a damage value.
+    :param str d_text: A damage string, see :py:data:`cdiDamageValues` for allowed values
     :returns: float
+
+    Multiple damage strings (separated by whitespace) are allowed.
 
     """
 
@@ -114,10 +115,10 @@ def getDamageFromText(d_text):
 
     damageTokens=d_text.split()
     damage=None
-    for dval,dstrings in cdiDamageValues.items():
+    for val,dstrings in cdiDamageValues.items():
         for dstring in dstrings:
             if dstring in damageTokens:
-                damage=dval
+                damage=val
                 continue
 
     return damage

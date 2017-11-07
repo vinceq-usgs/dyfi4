@@ -137,7 +137,7 @@ class Db:
             table=self.latesttable
           elif table=='all':
             table=self.exttables
-          elif 'extended_'+table in self.exttables:
+          elif isinstance(table,str) and 'extended_'+table in self.exttables:
             table='extended_'+table
 
         elif not table:

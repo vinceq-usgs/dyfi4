@@ -1,8 +1,3 @@
-"""
-Config
-======
-
-"""
 
 import yaml
 
@@ -10,7 +5,7 @@ class Config:
 
     """
 
-    :synopsis: Handle DYFI configuration options.
+    :synopsis: Handle DYFI configuration options
     :param str configfile: YAML file with configuration options
 
     .. attribute:: hash
@@ -18,13 +13,24 @@ class Config:
         Dict of configuration sections suitable for __iter__.
 
 
-    Usage:
+    Usage::
 
-    from dyfi import Config
-    config=Config(someyamlfile)
-    config=Config() # defaults to ./config.yml
+      # To call:
+      from dyfi import Config
+      config=Config(someyamlfile)
+      config=Config() # defaults to ./config.yml
 
-    recipient=config.mail['to']
+      # Prettyprint all configs:
+      print(config) # prettyprints all configs
+
+      # Access a config value:
+      recipient=config.mail['to']
+      eventdbfile=config.db['files']['event']
+      dbparams=config.directories # Get all directories
+
+      # Loop through values
+      for section in config: 
+        print(section) # prints a list of sections
 
 """
 
@@ -48,8 +54,8 @@ class Config:
 
     def __repr__(self):
         output=''
-        for val in self.hash.values():
-            output=output+'section'+':\n'
-            output=output+(str(val))
+        for key,val in self.hash.items():
+            output=output+key+':'+str(val)+'\n'
 
         return output
+

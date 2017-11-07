@@ -18,13 +18,13 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import sys
-#import os
+import os
 #sys.path.insert(0, os.path.abspath('.'))
-#sys.path.insert(0, os.path.abspath('./modules'))
-#sys.path.insert(0, os.path.abspath('..'))
-#sys.path.insert(0, os.path.abspath('../modules'))
-sys.path.insert(0,'/Users/vinceq/Desktop/Work/pydyfi')
-sys.path.insert(0,'/Users/vinceq/Desktop/Work/pydyfi/modules')
+#sys.path.insert(0, os.path.abspath('./dyfi'))
+sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../dyfi'))
+#sys.path.insert(0,'/Users/vinceq/repos/dyfi4')
+#sys.path.insert(0,'/Users/vinceq/repos/dyfi4/dyfi')
 
 
 # -- General configuration ------------------------------------------------
@@ -40,6 +40,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
+    'sphinx.ext.autosectionlabel',
+    'sphinxarg.ext',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

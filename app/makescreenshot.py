@@ -17,29 +17,29 @@ import argparse
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from dyfi import Config,Map
 
-def main(args=None):
+parser=argparse.ArgumentParser(
+    prog='app/makescreenshot.py',
+    description='Create static image .png files for a given event'
+)
+parser.add_argument(
+    'input',type=str,
+    help='GeoJSON file'
+)
+parser.add_argument(
+    'output',type=str,nargs='?',default='screenshot.png',
+    help='output (default is screenshot.png)'
+)
+parser.add_argument(
+    '--configfile',action='store',default='./config.yml',
+    help='Specify config file'
+)
 
-    parser=argparse.ArgumentParser(
-        description='Create static image .png files for a given event'
-    )
-    parser.add_argument(
-        'input',type=str,
-        help='GeoJSON file'
-    )
-    parser.add_argument(
-        'output',type=str,nargs='?',default='screenshot.png',
-        help='output (default is screenshot.png)'
-    )
-    parser.add_argument(
-        '--configfile',action='store',default='./config.yml',
-        help='Specify config file'
-    )
 
-    if not args:
-      args=parser.parse_args()
+def main(args):
+
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+    from dyfi import Config,Map
 
     inputfile=args.input
     outputfile=args.output
@@ -53,5 +53,5 @@ def main(args=None):
     exit()
 
 if __name__=='__main__':
-  main()
-
+    args=parser.parse_args()
+    main(args)

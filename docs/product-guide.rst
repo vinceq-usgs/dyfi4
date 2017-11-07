@@ -24,7 +24,7 @@ GeoJSON
 XML
 ---
 
-- :ref:`content.xml`
+- contents.xml
 
 
 

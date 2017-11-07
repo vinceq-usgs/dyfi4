@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+        
 from collections import OrderedDict
 import os.path
 import defusedxml.minidom as minidom
@@ -6,18 +8,22 @@ class Contents:
 
     """
 
-productContents
-===============
+    :synopsis: Create a :ref:`contents.xml` file 
+    :parameter container: A :class:`Container` object containing the event data
 
-:synopsis: Create a :ref:`contents.xml` file used by the Earthquake Pages.
+    The :ref:`contents.xml` file is a list of DYFI products to be exported online. 
+    
+    This loops through each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory to populate :ref:`contents.xml`.
+    
+    The USGS Earthquake Pages webserver uses this file to populate the DYFI page for this event.
 
-.. data:: PRODUCT_TYPES
+    .. py:attribute:: PRODUCT_TYPES
 
-An OrderedDict of the product types and the titles used for Event Pages formatting.
+        An OrderedDict of DYFI product types and the titles.
 
-.. data:: FORMAT_TYPES
+    .. py:attribute:: FORMAT_TYPES
 
-An OrderedDict of the available formats and their corresponding MIME types.
+        An OrderedDict of the available formats and their corresponding MIME types.
 
     """
 
