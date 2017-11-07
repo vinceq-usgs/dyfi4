@@ -93,7 +93,7 @@ def aggregate(entries,producttype):
         rawresults[location].append(entry)
         nlocated+=1
 
-    print('Aggregate: For %s, %i/%i entries located.' % 
+    print('Aggregate: For %s, %i/%i entries located.' %
       (producttype,nlocated,npts))
 
     # Now each location has geographic information.
@@ -165,12 +165,12 @@ def getUtmFromCoordinates(lat,lon,span=None):
     :synopsis: Convert lat/lon coordinates to UTM string
     :param float lat: Latitude
     :param float lon: Longitude
-    :param str span: (optional) Size of the UTM box (see below)
+    :param span: (optional) Size of the UTM box (see below)
     :returns: UTM string with the correct resolution
 
     Convert lat/lon coordinates into a UTM string using the :py:obj:`UTM` package. If :py:obj:`span` is specified, the output is degraded via the :py:obj:`floor` function.
 
-    :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10)
+    :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10).
 
     This will NOT filter the location based on precision of the input coordinates.
 
@@ -203,10 +203,12 @@ def getUtmForEntry(entry,span):
 
     :synopsis: Find the UTM location for an entry
     :param entry: The :py:obj:`Entry` object to locate
-    :param str span: Size of the UTM box (see below)
+    :param span: Size of the UTM box (see below)
     :returns: UTM string with the correct resolution
 
     Compute the UTM block for an :py:obj:`Entry` object using :py:func:`getUtmFromCoordinates`. The UTM coordinate resolution is degraded via the :py:obj:`floor` function depending on the :py:obj:`span` parameter.
+
+    :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10).
 
     """
 
@@ -224,11 +226,13 @@ def getUtmPolyFromString(utm,span):
     """
 
     :synopsis: Compute the (lat/lon) bounds and center from a UTM string
-    :param str utm: A UTM string
-    :param str span: The size of the UTM box in meters
+    :param utm: A UTM string
+    :param int span: The size of the UTM box in meters
     :return: dict
 
-    Get the bounding box and center point for a UTM string suitable for plotting. The return value has two keys:
+    Get the bounding box and center point for a UTM string suitable for plotting.
+
+    The return value has two keys:
 
     ======    ========================
     center    A GeoJSON Point object
@@ -242,7 +246,7 @@ def getUtmPolyFromString(utm,span):
     y=int(y)
     zone=int(zone)
 
-    # Compute bounds. Need to reverse-tuple here because the 
+    # Compute bounds. Need to reverse-tuple here because the
     # to_latlon function returns lat/lon and geojson requires lon/lat.
     # Rounding needed otherwise lat/lon coordinates are arbitrarily long
 
@@ -299,7 +303,7 @@ def getZipLocation(entry,resolution):
 def getZipCoordinates(zipcode):
 
     :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
-    :param str zipcode: A UTM string
+    :param zipcode: A UTM string
     :return: dict
 
     The return value has two keys:

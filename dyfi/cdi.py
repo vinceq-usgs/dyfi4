@@ -35,8 +35,8 @@ def calculate(entries):
     :param list entries: Single :py:class:`Entry` object or list of entries in an aggregated area
     :returns: float
 
-    If given a single entry instead of list, calculate the decimal intensity for that entry. 
-    
+    If given a single entry instead of list, calculate the decimal intensity for that entry.
+
     .. note:: Intensity is defined over an area, not a point. "Point intensities" should be used as estimates or for debugging only.
 
     A computed value less than or equal to zero is considered intensity I (unfelt).
@@ -63,7 +63,7 @@ def calculate(entries):
             else:
                 val=entry.__dict__[index]
 
-            # Indices with no value are not counted. 
+            # Indices with no value are not counted.
             # They DO NOT have zero value!
             if val is None:
                  continue

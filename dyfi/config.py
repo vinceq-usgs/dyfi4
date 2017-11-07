@@ -29,7 +29,7 @@ class Config:
       dbparams=config.directories # Get all directories
 
       # Loop through values
-      for section in config: 
+      for section in config:
         print(section) # prints a list of sections
 
 """

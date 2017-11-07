@@ -40,7 +40,7 @@ def test_db():
 
   pasttime=db.timeago(3)
   assert pasttime.year>1990
- 
+
 
 def test_event():
   import geojson

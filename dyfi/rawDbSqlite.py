@@ -72,7 +72,7 @@ class RawDb:
         :param tables: table or list of tables to query, see below
         :returns: list of rows returned by query
 
-        The :param:`tables` parameter accepts a single table, a comma-separated list of tables, or a list of tables. It calls :method:`querySingleTable` on each table, then concatenates the results into a single list.
+        The :py:attr:`tables` parameter accepts a single table, a comma-separated list of tables, or a list of tables. It calls :py:meth:`querySingleTable` on each table, then concatenates the results into a single list.
 
         """
 
@@ -93,13 +93,13 @@ class RawDb:
         """
 
         :synopsis: Query a single table of the database
-        :param str tabl: table to be queried
+        :param str table: table to be queried
         :returns: list of rows returned by query
 
-        No checking of table names is done at this step.
+        Note that no checking of table names is done at this step.
 
         """
-     
+
         c=self.getcursor(table)
         query='SELECT * FROM '+table
         if clause:

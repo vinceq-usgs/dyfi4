@@ -9,7 +9,7 @@ import datetime
 
 class Db:
     """
-    
+
     :synopsis: Open a connection to access the DYFI database
     :param config: (optional) :py:class:`Config` object
 
@@ -36,12 +36,12 @@ class Db:
        The year of the earliest named extended table. Previous entries are contained in the table 'extended_pre'.
 
     .. data:: EXT_MINYR
-    
-       The year of the latest defined extended table. 
+
+       The year of the latest defined extended table.
 
     """
 
-    # TODO: 
+    # TODO:
     # create table 'extended' with up to two years of latest entries
     # automatically calculate tables: ...2014,2015,extended
     # calculate MAXYR automatically
