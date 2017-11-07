@@ -15,13 +15,15 @@ floatcolumns=['lat','lon','mag',
               'lat_offset','lon_offset','lat_span','lon_span']
 
 class RawDb:
-
     """
 
     :synopsis: Open a Sqlite connection.
     :param str dbparams: The name of a Config object (see config.py).
 
+    Handles raw database transactions.
+
     """
+
     def __init__(self,dbparams):
 
         self.dbfiles=dbparams['files']
@@ -29,6 +31,16 @@ class RawDb:
 
 
     def getcursor(self,table):
+        """
+
+        :synopsis: Create a Sqlite3 cursor to a particular table.
+        :param str table: A single table.
+        :param str dbparams: The name of a Config object (see config.py).
+
+        Handles raw database transactions.
+
+        """
+
 
         if table in self.cursors:
             return self.cursors[table]
@@ -84,15 +96,10 @@ class RawDb:
         :param str tabl: table to be queried
         :returns: list of rows returned by query
 
-        Table can be a string name ('extended_2017') or year ('2017')
+        No checking of table names is done at this step.
+
         """
      
-        try:
-            year=int(table)
-            table='extended_'+str(year)
-        except:
-            pass
-
         c=self.getcursor(table)
         query='SELECT * FROM '+table
         if clause:
@@ -131,9 +138,4 @@ class RawDb:
 
         # results is now a list of dicts
         return results
-
-
-    def execute(self,text):
-        print('Attempting execute with',self)
-        raise RuntimeError('database raw execute is unsafe, not implemented')
 

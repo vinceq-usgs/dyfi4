@@ -110,11 +110,6 @@ def test_dbentries():
   assert len(entries3)==e1+e2
   assert len(entries4)==e1+e2
 
-
-  with pytest.raises(RuntimeError) as exception:
-    db.rawStatement('select * from event where eventid="%s"' % testid)
-  assert 'database raw execute is unsafe' in str(exception.value)
-
   # Test loading entries by event object
   event=Event(db.loadEvent(testid))
   entries=db.loadEntries(event=event)
