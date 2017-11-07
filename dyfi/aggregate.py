@@ -176,13 +176,13 @@ def getUtmFromCoordinates(lat,lon,span=None):
 
     """
 
-    if isinstance(span,str):
-        if span=='geo_1km' or span=='1km':
-            span=1000
-        elif span=='geo_10km' or span=='10km':
-            span=10000
-        else:
-            raise TypeError('Invalid span value')
+    if span=='geo_1km' or span=='1km' or span==1000:
+        span=1000
+    elif span=='geo_10km' or span=='10km' or span==10000:
+        span=10000
+    else:
+        raise TypeError('Invalid span value '+str(span))
+    
 
     try:
         loc=from_latlon(lat,lon)

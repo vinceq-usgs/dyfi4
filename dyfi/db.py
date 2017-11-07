@@ -1,4 +1,4 @@
-a To use MySQL, switch the top line with this:
+# To use MySQL, switch the top line with this:
 #import modules.rawDbMySQL as rawdb
 
 import warnings
@@ -215,7 +215,7 @@ class Db:
             if table in self.tables:
                 outtables.append(table)
 
-            elif 'extended'+table in self.tables:
+            elif 'extended_'+table in self.tables:
                 outtables.append('extended_'+table)
             else:
                 raise NameError('Db: no such table '+table)
