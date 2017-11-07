@@ -1,4 +1,4 @@
-# To use MySQL, switch the top line with this:
+a To use MySQL, switch the top line with this:
 #import modules.rawDbMySQL as rawdb
 
 import warnings
@@ -221,25 +221,6 @@ class Db:
                 raise NameError('Db: no such table '+table)
 
         return outtables
-
-
-    def rawStatement(self,text):
-        """
-
-        :synopsis: Simplest SQL query with the raw query string, no formatting.
-
-        :param str text: SQL query string
-        :returns: list
-
-        Use this in case an application needs to do low-level SQL operations.
-
-        The return value is a list of table rows, where each row is a dict.
-
-        """
-
-        self.statement=text
-        print('Db: rawStatement:',text)
-        return self.rawdb.execute(text)
 
 
     @classmethod

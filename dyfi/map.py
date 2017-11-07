@@ -14,7 +14,7 @@ import copy
 
 class Map:
     """
-        :synopsis: Create a static graph
+        :synopsis: Create a static map
         :param str filename: The filename to create
         :param Event event: An Event object
         :param dict mapparams: A dict of params from a eventMap

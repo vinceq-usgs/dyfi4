@@ -41,6 +41,14 @@ def test_db():
   pasttime=db.timeago(3)
   assert pasttime.year>1990
 
+  # Test RawDb
+ 
+  rawdb=db.rawdb
+
+  with pytest.raises(NameError) as exception:
+    rawdb.querySingleTable('badtable','suspect=1')
+  assert 'getcursor could not find table' in str(exception.value)
+
 
 def test_event():
   import geojson
@@ -179,11 +187,16 @@ def test_entries():
   user_cdi=cdi.calculate(single)
   assert user_cdi>=2 or user_cdi==1
 
-  # : test if entry has a missing required column
+  # test if entry has a missing required column
   single.__dict__.pop('felt')
   single.__dict__['badcolumn']=1
   assert cdi.calculate(single)!=user_cdi
 
+  # test bad cdi
+  single.__dict__['felt']='a bad value'
+  single.__dict__['d_text']='_chim'
+  assert cdi.calculate(single)==4.8
+  
   # Test aggregate
 
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
@@ -195,11 +208,21 @@ def test_entries():
   assert isinstance(aggregate.getUtmForEntry(single,'1km'),str)
 
   utmstring='500000 3650000 11 S'
+
+  poly=aggregate.getUtmPolyFromString(utmstring,10000)
   assert aggregate.getUtmFromCoordinates(33,-117,'geo_10km')==utmstring
   poly=aggregate.getUtmPolyFromString(utmstring,10000)
   lonlat=poly['center']['coordinates']
   assert abs(lonlat[1]-33)<0.1
   assert abs(lonlat[0]-(-117))<0.1
+
+  # Test bad span values
+
+  for badvalue in ('geo_9km','9km',9000):
+    print('Trying value',badvalue)
+    with pytest.raises(TypeError) as exception:
+      aggregate.getUtmFromCoordinates(33,-117,badvalue)
+    assert 'Invalid span value' in str(exception.value)
 
   # Test bad lat/lon values
 

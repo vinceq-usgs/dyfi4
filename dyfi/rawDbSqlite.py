@@ -69,10 +69,12 @@ class RawDb:
         """
 
         :synopsis: Query the database, splitting multiple tables if necessary
-        :param tables: table or list of tables to query, see below
+        :param tables: table or list of tables to query
         :returns: list of rows returned by query
 
-        The :py:attr:`tables` parameter accepts a single table, a comma-separated list of tables, or a list of tables. It calls :py:meth:`querySingleTable` on each table, then concatenates the results into a single list.
+        Calls :py:meth:`querySingleTable` on each table, then concatenates the results into a single list.
+
+        The :py:attr:`tables` parameter accepts a single table or list of tables. No checking of table names is done at this step.
 
         """
 
@@ -96,7 +98,7 @@ class RawDb:
         :param str table: table to be queried
         :returns: list of rows returned by query
 
-        Note that no checking of table names is done at this step.
+        No checking of table names is done at this step.
 
         """
 
