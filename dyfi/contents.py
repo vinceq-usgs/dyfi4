@@ -13,7 +13,7 @@ class Contents:
 
     The :ref:`contents.xml` file is a list of DYFI products to be exported online. 
     
-    This loops through each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory to populate :ref:`contents.xml`.
+    Loops through each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory to populate :ref:`contents.xml`.
     
     The USGS Earthquake Pages webserver uses this file to populate the DYFI page for this event.
 

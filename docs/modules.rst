@@ -6,4 +6,3 @@ dyfi4
 
    app
    dyfi
-   tests

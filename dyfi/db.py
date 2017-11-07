@@ -70,7 +70,7 @@ class Db:
         :param str evid: event ID, e.g. 'us1000abcd'
         :returns: dict suitable for input to an :py:obj:`Event` instance
 
-        This is mostly a wrapper to the `RawDb` :py:obj:`query` method.
+        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
 
         """
 
@@ -94,7 +94,7 @@ class Db:
         :synopsis: Get a list of maps for an event.
         :returns: list of rows suitable for input to an :py:obj:`Maps` instance
 
-        This is mostly a wrapper to :py:obj:`query`.
+        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
 
         Each item in the return list is a dict with keys
         being columns to the maps table.
@@ -124,12 +124,13 @@ class Db:
         :param str querytext: optional clause(s)
         :returns: list of entries suitable for aggregation
 
-        This is mostly a wrapper to :py:obj:`query`. It also
-        figures out which extended tables to search,
+        This is mostly a wrapper to the :py:obj:`rawDBSqlite` :py:obj:`query` object.
+
+        It also figures out which extended tables to search,
         depending on the date of the event, using
         :py:obj:`getExtendedTablesByDatetime`.
 
-        For valid values of parameter :param:`table` see the :method:`checkTables` method.
+        For valid values of parameter :py:attr:`table` see the :py:meth:`checkTables` method.
 
         The optional query parameter is a string of SQL `WHERE` clauses
         (e.g. 'suspect=0 OR suspect is null').
@@ -184,7 +185,7 @@ class Db:
         :synopsis: Check that the table or tables exist
         :param table: Table (str or int) or list of tables
 
-        The :param:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
+        The :attr:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
 
         """
 
