@@ -86,10 +86,10 @@ class RawDb:
 
         Table can be a string name ('extended_2017') or year ('2017')
         """
-      
+     
         try:
-            year=float(table)
-            table='extended_'+year
+            year=int(table)
+            table='extended_'+str(year)
         except:
             pass
 
@@ -101,11 +101,11 @@ class RawDb:
         if isinstance(subs,str):
             subs=[subs]
 
-#        subs=[str(x) for x in subs]
         print('RawDb:',query)
-#        if subs is not None:
-#            print('RawDb:',','.join(subs))
-        c.execute(query,subs)
+        try:
+            c.execute(query,subs)
+        except sqlite3.OperationalError as e:
+            raise NameError('sqlite3 Operational error: '+str(e))
 
         results=[]
         for row in c:

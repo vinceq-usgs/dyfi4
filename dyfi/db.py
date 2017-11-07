@@ -18,6 +18,10 @@ class Db:
 
     .. note:: To change to the database implementation to MySQL, see the heading of the :code:`db.py` module.
 
+    .. data:: tables
+
+        A list of all tables (including extended tables).
+
     .. data:: exttables
 
         A list of all the extended tables.
@@ -50,10 +54,13 @@ class Db:
 
         self.rawdb=RawDb(config.db)
         self.params=config.db
+        self.tables=['event','maps']
         self.exttables=['extended_'+str(x) for x in
             (['pre'] + list(range(self.EXT_MINYR,self.EXT_MAXYR+1)))]
         self.latesttable=self.exttables[-1]
         self.event=''
+
+        self.tables.extend(self.exttables)
 
 
     def loadEvent(self,evid):
@@ -117,12 +124,12 @@ class Db:
         :param str querytext: optional clause(s)
         :returns: list of entries suitable for aggregation
 
-        The :param:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables.
-
         This is mostly a wrapper to :py:obj:`query`. It also
         figures out which extended tables to search,
         depending on the date of the event, using
         :py:obj:`getExtendedTablesByDatetime`.
+
+        For valid values of parameter :param:`table` see the :method:`checkTables` method.
 
         The optional query parameter is a string of SQL `WHERE` clauses
         (e.g. 'suspect=0 OR suspect is null').
@@ -133,14 +140,9 @@ class Db:
         # First, figure out which tables to check
 
         if table:
-          if table=='latest':
-            table=self.latesttable
-          elif table=='all':
-            table=self.exttables
-          elif isinstance(table,str) and 'extended_'+table in self.exttables:
-            table='extended_'+table
+          table=self.checkTables(table)
 
-        elif not table:
+        else:
             if startdatetime:
                 table=self.getExtendedTablesByDatetime(startdatetime)
             elif event:
@@ -172,9 +174,52 @@ class Db:
         if myclauses:
             querytext=' AND '.join(myclauses)
 
-
         results=self.rawdb.query(table,querytext,mysubs)
         return results
+
+
+    def checkTables(self,table):
+        """
+
+        :synopsis: Check that the table or tables exist
+        :param table: Table (str or int) or list of tables
+
+        The :param:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
+
+        """
+
+        if table=='all':
+            return self.exttables
+
+        if isinstance(table,str) and ',' in table:
+            tables=table.split(',')
+
+        elif not isinstance(table,list):
+            tables=[table]
+        else:
+            tables=table
+
+        outtables=[]
+        for table in tables:
+            print('Trying table',table)
+            if isinstance(table,int):
+                table='extended_'+str(table)
+
+            if table=='latest':
+                table=self.latesttable
+
+            if table not in self.tables:
+                table='extended_'+table
+
+            if table in self.tables:
+                outtables.append(table)
+
+            elif 'extended'+table in self.tables:
+                outtables.append('extended_'+table)
+            else:
+                raise NameError('Db: no such table '+table)
+
+        return outtables
 
 
     def rawStatement(self,text):
