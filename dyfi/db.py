@@ -202,21 +202,18 @@ class Db:
 
         outtables=[]
         for table in tables:
-            print('Trying table',table)
             if isinstance(table,int):
                 table='extended_'+str(table)
 
             if table=='latest':
                 table=self.latesttable
 
-            if table not in self.tables:
-                table='extended_'+table
-
             if table in self.tables:
                 outtables.append(table)
 
             elif 'extended_'+table in self.tables:
                 outtables.append('extended_'+table)
+
             else:
                 raise NameError('Db: no such table '+table)
 
