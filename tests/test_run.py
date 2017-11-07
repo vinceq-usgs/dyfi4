@@ -7,27 +7,6 @@ from argparse import Namespace
 
 testid='us10006u0q'
 
-
-def test_aggregate():
-    from dyfi import aggregate
-
-    utmstring='500000 3650000 11 S'
-    assert aggregate.main(['33','-117','geo_10km'])==utmstring
-    latlon=aggregate.main([utmstring])
-    assert abs(latlon[0]-33)<0.1
-    assert abs(latlon[1]-(-117))<0.1
-
-    with pytest.raises(ValueError) as exception:
-        aggregate.main(['91','-117','geo_1km'])
-    assert 'Latitude out of bounds' in str(exception.value)
-
-    try:
-        aggregate.main(['bad','worse','geo_1km'])
-        assert False
-    except SystemExit:
-        pass
-
-
 def test_run():
     from app import rundyfi
 

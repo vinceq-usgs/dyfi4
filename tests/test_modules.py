@@ -40,6 +40,7 @@ def test_db():
 
   pasttime=db.timeago(3)
   assert pasttime.year>1990
+ 
 
 def test_event():
   import geojson
@@ -76,6 +77,7 @@ def test_event():
     event=Event(db.loadEvent('blank'))
   assert str(exception.value)=='Event: Cannot create evid with no data'
 
+
 def test_dbentries():
   import geojson
   import datetime
@@ -83,20 +85,31 @@ def test_dbentries():
 
   db=Db(Config(configfile))
   entries=db.loadEntries(evid=testid,table='latest')
-  assert len(entries)>0
+  assert len(entries)==913
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
-  assert len(entries)>0
+  assert len(entries)==913
   with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='2099')
-  assert 'getcursor could not find table' in str(exception.value)
-
-  #  with pytest.raises(NameError) as exception:
+  assert 'no such table' in str(exception.value)
 
   with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='1999,2000')
-  assert 'getcursor could not find table' in str(exception.value)
+  assert 'no such table' in str(exception.value)
+
+  querytext='suspect is not null'
+  entries1=db.loadEntries(table='2015',querytext=querytext)
+  entries2=db.loadEntries(table='2016',querytext=querytext)
+  entries3=db.loadEntries(table='2015,2016',querytext=querytext)
+  entries4=db.loadEntries(table=[2015,2016],querytext=querytext)
+  e1=len(entries1)
+  e2=len(entries2)
+  assert e1==2017
+  assert e2==7
+  assert len(entries3)==e1+e2
+  assert len(entries4)==e1+e2
+
 
   with pytest.raises(RuntimeError) as exception:
     db.rawStatement('select * from event where eventid="%s"' % testid)
