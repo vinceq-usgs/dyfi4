@@ -182,7 +182,6 @@ def getUtmFromCoordinates(lat,lon,span=None):
         span=10000
     else:
         raise TypeError('Invalid span value '+str(span))
-    
 
     try:
         loc=from_latlon(lat,lon)

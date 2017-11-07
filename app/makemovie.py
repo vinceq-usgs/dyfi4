@@ -95,7 +95,7 @@ class Movie:
             products.create(mapParams)
 
             # Create geojson
-            prod=Product(products,'geo10km snapshot',dataset='geo_10km',productType='map').create('geojson',inputfile)
+            Product(products,'geo10km snapshot',dataset='geo_10km',productType='map').create('geojson',inputfile)
             print('Made Product and saved to',inputfile)
 
             Map.GeoJSONtoImage(inputfile,outputfile,config)

@@ -42,7 +42,7 @@ def test_db():
   assert pasttime.year>1990
 
   # Test RawDb
- 
+
   rawdb=db.rawdb
 
   with pytest.raises(NameError) as exception:
@@ -196,7 +196,7 @@ def test_entries():
   single.__dict__['felt']='a bad value'
   single.__dict__['d_text']='_chim'
   assert cdi.calculate(single)==4.8
-  
+
   # Test aggregate
 
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
