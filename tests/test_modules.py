@@ -49,6 +49,9 @@ def test_db():
     rawdb.querySingleTable('badtable','suspect=1')
   assert 'getcursor could not find table' in str(exception.value)
 
+  with pytest.raises(NameError) as exception:
+    rawdb.querySingleTable('event','invalid command')
+  assert 'Operational error' in str(exception.value)
 
 def test_event():
   import geojson
