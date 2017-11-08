@@ -16,7 +16,7 @@ class Db:
     This connection is required to run any database queries.
     The database is currently implemented in SQLite. (Subject to change)
 
-    .. note:: To change to the database implementation to MySQL, see the heading of the :code:`db.py` module.
+    .. note:: To change to the database implementation to MySQL, see the heading of this module.
 
     .. data:: tables
 
@@ -92,6 +92,7 @@ class Db:
         """
 
         :synopsis: Get a list of maps for an event.
+        :param str evid: event ID, e.g. 'us1000abcd'
         :returns: list of rows suitable for input to an :py:obj:`Maps` instance
 
         This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
@@ -184,8 +185,11 @@ class Db:
 
         :synopsis: Check that the table or tables exist
         :param table: Table (str or int) or list of tables
+        :returns: list of table names
 
         The :attr:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
+
+        The return value is a list of proper table names ('2016' will be converted to 'extended_2016', etc.) If any of the tables don't exist, a NameError is returned.
 
         """
 
@@ -222,6 +226,16 @@ class Db:
 
     @classmethod
     def timeago(cls,t):
+        """
+
+        :synopsis: Compute a past datetime
+        :param int t: Time interval in minutes
+        :returns: :py:obj:`Datetime` object
+
+        Returns the datetime from :py:attr:`t` minutes ago.
+
+        """
+
         t0=datetime.datetime.now()
         tdelta=datetime.timedelta(minutes=t)
         tnew=t0-tdelta
@@ -230,6 +244,13 @@ class Db:
 
     @classmethod
     def row2geojson(cls,row):
+        """
+
+        :synopsis: Convert a database entry row into a GeoJSON object
+        :param dict row: A dict entry
+        :returns: :py:obj:`GeoJSON` dict
+
+        """
         lat=row['latitude']
         lon=row['longitude']
         if not lat or not lon: # pragma: no cover

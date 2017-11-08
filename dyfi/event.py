@@ -14,7 +14,9 @@ import datetime
 class Event:
     """
 
-    :synopsis: Class for handling Event objects. This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
+    :synopsis: Class for handling Event objects
+    
+    This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
 
     .. note::
         Access the data in this object with the keys in

@@ -25,8 +25,8 @@ def aggregate(entries,producttype):
     the following properties:
 
     ======  ========================================
-    name    Same as :py:obj:`producttype`
-    id      Same as :py:obj:`producttype`
+    name    Same as :py:attr:`producttype`
+    id      Same as :py:attr:`producttype`
     nresp   Total number of responses from each valid location
     maxint  Maximum intensity from each valid location
     ======  ========================================

@@ -13,11 +13,11 @@ class Entries():
     """
 
     :synopsis: Handle a collection of entries and aggregation.
-    :param list rawdata: a list of raw data from the extended DB table
+    :param list rawdata: a list of raw data (e.g. a table row)
 
     .. data:: entries
 
-        A list of Entry objects.
+        A list of :py:obj:`Entry` objects.
 
     """
 
@@ -40,13 +40,39 @@ class Entries():
             self.entries.append(entry)
             count+=1
 
+
     def aggregate(self,name,force=False):
+        """
+
+        :synopsis: Aggregate the entry data in this object
+        :param str name: The name of this aggregation
+        :returns: A `GeoJSON` :py:obj:`FeatureCollection`
+        
+        A wrapper to :py:obj:`Aggregate.aggregate`. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
+
+        """
+
         return aggregate(self.entries,name)
 
 
-    def getTimes(self,name,force=False):
-        entries=self.entries
+    def getTimes(self,datatype):
+        """
 
+        :synopsis: Create a list of entry times from a list of entries
+        :param str datatype: Usually 'time'
+        :returns: A dict of times data
+
+        The return value is a dict with the following values:
+
+        =====    =============================================
+        id       'numresp'
+        name     Same as :py:attr:`datatype`
+        data     A sorted list of :py:obj:`datetime` objects
+        =====    =============================================
+
+        """
+
+        entries=self.entries
         times=[]
         for entry in entries:
             entryTime=entry.time_now
@@ -90,7 +116,7 @@ class Entries():
 class Entry():
     """
 
-    :synopsis: Class for handling user questionnaire responses.
+    :synopsis: Class for handling user questionnaire responses
     :param dict rawdata: raw data from one row of an extended table
 
     .. warning::

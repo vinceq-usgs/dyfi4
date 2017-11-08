@@ -13,7 +13,21 @@ from .products import Products
 class DyfiContainer:
     """
 
-    :synopsis: Class for handling DyfiContainer objects. This holds all DYFI data about a particular earthquake (event data, entries, aggregated intensities, and products).
+    :synopsis: Class for handling DyfiContainer objects
+    
+    This holds all the DYFI data about a particular event: event data, entries, aggregated intensities, and products.
+
+    .. py:attribute:: event
+
+        A :py:obj:`dyfi.event.Event` object.
+
+    .. py:attribute:: entries
+
+        A :py:obj:`dyfi.entries.Entries` object.
+
+    .. py:attribute:: products
+
+        A :py:obj:`dyfi.products.Products` object.
 
     """
 

@@ -52,16 +52,12 @@ dyfi.entries
 
 .. automodule:: dyfi.entries
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 dyfi.event
 -----------------
 
 .. automodule:: dyfi.event
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 dyfi.graph
 -----------------
