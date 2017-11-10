@@ -84,7 +84,7 @@ class Entries():
         times.sort()
         data={
             'id':'numresp',
-            'name':name,
+            'name':datatype,
             'data':times
         }
         return data
