@@ -29,14 +29,14 @@ def test_ipe():
     assert 5.8<func(7,10,inverse=True)<5.9
 
 
-def test_mail():
-    from dyfi import mail
-
-    sample=['--subject','test subject','--to','nobody','--text','test body']
-
-    # This looks for /bin/mail and should fail under Travis
-    with pytest.raises(FileNotFoundError) as exception:
-        mail.main(sample)
-    assert 'No such file or directory' in str(exception.value)
+#def test_mail():
+#    from dyfi import mail
+#
+#    sample=['--subject','test subject','--to','nobody','--text','test body']
+#
+#    # This looks for /bin/mail and should fail under Travis
+#    with pytest.raises(FileNotFoundError) as exception:
+#        mail.main(sample)
+#    assert 'No such file or directory' in str(exception.value)
 
 

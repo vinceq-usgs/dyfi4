@@ -1,10 +1,3 @@
-"""
-
-Map
-===
-
-"""
-
 import shutil
 import tempfile
 import os
@@ -14,11 +7,11 @@ import copy
 
 class Map:
     """
-        :synopsis: Create a static map
+        :synopsis: Collects data to create a static map
         :param str filename: The filename to create
-        :param Event event: An Event object
-        :param dict mapparams: A dict of params from a eventMap
-        :param dict data: Aggregated data in GeoJSON format
+        :param event: A :py:class:`dyfi.Event` object
+        :param dict mapparams: A dict of params
+        :param dict data: Aggregated data in `GeoJSON` format
 
     """
 
@@ -52,20 +45,36 @@ class Map:
         data['features'].append(epicenter)
         self.data=data
 
-    # This creates the map used for static images, not the
-    # actual GeoJSON data. Hence it's only used for
-    # debugging.
     def toGeoJSON(self,filename=None):
+        """
 
-        text=json.dumps(self.data)
+        :synopsis: Convert the map data into GeoJSON
+        :param str filename: (optional) filename
+        :returns: prettyprinted GeoJSON text
+
+
+        This prints out the GeoJSON data used for the static images, not the actual GeoJSON data. Hence it's only used for debugging.
+
+        If `filename` is specified, the data is saved to that file.
+
+        """
+
+        text=json.dumps(self.data,sort_keys=True,indent=2)
         if filename:
             with open(filename,'w') as f:
                 f.write(text)
         return text
 
 
-    # Called by Product with format 'png'
     def toImage(self):
+        """
+
+        :synopsis: Creates the PNG static image
+        :returns: The resulting filename
+
+        Calls :py:func:`GeoJSONtoImage` with the appropriate parameters. Normally, this is called during the processing of a :py:class:`dyfi.products.Product` object.
+
+        """
         dataName=self.data['name']
 
         inputfile='%s/dyfi_%s.geojson' % (self.dir,dataName)
@@ -73,12 +82,17 @@ class Map:
 
         return Map.GeoJSONtoImage(inputfile,outputfile,self.config)
 
-
+    @staticmethod
     def GeoJSONtoImage(inputfile,outputfile,config):
 
         """
-        :synopsis: Create static image map from Event object
-        :returns: none
+        :synopsis: Create a static image from a GeoJSON file
+        :param str inputfile: The input GeoJSON file
+        :param str outputfile: The resulting PNG file
+        :returns: The resulting output file
+
+        Creates the static image using Leaflet to render the map and a screenshot application. See the :ref:`Creating static products` for details.
+
         """
 
         leafletdir=config.directories['leaflet']

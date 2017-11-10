@@ -86,7 +86,7 @@ class Graph:
     def getDataDistance(self):
         """
 
-        :synopsis: Return the data for the intensity vs. distance graph
+        :synopsis: Collect data for the intensity vs. distance graph
         :returns:  None
 
         Computes the datasets used for the intensity vs. distance graph using the data in :py:obj:`rawdata`:
@@ -94,14 +94,14 @@ class Graph:
         - Scatter data (from the data input)
         - Mean and median in each distance bin
         - IPE data plotted across the distance range (for each IPE)
- 
+
         This populates the :py:attr:`data` attribute of this instance with a dict with the following data:
 
         =========    ========================
-        datasets     A list of the datasets
+        datasets     The list of datasets
         xlabel       Label text
         ylabel       Label text
-        title        Title text
+        title        Title of this graph
         =========    ========================
 
         This also populates the :py:attr:`params` attribute with the graph limits.
@@ -149,11 +149,11 @@ class Graph:
         :synopsis: Computes scatterplot data from entries
         :returns: dict
 
-        Computes distance and intensity from each feature in :py:obj:`self.rawdata` and outputs a dict with the following values:
+        Used by :py:meth:`getDataDistance`. Computes distance and intensity from each feature in :py:obj:`self.rawdata` and outputs a dict with the following values:
 
         =======    =============================
         id         'scatterdata'
-        legend     Title of this graph
+        legend     'Aggregated [Event ID] data'
         class      'scatterplot1'
         data       List of points (see below)
         =======    =============================
@@ -199,7 +199,7 @@ class Graph:
         :synopsis: Computes IPE estimates for this event
         :returns: list
 
-        Computes estimated curves for each IPE for this event (using the event magnitude). The output is a list of dicts, one dict for each IPE, with the following data:
+        Used by :py:meth:`getDataDistance`. Computes estimated curves for each IPE for this event (using the event magnitude). The output is a list of dicts, one dict for each IPE, with the following data:
 
         =======    ================================
         id         'ipe_[IPE name]'
@@ -250,11 +250,19 @@ class Graph:
     def getMeanMedianData(self,scatterdata):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Computes mean and median data for entries
+        :returns: list
+
+        Used by :py:meth:`getDataDistance`. Computes mean and median data for the entries in each distance bin. The output is a list of dicts, one for mean data and one for median data:
+
+        =======    ================================
+        id         'meanBinned' or 'medianBinned'
+        legend     'Mean' or 'Median intensity in bin
+        class      'mean' or 'median'
+        data       The mean or median datapoints
+        =======    ================================
 
         """
-
 
         # Create distance bins in log space and fill them
 
@@ -324,8 +332,10 @@ class Graph:
     def getDistBins(self):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Computes the bins used for mean/median computation
+        :returns: A list of ints which are the bin boundaries
+
+        Used by :py:meth:`getMeanMedianData`.
 
         """
 
@@ -346,8 +356,13 @@ class Graph:
     def getTitle(self):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Gets a title from the :py:class:`dyfi.Event` object
+        :returns: A list of text (title and subtitle)
+
+        The standard title has two lines:
+
+        - USGS DYFI: [event location]
+        - ID:[event ID]
 
         """
 
@@ -366,8 +381,22 @@ class Graph:
     def getDataTime(self):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Compute data for the responses vs. time graph
+        :returns:  None
+
+        Computes the response count and time after origin for each entry in :py:obj:`rawdata`.
+
+        This populates the :py:attr:`data` attribute of this instance with a dict with the following data:
+
+        =====================   ==============================
+        datasets                The time dataset
+        xlabel                  Label text
+        ylabel                  Label text
+        title                   Title of this graph
+        preferred_unit          from :py:meth:`getTimeBounds`
+        preferred_conversion    from :py:meth:`getTimeBounds`
+        eventid                 Event ID
+        =====================   ==============================
 
         """
 
@@ -423,12 +452,20 @@ class Graph:
             'eventid':event.eventid
         }
 
+
     @classmethod
     def getTimeBounds(cls,t):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Returns the correct time units for plotting
+        :returns: dict
+
+        Used by :py:meth:`getDataTime`. The output is a dict with these values:
+
+        ==============  ===================================
+        prefUnit        'minutes' or 'hours' (for printing)
+        prefConversion  60 or 3600
+        ==============  ===================================
 
         """
 
@@ -452,8 +489,10 @@ class Graph:
     def toJSON(self):
         """
 
-        :synopsis:
-        :returns:
+        :synopsis: Convert data into a GeoJSON
+        :returns: prettyprinted string
+
+        This prints the :py:obj:`data` attribute of this object.
 
         """
 

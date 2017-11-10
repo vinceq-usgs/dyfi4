@@ -1,23 +1,29 @@
-#! /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 10 17:51:20 2016
 
-@author: vinceq
+    A collection of IPEs for plotting and filtering. 
+
 """
 
 import math
 
 C = (0,0.309,1.864,-1.672,-0.00219,1.77,-0.383)
 
-# Atkinson, Worden, and Wald 2014.
-# See https://doi.org/10.1785/0120140178
-
 def aww2014wna(mag,r,inverse=False,fine=False):
     """
-    Implementation of Atkinson, Worden, Wald (2014)
-    Returns intensity = f(mag,r)
-    If inverse is true, returns mag = f(intensity,r)
+
+    :synopsis: Estimate intensity given magnitude and distance
+    :param float mag: Magnitude
+    :param float r: Epicentral distance
+    :param bool inverse: Compute the inverse function
+    :param bool fine: If false, intensities below 2 become 1
+    :returns: Intensity
+
+
+    Implementation of Atkinson, Worden, Wald (2014) for the Western North America region. See https://doi.org/10.1785/0120140178
+
+    If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.
+
     """
 
     R=math.sqrt(r**2 + 14**2)
@@ -46,10 +52,19 @@ def aww2014wna(mag,r,inverse=False,fine=False):
 # See https://doi.org/10.1785/0120140178
 def aww2014ena(mag,r,inverse=False,fine=False):
     """
-    Implementation of Atkinson, Worden, Wald (2014)
-    Returns intensity = f(mag,r)
 
-    If inverse is true, returns mag = f(intensity,r)
+    :synopsis: Estimate intensity given magnitude and distance
+    :param float mag: Magnitude
+    :param float r: Epicentral distance
+    :param bool inverse: Compute the inverse function
+    :param bool fine: If false, intensities below 2 become 1
+    :returns: Intensity
+
+
+    Implementation of Atkinson, Worden, Wald (2014) for the Eastern North America region. See https://doi.org/10.1785/0120140178
+
+    If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.
+
     """
 
     R=math.sqrt(r**2 + 14**2)
