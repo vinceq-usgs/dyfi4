@@ -64,16 +64,12 @@ dyfi.graph
 
 .. automodule:: dyfi.graph
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 dyfi.ipes
 ----------------
 
 .. automodule:: dyfi.ipes
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 dyfi.mail
 ----------------

@@ -19,11 +19,26 @@ from . import ipes
 
 class Graph:
     """
-        :synopsis: Create a static graph
-        :param str filename: The filename to create
-        :param Event event: An Event object
-        :param dict mapparams: A dict of params from a eventMap
-        :param dict data: Aggregated data in GeoJSON format
+
+    :synopsis: Create a static graph
+    :param str filename: The filename to create
+    :param Event event: An Event object
+    :param dict mapparams: A dict of params from a eventMap
+    :param dict data: Aggregated data in GeoJSON format
+
+    Note that this creates an instance of :py:obj:`self.rawdata` which is a deep copy of the :py:obj:`data` object. This allows modifying the dataset without affecting the original.
+
+    .. py:data:: NBINS
+
+        Number of distance bins for the distance vs. intensity graph.
+
+    .. py:data:: ipelist
+
+        List of IPEs from :py:obj:`dyfi.ipes` to plot on the distance vs. intensity graph.
+
+    .. py:data:: graphLabels
+
+        Dict of titles, x labels, and y labels for each graph.
 
     """
 
@@ -42,9 +57,7 @@ class Graph:
         }
 
 
-    def __init__(self,name,event,data,config=None,eventDir=None,title=None,parent=None):
-
-        print('Graph: Creating',name,'object.')
+    def __init__(self,name,event,data,config=None,eventDir=None,title=None):
 
         self.name=name
         self.event=event
@@ -67,10 +80,34 @@ class Graph:
 
         self.title=title if title else self.getTitle()
 
+
 # Methods for plot_atten
-# TODO: Put this in separate function
 
     def getDataDistance(self):
+        """
+
+        :synopsis: Return the data for the intensity vs. distance graph
+        :returns:  None
+
+        Computes the datasets used for the intensity vs. distance graph using the data in :py:obj:`rawdata`:
+
+        - Scatter data (from the data input)
+        - Mean and median in each distance bin
+        - IPE data plotted across the distance range (for each IPE)
+ 
+        This populates the :py:attr:`data` attribute of this instance with a dict with the following data:
+
+        =========    ========================
+        datasets     A list of the datasets
+        xlabel       Label text
+        ylabel       Label text
+        title        Title text
+        =========    ========================
+
+        This also populates the :py:attr:`params` attribute with the graph limits.
+
+        """
+
         rawdata=self.rawdata
 
         d=[]
@@ -107,6 +144,24 @@ class Graph:
 
 
     def getScatterData(self):
+        """
+
+        :synopsis: Computes scatterplot data from entries
+        :returns: dict
+
+        Computes distance and intensity from each feature in :py:obj:`self.rawdata` and outputs a dict with the following values:
+
+        =======    =============================
+        id         'scatterdata'
+        legend     Title of this graph
+        class      'scatterplot1'
+        data       List of points (see below)
+        =======    =============================
+
+        Each point in :py:obj:`data` is a dict with x (distance) and y (intensity) for each feature.
+
+        """
+
         event=self.event
         rawdata=self.rawdata
 
@@ -139,6 +194,24 @@ class Graph:
 
 
     def getIpeData(self,ipelist=None):
+        """
+
+        :synopsis: Computes IPE estimates for this event
+        :returns: list
+
+        Computes estimated curves for each IPE for this event (using the event magnitude). The output is a list of dicts, one dict for each IPE, with the following data:
+
+        =======    ================================
+        id         'ipe_[IPE name]'
+        legend     IPE name
+        class      'estimated_n' where n is unique
+        data       List of points (see below)
+        =======    ================================
+
+        Each point in :py:obj:`data` is a dict with x (distance) and y (intensity) estimates across the plot range.
+
+        """
+
         mag=self.event.mag
         min_x=self.params['min_x']
         max_x=self.params['max_x']
@@ -175,6 +248,13 @@ class Graph:
 
 
     def getMeanMedianData(self,scatterdata):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
 
         # Create distance bins in log space and fill them
 
@@ -242,6 +322,13 @@ class Graph:
 
 
     def getDistBins(self):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
         if self.distBins is not None:
             bins=self.distBins
             return bins
@@ -257,6 +344,13 @@ class Graph:
 
 
     def getTitle(self):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
 
         event=self.event
         line1='USGS DYFI: %s' % (event.loc)
@@ -270,6 +364,13 @@ class Graph:
 # TODO: Put this in separate function
 
     def getDataTime(self):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
         event=self.event
         rawdata=self.rawdata
 
@@ -324,6 +425,13 @@ class Graph:
 
     @classmethod
     def getTimeBounds(cls,t):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
 
         if t<120:
             unit='minutes'
@@ -342,6 +450,13 @@ class Graph:
 # Methods for all Graph objects
 
     def toJSON(self):
+        """
+
+        :synopsis:
+        :returns:
+
+        """
+
         return json.dumps(self.data,sort_keys=True,indent=2)
 
 
