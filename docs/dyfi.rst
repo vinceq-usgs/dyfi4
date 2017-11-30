@@ -92,8 +92,6 @@ dyfi.products
 
 .. automodule:: dyfi.products
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 dyfi.rawDbSqlite
 -----------------------
