@@ -1,10 +1,3 @@
-"""
-
-Entries
-=======
-
-"""
-
 from .aggregate import aggregate
 from .db import Db
 import datetime

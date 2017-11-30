@@ -1,10 +1,3 @@
-"""
-
-Products
-========
-
-"""
-
 import json
 import yaml
 
@@ -14,10 +7,12 @@ from .map import Map
 class Products:
     """
 
-    :synopsis: Handle product generation for an event. This calls other product generators like :py:obj:`Contents` and :py:obj:`Map`.
-    :param event: :py:obj:`Event` object
+    :synopsis: Handle the generation of all the products 
+    :param event: A :py:obj:`dyfi.event.Event` object
+    :param entries: A :py:obj:`dyfi.entries.Entries` object
+    :param config: A :py:obj:`dyfi.config.Config` object
 
-    TODO
+    Create all the output files for an event. Each product is held in a :py:class:`dyfi.products.Product` object, which also runs the required product generation methods.
 
     """
 
@@ -37,6 +32,14 @@ class Products:
 
 
     def createAll(self):
+        """
+
+        :synopsis: Loop through all product types and create them
+        :returns: how many products were created
+
+        The list of products and parameters in the :file:`product.yml` are used as parameters for the :py:meth:`create` method.
+
+        """
 
         count=0
         for p in self.allProducts:
@@ -47,11 +50,25 @@ class Products:
         return count
 
 
-    # Create a particular Product object using the parameters in p
-    # This will compute the data specified in p['dataset'], if necessary
-    # Creating a Product object also creates the thing specified by 'productFormat'
-
     def create(self,p):
+        """
+
+        :synopsis: Create a :py:class:`Product` object and underlying thing
+        :param dict p: Set of parameters
+        :returns: Number of products created
+
+        Create a particular Product using the parameters in `p`. The following parameter keys are accepted in `p` (and are found in :file:`products.yml`):
+
+        - name
+        - dataset (geo_1km, geo_10km, time)
+        - format (geojson, png, json)
+        - type (map or graph)
+
+        If the `dataset` parameter is specified (e.g. 'geo' or 'time'), that dataset will be computed. 
+
+        If the 'formatType'  is specified, the :py:class:`Product` initializer will create the product as well (see :py:meth:`Product.create`).
+
+        """
 
         count=0
         params=dict()
@@ -113,6 +130,24 @@ class Products:
 
 
 class Product:
+    """
+
+    :synopsis: Handle the generation of a single product
+    :param parent: A :py:obj:`Products` object
+    :param str name: The name of this product
+    :param dataset: See below
+    :param productType: See below
+    :param productFormat: See below
+
+    Holds the output for particular product. This calls other product generators like :py:obj:`Contents` and :py:obj:`Map`.
+
+    If the `dataSet` parameter is set, this will run whatever method is needed to process the raw data (for example, geocoded aggregation, or generating time series data.)
+
+    If the `productType` parameter is set, this will create a :py:obj:`dyfi.graph.Graph` or :py:obj:`dyfi.map.Map` object from the processed data.
+
+    If the `productFormat` parameter is set, this will run the appropriate `create()` method to make and save the file.
+
+    """
 
     def __init__(self,parent,name,dataset=None,productType=None,productFormat=None):
 
@@ -141,6 +176,11 @@ class Product:
 
 
     def create(self,productFormat,filename=None):
+        """
+
+        :synopis:
+
+        """
 
         name=self.name
         if not filename:

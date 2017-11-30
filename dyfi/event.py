@@ -1,10 +1,3 @@
-"""
-
-Event
-=====
-
-"""
-
 import json
 import geojson
 
