@@ -1,8 +1,9 @@
 import json
 import geojson
+import datetime
+import time
 
 from .db import Db
-import datetime
 
 class Event:
     """
@@ -33,17 +34,18 @@ class Event:
 
 
     def __init__(self,data,config=None):
+        self.db=None
 
         if isinstance(data,str):
           evid=data
-          db=Db(config)
-          data=db.loadEvent(evid)
+          self.db=Db(config)
+          data=self.db.loadEvent(evid)
 
         elif isinstance(data,dict):
           evid=data['eventid']
 
         if not data:
-            raise NameError('Event: Cannot create evid with no data')
+            raise NameError('Event: Cannot create event with no data')
 
         self.raw=data
 
@@ -111,3 +113,57 @@ class Event:
                 rawlist.append({column:val})
 
         return json.dumps(rawlist)
+
+
+    @classmethod
+    def createFromContents(self,contents):
+        rawdata={'id':contents['id']}
+                
+        relevant=['place','time','mag','ids','net']
+        for key in relevant:
+            rawdata[key]=contents['properties'][key]
+
+        coords=['lon','lat','depth']
+        rawdata.update(zip(coords,contents['geometry']['coordinates']))
+
+        
+# calculate: eventdatetime nresp newresp max_intensity createdtime process_timestamp
+# ignore: eventlocaltime code_version event_version orig_id
+
+        rawdata['eventdatetime']=Event._toTime(rawdata['time'])
+        rawdata['createdtime']=Event._toTime()
+
+        conversion={
+            'eventid':'id',
+            'loc':'place',
+            'source':'net'
+        }
+
+        converted={}
+        for key in self.columns:
+            if key in rawdata:
+                converted[key]=rawdata[key]
+            elif key in conversion:
+                converted[key]=rawdata[conversion[key]]
+            else:
+                converted[key]=None
+
+        event=Event(converted)
+        return event
+
+
+    def save(self,config=None):
+        if not self.db:
+            self.db=Db(config)
+
+
+    def _toTime(epoch=None):
+        # Turn epoch time into '2017-01-01 12:00:00'
+
+        if not epoch:
+            dt=datetime.datetime.utcnow()
+        else:
+            dt=datetime.datetime.fromtimestamp(epoch/1000,tz=datetime.timezone.utc)
+
+        return dt.strftime('%Y-%m-%d %H:%M:%S')
+
