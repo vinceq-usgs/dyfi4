@@ -1,10 +1,3 @@
-"""
-
-DyfiContainer
-=============
-
-"""
-
 from .config import Config
 from .event import Event
 from .entries import Entries
@@ -38,4 +31,8 @@ class DyfiContainer:
         self.entries=Entries(evid,config=config)
         self.products=Products(self.event,self.entries,config=config)
         self.products.createAll()
+
+
+    def resetReponsesCount():
+        pass
 

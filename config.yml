@@ -19,6 +19,7 @@ db:
 directories:        
     data: data
     leaflet: leaflet
+    flags: data/flag
 
 # Use google chrome headless
 #executables:

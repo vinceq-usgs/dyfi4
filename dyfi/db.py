@@ -301,3 +301,22 @@ class Db:
         return self.exttables[(year-self.EXT_MINYR+1)::]
 
 
+    def getPendingEvents(self,minResponses=1):
+        """
+
+        :synopsis: Get a list of events with minResponses.
+        :param int minResponses: threshold of responses
+        :returns: list of events, each row is an event
+
+        Use this method to find events with pending responses.
+
+        """
+
+        table='event'
+        clause='cast(newresponses as integer) >= ?'
+        results=self.rawdb.query(table,clause,str(minResponses))
+        if not results:
+            return []
+        return results
+
+

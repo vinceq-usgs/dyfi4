@@ -53,7 +53,9 @@ def main(args):
     Contents(container).toXML(save=True)
 
     # TODO: Push should be a separate object
-    #Push.push(contents)
+    #if args.push:
+    #  Push.push(contents)
+    #  container.resetResponsesCount()
 
     print('Done with',evid)
     return container
