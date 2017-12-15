@@ -35,6 +35,7 @@ class Event:
 
     def __init__(self,data,config=None):
         self.db=None
+        self.table='event'
 
         if isinstance(data,str):
           evid=data
@@ -150,11 +151,6 @@ class Event:
 
         event=Event(converted)
         return event
-
-
-    def save(self,config=None):
-        if not self.db:
-            self.db=Db(config)
 
 
     def _toTime(epoch=None):

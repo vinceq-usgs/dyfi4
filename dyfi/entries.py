@@ -155,6 +155,7 @@ class Entry():
     ]
 
     def __init__(self,rawdata):
+        self.table='extended'
 
         for column,val in rawdata.items():
             if column in Entry.columns or '__' in column:

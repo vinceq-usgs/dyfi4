@@ -63,6 +63,25 @@ class Db:
         self.tables.extend(self.exttables)
 
 
+    def save(self,obj):
+        """
+
+        :synopsis: Save object to the database table
+        :param obj: Data object, see below
+        :returns: Success or failure
+
+        """
+
+        table=obj.table
+
+        if table=='event' or table=='extended':
+            return self.rawdb.save(table,obj)
+
+        else:
+            print('Db: Unknown object',obj)
+            return
+
+
     def loadEvent(self,evid):
         """
 
