@@ -28,16 +28,16 @@ class RawDb:
 
         self.dbfiles=dbparams['files']
         self.cursors={}
+        self.columns={}
+        self.connector=None
 
 
-    def getcursor(self,table):
+    def getCursor(self,table):
         """
 
         :synopsis: Create a Sqlite3 cursor to a particular table.
         :param str table: A single table.
         :param str dbparams: The name of a Config object (see config.py).
-
-        Handles raw database transactions.
 
         """
 
@@ -53,13 +53,15 @@ class RawDb:
             tablefile=self.dbfiles[table]
 
         else:
-            raise NameError('getcursor could not find table '+table)
+            raise NameError('getCursor could not find table '+table)
 
         print('RawDb: Connecting to file',tablefile)
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
+        self.connector=connector
+
+        print('RawDb: Creating new cursor for',table)
         cursor=connector.cursor()
-        print('RawDb: Creating cursor for',table)
         self.cursors[table]=cursor
 
         return cursor
@@ -102,7 +104,7 @@ class RawDb:
 
         """
 
-        c=self.getcursor(table)
+        c=self.getCursor(table)
         query='SELECT * FROM '+table
         if clause:
             query+=' WHERE '+clause
@@ -112,7 +114,7 @@ class RawDb:
 
         print('RawDb:',query)
         try:
-            c.execute(query,subs)
+            self.connector.execute(query,subs)
         except sqlite3.OperationalError as e:
             raise NameError('sqlite3 Operational error: '+str(e))
 
@@ -140,4 +142,61 @@ class RawDb:
 
         # results is now a list of dicts
         return results
+
+
+    def save(self,table,obj):
+        """
+
+        :synopsis: Save an object to the specifed table
+        :param str table: table to be saved
+        :returns: list of rows changed
+
+        """
+
+        # TODO: For extended table, figure out which table to use
+
+        # We no longer have to check for unique ID
+        c=self.getCursor(table)
+        columns=self.getColumns(table)
+        objDict=obj.__dict__
+
+        saveList=[]
+        for column in columns:
+            val=None
+            if column in objDict:
+                val=objDict[column]
+            saveList.append(val)
+
+        print('saveList is now:')
+        print(saveList)
+        query='INSERT OR REPLACE INTO '+table+' VALUES (%s)'
+        query %=(','.join('?'*len(saveList)))
+
+        try:
+            c.execute(query,saveList)
+            self.connector.commit()
+            return 1
+        except sqlite3.OperationalError as e:
+            raise NameError('sqlite3 Operational error: '+str(e))
+
+
+
+    def getColumns(self,table):
+        """
+
+        :synopsis:
+
+        """
+
+        if table in self.columns:
+            return self.columns[table]
+
+        # Cursor is saved, this won't open a duplicate cursor
+        c=self.getCursor(table)
+        c.execute('SELECT * FROM '+table)
+        columns=[tuple[0] for tuple in c.description]
+        self.columns[table]=columns
+
+        return columns
+
 
