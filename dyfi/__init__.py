@@ -13,3 +13,4 @@ from .lock import Lock
 from .pending import Pending
 from .responses import Responses
 from .comcat import ComcatEvent
+from .rawDbSqlite import RawDb

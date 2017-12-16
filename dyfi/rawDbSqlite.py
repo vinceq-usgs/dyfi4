@@ -112,14 +112,15 @@ class RawDb:
         if isinstance(subs,str):
             subs=[subs]
 
-        print('RawDb:',query)
+        print('RawDb: %s [%s]' % (query,','.join(subs)))
         try:
-            self.connector.execute(query,subs)
+            c.execute(query,subs)
         except sqlite3.OperationalError as e:
             raise NameError('sqlite3 Operational error: '+str(e))
 
         results=[]
         for row in c:
+
             # Sqlite data is a Row object, this is how you
             # turn it into a dict:
             rowdict=dict(zip(row.keys(),row))
@@ -167,8 +168,6 @@ class RawDb:
                 val=objDict[column]
             saveList.append(val)
 
-        print('saveList is now:')
-        print(saveList)
         query='INSERT OR REPLACE INTO '+table+' VALUES (%s)'
         query %=(','.join('?'*len(saveList)))
 

@@ -24,7 +24,7 @@ parser.add_argument(
     help='Read from file instead of feed'
 )
 parser.add_argument(
-    '--raw',action='store_true',
+    '--raw',action='store_true',default=False,
     help='Print raw feed and exit'
 )
 parser.add_argument(
