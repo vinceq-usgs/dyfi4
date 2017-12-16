@@ -6,8 +6,6 @@ use flock to ensure that multiple processes never run concurrently
 
 Usage: app/queue.py --check --config [configfile]
 
-
-
 Process loop:
 
 Get list of events with nresponses>n
