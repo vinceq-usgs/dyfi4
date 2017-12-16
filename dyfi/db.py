@@ -1,5 +1,6 @@
-# To use MySQL, switch the top line with this:
-#import modules.rawDbMySQL as rawdb
+# To use MySQL, 
+# 1. change line 6 from .rawDbSqlite to .rawDbMysql
+# 2. same for dyfi/__init__.py 
 
 import warnings
 from .rawDbSqlite import RawDb
