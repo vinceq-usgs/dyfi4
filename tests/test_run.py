@@ -14,7 +14,7 @@ def test_run():
 
     with pytest.raises(NameError) as exception:
         rundyfi.main(Namespace(evid='blank',configfile='./tests/testconfig.yml'))
-    assert 'Cannot create evid' in str(exception.value)
+    assert 'Cannot create Event' in str(exception.value)
 
     container=rundyfi.main(Namespace(evid=testid,configfile='./tests/testconfig.yml'))
 

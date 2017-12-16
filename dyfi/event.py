@@ -46,7 +46,7 @@ class Event:
           evid=data['eventid']
 
         if not data:
-            raise NameError('Event: Cannot create event with no data')
+            raise NameError('Event: Cannot create Event with no data')
 
         self.raw=data
 

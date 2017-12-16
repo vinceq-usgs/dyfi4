@@ -112,7 +112,8 @@ class RawDb:
         if isinstance(subs,str):
             subs=[subs]
 
-        print('RawDb: %s [%s]' % (query,','.join(subs)))
+        print('RawDb: %s;',subs)
+
         try:
             c.execute(query,subs)
         except sqlite3.OperationalError as e:

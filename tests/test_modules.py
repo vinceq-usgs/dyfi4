@@ -47,7 +47,7 @@ def test_db():
 
   with pytest.raises(NameError) as exception:
     rawdb.querySingleTable('badtable','suspect=1')
-  assert 'getcursor could not find table' in str(exception.value)
+  assert 'getCursor could not find table' in str(exception.value)
 
   with pytest.raises(NameError) as exception:
     rawdb.querySingleTable('event','invalid command')
@@ -86,7 +86,7 @@ def test_event():
   # Test an event with no db entry
   with pytest.raises(NameError) as exception:
     event=Event(db.loadEvent('blank'))
-  assert str(exception.value)=='Event: Cannot create evid with no data'
+  assert 'Cannot create Event' in str(exception.value)
 
 
 def test_dbentries():
@@ -344,5 +344,5 @@ def test_container():
 
   with pytest.raises(NameError) as badAttr:
     DyfiContainer('blank')
-  assert 'Cannot create evid' in str(badAttr.value)
+  assert 'Cannot create Event' in str(badAttr.value)
 
