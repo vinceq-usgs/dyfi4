@@ -5,7 +5,7 @@ Allows processes to run in crontab without worrying about multiple instances
 
 Usage:
 try:
-    Lock('program_name',[optional max time in seconds])
+    Lock('program_name',flagDir=['optional directory'])
 
 except:
     exit()
