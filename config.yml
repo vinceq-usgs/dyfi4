@@ -19,7 +19,7 @@ db:
 directories:        
     data: data
     leaflet: leaflet
-    flags: data/flag
+    incoming: data/incoming
 
 # Use google chrome headless
 #executables:
@@ -37,8 +37,16 @@ executables:
     screenshot: 
       - phantomjs
       - __ABSPATH__/capture.js
-
+    sync: /usr/bin/rsync
+    ssh: /usr/bin/ssh
 
 products:
     file: lib/products.yml
 
+responses:
+    serverTemplate: vinceq@{server}-acquisition.cr.usgs.gov
+    remoteDir: /data/write/{server}/earthquake-dyfi-response/incoming.vmdyfit
+    remotes: dev01,dev02,prod01,prod02
+    #serverTemplate: localhost
+    #remoteDir: tests/incoming
+    #remotes: test

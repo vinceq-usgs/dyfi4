@@ -4,6 +4,8 @@
 readEvent.py
 ============
 
+# TODO: Find duplicates
+
 """
 
 import os

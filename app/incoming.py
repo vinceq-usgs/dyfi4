@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 """
 
-run from cron
-use flock to ensure that multiple processes never run concurrently
-
 Usage: app/incoming.py --check --config [configfile]
+
+Mostly a stub to dyfi/responses.py
+Note: Run from cron
 
 Process loop:
 
@@ -23,6 +23,8 @@ import argparse
 import os.path
 import time
 
+PENDING_FILES_MAX=19 # Don't download more responses if more than this
+
 parser=argparse.ArgumentParser(
     prog='app/incoming.py',
     description='Download incoming responses and save to extended table'
@@ -32,8 +34,12 @@ parser.add_argument(
     help='Check for pending responses but don\'t download them'
 )
 parser.add_argument(
-    '--nofeed',action='store_true',default=False,
-    help='Don\'t check the USGS Event Feed for event data'
+    '--noremote',action='store_true',
+    help='Don\'t access remote servers'
+)
+parser.add_argument(
+    '--nodelete',action='store_true',default=False,
+    help='Don\'t remove remote files (for debugging only)'
 )
 parser.add_argument(
     '--configfile',action='store',default='./config.yml',
@@ -49,7 +55,33 @@ def main(args):
     if not args.check:
         Lock('incoming')
 
-    responses=Responses(**vars(args))
+    resp=Responses(args.configfile)
+    pendingFiles=resp.checkIncomingDir()
+
+    if args.check:
+        nfiles=len(pendingFiles)
+        print('incoming.py: Got',nfiles,'responses in incoming')
+        if not args.noremote:
+            resp.downloadServers(checkonly=True)
+        exit()
+
+    while(1):
+        if not args.noremote and len(pendingFiles)<=PENDING_FILES_MAX:
+            resp.downloadServers(nodelete=args.nodelete)
+            pendingFiles=resp.checkIncomingDir()
+
+        if len(pendingFiles)==0:
+            print('No responses found, exiting.')
+            exit()
+
+        for file in pendingFiles:
+            # evid=resp.writeResponseFile(file,checkEvid=True)
+            # If event does not exist, create stub with +1 newresponses
+            # else update evid with +1 newresponses
+            print('Deleting',file)
+            os.remove(file)
+
+        pendingFiles=[]
 
 
 if __name__=='__main__':

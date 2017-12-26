@@ -14,42 +14,85 @@ For each response:
 
 import sys
 import argparse
-import os.path
+import os
 import time
+import subprocess
 
 from .config import Config
 from .db import Db
 
 class Responses:
 
-    def __init__(self,check,nofeed,configfile):
+    def __init__(self,configfile,verbose=False):
 
-        config=Config(configfile)
-        self.db=Db(config)
-        self.responses=self.db.getResponses(check)
+        self.config=Config(configfile)
+        self.verbose=verbose
+        self.verbose=1
         self.processed=0
+        self.downloaded=0
 
-        if check:
-            self.displayResponses()
-            exit()
-
-        if not self.responses:
-            print('Responses: None found')
-            return
-
-        for response in self.responses:
-            # save here
-            self.processed+=1
+        os.makedirs(self.config.directories['incoming'],exist_ok=True)
 
 
-    def displayResponses(self,check):
-        print('Got %i events to process.' % len(self.events))
-        event=self.events[0]
-        print('Priority is event %s with %i responses.' %
-            (event['eventid'],event['newresponses']))
+    def checkIncomingDir(self):
+        incomingDir=self.config.directories['incoming']
+        files=next(os.walk(incomingDir))[2]
+        files=[incomingDir+'/'+x for x in files]
+        return files
 
 
+    def downloadServers(self,nodelete=False,checkonly=False):
+
+        remotes=self.config.responses['remotes']
+
+        for remote in remotes.split(','):
+
+            if checkonly:
+                count=self.countRemote(remote)
+                print('Server:',remote,'files:',count)
+                continue
+
+            count=self.downloadRemote(remote,nodelete)
+            if count:
+                print('Server:',remote,'files:',count)
 
 
-    
+    def countRemote(self,remote):
+        server=self.config.responses['serverTemplate']
+        remoteDir=self.config.responses['remoteDir']
+        bin=self.config.executables['ssh']
+
+        server=server.format(server=remote)
+        remoteDir=remoteDir.format(server=remote)
+
+        commands=[bin,server,'ls','-1',remoteDir,'|','wc','-l'] 
+        if self.verbose:
+            print('Command:\n',' '.join(commands))
+        results=subprocess.run(commands,stdout=subprocess.PIPE)
+      
+        count=int(results.stdout)
+        return count
+
+
+    def downloadRemote(self,remote,nodelete=False):
+        server=self.config.responses['serverTemplate']
+        remoteDir=self.config.responses['remoteDir']
+        bin=self.config.executables['sync']
+        localDir=self.config.directories['incoming']+'/'
+
+        server=server.format(server=remote)
+        remoteDir=remoteDir.format(server=remote)
+        serverDir=server+':'+remoteDir+'/.'
+
+        command=[bin,'--exclude','tmp.*','--timeout=60',
+            '-ulpotgrz',serverDir,localDir]
+
+        if not nodelete:
+            command.insert(1,'--remove-sent-files')
+
+        if self.verbose:
+            print('Command:\n',' '.join(command))
+
+        results=subprocess.run(command,stdout=subprocess.PIPE)
+        return
 
