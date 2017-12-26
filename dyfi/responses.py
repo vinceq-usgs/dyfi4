@@ -17,6 +17,7 @@ import argparse
 import os
 import time
 import subprocess
+import re
 
 from .config import Config
 from .db import Db
@@ -53,19 +54,18 @@ class Responses:
                 continue
 
             count=self.downloadRemote(remote,nodelete)
-            if count:
-                print('Server:',remote,'files:',count)
+            print('Server:',remote,'files:',count)
 
 
     def countRemote(self,remote):
         server=self.config.responses['serverTemplate']
         remoteDir=self.config.responses['remoteDir']
-        bin=self.config.executables['ssh']
+        ssh=self.config.executables['ssh']
 
         server=server.format(server=remote)
         remoteDir=remoteDir.format(server=remote)
 
-        commands=[bin,server,'ls','-1',remoteDir,'|','wc','-l'] 
+        commands=[ssh,server,'ls','-1',remoteDir,'|','wc','-l'] 
         if self.verbose:
             print('Command:\n',' '.join(commands))
         results=subprocess.run(commands,stdout=subprocess.PIPE)
@@ -77,15 +77,15 @@ class Responses:
     def downloadRemote(self,remote,nodelete=False):
         server=self.config.responses['serverTemplate']
         remoteDir=self.config.responses['remoteDir']
-        bin=self.config.executables['sync']
+        sync=self.config.executables['sync']
         localDir=self.config.directories['incoming']+'/'
 
         server=server.format(server=remote)
         remoteDir=remoteDir.format(server=remote)
         serverDir=server+':'+remoteDir+'/.'
 
-        command=[bin,'--exclude','tmp.*','--timeout=60',
-            '-ulpotgrz',serverDir,localDir]
+        command=[sync,'--exclude','tmp.*','--timeout=60',
+            '-ulpotgrz','--stats',serverDir,localDir]
 
         if not nodelete:
             command.insert(1,'--remove-sent-files')
@@ -93,6 +93,16 @@ class Responses:
         if self.verbose:
             print('Command:\n',' '.join(command))
 
+        # subprocess encoding is in python 3.6+ only
         results=subprocess.run(command,stdout=subprocess.PIPE)
-        return
+        out=results.stdout.decode('utf-8')
+
+        try:
+            pattern=re.compile(r'Number of files transferred: (.+?)$',re.MULTILINE)
+            found=pattern.search(out).group(1)
+            found=int(found)
+        except AttributeError:
+            found=None
+
+        return found
 
