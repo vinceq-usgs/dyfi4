@@ -183,6 +183,9 @@ class Responses:
                 print('Unknown key',k)
 
         # Only time_now needs special processing
+        if 'time_now' not in data or not data['time_now']:
+            return
+
         data['time_now']=Db.epochToString(int(data['time_now']))
         response=Entry(data)
         print(repr(response))

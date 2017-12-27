@@ -68,6 +68,7 @@ def main(args):
     while(1):
         if not args.noremote and len(pendingFiles)<=PENDING_FILES_MAX:
             resp.downloadServers(nodelete=args.nodelete)
+            time.sleep(1)
             pendingFiles=resp.checkIncomingDir()
 
         if len(pendingFiles)==0:
@@ -77,11 +78,19 @@ def main(args):
         for file in pendingFiles:
             print('Processing',file)
             subid=resp.writeResponseFromFile(file,checkEvid=True)
-            print('Saved this file to subid',subid)
-            print('Stopping in app/incoming.py')
-            exit()
-            # If event does not exist, create stub with newresponses=1
-            # else update evid with +1 newresponses
+
+            if subid:
+
+                print('Saved this file to subid',subid)
+                # TODO: 
+                # If event does not exist, create stub 
+                # and set newresponses=1
+                # else update evid with +1 newresponses
+
+            else:
+                # TODO: Save this to badfiles directory
+                print('Ignoring file',file)
+
             print('Deleting',file)
             os.remove(file)
 
