@@ -90,7 +90,8 @@ class Event:
     # Generic getattr method for parameters (no setattr)
 
     def __getattr__(self,name):
-
+ 
+        # Change text datetime to Datetime object suitable for time arithmetic
         if name=='eventDateTime':
             dTime=self.eventdatetime
             tFormat='%Y-%m-%d %H:%M:%S'
@@ -131,8 +132,8 @@ class Event:
 # calculate: eventdatetime nresp newresp max_intensity createdtime process_timestamp
 # ignore: eventlocaltime code_version event_version orig_id
 
-        rawdata['eventdatetime']=Event._toTime(rawdata['time'])
-        rawdata['createdtime']=Event._toTime()
+        rawdata['eventdatetime']=Db.epochToString(rawdata['time']/1000)
+        rawdata['createdtime']=Db.epochToString()
 
         conversion={
             'eventid':'id',
@@ -151,15 +152,4 @@ class Event:
 
         event=Event(converted)
         return event
-
-
-    def _toTime(epoch=None):
-        # Turn epoch time into '2017-01-01 12:00:00'
-
-        if not epoch:
-            dt=datetime.datetime.utcnow()
-        else:
-            dt=datetime.datetime.fromtimestamp(epoch/1000,tz=datetime.timezone.utc)
-
-        return dt.strftime('%Y-%m-%d %H:%M:%S')
 

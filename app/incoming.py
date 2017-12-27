@@ -23,7 +23,7 @@ import argparse
 import os.path
 import time
 
-PENDING_FILES_MAX=19 # Don't download more responses if more than this
+PENDING_FILES_MAX=50 # Don't download more responses if more than this
 
 parser=argparse.ArgumentParser(
     prog='app/incoming.py',
@@ -75,8 +75,12 @@ def main(args):
             exit()
 
         for file in pendingFiles:
-            # evid=resp.writeResponseFile(file,checkEvid=True)
-            # If event does not exist, create stub with +1 newresponses
+            print('Processing',file)
+            subid=resp.writeResponseFromFile(file,checkEvid=True)
+            print('Saved this file to subid',subid)
+            print('Stopping in app/incoming.py')
+            exit()
+            # If event does not exist, create stub with newresponses=1
             # else update evid with +1 newresponses
             print('Deleting',file)
             os.remove(file)

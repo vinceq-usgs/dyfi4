@@ -8,6 +8,8 @@ rawDbSqlite
 """
 
 import sqlite3
+import shutil
+import os
 
 intcolumns=['nresponses','newresponses']
 floatcolumns=['lat','lon','mag',
@@ -41,7 +43,6 @@ class RawDb:
 
         """
 
-
         if table in self.cursors:
             return self.cursors[table]
 
@@ -55,12 +56,15 @@ class RawDb:
         else:
             raise NameError('getCursor could not find table '+table)
 
-        print('RawDb: Connecting to file',tablefile)
+        if not os.path.isfile(tablefile):
+            print('RawDb: Creating table',tablefile)
+            self.createTable(tablefile,table=table)
+
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
         self.connector=connector
 
-        print('RawDb: Creating new cursor for',table)
+        print('RawDb: Creating cursor for',table)
         cursor=connector.cursor()
         self.cursors[table]=cursor
 
@@ -112,7 +116,7 @@ class RawDb:
         if isinstance(subs,str):
             subs=[subs]
 
-        print('RawDb: %s;',subs)
+        print('RawDb: Querying %s;' % subs)
 
         try:
             c.execute(query,subs)
@@ -155,9 +159,6 @@ class RawDb:
 
         """
 
-        # TODO: For extended table, figure out which table to use
-
-        # We no longer have to check for unique ID
         c=self.getCursor(table)
         columns=self.getColumns(table)
         objDict=obj.__dict__
@@ -175,10 +176,15 @@ class RawDb:
         try:
             c.execute(query,saveList)
             self.connector.commit()
-            return 1
+
+            if 'extended' in table:
+                return c.lastrowid
+            else:
+                return c.rowcount
+            
+
         except sqlite3.OperationalError as e:
             raise NameError('sqlite3 Operational error: '+str(e))
-
 
 
     def getColumns(self,table):
@@ -198,5 +204,24 @@ class RawDb:
         self.columns[table]=columns
 
         return columns
+
+
+    def createTable(self,tablefile,table=None):
+
+        templatefile=tablefile+'.template'
+        if 'extended' in tablefile:
+            # The template for all extended_* databases is
+            # .../extended.db.template
+            templatefile=self.dbfiles['extended']+'.template'
+            templatefile=templatefile.replace('__EXTENDED__','extended')
+
+        print('RawDb.createTable: creating',tablefile,'from',templatefile)
+        shutil.copy(templatefile,tablefile)
+
+        if 'extended' in table:
+            connector=sqlite3.connect(tablefile)
+            connector.row_factory = sqlite3.Row
+            c=connector.cursor()
+            c.execute('ALTER TABLE extended RENAME TO '+table)
 
 

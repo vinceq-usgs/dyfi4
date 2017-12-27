@@ -18,11 +18,66 @@ import os
 import time
 import subprocess
 import re
+import datetime
 
 from .config import Config
+from .event import Event
 from .db import Db
+from .entries import Entry
 
 class Responses:
+
+    translateColumns={
+        'server' : 'server',
+        'eventid' : 'eventid',
+        'eventTime' : 'event_time',
+        'language' : 'language',
+        'd_text' : 'd_text',
+
+        'fldSituation_felt' : 'felt',
+        'fldSituation_others' : 'other_felt',
+        'fldSituation_situation' : 'situation',
+        'fldSituation_sitOther' : 'situation',
+        'fldSituation_structure' : 'building',
+        'fldSituation_structOther' : 'building',
+        'fldSituation_sleep' : 'asleep',
+
+        'fldExperience_shaking' : 'motion',
+        'fldExperience_duration' : 'duration',
+        'fldExperience_reaction' : 'reaction',
+        'fldExperience_response' : 'response',
+        'response_other' : 'response',
+        'fldExperience_stand' : 'stand',
+
+        'fldEffects_doors' : 'sway',
+        'fldEffects_sounds' : 'creak',
+        'fldEffects_shelved' : 'shelf',
+        'fldEffects_pictures' : 'picture',
+        'fldEffects_furniture' : 'furniture',
+        'fldEffects_appliances' : 'heavy_appliance',
+        'fldEffects_walls' : 'walls',
+
+        'fldDamage_structure' : 'building_details',
+
+        'fldContact_name' : 'name',
+        'fldContact_email' : 'email',
+        'fldContact_phone' : 'phone',
+        'fldContact_comments' : 'comments',
+
+        'timestamp' : 'time_now',
+        'ciim_time' : 'usertime',
+        'ciim_report' : 'report',
+
+        'ciim_mapConfidence' : 'confidence',
+        'form_version' : 'version',
+        'ciim_mapAddress' : 'street',
+        'ciim_mapRegion' : 'admin_region',
+        'ciim_mapCity' : 'city',
+        'ciim_mapCountry' : 'country',
+        'ciim_mapLat' : 'latitude',
+        'ciim_mapLon' : 'longitude',
+        'ciim_mapZip' : 'zip'
+}
 
     def __init__(self,configfile,verbose=False):
 
@@ -31,6 +86,7 @@ class Responses:
         self.verbose=1
         self.processed=0
         self.downloaded=0
+        self.db=None
 
         os.makedirs(self.config.directories['incoming'],exist_ok=True)
 
@@ -105,4 +161,35 @@ class Responses:
             found=None
 
         return found
+
+
+    def writeResponseFromFile(self,file,checkEvid=True):
+        with open(file,'r') as f:
+            raw=f.read()
+
+        # Trust that earthquake-dyfi-responses is doing its job
+        # and handling characters properly
+        # but just in case, don't blindly accept keys
+
+        data={}
+        for val in raw.split('&'):
+            if '=' not in val:
+                continue
+
+            (k,v)=val.split('=')
+            if k in Responses.translateColumns:
+                data[Responses.translateColumns[k]]=v
+            else:
+                print('Unknown key',k)
+
+        # Only time_now needs special processing
+        data['time_now']=Db.epochToString(int(data['time_now']))
+        response=Entry(data)
+        print(repr(response))
+
+        if not self.db:
+            self.db=Db(self.config)
+
+        results=self.db.save(response)
+        return results
 

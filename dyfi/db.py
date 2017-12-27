@@ -48,10 +48,12 @@ class Db:
     # calculate MAXYR automatically
     # when searching dates, get the correct tables automatically
 
-    EXT_MINYR=2015;
-    EXT_MAXYR=2016;
+    EXT_MINYR=2003;
+    EXT_MAXYR=None;
 
     def __init__(self,config=None):
+
+        Db.EXT_MAXYR=datetime.datetime.utcnow().year
 
         self.rawdb=RawDb(config.db)
         self.params=config.db
@@ -64,7 +66,7 @@ class Db:
         self.tables.extend(self.exttables)
 
 
-    def save(self,obj):
+    def save(self,obj,table=None):
         """
 
         :synopsis: Save object to the database table
@@ -73,9 +75,16 @@ class Db:
 
         """
 
-        table=obj.table
+        if hasattr(obj,'table'):
+            table=obj.table
 
-        if table=='event' or table=='extended':
+        if not table:
+            raise NameError('Cannot save, table not specified')
+
+        if 'extended' in table:
+            table=self.getExtendedTablesByDatetime(obj.time_now)[0]
+
+        if table=='event' or 'extended' in table:
             return self.rawdb.save(table,obj)
 
         else:
@@ -339,4 +348,13 @@ class Db:
             return []
         return results
 
+    def epochToString(epoch=None):
+        # Turn epoch time into '2017-01-01 12:00:00'
+
+        if epoch:
+            dt=datetime.datetime.fromtimestamp(epoch,tz=datetime.timezone.utc)
+        else:
+            dt=datetime.datetime.utcnow()
+
+        return dt.strftime('%Y-%m-%d %H:%M:%S')
 

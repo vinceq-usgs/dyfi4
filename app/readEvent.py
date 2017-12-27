@@ -69,8 +69,11 @@ def main(args):
     if args.save:
         print('Saving to event table.')
         db=Db(Config(args.config))
-        if not db.save(event):
-            print('Warning: problem with saving this event.')
+        saved=db.save(event)
+        if saved:
+            print('Saved',saved,'in database.')
+        else:
+            print('Warning: problem saving this event.')
 
     print('Done with',evid)
 

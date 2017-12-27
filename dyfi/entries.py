@@ -144,8 +144,7 @@ class Entry():
         'd_text','damage','building_details','comments','user_cdi',
         'city_latitude','city_longitude','city_population',
         'zip_latitude','zip_longitude','location','tzoffset',
-        'confidence','version','citydb','cityid',
-        'table'
+        'confidence','version','citydb','cityid'
     ]
 
     cdicolumns=[
@@ -157,11 +156,11 @@ class Entry():
     def __init__(self,rawdata):
         self.table='extended'
 
-        for column,val in rawdata.items():
-            if column in Entry.columns or '__' in column:
-                self.__dict__[column]=val
+        for column in Entry.columns:
+            if column in rawdata.keys():
+                self.__dict__[column]=rawdata[column]
             else:
-                print('WARNING: Entry: Unknown column',column)
+                self.__dict__[column]=None
 
 
     def __str__(self):
@@ -172,8 +171,8 @@ class Entry():
 
     def __repr__(self):
         text=''
-        for column in ('subid','user_cdi'):
-            if column in self.__dict__:
+        for column in Entry.columns:
+            if self.__dict__[column]:
                 val=str(self.__dict__[column])
                 text=text+column+':'+val+','
 
