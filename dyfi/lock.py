@@ -31,6 +31,7 @@ class Lock:
             self.f=open(self.lockfile,'wb')
             fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
             atexit.register(self.removeLock)
+            print('Lock: creating lock "%s"' % self.name)
 
         except:
             print('Lock: Could not lock "%s", stopping.' % self.name)
