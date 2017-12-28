@@ -95,7 +95,7 @@ def test_dbentries():
   from dyfi import Db,Config,Event
 
   db=Db(Config(configfile))
-  entries=db.loadEntries(evid=testid,table='latest')
+  entries=db.loadEntries(evid=testid,table='extended_2016')
   assert len(entries)==913
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
@@ -157,21 +157,20 @@ def test_dbentries():
 
 
 def test_entries():
-  from dyfi import Config,Entries,Db,cdi,aggregate
+  from dyfi import Config,Event,Entries,Db,cdi,aggregate
 
   config=Config(configfile)
 
   # Test loading Entries with raw data
 
-  rawentries=Db(config).loadEntries(testid)
+  rawentries=Db(config).loadEntries(testid,table='extended_2016')
   entries=Entries(testid,rawentries=rawentries)
   assert len(entries)>9
 
-  # Test loading Entries with eventid
-  entries=Entries(testid,config=config)
-
+  # Test loading Entries with event
+  event=Event(testid,config=config)
+  entries=Entries(event=event,config=config)
   count=len(entries)
-
   assert len(entries)==count
   assert 'Entries[' in repr(entries)
   assert 'Entries' in str(entries)
@@ -185,7 +184,9 @@ def test_entries():
   badentries=Entries(testid,rawentries=[badentry],config=config)
   assert len(badentries)==1
 
+  print(entries)
   single=[x for x in entries if x.subid=='4279149'][0]
+  print(single)
   assert '[Entry:' in str(single)
   user_cdi=cdi.calculate(single)
   assert user_cdi>=2 or user_cdi==1
