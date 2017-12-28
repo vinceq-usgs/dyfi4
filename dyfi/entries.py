@@ -15,14 +15,20 @@ class Entries():
     """
 
     # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,rawentries=None,config=None,load=True):
 
-        self.evid=evid
+        if evid:
+            self.evid=evid
+        elif event:
+            self.evid=event.eventid
+        else:
+            raise NameError('Entries: No evid or Event object specified')
+
         self.entries=[]
 
         if rawentries==None and load==True:
             db=Db(config)
-            rawentries=db.loadEntries(evid)
+            rawentries=db.loadEntries(evid=evid,event=event)
 
         count=0
         for row in rawentries:
