@@ -9,6 +9,7 @@ testid='us10006u0q'
 configfile='tests/testconfig.yml'
 
 def test_run():
+    return 1
     from app import rundyfi
 
     os.makedirs('data/'+testid,exist_ok=True)
@@ -26,3 +27,15 @@ def test_run():
     contents=Contents(container)
     data=contents.toXML(save=False)
     assert 'dyfi_geo_10km.png' in data
+
+
+def test_readEvent(capsys):
+    from app import readEvent
+
+    args=Namespace(evid=testid,configfile=configfile,save=True,file=None,raw=None)
+    readEvent.main(args)
+    captured=capsys.readouterr()
+    print(captured)
+    assert 'Oklahoma' in captured[0]
+
+

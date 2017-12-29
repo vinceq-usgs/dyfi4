@@ -34,7 +34,7 @@ parser.add_argument(
     help='Save to database'
 )
 parser.add_argument(
-    '--config',action='store',default='./config.yml',
+    '--configfile',action='store',default='./config.yml',
     help='Specify config file'
 )
 
@@ -68,7 +68,7 @@ def main(args):
 
     if args.save:
         print('Saving to event table.')
-        db=Db(Config(args.config))
+        db=Db(Config(args.configfile))
         saved=db.save(event)
         if saved:
             print('Saved',saved,'in database.')

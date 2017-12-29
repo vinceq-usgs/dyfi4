@@ -101,6 +101,9 @@ def test_dbentries():
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
   assert len(entries)==913
+  entries=db.loadEntries(evid=testid,table='latest')
+  assert len(entries)==0
+
   with pytest.raises(NameError) as exception:
     entries=db.loadEntries(evid=testid,table='2099')
   assert 'no such table' in str(exception.value)
@@ -161,6 +164,10 @@ def test_entries():
 
   config=Config(configfile)
 
+  with pytest.raises(NameError) as exception:
+      Entries()
+  assert 'No evid or Event object' in str(exception.value)
+          
   # Test loading Entries with raw data
 
   rawentries=Db(config).loadEntries(testid,table='extended_2016')
