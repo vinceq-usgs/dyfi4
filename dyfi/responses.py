@@ -1,29 +1,23 @@
 """
 
-Process loop:
-
-Download responses
-For each response:
-  Write to extended table
-  If event doesn't exist in table:
-    Save stub in event table (invisible=1)
-    Run getEvent.py (separate process)
-    
+Responses
+=========
 
 """
 
 import sys
 import argparse
 import os
+import shutil
 import time
 import subprocess
 import re
 import datetime
 
 from .config import Config
-from .event import Event
 from .db import Db
 from .entries import Entry
+from .cdi import calculate as CdiCalculate
 
 class Responses:
 
@@ -33,6 +27,7 @@ class Responses:
         'eventTime' : 'event_time',
         'language' : 'language',
         'd_text' : 'd_text',
+        'orig_id' : 'orig_id',
 
         'fldSituation_felt' : 'felt',
         'fldSituation_others' : 'other_felt',
@@ -83,7 +78,6 @@ class Responses:
 
         self.config=Config(configfile)
         self.verbose=verbose
-        self.verbose=1
         self.processed=0
         self.downloaded=0
         self.db=None
@@ -150,6 +144,7 @@ class Responses:
             print('Command:\n',' '.join(command))
 
         # subprocess encoding is in python 3.6+ only
+        # For 3.5, need to use str.decode()
         results=subprocess.run(command,stdout=subprocess.PIPE)
         out=results.stdout.decode('utf-8')
 
@@ -162,8 +157,41 @@ class Responses:
 
         return found
 
+    """
 
-    def writeResponseFromFile(self,file,checkEvid=True):
+    if checkEvid, get authoritative id for this eventid.
+    if different, change entry's eventid.
+    increment the latest eventid.
+
+    """
+
+    def processFile(self,file,checkEvid=True,save=True):
+        entry=self.readFile(file)
+
+        if save or checkEvid:
+            if not self.db:
+                self.db=Db(self.config)
+
+        evid=entry.eventid
+        if checkEvid:
+            goodid=self.db.incrementEvid(evid,checkAuth=True)
+            if goodid and goodid!=evid:
+                entry.eventid=goodid
+                evid=goodid
+
+        if save:
+            subid=self.db.save(entry)
+            if subid:
+                entry.subid=subid
+                return entry
+            else:
+                print('WARNING: Responses.processFile could not save',file,'to database')
+                return
+
+        return entry
+
+
+    def readFile(self,file):
         with open(file,'r') as f:
             raw=f.read()
 
@@ -182,17 +210,32 @@ class Responses:
             else:
                 print('Unknown key',k)
 
-        # Only time_now needs special processing
+        # Keys that require special processing
+
+        # 1. Unknown evid
+        evid=data['eventid']
+        data['orig_id']=evid
+        if evid==None or evid=='null':
+            evid='unknown'
+            data['eventid']=evid
+
+        # 2. Make sure time_now exists
         if 'time_now' not in data or not data['time_now']:
+            print('WARNING: Responses.processFile found no timestamp for',file)
             return
-
         data['time_now']=Db.epochToString(int(data['time_now']))
-        response=Entry(data)
-        print(repr(response))
 
-        if not self.db:
-            self.db=Db(self.config)
+        # 3. Calculate user_cdi
+        entry=Entry(data)
+        entry.user_cdi=CdiCalculate(entry)
+        return entry 
 
-        results=self.db.save(response)
-        return results
+
+    def removeFile(self,file):
+        badDir=self.config.directories['badincoming']
+        os.makedirs(badDir,exist_ok=True)
+
+        return shutil.move(file,badDir)
+
+
 

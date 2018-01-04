@@ -1,4 +1,5 @@
 """
+
 rawDbSqlite
 ===========
 
@@ -10,6 +11,7 @@ rawDbSqlite
 import sqlite3
 import shutil
 import os
+import time
 
 intcolumns=['nresponses','newresponses']
 floatcolumns=['lat','lon','mag',
@@ -30,9 +32,8 @@ class RawDb:
 
         self.dbfiles=dbparams['files']
         self.cursors={}
+        self.connectors={}
         self.columns={}
-        self.connector=None
-
 
     def getCursor(self,table):
         """
@@ -62,11 +63,11 @@ class RawDb:
 
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
-        self.connector=connector
 
-        print('RawDb: Creating cursor for',table)
+        print('RawDb: New cursor for',table)
         cursor=connector.cursor()
         self.cursors[table]=cursor
+        self.connectors[table]=connector
 
         return cursor
 
@@ -116,8 +117,6 @@ class RawDb:
         if isinstance(subs,str):
             subs=[subs]
 
-        print('RawDb: Querying %s;' % subs)
-
         try:
             c.execute(query,subs)
         except sqlite3.OperationalError as e:
@@ -150,6 +149,37 @@ class RawDb:
         return results
 
 
+    def updateRow(self,table,row,column,val):
+        """
+
+        :synopsis: Update a row
+        :param str table: table to be saved
+        :param str row: primary key value
+        :param str column: column to be updated
+        :param str val: new value
+        :returns: number of rows changed
+
+        """
+
+        c=self.getCursor(table)
+        query='UPDATE %s SET %s=?' % (table,column)
+        if 'extended' in table:
+            primaryKey='subid'
+        else:
+            primaryKey='eventid'
+
+        query+=' WHERE %s=?' % primaryKey
+
+        try:
+            c.execute(query,[val,row])
+            self.connectors[table].commit()
+
+        except sqlite3.OperationalError as e:
+            raise NameError('sqlite3 Operational error: '+str(e))
+
+        return c.rowcount
+
+
     def save(self,table,obj):
         """
 
@@ -161,7 +191,11 @@ class RawDb:
 
         c=self.getCursor(table)
         columns=self.getColumns(table)
-        objDict=obj.__dict__
+
+        if isinstance(obj,dict):
+            objDict=obj
+        else:
+            objDict=obj.__dict__
 
         saveList=[]
         for column in columns:
@@ -175,14 +209,13 @@ class RawDb:
 
         try:
             c.execute(query,saveList)
-            self.connector.commit()
+            self.connectors[table].commit()
 
             if 'extended' in table:
                 return c.lastrowid
             else:
                 return c.rowcount
             
-
         except sqlite3.OperationalError as e:
             raise NameError('sqlite3 Operational error: '+str(e))
 
@@ -223,5 +256,6 @@ class RawDb:
             connector.row_factory = sqlite3.Row
             c=connector.cursor()
             c.execute('ALTER TABLE extended RENAME TO '+table)
+            connector.commit()
 
 

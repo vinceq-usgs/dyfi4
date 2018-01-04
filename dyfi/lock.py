@@ -24,8 +24,7 @@ class Lock:
         self.name=name
         self.f=None
 
-        if not os.path.isdir(flagDir):
-            os.makedirs(flagDir,exist_ok=True)
+        os.makedirs(flagDir,exist_ok=True)
 
         try:
             self.f=open(self.lockfile,'wb')

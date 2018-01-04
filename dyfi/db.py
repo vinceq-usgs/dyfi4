@@ -105,9 +105,8 @@ class Db:
 
         table='event'
         clause='eventid=?'
-        print('table:',table,'clause:',clause,'evid:',evid)
         results=self.rawdb.query(table,clause,evid)
-        if not results:
+        if not results or len(results)==0:
             return
 
         if len(results)>1: # pragma: no cover
@@ -358,3 +357,51 @@ class Db:
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
+
+    def incrementEvid(self,evid,checkAuth=False):
+        """
+
+        :synopsis: Increment newresponses for this evid
+        :param str evid: event ID, e.g. 'us1000abcd'
+        :returns str results: see below
+
+        """
+
+        if self.evidIsUnknown(evid):
+            return
+
+        increment=1
+        if checkAuth:
+            raw=self.loadEvent(evid)
+            if not raw:
+                self.createStubEvent(evid)
+                return
+
+            if raw['newresponses']:
+                increment+=raw['newresponses']
+
+            if raw and raw['good_id']:
+                evid=event['good_id']
+ 
+        print('Db: Updating newresponses for',evid)
+        self.rawdb.updateRow('event',evid,'newresponses',increment)
+        return evid
+
+
+        self.rawdb.update(table='event',key='eventid',value=updateId,column='newresponses',n=1,increment=True)
+        return results.good_id
+
+
+    def createStubEvent(self,evid,newresponses=1):
+
+        print('Db: Creating stub event for',evid)
+        stub={'eventid':evid,'newresponses':newresponses}
+        results=self.rawdb.save('event',stub)
+        return results
+
+
+    def evidIsUnknown(self,evid):
+        if not evid or evid=='unknown' or evid=='null':
+            return True
+
+            

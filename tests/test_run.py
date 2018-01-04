@@ -13,7 +13,7 @@ def test_run():
 
     os.makedirs('data/'+testid,exist_ok=True)
 
-    with pytest.raises(NameError) as exception:
+    with pytest.raises(RuntimeError) as exception:
         rundyfi.main(Namespace(evid='blank',configfile=configfile))
     assert 'Cannot create Event' in str(exception.value)
 

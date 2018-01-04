@@ -28,9 +28,10 @@ class Event:
 """
 
     columns=['eventid','region','source','mag','lat','lon','depth',
-             'eventdatetime','eventlocaltime','loc','nresp','newresp',
+             'eventdatetime','eventlocaltime','loc',
+             'nresponses','newresponses',
              'max_intensity','code_version','event_version',
-             'createdtime','process_timestamp','orig_id']
+             'createdtime','process_timestamp','orig_id','good_id']
 
 
     def __init__(self,data,config=None):
@@ -46,7 +47,7 @@ class Event:
           evid=data['eventid']
 
         if not data:
-            raise NameError('Event: Cannot create Event with no data')
+            raise RuntimeError('Cannot create Event with no data')
 
         self.raw=data
 

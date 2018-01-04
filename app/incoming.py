@@ -77,22 +77,18 @@ def main(args):
 
         for file in pendingFiles:
             print('Processing',file)
-            subid=resp.writeResponseFromFile(file,checkEvid=True)
+            entry=resp.processFile(file)
 
-            if subid:
+            if entry:
+                subid=entry.subid
+                print('Saved this file to subid',subid,'now deleting')
+                os.remove(file)
+                continue
 
-                print('Saved this file to subid',subid)
-                # TODO: 
-                # If event does not exist, create stub 
-                # and set newresponses=1
-                # else update evid with +1 newresponses
-
-            else:
-                # TODO: Save this to badfiles directory
-                print('Ignoring file',file)
-
-            print('Deleting',file)
-            os.remove(file)
+            print('Ignoring file',file)
+            if not resp.removeFile(file):
+                print('WARNING: Could not remove',file)
+                continue
 
         pendingFiles=[]
 

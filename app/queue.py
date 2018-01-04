@@ -2,7 +2,6 @@
 """
 
 run from cron
-use flock to ensure that multiple processes never run concurrently
 
 Usage: app/queue.py --check --config [configfile]
 
@@ -10,7 +9,12 @@ Process loop:
 
 Get list of events with nresponses>n
   Sort by nresponses
-  For each event: run event
+  For each event: 
+      TODO
+      if stub, readEvent.py and process duplicates
+
+      if event has not been updated in the last 5 mins, readEvent
+      run event
 
 """
 

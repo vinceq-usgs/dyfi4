@@ -66,6 +66,8 @@ def main(args):
     print('Event data:')
     print(event)
 
+    #duplicates=event.duplicates
+
     if args.save:
         print('Saving to event table.')
         db=Db(Config(args.configfile))
@@ -74,6 +76,10 @@ def main(args):
             print('Saved',saved,'in database.')
         else:
             print('Warning: problem saving this event.')
+
+        #if duplicates:
+        #    db.saveDuplicates(duplicates)
+
 
     print('Done with',evid)
 

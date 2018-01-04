@@ -53,6 +53,7 @@ def test_db():
     rawdb.querySingleTable('event','invalid command')
   assert 'Operational error' in str(exception.value)
 
+
 def test_event():
   import geojson
   from dyfi import Config,Db,Event
@@ -84,8 +85,8 @@ def test_event():
   assert 'bad column' in str(exception.value)
 
   # Test an event with no db entry
-  with pytest.raises(NameError) as exception:
-    event=Event(db.loadEvent('blank'))
+  with pytest.raises(RuntimeError) as exception:
+      event=Event('blank',config=config)
   assert 'Cannot create Event' in str(exception.value)
 
 
@@ -350,7 +351,7 @@ def test_container():
   # Note that individual packages will raise their own exceptions
   # no need to test here
 
-  with pytest.raises(NameError) as badAttr:
+  with pytest.raises(RuntimeError) as e:
     DyfiContainer('blank')
-  assert 'Cannot create Event' in str(badAttr.value)
+  assert 'Cannot create Event' in str(e.value)
 
