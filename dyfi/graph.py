@@ -69,7 +69,7 @@ class Graph:
             self.getDataTime()
 
         else:
-            raise NameError('ERROR: Graph got unknown graph type '+name)
+            raise RuntimeError('ERROR: Graph got unknown graph type '+name)
 
         self.title=title if title else self.getTitle()
 

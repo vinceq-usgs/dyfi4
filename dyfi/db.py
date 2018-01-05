@@ -79,7 +79,7 @@ class Db:
             table=obj.table
 
         if not table:
-            raise NameError('Cannot save, table not specified')
+            raise ValueError('Cannot save, table not specified')
 
         if 'extended' in table:
             table=self.getExtendedTablesByDatetime(obj.time_now)[0]
@@ -217,7 +217,7 @@ class Db:
 
         The :attr:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
 
-        The return value is a list of proper table names ('2016' will be converted to 'extended_2016', etc.) If any of the tables don't exist, a NameError is returned.
+        The return value is a list of proper table names ('2016' will be converted to 'extended_2016', etc.) If any of the tables don't exist, a ValueError is returned.
 
         """
 
@@ -247,7 +247,7 @@ class Db:
                 outtables.append('extended_'+table)
 
             else:
-                raise NameError('Db: no such table '+table)
+                raise ValueError('Db: no such table '+table)
 
         return outtables
 
@@ -321,7 +321,7 @@ class Db:
             year=date.year
 
         if not year:
-            raise NameError('ERROR: getExtendedTablesByDatetime: Bad year in '+date)
+            raise ValueError('ERROR: getExtendedTablesByDatetime: Bad year in '+date)
 
         if year<self.EXT_MINYR:
             return self.exttables

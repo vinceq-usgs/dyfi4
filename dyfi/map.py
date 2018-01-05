@@ -129,7 +129,7 @@ class Map:
             try:
                 subprocess.call(command,cwd=leafletdir,stdout=logOut,stderr=logErr,timeout=30)
             except:
-                raise NameError('Something wrong with subprocess call!')
+                raise RuntimeError('Something wrong with subprocess call!')
 
             print('Map.GeoJSONtoImage: ...Done.')
 

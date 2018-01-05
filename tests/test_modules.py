@@ -80,9 +80,9 @@ def test_event():
   assert isinstance(attr,str)
   assert testid in repr(event)
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(ValueError) as exception:
     print(event.invalidcolumn)
-  assert 'bad column' in str(exception.value)
+  assert 'Invalid column' in str(exception.value)
 
   # Test an event with no db entry
   with pytest.raises(RuntimeError) as exception:
@@ -105,11 +105,11 @@ def test_dbentries():
   entries=db.loadEntries(evid=testid,table='latest')
   assert len(entries)==0
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(ValueError) as exception:
     entries=db.loadEntries(evid=testid,table='2099')
   assert 'no such table' in str(exception.value)
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(ValueError) as exception:
     entries=db.loadEntries(evid=testid,table='1999,2000')
   assert 'no such table' in str(exception.value)
 
@@ -144,7 +144,7 @@ def test_dbentries():
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(ValueError) as exception:
     db.loadEntries(startdatetime='Stardate 1312.4')
   assert 'Bad year' in str(exception.value)
 
@@ -165,7 +165,7 @@ def test_entries():
 
   config=Config(configfile)
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(RuntimeError) as exception:
       Entries()
   assert 'No evid or Event object' in str(exception.value)
           
@@ -277,11 +277,11 @@ def test_products():
     # Test product with no format
     assert Product(products,name='test',dataset='time')
 
-    with pytest.raises(NameError) as exception:
+    with pytest.raises(RuntimeError) as exception:
         Product(products,name='blank',dataset='bad')
     assert 'Unknown datatype' in str(exception.value)
 
-    with pytest.raises(NameError) as exception:
+    with pytest.raises(RuntimeError) as exception:
         Product(products,name='test',productFormat='bad')
     assert 'Cannot save' in str(exception.value)
 
@@ -299,7 +299,7 @@ def test_products():
 
     badconfig=copy.deepcopy(config)
     badconfig.executables['screenshot']='badexec'
-    with pytest.raises(NameError) as exception:
+    with pytest.raises(RuntimeError) as exception:
         Map.GeoJSONtoImage('tests/testMap.geojson','tests/testMap.png',badconfig)
     assert 'subprocess call' in str(exception.value)
 
@@ -308,7 +308,7 @@ def test_products():
 
     # Test graph functions
 
-    with pytest.raises(NameError) as exception:
+    with pytest.raises(RuntimeError) as exception:
         graph=Graph('badtype',event=event,data=None,config=config)
     assert 'Graph got unknown graph type' in str(exception.value)
 

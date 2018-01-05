@@ -46,10 +46,6 @@ def main(args):
     # Load event
     # TODO: Add directives like --create, --redo, --push
     container=DyfiContainer(evid)
-
-    if not container:
-        raise NameError('No data for event '+evid)
-
     Contents(container).toXML(save=True)
 
     # TODO: Push should be a separate object

@@ -22,7 +22,7 @@ class Entries():
         elif event:
             self.evid=event.eventid
         else:
-            raise NameError('Entries: No evid or Event object specified')
+            raise RuntimeError('Entries: No evid or Event object specified')
 
         self.entries=[]
 

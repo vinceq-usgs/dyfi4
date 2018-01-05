@@ -101,7 +101,7 @@ class Event:
             return dTime
 
         if name not in self.columns:
-            raise NameError('ERROR: Event got bad column '+name)
+            raise ValueError('Event: Invalid column '+name)
 
 
     def __str__(self):

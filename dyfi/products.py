@@ -110,7 +110,7 @@ class Products:
             data=self.entries.getTimes(dataType)
 
         else:
-            raise NameError('Unknown datatype '+dataType)
+            raise RuntimeError('Unknown datatype '+dataType)
 
         self.data.append(data)
         return data
@@ -205,7 +205,7 @@ class Product:
                 product='FILE'
 
         if not product:
-            raise NameError('Cannot save '+self.name+' as format '+productFormat)
+            raise RuntimeError('Cannot save '+self.name+' as format '+productFormat)
 
         if isinstance(product,str) and product!='FILE':
             with open(filename,'w') as f:
