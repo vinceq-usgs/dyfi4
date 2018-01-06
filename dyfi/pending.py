@@ -67,6 +67,8 @@ class Pending:
                 evid=newid
                 recalculate=True
 
+            # TODO: check duplicate entries and grab them
+
             container=dyfiContainer(evid)
             db.resetNewResponses(evid)
             self.eventsRun+=1

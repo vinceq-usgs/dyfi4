@@ -176,7 +176,13 @@ class Responses:
 
         evid=entry.eventid
         if checkEvid:
-            goodid=self.db.incrementEvid(evid,checkAuth=True)
+
+            # This updates the event table newresponses column.
+            # It will check if the event
+            # has an updated good_id column. If it does, change
+            # this entry's evid to the correct one..
+
+            goodid=self.db.checkIncrementEvid(evid)
             if goodid and goodid!=evid:
                 entry.eventid=goodid
                 evid=goodid

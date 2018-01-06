@@ -149,7 +149,7 @@ class RawDb:
         return results
 
 
-    def updateRow(self,table,row,column,val):
+    def updateRow(self,table,row,column,val,increment=False):
         """
 
         :synopsis: Update a row
@@ -162,12 +162,23 @@ class RawDb:
         """
 
         c=self.getCursor(table)
-        query='UPDATE %s SET %s=?' % (table,column)
         if 'extended' in table:
             primaryKey='subid'
         else:
             primaryKey='eventid'
 
+        if increment:
+            # incrementing does not work if original value is null
+            # need to read the original column, then
+            # increment manually
+
+            clause='%s = ?' % primaryKey
+            row=self.querySingleTable(table,clause,row)[0]
+            oldVal=row[column]
+            if oldVal:
+                val+=oldVal
+
+        query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey
 
         try:

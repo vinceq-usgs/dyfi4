@@ -359,7 +359,7 @@ class Db:
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 
-    def incrementEvid(self,evid,checkAuth=False):
+    def checkIncrementEvid(self,evid):
         """
 
         :synopsis: Increment newresponses for this evid
@@ -371,21 +371,20 @@ class Db:
         if Db.evidIsUnknown(evid):
             return
 
-        increment=1
-        if checkAuth:
-            raw=self.loadEvent(evid)
-            if not raw:
-                self.createStubEvent({'eventid':evid,'newresponses':1})
-                return
+        newresponses=1
+        row=self.loadEvent(evid)
+        if not row:
+            self.createStubEvent({'eventid':evid,'newresponses':1})
+            return
 
-            if raw['newresponses']:
-                increment+=raw['newresponses']
+        if row['newresponses']:
+            newresponses+=row['newresponses']
 
-            if raw and raw['good_id']:
-                evid=event['good_id']
+        if row['good_id']:
+            evid=event['good_id']
+            print('Db.checkIncrementEvid: Switching to',evid)
  
-        print('Db: Updating newresponses for',evid)
-        self.rawdb.updateRow('event',evid,'newresponses',increment)
+        self.rawdb.updateRow('event',evid,'newresponses',newresponses,increment=True)
         return evid
 
 
@@ -398,8 +397,13 @@ class Db:
         results=self.rawdb.save('event',data)
         return results
 
-
+ 
     def saveDuplicates(self,goodid,dups):
+        """
+        If event doesn't exit yet, create a stub for it.
+        If it does, make sure its good_id column is correct.
+
+        """
         for dupid in dups:
 
             dupevent=self.loadEvent(dupid)
@@ -408,13 +412,13 @@ class Db:
                 self.createStubEvent(stub)
                 continue
 
-            if dupevent.good_id==goodid:
-                TODO: grab newresponses and entries
-                continue
+            if dupevent['good_id']!=goodid:
+                print('Db: Updating goodid for',dupid)
+                self.rawdb.updateRow('event',dupid,'good_id',goodid)
 
-            print('Db: Updating goodid for',dupid)
-            self.rawdb.updateRow('event',dupid,'good_id',goodid)
-            TODO: grab newresponses and entries
+            if dupevent['newresponses']:
+                dupresponses=dupevent['newresponses']
+                self.rawdb.updateRow('event',goodid,'newresponses',dupresponses,increment=True)
 
 
     @staticmethod
