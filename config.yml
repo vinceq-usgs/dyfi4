@@ -20,6 +20,7 @@ directories:
     data: data
     leaflet: leaflet
     incoming: data/incoming
+    badincoming: data/badincoming
 
 # Use google chrome headless
 #executables:

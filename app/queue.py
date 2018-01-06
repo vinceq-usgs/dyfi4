@@ -5,16 +5,7 @@ run from cron
 
 Usage: app/queue.py --check --config [configfile]
 
-Process loop:
-
-Get list of events with nresponses>n
-  Sort by nresponses
-  For each event: 
-      TODO
-      if stub, readEvent.py and process duplicates
-
-      if event has not been updated in the last 5 mins, readEvent
-      run event
+A stub to Pending.py
 
 """
 
@@ -51,7 +42,14 @@ def main(args):
         Lock('queue')
 
     print(vars(args))
-    pending=Pending(**vars(args))
+    pending=Pending(maxruns=0,configfile=args.configfile)
+
+    if args.check:
+        pending.countEvents()
+        pending.displayEvents()
+        exit()
+
+    pending.loop()
 
 
 if __name__=='__main__':

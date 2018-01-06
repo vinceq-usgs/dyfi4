@@ -79,6 +79,9 @@ def main(args):
             print('Processing',file)
             entry=resp.processFile(file)
 
+            if args.nodelete:
+                continue
+
             if entry:
                 subid=entry.subid
                 print('Saved this file to subid',subid,'now deleting')
@@ -91,6 +94,8 @@ def main(args):
                 continue
 
         pendingFiles=[]
+        if args.nodelete:
+            exit()
 
 
 if __name__=='__main__':

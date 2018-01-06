@@ -347,6 +347,7 @@ class Db:
             return []
         return results
 
+
     def epochToString(epoch=None):
         # Turn epoch time into '2017-01-01 12:00:00'
 
@@ -367,14 +368,14 @@ class Db:
 
         """
 
-        if self.evidIsUnknown(evid):
+        if Db.evidIsUnknown(evid):
             return
 
         increment=1
         if checkAuth:
             raw=self.loadEvent(evid)
             if not raw:
-                self.createStubEvent(evid)
+                self.createStubEvent({'eventid':evid,'newresponses':1})
                 return
 
             if raw['newresponses']:
@@ -388,20 +389,37 @@ class Db:
         return evid
 
 
-        self.rawdb.update(table='event',key='eventid',value=updateId,column='newresponses',n=1,increment=True)
-        return results.good_id
+    def createStubEvent(self,data):
 
+        if 'eventid' not in data:
+            raise ValueError('Cannot create event without evid')
 
-    def createStubEvent(self,evid,newresponses=1):
-
-        print('Db: Creating stub event for',evid)
-        stub={'eventid':evid,'newresponses':newresponses}
-        results=self.rawdb.save('event',stub)
+        print('Db: Creating stub event for',data['eventid'])
+        results=self.rawdb.save('event',data)
         return results
 
 
-    def evidIsUnknown(self,evid):
+    def saveDuplicates(self,goodid,dups):
+        for dupid in dups:
+
+            dupevent=self.loadEvent(dupid)
+            if not dupevent:
+                stub={'eventid':dupid,'good_id':goodid}
+                self.createStubEvent(stub)
+                continue
+
+            if dupevent.good_id==goodid:
+                TODO: grab newresponses and entries
+                continue
+
+            print('Db: Updating goodid for',dupid)
+            self.rawdb.updateRow('event',dupid,'good_id',goodid)
+            TODO: grab newresponses and entries
+
+
+    @staticmethod
+    def evidIsUnknown(cls,evid):
         if not evid or evid=='unknown' or evid=='null':
             return True
 
-            
+

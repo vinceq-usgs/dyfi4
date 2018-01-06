@@ -25,6 +25,9 @@ class Event:
 
     A reference to the raw database output of the event data.
 
+    .. attribute:: duplicates
+
+    A list of duplicates for this event, if filled in by createFromContents
 """
 
     columns=['eventid','region','source','mag','lat','lon','depth',
@@ -37,6 +40,7 @@ class Event:
     def __init__(self,data,config=None):
         self.db=None
         self.table='event'
+        self.duplicates=None
 
         if isinstance(data,str):
           evid=data
@@ -100,7 +104,7 @@ class Event:
             dTime.replace(tzinfo=datetime.timezone.utc)
             return dTime
 
-        if name not in self.columns:
+        if name not in self.columns and name not in self.__dict__:
             raise ValueError('Event: Invalid column '+name)
 
 
@@ -129,17 +133,17 @@ class Event:
         coords=['lon','lat','depth']
         rawdata.update(zip(coords,contents['geometry']['coordinates']))
 
-        
-# calculate: eventdatetime nresp newresp max_intensity createdtime process_timestamp
-# ignore: eventlocaltime code_version event_version orig_id
-
+        # TODO: Update event_version, code_version
         rawdata['eventdatetime']=Db.epochToString(rawdata['time']/1000)
         rawdata['createdtime']=Db.epochToString()
+
+        # Now turn raw values into table values
 
         conversion={
             'eventid':'id',
             'loc':'place',
-            'source':'net'
+            'source':'net',
+            'orig_id':'id'
         }
 
         converted={}
@@ -152,5 +156,28 @@ class Event:
                 converted[key]=None
 
         event=Event(converted)
+
+        dups=Event.readDuplicatesFromContents(contents)
+        if dups:
+            event.duplicates=dups
+
         return event
+
+
+    @classmethod
+    def readDuplicatesFromContents(self,contents):
+        if 'ids' in contents['properties']:
+            duptext=contents['properties']['ids']
+        else:
+            return
+      
+        dups=[]
+        goodid=contents['id']
+        for id in duptext.split(','):
+            if not id or id=='': continue
+            if id==goodid: continue
+            dups.append(id)
+
+        if dups:
+            return dups
 

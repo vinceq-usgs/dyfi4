@@ -167,6 +167,8 @@ class Responses:
 
     def processFile(self,file,checkEvid=True,save=True):
         entry=self.readFile(file)
+        if not entry:
+            return
 
         if save or checkEvid:
             if not self.db:
@@ -204,17 +206,22 @@ class Responses:
             if '=' not in val:
                 continue
 
-            (k,v)=val.split('=')
+            (k,v)=val.split('=')[0:2]
             if k in Responses.translateColumns:
                 data[Responses.translateColumns[k]]=v
             else:
                 print('Unknown key',k)
 
+        if len(data.keys())==0:
+            return
+
         # Keys that require special processing
 
         # 1. Unknown evid
+        if 'eventid' not in data:
+            data['eventid']='unknown'
+
         evid=data['eventid']
-        data['orig_id']=evid
         if evid==None or evid=='null':
             evid='unknown'
             data['eventid']=evid
@@ -236,6 +243,3 @@ class Responses:
         os.makedirs(badDir,exist_ok=True)
 
         return shutil.move(file,badDir)
-
-
-

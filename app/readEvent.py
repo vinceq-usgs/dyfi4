@@ -4,8 +4,6 @@
 readEvent.py
 ============
 
-# TODO: Find duplicates
-
 """
 
 import os
@@ -59,14 +57,16 @@ def main(args):
         exit()
 
     event=Event.createFromContents(contents)
+    if not event:
+        print('No data found.')
+        exit()
+
     if event.eventid!=evid:
         print('Event ID changed from %s to %s' % (evid,event.eventid))
         evid=event.eventid
 
     print('Event data:')
     print(event)
-
-    #duplicates=event.duplicates
 
     if args.save:
         print('Saving to event table.')
@@ -77,9 +77,9 @@ def main(args):
         else:
             print('Warning: problem saving this event.')
 
-        #if duplicates:
-        #    db.saveDuplicates(duplicates)
-
+        print('Dups:',event.duplicates)
+        if event.duplicates:
+            db.saveDuplicates(evid,event.duplicates)
 
     print('Done with',evid)
 

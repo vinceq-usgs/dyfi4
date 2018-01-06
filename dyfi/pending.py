@@ -21,39 +21,68 @@ from .comcat import Comcat
 
 class Pending:
 
-    def __init__(self,check,maxruns,configfile):
+    def __init__(self,maxruns,configfile):
 
         config=Config(configfile)
         self.db=Db(config)
-        self.events=self.db.getPendingEvents(minResponses=1)
-        self.events=sorted(self.events,
-            key=lambda x:x['newresponses'],
-            reverse=True)
-        self.processed=0
+        self.maxruns=maxruns
+        self.events=[]
+        self.eventsRun=0
 
-        if check:
-            self.displayEvents()
-            exit()
 
-        if not self.events:
-            print('Pending: No events found')
-            return
-     
-        for event in self.events:
-            evid=event['eventid']
-            print('Pending: Running event',evid)
-            time.sleep(5)
-            self.processed+=1
+    def countEvents(self):
+        events=self.db.getPendingEvents()
+        events=sorted(events,
+           key=lambda x:x['newresponses'],
+           reverse=True)
+        self.events=events
+        return self.events
 
-            if maxruns>0 and self.processed>=maxruns:
-                print('Pending: %i events done, stopping.' % maxruns)
+
+    def loop(self):
+        maxruns=self.maxruns
+        while True:
+            if not self.loopEvents():
+                print('Pending: No events found')
                 return
 
+            if maxruns>0 and self.eventsRun>=maxruns:
+                print('Pending: %i events processed' % maxruns)
+                return
+
+
+    def loopEvents(self):
+        self.countEvents()
+        if not self.events: return
+
+        self.events=[x['eventid'] for x in self.events]
+
+        recalculate=False
+        for evid in self.events:
+            print('Pending: Running event',evid)
+
+            newevid=self.moveDuplicates(evid)
+            if newevid!=evid:
+                print('Pending: recalculating loop after this.')
+                evid=newid
+                recalculate=True
+
+            container=dyfiContainer(evid)
+            db.resetNewResponses(evid)
+            self.eventsRun+=1
+
+            if recalculate: break
+            if self.maxruns>0 and self.eventsRun>=maxruns: break
+
+        return True
 
 
     def displayEvents(self):
 
         print('Got %i events to process.' % len(self.events))
+        if len(self.events)==0:
+            return
+
         event=self.events[0]
         print('Priority is event %s with %i responses.' % 
             (event['eventid'],event['newresponses']))
