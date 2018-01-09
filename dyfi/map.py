@@ -38,12 +38,15 @@ class Map:
             },
             'properties': {
                 'name':'Epicenter',
-                'magnitude':event.mag
+                'magnitude':event.mag,
+                'depth':event.depth,
+                'id':event.eventid
             }
         }
 
         data['features'].append(epicenter)
         self.data=data
+
 
     def toGeoJSON(self,filename=None):
         """
@@ -77,17 +80,16 @@ class Map:
         """
         dataName=self.data['name']
 
-        inputfile='%s/dyfi_%s.geojson' % (self.dir,dataName)
         outputfile='%s/dyfi_%s.png' % (self.dir,dataName)
 
-        return Map.GeoJSONtoImage(inputfile,outputfile,self.config)
+        return Map.GeoJSONtoImage(self.data,outputfile,self.config)
 
     @staticmethod
-    def GeoJSONtoImage(inputfile,outputfile,config):
+    def GeoJSONtoImage(input,outputfile,config):
 
         """
         :synopsis: Create a static image from a GeoJSON file
-        :param str inputfile: The input GeoJSON file
+        :param input: The input GeoJSON file (str) or GeoJSON object
         :param str outputfile: The resulting PNG file
         :returns: The resulting output file
 
@@ -105,11 +107,17 @@ class Map:
         # a GeoJSON file but with VAR= to make it valid JavaScript.
         # This is a lot easier than dealing with browser CORS shenanigans.
 
+
+        if isinstance(input,str):
+            with open(inputfile,'r') as jsonText:
+                outputtext=jsonText.read()
+        else:
+            outputtext=json.dumps(input,sort_keys=True,indent=2)
+
         tmpfilename=None
         with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
             tmpfilename=tmp.name
-            with open(inputfile,'r') as jsonText:
-                tmp.write('data='+jsonText.read()+';\n')
+            tmp.write('data='+outputtext+';\n')
 
         if (not tmpfilename
             or not os.path.isfile(tmpfilename)

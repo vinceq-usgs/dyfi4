@@ -204,6 +204,7 @@ class Product:
 
         elif productFormat=='png':
             if hasattr(data,'toImage'):
+
                 os.makedirs(dir,exist_ok=True)
                 data.toImage()
                 product='FILE'
