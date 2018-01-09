@@ -53,3 +53,6 @@ after_success:
     - coverage xml
     - python-codacy-coverage -r coverage.xml
     - bash <(curl -s https://codecov.io/bash)
+
+env:
+  secure: "c/QyOUIh2tRENnbL+w8uAJqPwVenlQISAg6Gqm7lVg8PgEFF2HuQrYkNXpzNVC/OmhulD2+kxyABr4gKioZUM+x8kg0+1jxx6E4DLVULeTcoH0RpFLq95hrHSaPmhGcPpWk8WcANYlG9Rjs6l2PrzvrFTIpP535dZygkvTCP2TQuauslZfG9rtLBq10SFpvqBWsZdGWhVIBEHgtnpx1AxZ2/HiS6CgL76FUYPDSMOoqoJyAk92t1UeFcouODJor7Sw+xBEmhkTH2In11dl1SzTmdQfUEJfhIFczQa9ylE1GpuaHjQDTUUJF4U194nmXPyNgiOHHGeYzb3cMA9eQ/7WsqTdbmdnrhkRtcCF8cxkkUS0HO6wsyhndxfo3cbFhjaiOZzdfAS8D6vXlCQ367HaDCXh/QsUDJR6BdO7BL3vRzYBp3jAqkvYTkF0w1ez+SkrvXvTkW/aNMHTJOBVCXLNa8VUrRepdAHGadwC6pq/XsEkw87+LmLK6miLP7CgFaqymVGAPTYtzXOVioSM/ZB6hOYeILvfiQT4GdzcpqlG6h80Yw6y69hUq6CZCjGRbGBKXwWo8J1dk4Hrun7WcV8uI9jKR/rsZOzZlJNJKzNp58FMuB/EreraJY0gD4Wu69Jh3cuKM5sXYNTdDAr8U+/Q44dfGGm4aLTtazGTMkIIE="

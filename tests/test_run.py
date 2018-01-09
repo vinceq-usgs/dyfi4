@@ -3,10 +3,15 @@
 
 import pytest
 import shutil
+import os
 from argparse import Namespace
 
 testid='us10006u0q'
 configfile='tests/testconfig.yml'
+
+def test_privatekey():
+    if key=os.environ.get('SECRET_SERVER'):
+        raise RuntimeError('SECRET SERVER FOUND')
 
 def test_run():
     from app import rundyfi
