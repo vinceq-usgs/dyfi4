@@ -112,6 +112,7 @@ class Entries():
         text='Entries['+text[:-1]+']'
         return text
 
+
 class Entry():
     """
 

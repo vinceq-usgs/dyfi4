@@ -1,5 +1,6 @@
 import json
 import yaml
+import os
 
 from .graph import Graph
 from .map import Map
@@ -182,6 +183,8 @@ class Product:
 
         """
 
+        dir=self.dir
+
         name=self.name
         if not filename:
             filename='%s/%s.%s' % (self.dir,name,productFormat)
@@ -201,6 +204,7 @@ class Product:
 
         elif productFormat=='png':
             if hasattr(data,'toImage'):
+                os.makedirs(dir,exist_ok=True)
                 data.toImage()
                 product='FILE'
 
@@ -208,6 +212,8 @@ class Product:
             raise RuntimeError('Cannot save '+self.name+' as format '+productFormat)
 
         if isinstance(product,str) and product!='FILE':
+            if dir:
+                os.makedirs(dir,exist_ok=True)
             with open(filename,'w') as f:
                 f.write(product)
 

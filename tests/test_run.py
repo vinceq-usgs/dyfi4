@@ -2,7 +2,7 @@
 # pytest tests/test_run.py
 
 import pytest
-import os
+import shutil
 from argparse import Namespace
 
 testid='us10006u0q'
@@ -11,7 +11,8 @@ configfile='tests/testconfig.yml'
 def test_run():
     from app import rundyfi
 
-    os.makedirs('data/'+testid,exist_ok=True)
+    if testid:
+        shutil.rmtree('data/'+testid,ignore_errors=True)
 
     with pytest.raises(RuntimeError) as exception:
         rundyfi.main(Namespace(evid='blank',configfile=configfile))

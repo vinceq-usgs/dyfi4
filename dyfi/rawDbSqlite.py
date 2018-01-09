@@ -149,12 +149,12 @@ class RawDb:
         return results
 
 
-    def updateRow(self,table,row,column,val,increment=False):
+    def updateRow(self,table,id,column,val,increment=False):
         """
 
-        :synopsis: Update a row
+        :synopsis: Update a table row
         :param str table: table to be saved
-        :param str row: primary key value
+        :param str id: primary key value
         :param str column: column to be updated
         :param str val: new value
         :returns: number of rows changed
@@ -173,16 +173,16 @@ class RawDb:
             # increment manually
 
             clause='%s = ?' % primaryKey
-            row=self.querySingleTable(table,clause,row)[0]
+            row=self.querySingleTable(table,clause,id)[0]
             oldVal=row[column]
             if oldVal:
                 val+=oldVal
 
+        val=str(val)
         query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey
-
         try:
-            c.execute(query,[val,row])
+            c.execute(query,[val,id])
             self.connectors[table].commit()
 
         except sqlite3.OperationalError as e:

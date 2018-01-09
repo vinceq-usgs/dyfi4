@@ -384,7 +384,7 @@ class Db:
             evid=event['good_id']
             print('Db.checkIncrementEvid: Switching to',evid)
  
-        self.rawdb.updateRow('event',evid,'newresponses',newresponses,increment=True)
+        self.rawdb.updateRow('event',evid,'newresponses',newresponses,increment=False)
         return evid
 
 
@@ -422,7 +422,7 @@ class Db:
 
 
     @staticmethod
-    def evidIsUnknown(cls,evid):
+    def evidIsUnknown(evid):
         if not evid or evid=='unknown' or evid=='null':
             return True
 

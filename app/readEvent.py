@@ -71,7 +71,9 @@ def main(args):
     if args.save:
         print('Saving to event table.')
         db=Db(Config(args.configfile))
+        # TODO: Don't clobber newresponses
         saved=db.save(event)
+
         if saved:
             print('Saved',saved,'in database.')
         else:

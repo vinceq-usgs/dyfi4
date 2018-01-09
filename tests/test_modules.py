@@ -2,6 +2,7 @@
 # pytest tests/test_modules.py
 
 import pytest
+import shutil
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
@@ -163,6 +164,9 @@ def test_dbentries():
 def test_entries():
   from dyfi import Config,Event,Entries,Db,cdi,aggregate
 
+  if testid:
+      shutil.rmtree('data/'+testid,ignore_errors=True)
+            
   config=Config(configfile)
 
   with pytest.raises(RuntimeError) as exception:
@@ -266,6 +270,9 @@ def test_maps():
 def test_products():
     import copy
     from dyfi import Config,Event,Entries,Products,Product,Map,Graph
+
+    if testid:
+        shutil.rmtree('data/'+testid,ignore_errors=True)
 
     config=Config(configfile)
     event=Event(testid,config=config)
