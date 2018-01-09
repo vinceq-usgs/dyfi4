@@ -109,7 +109,7 @@ class Map:
 
 
         if isinstance(input,str):
-            with open(inputfile,'r') as jsonText:
+            with open(input,'r') as jsonText:
                 outputtext=jsonText.read()
         else:
             outputtext=json.dumps(input,sort_keys=True,indent=2)
