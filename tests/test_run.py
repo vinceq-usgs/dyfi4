@@ -10,8 +10,9 @@ testid='us10006u0q'
 configfile='tests/testconfig.yml'
 
 def test_privatekey():
-    if key=os.environ.get('SECRET_SERVER'):
-        raise RuntimeError('SECRET SERVER FOUND')
+    key=os.environ.get('SECRET_SERVER')
+    if key:
+        RuntimeError('SECRET SERVER FOUND')
 
 def test_run():
     from app import rundyfi
