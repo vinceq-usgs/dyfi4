@@ -31,5 +31,6 @@ screenshot.png
 setup_env.sh.disabled
 log.*
 tests/db/*
+tests/db/*.db
 movie/*.apng
 

@@ -253,24 +253,6 @@ class Db:
 
 
     @classmethod
-    def timeago(cls,t):
-        """
-
-        :synopsis: Compute a past datetime
-        :param int t: Time interval in minutes
-        :returns: :py:obj:`Datetime` object
-
-        Returns the datetime from :py:attr:`t` minutes ago.
-
-        """
-
-        t0=datetime.datetime.now()
-        tdelta=datetime.timedelta(minutes=t)
-        tnew=t0-tdelta
-        return(tnew)
-
-
-    @classmethod
     def row2geojson(cls,row):
         """
 
@@ -329,25 +311,25 @@ class Db:
         return self.exttables[(year-self.EXT_MINYR+1)::]
 
 
-    def getPendingEvents(self,minResponses=1):
+    @classmethod
+    def timeago(cls,t):
         """
 
-        :synopsis: Get a list of events with minResponses.
-        :param int minResponses: threshold of responses
-        :returns: list of events, each row is an event
+        :synopsis: Compute a past datetime
+        :param int t: Time interval in minutes
+        :returns: :py:obj:`Datetime` object
 
-        Use this method to find events with pending responses.
+        Returns the datetime from :py:attr:`t` minutes ago.
 
         """
 
-        table='event'
-        clause='cast(newresponses as integer) >= ?'
-        results=self.rawdb.query(table,clause,str(minResponses))
-        if not results:
-            return []
-        return results
+        t0=datetime.datetime.now()
+        tdelta=datetime.timedelta(minutes=t)
+        tnew=t0-tdelta
+        return(tnew)
 
 
+    @staticmethod
     def epochToString(epoch=None):
         # Turn epoch time into '2017-01-01 12:00:00'
 
@@ -357,73 +339,4 @@ class Db:
             dt=datetime.datetime.utcnow()
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
-
-
-    def checkIncrementEvid(self,evid):
-        """
-
-        :synopsis: Increment newresponses for this evid
-        :param str evid: event ID, e.g. 'us1000abcd'
-        :returns str results: see below
-
-        """
-
-        if Db.evidIsUnknown(evid):
-            return
-
-        newresponses=1
-        row=self.loadEvent(evid)
-        if not row:
-            self.createStubEvent({'eventid':evid,'newresponses':1})
-            return
-
-        if row['newresponses']:
-            newresponses+=row['newresponses']
-
-        if row['good_id']:
-            evid=event['good_id']
-            print('Db.checkIncrementEvid: Switching to',evid)
- 
-        self.rawdb.updateRow('event',evid,'newresponses',newresponses,increment=False)
-        return evid
-
-
-    def createStubEvent(self,data):
-
-        if 'eventid' not in data:
-            raise ValueError('Cannot create event without evid')
-
-        print('Db: Creating stub event for',data['eventid'])
-        results=self.rawdb.save('event',data)
-        return results
-
- 
-    def saveDuplicates(self,goodid,dups):
-        """
-        If event doesn't exit yet, create a stub for it.
-        If it does, make sure its good_id column is correct.
-
-        """
-        for dupid in dups:
-
-            dupevent=self.loadEvent(dupid)
-            if not dupevent:
-                stub={'eventid':dupid,'good_id':goodid}
-                self.createStubEvent(stub)
-                continue
-
-            if dupevent['good_id']!=goodid:
-                print('Db: Updating goodid for',dupid)
-                self.rawdb.updateRow('event',dupid,'good_id',goodid)
-
-            if dupevent['newresponses']:
-                dupresponses=dupevent['newresponses']
-                self.rawdb.updateRow('event',goodid,'newresponses',dupresponses,increment=True)
-
-
-    @staticmethod
-    def evidIsUnknown(evid):
-        if not evid or evid=='unknown' or evid=='null':
-            return True
-
 
