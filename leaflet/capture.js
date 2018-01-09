@@ -1,4 +1,8 @@
-var page = require("webpage").create();
+/*
+  TODO: Set eventid as parameter so this won't clobber concurrent runs
+*/
+  
+  var page = require("webpage").create();
 page.open("viewer.html", function() {
   // staticImage module is running this in cwd="./leaflet"
   console.log("Rendering viewer.html");
