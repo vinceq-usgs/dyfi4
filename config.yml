@@ -44,6 +44,12 @@ executables:
 products:
     file: lib/products.yml
 
+filter:
+    maxdist: 1000
+    resps_do_not_filter: 50
+    int_diff_threshold: 3
+    int_low_threshold: 0
+
 responses:
     serverTemplate: vinceq@{server}-acquisition.cr.usgs.gov
     remoteDir: /data/write/{server}/earthquake-dyfi-response/incoming.vmdyfit

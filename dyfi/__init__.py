@@ -5,6 +5,7 @@ from .dyfiContainer import DyfiContainer
 from .event import Event
 from .maps import Maps
 from .entries import Entry,Entries
+from .filter import Filter
 from .cdi import calculate as CdiCalculate
 from .products import Products,Product
 from .map import Map

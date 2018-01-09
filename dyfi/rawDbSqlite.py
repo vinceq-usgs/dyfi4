@@ -14,7 +14,7 @@ import os
 import time
 
 intcolumns=['nresponses','newresponses']
-floatcolumns=['lat','lon','mag',
+floatcolumns=['lat','lon','mag','depth',
               'latitude','longitude',
               'lat_offset','lon_offset','lat_span','lon_span']
 

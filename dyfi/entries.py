@@ -6,7 +6,11 @@ class Entries():
     """
 
     :synopsis: Handle a collection of entries and aggregation.
-    :param list rawdata: a list of raw data (e.g. a table row)
+    :param list rawdata: optional list of raw data (e.g. table rows)
+
+    The Event object is necessary/useful because db.loadEntries
+    needs the object's event date attribute to calculate which
+    extended tables to search.
 
     .. data:: entries
 
@@ -15,7 +19,7 @@ class Entries():
     """
 
     # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid=None,event=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,filter=None,rawentries=None,config=None,load=True):
 
         if evid:
             self.evid=evid
@@ -25,6 +29,7 @@ class Entries():
             raise RuntimeError('Entries: No evid or Event object specified')
 
         self.entries=[]
+        self.filter=filter
 
         if rawentries==None and load==True:
             db=Db(config)
@@ -51,7 +56,20 @@ class Entries():
 
         """
 
-        return aggregate(self.entries,name)
+        locations=aggregate(self.entries,name)
+        if not self.filter:
+            return locations
+
+        print('Entries: aggregate has',len(locations.features),'locations.')
+        goodLocations=[]
+        for location in locations.features:
+            bad=self.filter(location)
+            if not bad:
+               goodLocations.append(location) 
+
+        locations.features=goodLocations
+        print('Entries: aggregate now has',len(locations.features),'locations.')
+        return locations
 
 
     def getTimes(self,datatype):

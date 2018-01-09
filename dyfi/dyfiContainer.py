@@ -1,6 +1,7 @@
 from .config import Config
 from .event import Event
 from .entries import Entries
+from .filter import Filter
 from .products import Products
 
 class DyfiContainer:
@@ -28,8 +29,9 @@ class DyfiContainer:
 
         config=Config(configfile)
         self.event=Event(evid,config=config)
+        filter=Filter(event=self.event,config=config).filterFunction()
+        self.entries=Entries(event=self.event,config=config,filter=filter)
 
-        self.entries=Entries(event=self.event,config=config)
         self.products=Products(self.event,self.entries,config=config)
         self.products.createAll()
 
