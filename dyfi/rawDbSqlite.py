@@ -114,7 +114,7 @@ class RawDb:
         if clause:
             query+=' WHERE '+clause
 
-        if isinstance(subs,str):
+        if not isinstance(subs,list):
             subs=[subs]
 
         try:

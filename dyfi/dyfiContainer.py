@@ -35,7 +35,3 @@ class DyfiContainer:
         self.products=Products(self.event,self.entries,config=config)
         self.products.createAll()
 
-
-    def resetReponsesCount():
-        pass
-

@@ -13,7 +13,7 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/rundyfi.py',
-    description='Create DYFI products for a given event ID'
+    description='Create DYFI products for a given event.'
 )
 parser.add_argument(
     'evid',type=str,
@@ -21,7 +21,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--push',action='store_true',
-    help='Push event products to PDL'
+    help='Push event products to PDL (not yet implemented)'
 )
 parser.add_argument(
     '--redo',action='store_true',

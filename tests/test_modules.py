@@ -39,11 +39,7 @@ def test_db():
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-  pasttime=db.timeago(3)
-  assert pasttime.year>1990
-
   # Test RawDb
-
   rawdb=db.rawdb
 
   with pytest.raises(NameError) as exception:
@@ -53,6 +49,17 @@ def test_db():
   with pytest.raises(NameError) as exception:
     rawdb.querySingleTable('event','invalid command')
   assert 'Operational error' in str(exception.value)
+
+  testtable='extended_2015'
+  subid=3996577;
+
+  assert rawdb.updateRow(testtable,subid,'comments','foo')==1
+  row=rawdb.querySingleTable(testtable,'subid=?',subid)
+  assert row[0]['comments']=='foo'
+
+  assert rawdb.updateRow(testtable,subid,'comments','bar')==1
+  row=rawdb.querySingleTable(testtable,'subid=?',subid)
+  assert row[0]['comments']=='bar'
 
 
 def test_event():
@@ -99,6 +106,7 @@ def test_dbentries():
   db=Db(Config(configfile))
   entries=db.loadEntries(evid=testid,table='extended_2016')
   assert len(entries)==913
+
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')

@@ -20,7 +20,7 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/makescreenshot.py',
-    description='Create static image .png files for a given event'
+    description='Create a static image .png file for a given event. The event data must already exist (run rundyfi.py first).'
 )
 parser.add_argument(
     'input',type=str,
@@ -28,7 +28,7 @@ parser.add_argument(
 )
 parser.add_argument(
     'output',type=str,nargs='?',default='screenshot.png',
-    help='output (default is screenshot.png)'
+    help='output filename'
 )
 parser.add_argument(
     '--configfile',action='store',default='./config.yml',

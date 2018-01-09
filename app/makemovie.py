@@ -4,8 +4,6 @@
 makemovie.py
 =============
 
-Usage:
-
 """
 
 import argparse
@@ -17,7 +15,7 @@ import apng
 
 parser=argparse.ArgumentParser(
     prog='app/makemovie.py',
-    description='Create movie frames for a given event'
+    description='Create movie frames for a given event.'
 )
 parser.add_argument(
     'evid',type=str,
@@ -25,15 +23,15 @@ parser.add_argument(
 )
 parser.add_argument(
     'tmax',type=int,nargs='?',default=60,
-    help='Length of movie in minutes (default 60)'
+    help='Length of movie in minutes'
 )
 parser.add_argument(
-    'framelength',type=float,nargs='?',default=60,
-    help='Time of each frame, in seconds (default 60)'
+    'framelength',type=float,nargs='?',default=1,
+    help='Time of each frame, in minutes'
 )
 parser.add_argument(
     'type',type=str,nargs='?',default='geo_10km',
-    help='Type of aggregation (default geo_10km)'
+    help='Type of aggregation to display'
 )
 
 
@@ -63,8 +61,8 @@ class Movie:
         eventtime=datetime.datetime.strptime(event.eventdatetime,'%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc)
 
         t=0
-        while (t+args.framelength)<=60*(args.tmax):
-            t+=args.framelength
+        while (t+60*args.framelength)<=60*(args.tmax):
+            t+=60*args.framelength
 
             inputfile='%s/tmp.%s.%i.geojson' % (self.dir,evid,t)
             outputfile='%s/tmp.%s.%i.png' % (self.dir,evid,t)
@@ -115,9 +113,9 @@ class Movie:
 
         files=self.framefiles
         apng.APNG.from_files(files,delay=500).save(outputfile)
-#        for file in files:
-#            os.remove(file)
-#        return outputfile
+        for file in files:
+            os.remove(file)
+        return outputfile
 
 
 def main(args):

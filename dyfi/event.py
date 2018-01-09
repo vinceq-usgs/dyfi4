@@ -25,9 +25,6 @@ class Event:
 
     A reference to the raw database output of the event data.
 
-    .. attribute:: duplicates
-
-    A list of duplicates for this event, if filled in by createFromContents
 """
 
     columns=['eventid','region','source','mag','lat','lon','depth',
@@ -40,7 +37,6 @@ class Event:
     def __init__(self,data,config=None):
         self.db=None
         self.table='event'
-        self.duplicates=None
 
         if isinstance(data,str):
           evid=data
@@ -121,63 +117,4 @@ class Event:
 
         return json.dumps(rawlist)
 
-
-    @classmethod
-    def createFromContents(self,contents):
-        rawdata={'id':contents['id']}
-                
-        relevant=['place','time','mag','ids','net']
-        for key in relevant:
-            rawdata[key]=contents['properties'][key]
-
-        coords=['lon','lat','depth']
-        rawdata.update(zip(coords,contents['geometry']['coordinates']))
-
-        # TODO: Update event_version, code_version
-        rawdata['eventdatetime']=Db.epochToString(rawdata['time']/1000)
-        rawdata['createdtime']=Db.epochToString()
-
-        # Now turn raw values into table values
-
-        conversion={
-            'eventid':'id',
-            'loc':'place',
-            'source':'net',
-            'orig_id':'id'
-        }
-
-        converted={}
-        for key in self.columns:
-            if key in rawdata:
-                converted[key]=rawdata[key]
-            elif key in conversion:
-                converted[key]=rawdata[conversion[key]]
-            else:
-                converted[key]=None
-
-        event=Event(converted)
-
-        dups=Event.readDuplicatesFromContents(contents)
-        if dups:
-            event.duplicates=dups
-
-        return event
-
-
-    @classmethod
-    def readDuplicatesFromContents(self,contents):
-        if 'ids' in contents['properties']:
-            duptext=contents['properties']['ids']
-        else:
-            return
-      
-        dups=[]
-        goodid=contents['id']
-        for id in duptext.split(','):
-            if not id or id=='': continue
-            if id==goodid: continue
-            dups.append(id)
-
-        if dups:
-            return dups
 

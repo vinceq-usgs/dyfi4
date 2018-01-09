@@ -45,25 +45,20 @@ INSTALLATION
 
 4. If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' amd make sure the 'db' section has the correct information.
 
-5. Run:
-./setup_env.sh
-This will, in addition to installing Python modules, put env_vars.sh
-in your miniconda environment so it will set PYTHONPATH whenever you
-run step 5.
+5. Run ./setup_env.sh. This will, in addition to installing Python modules, put env_vars.sh in your miniconda environment so it will set PYTHONPATH whenever you run step 6.
 
-(You will only need to run steps 1-4 once.)
+(You will only need to run steps 1-5 once.)
 
-5. Whenever you want to run DYFI programs, activate the virtual environment by typing:
+6. Whenever you want to run DYFI programs, activate the virtual environment by typing:
 source activate dyfi
 (You may wish to alias this to something shorter, like "dyfigo".)
 
 
 NEXT STEPS
 
-- Static map: time vs. responses
 - queue, incoming equivalents
 
 HISTORY
 V4.01: Rewrite modules for more modularity
-
+V4.02: Complete coverage for core functions
 
