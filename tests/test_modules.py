@@ -102,6 +102,18 @@ def test_db():
   row=rawdb.querySingleTable(testtable,'subid=?',subid)
   assert row[0]['comments']=='bar'
 
+  # Test updateRow increment
+  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert rawdb.updateRow('event',testid,'newresponses',99)
+  assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
+  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert testevent['newresponses']==100
+  rawdb.updateRow('event',testid,'newresponses',0)
+
+  with pytest.raises(RuntimeError) as exception:
+    rawdb.updateRow('event',testid,'badcolumn',None)
+  assert 'Operational error' in str(exception.value)
+
 
 def test_event():
   import geojson
@@ -413,6 +425,45 @@ def test_cdi():
   assert cdi.getDamageFromText('_masonryfell')==2
   assert cdi.getDamageFromText('_crackmin _pipe')==2
   assert cdi.getDamageFromText('_crackmin _crackwall _wall _chim')==3
+
+
+def test_filter():
+    from dyfi import Config,Event,Filter
+
+    config=Config(configfile)
+    event=Event(testid,config=config)
+    event.mag=2
+    filter=Filter(event,config)
+
+    func=filter.filterFunction();
+    goodcoords=[event.lon,event.lat]
+
+    testentry={
+        'properties':{ 'intensity':2 }
+    }
+
+    with pytest.raises(ValueError) as exception:
+        func(testentry)
+    assert 'Cannot find coordinates' in str(exception.value)
+
+    testentry['properties']['center']={ 'coordinates':goodcoords }
+    print(testentry)
+    assert not func(testentry)
+
+    # Test very very far distance
+    coords=[event.lon,event.lat-90]
+    testentry['properties']['center']['coordinates']=coords
+    assert func(testentry)==2
+
+    # Test approx. 200 km away
+    coords=[event.lon+15,event.lat]
+    testentry['properties']['center']['coordinates']=coords
+    assert func(testentry)==1
+
+    # Test intensity too high
+    testentry['properties']['intensity']=9
+    assert func(testentry)==1
+
 
 
 def test_container():

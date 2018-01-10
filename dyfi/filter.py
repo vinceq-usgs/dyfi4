@@ -66,12 +66,15 @@ class Filter:
 
             # Check maximum distance
             r=dist(epicenter,loccoords,edepth)
+            print('r:',r)
             if r>config['maxdist']:
                 return 2
 
             intensity=entry['properties']['intensity']
+            print('intensity:',intensity)
             if self.ipe:
                 expectedInt=self.ipe(emag,r,fine=True)
+                print('expected:',expectedInt)
 
             # Check distance based on IPE
             if expectedInt<config['int_low_threshold']:

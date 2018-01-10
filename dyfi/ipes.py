@@ -43,8 +43,8 @@ def aww2014wna(mag,r,inverse=False,fine=False):
         if ii > 1.0 and ii < 2.0:
             ii = 2.0
 
-    if ii < 1.0:
-         ii = 1.0
+        if ii < 1.0:
+            ii = 1.0
     return ii
 
 
@@ -90,8 +90,8 @@ def aww2014ena(mag,r,inverse=False,fine=False):
         if ii>1.0 and ii<2.0:
             ii=2.0
 
-    if ii < 1.0:
-        ii=1.0
+        if ii < 1.0:
+            ii=1.0
     return ii
 
 aww2014wna.name = 'Atkinson, Worden, Wald 2014 (WNA)'

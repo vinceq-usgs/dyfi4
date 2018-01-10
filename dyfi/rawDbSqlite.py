@@ -187,7 +187,7 @@ class RawDb:
             self.connectors[table].commit()
 
         except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
         return c.rowcount
 

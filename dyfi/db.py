@@ -93,9 +93,7 @@ class Db:
                 obj['table']=table
             return self.rawdb.save(table,obj)
 
-        else:
-            raise RuntimeError('Db.save: unsupported table')
-            return
+        raise RuntimeError('Db.save: unsupported table')
 
 
     def loadEvent(self,evid):
