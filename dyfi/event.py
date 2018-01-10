@@ -1,7 +1,6 @@
 import json
 import geojson
 import datetime
-import time
 
 from .db import Db
 
@@ -9,7 +8,7 @@ class Event:
     """
 
     :synopsis: Class for handling Event objects
-    
+
     This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
 
     .. note::
@@ -91,7 +90,7 @@ class Event:
     # Generic getattr method for parameters (no setattr)
 
     def __getattr__(self,name):
- 
+
         # Change text datetime to Datetime object suitable for time arithmetic
         if name=='eventDateTime':
             dTime=self.eventdatetime

@@ -11,7 +11,6 @@ rawDbSqlite
 import sqlite3
 import shutil
 import os
-import time
 
 intcolumns=['nresponses','newresponses']
 floatcolumns=['lat','lon','mag','depth',
@@ -111,9 +110,9 @@ class RawDb:
         """
 
         c=self.getCursor(table)
-        query='SELECT * FROM '+table
+        query='SELECT * FROM %s' % table
         if clause:
-            query+=' WHERE '+clause
+            query+=' WHERE %s' % clause
 
         if not isinstance(subs,list):
             subs=[subs]
@@ -150,12 +149,12 @@ class RawDb:
         return results
 
 
-    def updateRow(self,table,id,column,val,increment=False):
+    def updateRow(self,table,subid,column,val,increment=False):
         """
 
         :synopsis: Update a table row
         :param str table: table to be saved
-        :param str id: primary key value
+        :param str subid: primary key value
         :param str column: column to be updated
         :param str val: new value
         :returns: number of rows changed
@@ -174,7 +173,7 @@ class RawDb:
             # increment manually
 
             clause='%s = ?' % primaryKey
-            row=self.querySingleTable(table,clause,id)[0]
+            row=self.querySingleTable(table,clause,subid)[0]
             oldVal=row[column]
             if oldVal:
                 val+=oldVal
@@ -183,7 +182,7 @@ class RawDb:
         query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey
         try:
-            c.execute(query,[val,id])
+            c.execute(query,[val,subid])
             self.connectors[table].commit()
 
         except sqlite3.OperationalError as e:
@@ -240,7 +239,7 @@ class RawDb:
 
         # Cursor is saved, this won't open a duplicate cursor
         c=self.getCursor(table)
-        c.execute('SELECT * FROM '+table)
+        c.execute('SELECT * FROM %s' % table)
         columns=[tuple[0] for tuple in c.description]
         self.columns[table]=columns
 

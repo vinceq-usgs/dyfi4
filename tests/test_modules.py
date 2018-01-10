@@ -121,7 +121,7 @@ def test_db():
     rawdb.updateRow('event',testid,'badcolumn',None)
   assert 'Operational error' in str(exception.value)
 
- 
+
 def test_event():
   import geojson
   from dyfi import Config,Db,Event
@@ -249,22 +249,19 @@ def test_dbentries():
   testentry['street']='[REDACTED]'
   assert db.save(testentry,testtable)==1
 
-  
-  feature=db.row2geojson(testentry)
-
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,cdi,aggregate
 
   if testid:
       shutil.rmtree('data/'+testid,ignore_errors=True)
-            
+
   config=Config(configfile)
 
   with pytest.raises(RuntimeError) as exception:
       Entries()
   assert 'No evid or Event object' in str(exception.value)
-          
+
   # Test loading Entries with raw data
 
   rawentries=Db(config).loadEntries(testid,table='extended_2016')

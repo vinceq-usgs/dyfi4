@@ -19,7 +19,7 @@ class Entries():
     """
 
     # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid=None,event=None,filter=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,cdifilter=None,rawentries=None,config=None,load=True):
 
         if evid:
             self.evid=evid
@@ -29,7 +29,7 @@ class Entries():
             raise RuntimeError('Entries: No evid or Event object specified')
 
         self.entries=[]
-        self.filter=filter
+        self.filter=cdifilter
 
         if rawentries==None and load==True:
             db=Db(config)
@@ -51,7 +51,7 @@ class Entries():
         :synopsis: Aggregate the entry data in this object
         :param str name: The name of this aggregation
         :returns: A `GeoJSON` :py:obj:`FeatureCollection`
-        
+
         A wrapper to :py:obj:`Aggregate.aggregate`. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
 
         """
@@ -65,7 +65,7 @@ class Entries():
         for location in locations.features:
             bad=self.filter(location)
             if not bad:
-               goodLocations.append(location) 
+               goodLocations.append(location)
 
         locations.features=goodLocations
         print('Entries: aggregate now has',len(locations.features),'locations.')

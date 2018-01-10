@@ -50,8 +50,8 @@ class Filter:
             if edepth:
                 r=math.sqrt(r**2+edepth**2)
             return r
-        
-        
+
+
         def func(entry):
 
             # Get coordinates
@@ -85,6 +85,6 @@ class Filter:
             return
 
         return func
-        
+
 
 

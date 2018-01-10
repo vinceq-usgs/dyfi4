@@ -85,11 +85,11 @@ class Map:
         return Map.GeoJSONtoImage(self.data,outputfile,self.config)
 
     @staticmethod
-    def GeoJSONtoImage(input,outputfile,config):
+    def GeoJSONtoImage(inputdata,outputfile,config):
 
         """
         :synopsis: Create a static image from a GeoJSON file
-        :param input: The input GeoJSON file (str) or GeoJSON object
+        :param inputdata: The input GeoJSON file (str) or GeoJSON object
         :param str outputfile: The resulting PNG file
         :returns: The resulting output file
 
@@ -108,11 +108,11 @@ class Map:
         # This is a lot easier than dealing with browser CORS shenanigans.
 
 
-        if isinstance(input,str):
-            with open(input,'r') as jsonText:
+        if isinstance(inputdata,str):
+            with open(inputdata,'r') as jsonText:
                 outputtext=jsonText.read()
         else:
-            outputtext=json.dumps(input,sort_keys=True,indent=2)
+            outputtext=json.dumps(inputdata,sort_keys=True,indent=2)
 
         tmpfilename=None
         with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
