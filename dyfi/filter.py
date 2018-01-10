@@ -66,23 +66,20 @@ class Filter:
 
             # Check maximum distance
             r=dist(epicenter,loccoords,edepth)
-            print('r:',r)
             if r>config['maxdist']:
                 return 2
 
-            intensity=entry['properties']['intensity']
-            print('intensity:',intensity)
+            ii=entry['properties']['intensity']
             if self.ipe:
-                expectedInt=self.ipe(emag,r,fine=True)
-                print('expected:',expectedInt)
+                expectedI=self.ipe(emag,r,fine=True)
 
             # Check distance based on IPE
-            if expectedInt<config['int_low_threshold']:
+            if expectedI<config['int_low_threshold']:
                 return 1
 
             # Check max intensity based on IPE
-            if intensity:
-                if intensity>(expectedInt+config['int_diff_threshold']):
+            if ii:
+                if ii>(expectedI+config['int_diff_threshold']):
                     return 1
 
             return
