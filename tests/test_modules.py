@@ -31,9 +31,12 @@ def test_config():
 
 
 def test_db():
-  from dyfi import Config,Db
+  from dyfi import Config,Db,Event
 
-  db=Db(Config(configfile))
+  config=Config(configfile)
+  db=Db(config)
+  rawdb=db.rawdb
+
   raw=db.loadEvent(testid)
   assert isinstance(raw['lat'],float)
   assert isinstance(raw['lon'],float)
@@ -41,11 +44,29 @@ def test_db():
 
   # these functions are unused right now but maybe useful later
   assert Db.timeago(60).year>2016
-
   assert '2018' in Db.epochToString(1515565764)
 
+  import datetime
+  year = datetime.datetime.utcnow().year
+  assert str(year) in Db.epochToString()
+
+  assert rawdb.updateRow('event',testid,'mag',3)==1
+  event=Event(testid,config)
+  mag=event.mag
+  print('Saving id',testid,'mag:',mag)
+
+  event.__dict__['mag']=11
+  assert 1==db.save(event)
+
+  event=Event(testid,config)
+  assert event.mag==11
+
+  event.__dict__['mag']=mag
+  assert 1==db.save(event)
+  event=Event(testid,config)
+  assert event.mag==mag
+
   # Test RawDb
-  rawdb=db.rawdb
 
   with pytest.raises(NameError) as exception:
     rawdb.querySingleTable('badtable','suspect=1')
