@@ -6,7 +6,7 @@ import shutil
 import os
 from argparse import Namespace
 
-testid='us10006u0q'
+testid='ci37511872'
 configfile='tests/testconfig.yml'
 
 def test_privatekey():
