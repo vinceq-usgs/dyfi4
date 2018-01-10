@@ -73,22 +73,28 @@ class Db:
         :param obj: Data object, see below
         :returns: Success or failure
 
+        For consistency, this will automagically clobber the table attribute
+
         """
 
-        if hasattr(obj,'table'):
+        if not table and hasattr(obj,'table'):
             table=obj.table
 
         if not table:
-            raise ValueError('Cannot save, table not specified')
+            raise ValueError('Db.save: table not specified')
 
-        if 'extended' in table:
-            table=self.getExtendedTablesByDatetime(obj.time_now)[0]
+        if table=='extended':
+            table=self.getExtendedTablesByDatetime(obj['time_now'])[0]
 
         if table=='event' or 'extended' in table:
+            if hasattr(obj,'table'):
+                obj.table=table
+            else:
+                obj['table']=table
             return self.rawdb.save(table,obj)
 
         else:
-            print('Db: Unknown object',obj)
+            raise RuntimeError('Db.save: unsupported table')
             return
 
 
@@ -204,6 +210,7 @@ class Db:
         if myclauses:
             querytext=' AND '.join(myclauses)
 
+        # Automagically fills in 'table' key in each entry
         results=self.rawdb.query(table,querytext,mysubs)
         return results
 

@@ -42,7 +42,8 @@ def test_db():
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-  # these functions are unused right now but maybe useful later
+  # These functions are unused right now but maybe useful later
+
   assert Db.timeago(60).year>2016
   assert '2018' in Db.epochToString(1515565764)
 
@@ -50,21 +51,35 @@ def test_db():
   year = datetime.datetime.utcnow().year
   assert str(year) in Db.epochToString()
 
+  # Test save function
   assert rawdb.updateRow('event',testid,'mag',3)==1
   event=Event(testid,config)
   mag=event.mag
   print('Saving id',testid,'mag:',mag)
 
+  # Make a change and save...
   event.__dict__['mag']=11
   assert 1==db.save(event)
-
   event=Event(testid,config)
   assert event.mag==11
 
+  # Now change it back
   event.__dict__['mag']=mag
   assert 1==db.save(event)
   event=Event(testid,config)
   assert event.mag==mag
+
+  # Test missing table
+  event.__dict__['table']=None
+  with pytest.raises(ValueError) as exception:
+    db.save(event)
+  assert 'table not specified' in str(exception.value)
+
+  # Test invalid table
+  event.__dict__['table']='invalidtable'
+  with pytest.raises(RuntimeError) as exception:
+    db.save(event)
+  assert 'unsupported table' in str(exception.value)
 
   # Test RawDb
 
@@ -77,7 +92,7 @@ def test_db():
   assert 'Operational error' in str(exception.value)
 
   testtable='extended_2015'
-  subid=3996577;
+  subid=3996577
 
   assert rawdb.updateRow(testtable,subid,'comments','foo')==1
   row=rawdb.querySingleTable(testtable,'subid=?',subid)
@@ -184,16 +199,30 @@ def test_dbentries():
   assert 'Bad year' in str(exception.value)
 
   testentry=entries[0]
-  testentry['orig_id']=''
   feature=db.row2geojson(testentry)
+  assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
+
   coords=list(geojson.utils.coords(feature))
   assert len(coords)==1
   assert isinstance(coords[0][0],float)
   assert isinstance(coords[0][1],float)
 
-  testentry['lat']=None
-  feature=db.row2geojson(testentry)
+  # Test of saving an entry
+  testsubid=testentry['subid']
+  testtable=testentry['table']
+  testentry['street']='test street'
 
+  assert db.save(testentry,table='extended')==1
+  row=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)
+  testentry=row[0]
+  assert testentry['street']=='test street'
+
+  testentry['street']='[REDACTED]'
+  assert db.save(testentry,testtable)==1
+
+  #feature=db.row2geojson(testentry)
+
+  
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,cdi,aggregate
@@ -231,7 +260,7 @@ def test_entries():
   assert len(badentries)==1
 
   print(entries)
-  single=[x for x in entries if x.subid=='4279149'][0]
+  single=[x for x in entries if x.subid==4279149][0]
   print(single)
   assert '[Entry:' in str(single)
   user_cdi=cdi.calculate(single)

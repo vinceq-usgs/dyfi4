@@ -106,6 +106,7 @@ class RawDb:
         :returns: list of rows returned by query
 
         No checking of table names is done at this step.
+        Automagically fills in the 'table' key of each item.
 
         """
 
@@ -221,11 +222,7 @@ class RawDb:
         try:
             c.execute(query,saveList)
             self.connectors[table].commit()
-
-            if 'extended' in table:
-                return c.lastrowid
-            else:
-                return c.rowcount
+            return c.rowcount
             
         except sqlite3.OperationalError as e:
             raise NameError('sqlite3 Operational error: '+str(e))
