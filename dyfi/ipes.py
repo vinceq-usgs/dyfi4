@@ -97,3 +97,6 @@ def aww2014ena(mag,r,inverse=False,fine=False):
 aww2014wna.name = 'Atkinson, Worden, Wald 2014 (WNA)'
 aww2014ena.name = 'Atkinson, Worden, Wald 2014 (ENA)'
 
+# Define this last since these functions must be defined first
+ipelist=[ aww2014wna,aww2014ena ]
+

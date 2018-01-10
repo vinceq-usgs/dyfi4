@@ -121,7 +121,7 @@ class RawDb:
         try:
             c.execute(query,subs)
         except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
         results=[]
         for row in c:
@@ -224,8 +224,8 @@ class RawDb:
             self.connectors[table].commit()
             return c.rowcount
             
-        except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+        except (sqlite3.OperationalError,sqlite3.IntegrityError) as e:
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
 
     def getColumns(self,table):

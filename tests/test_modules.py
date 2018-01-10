@@ -42,7 +42,7 @@ def test_db():
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-  # These functions are unused right now but maybe useful later
+ # These functions are unused right now but maybe useful later
 
   assert Db.timeago(60).year>2016
   assert '2018' in Db.epochToString(1515565764)
@@ -87,7 +87,7 @@ def test_db():
     rawdb.querySingleTable('badtable','suspect=1')
   assert 'getCursor could not find table' in str(exception.value)
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(RuntimeError) as exception:
     rawdb.querySingleTable('event','invalid command')
   assert 'Operational error' in str(exception.value)
 
@@ -102,6 +102,13 @@ def test_db():
   row=rawdb.querySingleTable(testtable,'subid=?',subid)
   assert row[0]['comments']=='bar'
 
+  # Test rawdb.save
+  with pytest.raises(RuntimeError) as exception:
+    testentry=row[0]
+    testentry['subid']='invalidstring'
+    rawdb.save('extended_2015',testentry)
+  assert 'Operational error' in str(exception.value)
+
   # Test updateRow increment
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
   assert rawdb.updateRow('event',testid,'newresponses',99)
@@ -114,7 +121,7 @@ def test_db():
     rawdb.updateRow('event',testid,'badcolumn',None)
   assert 'Operational error' in str(exception.value)
 
-
+ 
 def test_event():
   import geojson
   from dyfi import Config,Db,Event
@@ -210,21 +217,31 @@ def test_dbentries():
     db.loadEntries(startdatetime='Stardate 1312.4')
   assert 'Bad year' in str(exception.value)
 
+  # Test row2geojson
   testentry=entries[0]
   feature=db.row2geojson(testentry)
   assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
-
   coords=list(geojson.utils.coords(feature))
-  assert len(coords)==1
+  assert coords[0][0]==testentry['longitude']
   assert isinstance(coords[0][0],float)
+  assert coords[0][1]==testentry['latitude']
   assert isinstance(coords[0][1],float)
+
+  # Test null column value
+  testentry['mag']='null'
+  feature=db.row2geojson(testentry)
+  assert feature.properties['mag']==None
 
   # Test of saving an entry
   testsubid=testentry['subid']
+  assert testsubid!=None
   testtable=testentry['table']
-  testentry['street']='test street'
+  assert testtable!='extended'
 
+  # Test entry save
+  testentry['street']='test street'
   assert db.save(testentry,table='extended')==1
+
   row=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)
   testentry=row[0]
   assert testentry['street']=='test street'
@@ -232,9 +249,9 @@ def test_dbentries():
   testentry['street']='[REDACTED]'
   assert db.save(testentry,testtable)==1
 
-  #feature=db.row2geojson(testentry)
-
   
+  feature=db.row2geojson(testentry)
+
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,cdi,aggregate
@@ -427,6 +444,22 @@ def test_cdi():
   assert cdi.getDamageFromText('_crackmin _crackwall _wall _chim')==3
 
 
+def test_ipe():
+    from dyfi import ipes
+    mag=6.5
+    r=2
+    for ipe in ipes.ipelist:
+        i=ipe(mag,r)
+        print('mag:',mag,'r:',r,'i:',i)
+        assert i>2
+
+    r=10000
+    for ipe in ipes.ipelist:
+        i=ipe(mag,r)
+        print('mag:',mag,'r:',r,'i:',i)
+        assert i<=1
+
+
 def test_filter():
     from dyfi import Config,Event,Filter
 
@@ -461,9 +494,9 @@ def test_filter():
     assert func(testentry)==1
 
     # Test intensity too high
+    testentry['properties']['center']['coordinates']=goodcoords
     testentry['properties']['intensity']=9
     assert func(testentry)==1
-
 
 
 def test_container():
