@@ -222,7 +222,7 @@ class RawDb:
             c.execute(query,saveList)
             self.connectors[table].commit()
             return c.rowcount
-            
+
         except (sqlite3.OperationalError,sqlite3.IntegrityError) as e:
             raise RuntimeError('sqlite3 Operational error: '+str(e))
 

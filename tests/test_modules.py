@@ -463,9 +463,9 @@ def test_filter():
     config=Config(configfile)
     event=Event(testid,config=config)
     event.mag=2
-    filter=Filter(event,config)
+    f=Filter(event,config)
 
-    func=filter.filterFunction();
+    func=f.filterFunction();
     goodcoords=[event.lon,event.lat]
 
     testentry={

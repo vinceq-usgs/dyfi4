@@ -64,12 +64,10 @@ def aggregate(entries,producttype):
         else:
             aggregator=None
 
-        """
-    elif 'zip' in producttype:
-        aggregatetype='zip'
-        aggregator=getZipForEntry
-        resolutionMeters=0
-        """
+    #elif 'zip' in producttype:
+    #    aggregatetype='zip'
+    #    aggregator=getZipForEntry
+    #    resolutionMeters=0
 
     if not aggregator:
         raise ValueError('Aggregate: got unknown type '+producttype)
@@ -107,10 +105,9 @@ def aggregate(entries,producttype):
         geometry=None
         if aggregatetype=='geo':
             geometry=getUtmPolyFromString(location,resolutionMeters)
-            """
-        elif aggregatetype=='zip':
-            geometry=getZipCoordinates(location)
-            """
+
+        #elif aggregatetype=='zip':
+        #    geometry=getZipCoordinates(location)
 
         # Catchall if from_latlon created a valid UTM string
         # from a latlon, but to_latlon could not create a

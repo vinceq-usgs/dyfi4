@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-    A collection of IPEs for plotting and filtering. 
+    A collection of IPEs for plotting and filtering.
 
 """
 
