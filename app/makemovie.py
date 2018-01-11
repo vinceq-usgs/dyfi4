@@ -15,14 +15,14 @@ import apng
 
 parser=argparse.ArgumentParser(
     prog='app/makemovie.py',
-    description='Create movie frames for a given event.'
+    description='Create movie frames for a given event. This runs successive processes of DYFI on larger and larger timeslices of data.'
 )
 parser.add_argument(
     'evid',type=str,
     help='Event ID'
 )
 parser.add_argument(
-    'tmax',type=int,nargs='?',default=60,
+    'tmax',type=float,nargs='?',default=60,
     help='Length of movie in minutes'
 )
 parser.add_argument(
