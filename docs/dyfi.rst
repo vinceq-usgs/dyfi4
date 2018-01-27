@@ -71,14 +71,6 @@ dyfi.ipes
 .. automodule:: dyfi.ipes
     :members:
 
-dyfi.mail
-----------------
-
-.. automodule:: dyfi.mail
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 dyfi.map
 ---------------
 

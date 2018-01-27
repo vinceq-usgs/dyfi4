@@ -11,13 +11,13 @@ import geojson
 from . import cdi
 from .thirdparty.utm import from_latlon,to_latlon,OutOfRangeError
 
-PRECISION=4  # Maximum precision of lat/lon coordinates of output
+PRECISION=6  # Maximum precision of lat/lon coordinates of output
 
 def aggregate(entries,producttype):
     """
 
     :synopsis: Aggregate entries into geocoded boxes
-    :param entries: list of :py:class:`Entry` objects
+    :param entries: :obj:`list` of :py:class:`Entry` objects
     :param producttype: The product type (zip, geo_1km, geo_10km)
     :returns: `GeoJSON` :py:obj:`FeatureCollection`
 
@@ -246,16 +246,22 @@ def getUtmPolyFromString(utm,span):
     # to_latlon function returns lat/lon and geojson requires lon/lat.
     # Rounding needed otherwise lat/lon coordinates are arbitrarily long
 
-    def _reverse(tup):
-        (x,y)=tup
+    ebound=zone*6-180
+    wbound=ebound-6
+    def _reverse(tup,eastborder=None):
+        (y,x)=tup
+        if eastborder and x>ebound:
+            x=ebound
+        elif x<wbound:
+            x=wbound
         x=round(x,PRECISION)
         y=round(y,PRECISION)
-        return (y,x)
+        return (x,y)
 
     p1=_reverse(to_latlon(x,y,zone,zoneletter))
     p2=_reverse(to_latlon(x,y+span,zone,zoneletter))
-    p3=_reverse(to_latlon(x+span,y+span,zone,zoneletter))
-    p4=_reverse(to_latlon(x+span,y,zone,zoneletter))
+    p3=_reverse(to_latlon(x+span,y+span,zone,zoneletter),'e')
+    p4=_reverse(to_latlon(x+span,y,zone,zoneletter),'e')
     bounds=geojson.Polygon([[p1,p2,p3,p4,p1]])
 
     # Compute center

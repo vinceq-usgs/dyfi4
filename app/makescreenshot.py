@@ -20,7 +20,7 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/makescreenshot.py',
-    description='Create a static image .png file for a given event. The event data must already exist; run :obj:`rundyfi.py` first.'
+    description='Create a static image .png file for a given event. The event data must already exist; run :py:obj:`rundyfi.py` first.'
 )
 parser.add_argument(
     'input',type=str,
