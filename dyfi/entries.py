@@ -8,9 +8,8 @@ class Entries():
     :synopsis: Handle a collection of entries and aggregation.
     :param list rawdata: optional list of raw data (e.g. table rows)
 
-    The Event object is necessary/useful because db.loadEntries
-    needs the object's event date attribute to calculate which
-    extended tables to search.
+    An Event object or startdatetime is necessary for db.loadEntries
+    to know which extended tables to search.
 
     .. data:: entries
 
@@ -19,7 +18,7 @@ class Entries():
     """
 
     # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid=None,event=None,cdifilter=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True):
 
         if evid:
             self.evid=evid
@@ -33,7 +32,7 @@ class Entries():
 
         if rawentries==None and load==True:
             db=Db(config)
-            rawentries=db.loadEntries(evid=evid,event=event)
+            rawentries=db.loadEntries(evid=evid,event=event,startdatetime=startdatetime)
 
         count=0
         for row in rawentries:
