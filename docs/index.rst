@@ -6,7 +6,7 @@
 USGS Did You Feel It? (DYFI) Manual
 ===================================
 
-Source code and documentation can be found at https://gitlab.cr.usgs.gov/vinceq/pydyfi
+Source code and documentation can be found at https://github.com/vinceq-usgs/dyfi4
 
 Contents:
 

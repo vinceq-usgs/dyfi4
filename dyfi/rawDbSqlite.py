@@ -3,7 +3,7 @@
 rawDbSqlite
 ===========
 
-.. note:: There are two versions of this module: :file:`rawDbSqlite.py` and :file:`rawDbMysql.py`. Change the header section of :file:`Db.py` to point to the correct implementation and make sure your :file:`db.json` file has the correct login information.
+.. note:: The database currently implemented in SQLite 3. Low-level database operations are separated into this module in case we wish to reimplement to MySQL (or another solution) in the future.
 
 
 """
@@ -12,20 +12,28 @@ import sqlite3
 import shutil
 import os
 
-intcolumns=['nresponses','newresponses']
-floatcolumns=['lat','lon','mag','depth',
-              'latitude','longitude',
-              'lat_offset','lon_offset','lat_span','lon_span']
-
 class RawDb:
     """
 
     :synopsis: Open a Sqlite connection.
-    :param str dbparams: The name of a Config object (see config.py).
+    :param dbparams: A configuration `dict`, usually the 'db' section of a :py:obj:`dyfi.config.Config` object.
 
     Handles raw database transactions.
 
+    .. data:: intcolumns
+
+        A list of database columns that must be converted to type `int`.
+
+    .. data:: floatcolumns
+
+        A list of database columns that must be converted to type `float`.
+
     """
+
+    intcolumns=['nresponses','newresponses']
+    floatcolumns=['lat','lon','mag','depth',
+        'latitude','longitude',
+        'lat_offset','lon_offset','lat_span','lon_span']
 
     def __init__(self,dbparams):
 
@@ -37,9 +45,10 @@ class RawDb:
     def getCursor(self,table):
         """
 
-        :synopsis: Create a Sqlite3 cursor to a particular table.
-        :param str table: A single table.
-        :param str dbparams: The name of a Config object (see config.py).
+        :synopsis: Create a Sqlite3 cursor to a particular table
+        :param str table: Name of a single table
+
+        This creates a Sqlite cursor, which is how Sqlite handles database transactions.
 
         """
 
@@ -133,9 +142,9 @@ class RawDb:
             for col,val in rowdict.items():
                 if val is None:
                     continue
-                if col in intcolumns:
+                if col in self.intcolumns:
                     rowdict[col]=int(val)
-                elif col in floatcolumns:
+                elif col in self.floatcolumns:
                     rowdict[col]=float(val)
 
             # Now make a list
@@ -158,6 +167,8 @@ class RawDb:
         :param str column: column to be updated
         :param str val: new value
         :returns: number of rows changed
+
+        This function is used to update a single row if the primary key is known (subid for extended tables, event ID for everything else.)
 
         """
 
@@ -194,9 +205,11 @@ class RawDb:
     def save(self,table,obj):
         """
 
-        :synopsis: Save an object to the specifed table
+        :synopsis: Save an object to the specified table
         :param str table: table to be saved
         :returns: list of rows changed
+
+        This saves an `Event` or `Entry` object to the database.
 
         """
 
@@ -230,7 +243,13 @@ class RawDb:
     def getColumns(self,table):
         """
 
-        :synopsis:
+        :synopsis: Read columns from a database table
+        :param str table: A database table to read
+        :returns: List of columns
+
+        This is used to get the list of columns in table, so that the save function can save a row properly.
+
+        This will also populate the `columns` attribute.
 
         """
 
@@ -247,6 +266,15 @@ class RawDb:
 
 
     def createTable(self,tablefile,table=None):
+        """
+
+        :synopsis: Create a database table from a template
+        :param str tablefile: The name of the table file
+
+        This creates a new table from a table template (the DYFI tables are implemented in Sqlite, one .sql file per table.) The template is a blank table file with the extension '.template' in the same directory as the other Sqlite tables.
+
+        """
+
 
         templatefile=tablefile+'.template'
         if 'extended' in tablefile:

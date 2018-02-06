@@ -38,7 +38,7 @@ class Products:
         :synopsis: Loop through all product types and create them
         :returns: how many products were created
 
-        The list of products and parameters in the :file:`product.yml` are used as parameters for the :py:meth:`create` method.
+        This uses the list of products and parameters in the :file:`product.yml`.
 
         """
 
@@ -54,7 +54,7 @@ class Products:
     def create(self,p):
         """
 
-        :synopsis: Create a :py:class:`Product` object and underlying thing
+        :synopsis: Create a :py:class:`Product` object and underlying product 
         :param dict p: Set of parameters
         :returns: Number of products created
 

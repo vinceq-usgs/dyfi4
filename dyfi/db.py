@@ -14,66 +14,63 @@ class Db:
     :synopsis: Open a connection to access the DYFI database
     :param config: (optional) :py:class:`Config` object
 
-    This connection is required to run any database queries.
-    The database is currently implemented in SQLite. (Subject to change)
+    This connection is required to run all database queries.
+    The database is currently implemented in SQLite.
 
-    .. note:: To change to the database implementation to MySQL, see the heading of this module.
+    .. note:: To change to the database implementation to MySQL, see the top of this file.
 
-    .. data:: tables
+    .. data:: TABLES
 
         A list of all tables (including extended tables).
 
-    .. data:: exttables
+    .. data:: EXTTABLES
 
         A list of all the extended tables.
 
-    .. data:: latesttable
-
-        The name of the latest extended table
-        (should be the current year, e.g. "extended_2016").
-
     .. data:: EXT_MINYR
 
-       The year of the earliest named extended table. Previous entries are contained in the table 'extended_pre'.
+       The year of the earliest named extended table. Previous entries are combined into the table 'extended_pre'.
 
-    .. data:: EXT_MINYR
+    .. data:: EXT_MAXYR
 
-       The year of the latest defined extended table.
+       The year of the latest defined extended table. This is calculated from the current year.
 
-    """
+    .. attribute:: latesttable
+
+        The name of the latest extended table.
+
+     """
 
     # TODO:
-    # create table 'extended' with up to two years of latest entries
+    # create latest table with up to two years of latest entries
     # automatically calculate tables: ...2014,2015,extended
-    # calculate MAXYR automatically
-    # when searching dates, get the correct tables automatically
 
     EXT_MINYR=2003;
-    EXT_MAXYR=None;
+    EXT_MAXYR=datetime.datetime.utcnow().year
+    TABLES=['event','maps']
+    EXTTABLES=['extended_'+str(x) for x in
+            (['pre'] + list(range(EXT_MINYR,EXT_MAXYR+1)))]
+    TABLES.extend(EXTTABLES)
 
-    def __init__(self,config=None):
 
-        Db.EXT_MAXYR=datetime.datetime.utcnow().year
+    def __init__(self,config='./config.yml'):
 
         self.rawdb=RawDb(config.db)
         self.params=config.db
-        self.tables=['event','maps']
-        self.exttables=['extended_'+str(x) for x in
-            (['pre'] + list(range(self.EXT_MINYR,self.EXT_MAXYR+1)))]
-        self.latesttable=self.exttables[-1]
+        self.latesttable=Db.EXTTABLES[-1]
         self.event=''
-
-        self.tables.extend(self.exttables)
 
 
     def save(self,obj,table=None):
         """
 
-        :synopsis: Save object to the database table
-        :param obj: Data object, see below
+        :synopsis: Save a :py:class:`dyfi.Event` or :py:class:`dyfi.Entry` object to the database table
+        :param obj: Data object
         :returns: Success or failure
 
-        For consistency, this will automagically clobber the table attribute
+        Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function. 
+
+        For consistency, if the object is an `Entry` object, this will automagically overwrite the `table` attribute.
 
         """
 
@@ -99,11 +96,11 @@ class Db:
     def loadEvent(self,evid):
         """
 
-        :synopsis: Read database for an event
+        :synopsis: Read database for event data for an event ID
         :param str evid: event ID, e.g. 'us1000abcd'
-        :returns: dict suitable for input to an :py:obj:`Event` instance
+        :returns: `dict` suitable for input to an :py:obj:`Event` instance
 
-        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
+        This is mostly a wrapper to the `RawDb` :py:meth:`query` method. This returns a `dict` with keys being columns of the `Event` table.
 
         """
 
@@ -123,14 +120,14 @@ class Db:
     def loadMaps(self,evid):
         """
 
-        :synopsis: Get a list of maps for an event.
+        :synopsis: Read database for a list of maps for an event ID
         :param str evid: event ID, e.g. 'us1000abcd'
-        :returns: list of rows suitable for input to an :py:obj:`Maps` instance
+        :returns: list of rows suitable for input to a :py:obj:`Maps` instance
 
         This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
 
         Each item in the return list is a dict with keys
-        being columns to the maps table.
+        being columns to the `maps` table.
 
         """
 
@@ -149,12 +146,12 @@ class Db:
                     querytext=None):
         """
 
-        :synopsis: Search the extended tables for entries matching a query.
+        :synopsis: Search the extended tables for entries matching a query
         :param str evid: (optional) eventid
         :param Event event: (optional) Event object
         :param table: (optional) table or tables
-        :param startdatetime: optional datetime to start search
-        :param str querytext: optional clause(s)
+        :param startdatetime: (optional) datetime to start search
+        :param str querytext: (optional) clause(s)
         :returns: list of entries suitable for aggregation
 
         This is mostly a wrapper to the :py:obj:`rawDBSqlite` :py:obj:`query` object.
@@ -168,7 +165,8 @@ class Db:
         The optional query parameter is a string of SQL `WHERE` clauses
         (e.g. 'suspect=0 OR suspect is null').
 
-        Each item in the return list is a dict of entries from the extended tables, plus an additional key `table` that contains the name of the source extended table (see :py:obj:`query`).
+        Each item in the return list is a `dict` of entries from the `extended` tables. An additional key `table` is added to each entry that contains the name of the source extended table (see :py:obj:`query`).
+
         """
 
         # First, figure out which tables to check
@@ -208,7 +206,7 @@ class Db:
         if myclauses:
             querytext=' AND '.join(myclauses)
 
-        # Automagically fills in 'table' key in each entry
+        # This will automagically create a 'table' key for each entry
         results=self.rawdb.query(table,querytext,mysubs)
         return results
 
@@ -217,17 +215,17 @@ class Db:
         """
 
         :synopsis: Check that the table or tables exist
-        :param table: Table (str or int) or list of tables
-        :returns: list of table names
+        :param table: Table or list of tables, see below
+        :returns: list of matching table names
 
-        The :attr:`table` parameter accepts a single table, a comma-separated list of tables, or a list of tables. Each table is either the table name, a year (for extended tables), or 'latest' or 'all' for extended tables.
+        The :attr:`table` parameter accepts one or more extended tables (comma-seperated string or list). Each table is either the table name, a year, or 'latest' or 'all' for extended tables.
 
         The return value is a list of proper table names ('2016' will be converted to 'extended_2016', etc.) If any of the tables don't exist, a ValueError is returned.
 
         """
 
         if table=='all':
-            return self.exttables
+            return Db.EXTTABLES
 
         if isinstance(table,str) and ',' in table:
             tables=table.split(',')
@@ -245,10 +243,10 @@ class Db:
             if table=='latest':
                 table=self.latesttable
 
-            if table in self.tables:
+            if table in Db.TABLES: 
                 outtables.append(table)
 
-            elif 'extended_'+table in self.tables:
+            elif 'extended_'+table in Db.TABLES:
                 outtables.append('extended_'+table)
 
             else:
@@ -261,9 +259,11 @@ class Db:
     def row2geojson(cls,row):
         """
 
-        :synopsis: Convert a database entry row into a GeoJSON object
-        :param dict row: A dict entry
-        :returns: :py:obj:`GeoJSON` dict
+        :synopsis: Convert a raw dictionary into a GeoJSON object
+        :param dict row: A `dict`, such as extracted from an `extended` table
+        :returns: :py:obj:`GeoJSON` object
+
+        This returns a `GeoJSON` object by extracting the latitude and longitude. 
 
         """
         lat=row['latitude']
@@ -282,11 +282,11 @@ class Db:
         feature=geojson.Feature(geometry=pt,properties=props)
         return(feature)
 
-
-    def getExtendedTablesByDatetime(self,date):
+    @classmethod
+    def getExtendedTablesByDatetime(cls,date):
         """
 
-        :synopsis: Get a list of extended tables for a given date.
+        :synopsis: Get a list of extended tables for a given date
         :param date: any date, e.g. "2017-01-01"
         :returns: list of extended table names (extended_*)
 
@@ -310,14 +310,14 @@ class Db:
         if not year:
             raise ValueError('ERROR: getExtendedTablesByDatetime: Bad year in '+date)
 
-        if year<self.EXT_MINYR:
-            return self.exttables
+        if year<Db.EXT_MINYR:
+            return Db.EXTTABLES
 
-        return self.exttables[(year-self.EXT_MINYR+1)::]
+        return Db.EXTTABLES[(year-Db.EXT_MINYR+1)::]
 
 
-    @classmethod
-    def timeago(cls,t):
+    @staticmethod
+    def timeago(t):
         """
 
         :synopsis: Compute a past datetime

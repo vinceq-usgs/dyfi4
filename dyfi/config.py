@@ -1,36 +1,38 @@
-
 import yaml
 
 class Config:
-
     """
 
     :synopsis: Handle DYFI configuration options
-    :param str configfile: YAML file with configuration options
+    :param str configfile: YAML file with configuration options (default `./cofig.yml`)
 
-    .. attribute:: hash
+    .. attribute:: sections
 
         Dict of configuration sections suitable for __iter__.
 
+    A general class to handle configuration options using a `YAML` config file.
+    See the :ref:`Implementation Guide` for details.
 
     Usage::
 
-      # To call:
       from dyfi import Config
-      config=Config(someyamlfile)
-      config=Config() # defaults to ./config.yml
+      config=Config()
+      config=Config('./custom.yml')
 
-      # Prettyprint all configs:
-      print(config) # prettyprints all configs
+    To access values::
 
-      # Access a config value:
-      recipient=config.mail['to']
+      dbconfigs=config.db # A hash of database configs
+      dbfiles=config.db['files']
       eventdbfile=config.db['files']['event']
-      dbparams=config.directories # Get all directories
 
-      # Loop through values
+    Looping through config sections::
+
       for section in config:
         print(section) # prints a list of sections
+
+    Prettyprint all configs::
+
+      print(config) # prettyprints all configs
 
 """
 
@@ -39,22 +41,22 @@ class Config:
         with open(file,'r') as f:
             configs=yaml.safe_load(f)
 
-        self.hash={}
+        self.sections={}
 
         for key in configs:
             val=configs[key]
 
-            self.hash[key]=val
+            self.sections[key]=val
             setattr(self,key,val)
 
 
     def __iter__(self):
-        return iter(self.hash.keys())
+        return iter(self.sections.keys())
 
 
     def __repr__(self):
         output=''
-        for key,val in self.hash.items():
+        for key,val in self.sections.items():
             output=output+key+':'+str(val)+'\n'
 
         return output

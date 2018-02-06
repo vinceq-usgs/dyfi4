@@ -17,8 +17,7 @@ class Entries():
 
     """
 
-    # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config='./config.yml',load=True):
 
         if evid:
             self.evid=evid
@@ -78,7 +77,7 @@ class Entries():
         :param str datatype: Usually 'time'
         :returns: A dict of times data
 
-        The return value is a dict with the following values:
+        Used to create the Time vs. Responses graph. The return value is a dict with the following values:
 
         =====    =============================================
         id       'numresp'
@@ -135,6 +134,8 @@ class Entry():
 
     :synopsis: Class for handling user questionnaire responses
     :param dict rawdata: raw data from one row of an extended table
+
+    This holds data for a particular user entry (as loaded from the `extended` database).
 
     .. warning::
         An Entry object contains raw data and may have PII

@@ -7,11 +7,14 @@ import copy
 
 class Map:
     """
-        :synopsis: Collects data to create a static map
-        :param str filename: The filename to create
-        :param event: A :py:class:`dyfi.Event` object
-        :param dict mapparams: A dict of params
-        :param dict data: Aggregated data in `GeoJSON` format
+    :synopsis: Collects data to create a static map
+    :param str name: Name for the map
+    :param event: A :py:class:`dyfi.Event` object
+    :param data: Aggregated data in `GeoJSON` format
+    :param config: A :py:class:`dyfiConfig` object
+    :param str eventDir: (optional) event directory (default `data/[eventid]/`)
+
+    This handles the rendering of DYFI data (aggregated entries in GeoJSON format) into plottable data for `Leaflet`.
 
     """
 
@@ -51,7 +54,7 @@ class Map:
     def toGeoJSON(self,filename=None):
         """
 
-        :synopsis: Convert the map data into GeoJSON
+        :synopsis: Convert this map object into GeoJSON
         :param str filename: (optional) filename
         :returns: prettyprinted GeoJSON text
 

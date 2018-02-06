@@ -102,7 +102,7 @@ def calculate(entries):
 def getDamageFromText(d_text):
     """
 
-    :synopsis: Convert a damage string to a damage value.
+    :synopsis: Convert a damage string to a damage value
     :param str d_text: A damage string, see :py:data:`cdiDamageValues` for allowed values
     :returns: float
 

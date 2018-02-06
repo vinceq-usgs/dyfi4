@@ -15,24 +15,29 @@ import apng
 
 parser=argparse.ArgumentParser(
     prog='app/makemovie.py',
-    description='Create movie frames for a given event. This runs successive processes of DYFI on larger and larger timeslices of data.'
+    description='Create movie frames for a given event. This runs successive processes of DYFI on larger and larger timeslices of data. The output is an APNG file (default `./movie.apng`).'
 )
 parser.add_argument(
     'evid',type=str,
     help='Event ID'
 )
 parser.add_argument(
-    'tmax',type=float,nargs='?',default=60,
+    '--tmax',type=float,nargs='?',default=60,
     help='Length of movie in minutes'
 )
 parser.add_argument(
-    'framelength',type=float,nargs='?',default=1,
+    '--framelength',type=float,nargs='?',default=1,
     help='Time of each frame, in minutes'
 )
 parser.add_argument(
-    'type',type=str,nargs='?',default='geo_10km',
+    '--type',type=str,nargs='?',default='geo_10km',
     help='Type of aggregation to display'
 )
+parser.add_argument(
+    '--output',type=str,default='movie.apng',
+    help='Output filename'
+)
+
 
 
 class Movie:
@@ -102,7 +107,7 @@ class Movie:
             os.remove(inputfile)
 
         # Finished all frames
-        outputfile='movie/%s.apng' % evid
+        outputfile=args.output
         self.filename=self.splice(outputfile)
         return
 

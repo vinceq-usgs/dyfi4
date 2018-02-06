@@ -8,8 +8,10 @@ class Event:
     """
 
     :synopsis: Class for handling Event objects
+    :param event: A :py:class:`dyfi.Event` object or event ID string
+    :param config: A :py:class:`dyfiConfig` object
 
-    This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
+    This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
 
     .. note::
         Access the data in this object with the keys in
@@ -33,26 +35,26 @@ class Event:
              'createdtime','process_timestamp','orig_id','good_id']
 
 
-    def __init__(self,data,config=None):
+    def __init__(self,event,config='./config.yml'):
         self.db=None
         self.table='event'
 
-        if isinstance(data,str):
-          evid=data
+        if isinstance(event,str):
+          evid=event
           self.db=Db(config)
-          data=self.db.loadEvent(evid)
+          event=self.db.loadEvent(evid)
 
-        elif isinstance(data,dict):
-          evid=data['eventid']
+        elif isinstance(event,dict):
+          evid=event['eventid']
 
-        if not data:
+        if not event:
             raise RuntimeError('Cannot create Event with no data')
 
-        self.raw=data
+        self.raw=event
 
         for column in self.columns:
-            if column in data:
-                self.__dict__[column]=data[column]
+            if column in event:
+                self.__dict__[column]=event[column]
 
 
     def toGeoJSON(self):

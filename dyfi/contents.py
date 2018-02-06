@@ -9,21 +9,19 @@ class Contents:
     """
 
     :synopsis: Create a :ref:`contents.xml` file
-    :parameter container: A :class:`Container` object containing the event data
+    :parameter container: A :class:`dyfi.dyfiContainer` object containing the event data
 
-    The :ref:`contents.xml` file is a list of DYFI products to be exported online.
+    The :ref:`contents.xml` file is a list of DYFI products to be exported online. It is used by the USGS Earthquake Pages webserver to populate the DYFI page for this event. See the :ref:`Implementation Guide` for details.
 
-    Loops through each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory to populate :ref:`contents.xml`.
-
-    The USGS Earthquake Pages webserver uses this file to populate the DYFI page for this event.
+    This module checks each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory and uses that to populate :ref:`contents.xml`.
 
     .. py:attribute:: PRODUCT_TYPES
 
-        An OrderedDict of DYFI product types and the titles.
+        An `OrderedDict` of DYFI product types and the titles.
 
     .. py:attribute:: FORMAT_TYPES
 
-        An OrderedDict of the available formats and their corresponding MIME types.
+        An `OrderedDict` of the available formats and their corresponding MIME types.
 
     """
 
@@ -197,7 +195,21 @@ class Contents:
         # Now self.data is filled
 
 
-    def toXML(self,save=None,filename=None):
+    def toXML(self,save=False,filename=None):
+        """
+
+        :synopsis: Create an XML file from this object
+        :param bool save: If `True`, save to file
+        :param str filename: Output file (default `[data]/[evid]/contents.xml`)
+        :returns: If `save` is true, return the filename; otherwise, return the XML as text
+
+        Usage::
+
+          contents=Contents(dyficontainer)
+          xmltext=contents.toXML()           # create text output
+          filename=contents.toXML(save=True) # save to file
+
+        """
 
         data=self.data.toprettyxml(indent='  ',newl='\n')
         if not save and not filename:
