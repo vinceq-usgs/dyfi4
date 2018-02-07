@@ -1,0 +1,161 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tests.test_3rdparty &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_3rdparty</h1><div class="highlight"><pre>
+<span></span><span class="c1"># To run this test, you must be at the package root directory and run:</span>
+<span class="c1"># pytest tests/test_3rdparty.py</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="n">testid</span><span class="o">=</span><span class="s1">&#39;ci37511872&#39;</span>
+<span class="n">configfile</span><span class="o">=</span><span class="s1">&#39;tests/testconfig.yml&#39;</span>
+
+<div class="viewcode-block" id="test_gmtcolormap"><a class="viewcode-back" href="../../tests.html#tests.test_3rdparty.test_gmtcolormap">[docs]</a><span class="k">def</span> <span class="nf">test_gmtcolormap</span><span class="p">():</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="test_utm"><a class="viewcode-back" href="../../tests.html#tests.test_3rdparty.test_utm">[docs]</a><span class="k">def</span> <span class="nf">test_utm</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">dyfi</span> <span class="k">import</span> <span class="n">utm</span>
+    <span class="kn">from</span> <span class="nn">dyfi.thirdparty.utm</span> <span class="k">import</span> <span class="n">OutOfRangeError</span>
+
+    <span class="c1"># to_latlon tests</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;either zone_letter or northern needs to be set&#39;</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">zone_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">zone_letter</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="n">northern</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;set either zone_letter or northern, but not both&#39;</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">999999</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">northern</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;easting out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span><span class="mi">10000001</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">northern</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;northing out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">61</span><span class="p">,</span><span class="n">northern</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;zone number out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">zone_letter</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;zone letter out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">to_latlon</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">zone_letter</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">24297961</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">3361639877625</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span>
+
+    <span class="c1"># from_latlon tests</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">89</span><span class="p">,</span><span class="o">-</span><span class="mi">114</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;latitude out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">OutOfRangeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span><span class="mi">181</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s1">&#39;northing out of range&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">exception</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="n">coords1</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span>
+    <span class="n">coords2</span><span class="o">=</span><span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">90</span><span class="p">,</span><span class="n">force_zone_number</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">coords1</span><span class="o">!=</span><span class="n">coords2</span>
+
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">81</span><span class="p">)</span><span class="o">==</span><span class="p">(</span><span class="mf">500000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">32</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span><span class="mi">9</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">31</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span><span class="mi">21</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">33</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span><span class="mi">33</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">35</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">from_latlon</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span><span class="mi">42</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">37</span>
+    <span class="k">assert</span> <span class="n">utm</span><span class="o">.</span><span class="n">latitude_to_zone_letter</span><span class="p">(</span><span class="o">-</span><span class="mi">81</span><span class="p">)</span><span class="o">==</span><span class="kc">None</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

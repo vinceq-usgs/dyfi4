@@ -1,0 +1,222 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dyfi.cdi &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.cdi</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">A collection of functions to compute and manipulate intensity. For details, see the :ref:`Scientific Guide`.</span>
+
+<span class="sd">.. data:: cdiWeights</span>
+
+<span class="sd">    A dict of the CDI calculation indices and their relative weights.</span>
+
+<span class="sd">.. data:: cdiDamageValues</span>
+
+<span class="sd">    An OrderedDict of damage values and the d_text strings correspond to those values.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="n">cdiWeights</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;picture&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;furniture&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;damage&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span>
+
+<span class="n">cdiDamageValues</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">([</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="s1">&#39;_none&#39;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="mf">0.5</span><span class="p">,[</span><span class="s1">&#39;_crackmin&#39;</span><span class="p">,</span><span class="s1">&#39;_crackwindows&#39;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="mf">0.75</span><span class="p">,[</span><span class="s1">&#39;_crackwallfew&#39;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,[</span><span class="s1">&#39;_crackwallmany&#39;</span><span class="p">,</span><span class="s1">&#39;_crackwall&#39;</span><span class="p">,</span><span class="s1">&#39;_crackfloor&#39;</span><span class="p">,</span><span class="s1">&#39;_crackchim&#39;</span><span class="p">,</span><span class="s1">&#39;_tilesfell&#39;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,[</span><span class="s1">&#39;_wall&#39;</span><span class="p">,</span><span class="s1">&#39;_pipe&#39;</span><span class="p">,</span><span class="s1">&#39;_win&#39;</span><span class="p">,</span><span class="s1">&#39;_brokenwindows&#39;</span><span class="p">,</span><span class="s1">&#39;_majoroldchim&#39;</span><span class="p">,</span><span class="s1">&#39;_masonryfell&#39;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,[</span><span class="s1">&#39;_move&#39;</span><span class="p">,</span><span class="s1">&#39;_chim&#39;</span><span class="p">,</span><span class="s1">&#39;_found&#39;</span><span class="p">,</span><span class="s1">&#39;_collapse&#39;</span><span class="p">,</span><span class="s1">&#39;_porch&#39;</span><span class="p">,</span><span class="s1">&#39;_majormodernchim&#39;</span><span class="p">,</span><span class="s1">&#39;_tiltedwall&#39;</span><span class="p">])</span>
+    <span class="p">])</span>
+
+<div class="viewcode-block" id="calculate"><a class="viewcode-back" href="../../dyfi.html#dyfi.cdi.calculate">[docs]</a><span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">entries</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Calculate the intensity for one entry, or list of entries</span>
+<span class="sd">    :param list entries: Single :py:class:`Entry` object or list of entries in an aggregated area</span>
+<span class="sd">    :returns: float</span>
+
+<span class="sd">    If given a single entry instead of list, calculate the decimal intensity for that entry.</span>
+
+<span class="sd">    .. note:: Intensity is defined over an area, not a point. &quot;Point intensities&quot; should be used as estimates or for debugging only.</span>
+
+<span class="sd">    A computed value less than or equal to zero is considered intensity I (unfelt).</span>
+<span class="sd">    A computed value greater than zero is considered at least intensity II (felt).</span>
+<span class="sd">    Intensity is rounded off to the nearest 0.1 unit.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Make a list, if not already one</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        <span class="n">entries</span><span class="o">=</span><span class="p">[</span><span class="n">entries</span><span class="p">]</span>
+
+    <span class="n">totalByIndex</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">cdiWeights</span><span class="p">:</span>
+        <span class="n">indexTotal</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">indexCount</span><span class="o">=</span><span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span><span class="o">==</span><span class="s1">&#39;damage&#39;</span> <span class="ow">and</span> <span class="s1">&#39;d_text&#39;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">d_text</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="c1"># Indices with no value are not counted.</span>
+            <span class="c1"># They DO NOT have zero value!</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="k">continue</span>
+
+            <span class="c1"># Values might have additional text. Ignore it.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">indexTotal</span><span class="o">+=</span><span class="n">val</span>
+            <span class="n">indexCount</span><span class="o">+=</span><span class="mi">1</span>
+
+
+        <span class="k">if</span> <span class="n">indexCount</span><span class="p">:</span>
+            <span class="n">totalByIndex</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">indexTotal</span><span class="o">/</span><span class="n">indexCount</span>
+
+    <span class="n">cws</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">totalByIndex</span><span class="p">:</span>
+        <span class="n">cws</span> <span class="o">+=</span> <span class="n">totalByIndex</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">cdiWeights</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+
+    <span class="k">if</span> <span class="n">cws</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="n">cdi</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cws</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.3996</span> <span class="o">-</span> <span class="mf">4.3781</span>
+    <span class="k">if</span> <span class="n">cdi</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">cdi</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getDamageFromText"><a class="viewcode-back" href="../../dyfi.html#dyfi.cdi.getDamageFromText">[docs]</a><span class="k">def</span> <span class="nf">getDamageFromText</span><span class="p">(</span><span class="n">d_text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Convert a damage string to a damage value</span>
+<span class="sd">    :param str d_text: A damage string, see :py:data:`cdiDamageValues` for allowed values</span>
+<span class="sd">    :returns: float</span>
+
+<span class="sd">    Multiple damage strings (separated by whitespace) are allowed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">d_text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">damageTokens</span><span class="o">=</span><span class="n">d_text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">damage</span><span class="o">=</span><span class="kc">None</span>
+    <span class="k">for</span> <span class="n">val</span><span class="p">,</span><span class="n">dstrings</span> <span class="ow">in</span> <span class="n">cdiDamageValues</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">dstring</span> <span class="ow">in</span> <span class="n">dstrings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dstring</span> <span class="ow">in</span> <span class="n">damageTokens</span><span class="p">:</span>
+                <span class="n">damage</span><span class="o">=</span><span class="n">val</span>
+                <span class="k">continue</span>
+
+    <span class="k">return</span> <span class="n">damage</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

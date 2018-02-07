@@ -1,0 +1,140 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tests.test_aux &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_aux</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Tests of obsolete or not-yet-used functionality</span>
+<span class="c1"># To run this test, you must be at the package root directory and run:</span>
+<span class="c1"># pytest tests/test_aux.py</span>
+
+<span class="c1"># This is necessary only when using &quot;pytest.raises&quot; tests</span>
+<span class="c1"># import pytest</span>
+
+<span class="n">testid</span><span class="o">=</span><span class="s1">&#39;ci37511872&#39;</span>
+<span class="n">configfile</span><span class="o">=</span><span class="s1">&#39;tests/testconfig.yml&#39;</span>
+
+<div class="viewcode-block" id="test_aggregate"><a class="viewcode-back" href="../../tests.html#tests.test_aux.test_aggregate">[docs]</a><span class="k">def</span> <span class="nf">test_aggregate</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">dyfi</span> <span class="k">import</span> <span class="n">aggregate</span>
+
+    <span class="k">assert</span> <span class="n">aggregate</span><span class="o">.</span><span class="n">myCeil</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">==</span><span class="mi">20</span></div>
+
+
+<div class="viewcode-block" id="test_ipe"><a class="viewcode-back" href="../../tests.html#tests.test_aux.test_ipe">[docs]</a><span class="k">def</span> <span class="nf">test_ipe</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">dyfi</span> <span class="k">import</span> <span class="n">ipes</span>
+
+    <span class="n">func</span><span class="o">=</span><span class="n">ipes</span><span class="o">.</span><span class="n">aww2014wna</span> <span class="c1"># Test this ipe</span>
+
+    <span class="k">assert</span> <span class="mf">8.3</span><span class="o">&lt;</span><span class="n">func</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">8.4</span>
+    <span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span>
+    <span class="k">assert</span> <span class="mf">6.3</span><span class="o">&lt;</span><span class="n">func</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">6.4</span>
+
+    <span class="n">func</span><span class="o">=</span><span class="n">ipes</span><span class="o">.</span><span class="n">aww2014ena</span> <span class="c1"># Test this ipe</span>
+
+    <span class="k">assert</span> <span class="mf">9.0</span><span class="o">&lt;</span><span class="n">func</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">9.1</span>
+    <span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span>
+    <span class="k">assert</span> <span class="mf">5.8</span><span class="o">&lt;</span><span class="n">func</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">5.9</span></div>
+
+
+<span class="c1">#def test_mail():</span>
+<span class="c1">#    from dyfi import mail</span>
+<span class="c1">#</span>
+<span class="c1">#    sample=[&#39;--subject&#39;,&#39;test subject&#39;,&#39;--to&#39;,&#39;nobody&#39;,&#39;--text&#39;,&#39;test body&#39;]</span>
+<span class="c1">#</span>
+<span class="c1">#    # This looks for /bin/mail and should fail under Travis</span>
+<span class="c1">#    with pytest.raises(FileNotFoundError) as exception:</span>
+<span class="c1">#        mail.main(sample)</span>
+<span class="c1">#    assert &#39;No such file or directory&#39; in str(exception.value)</span>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

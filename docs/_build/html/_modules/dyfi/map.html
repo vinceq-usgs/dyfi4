@@ -1,0 +1,248 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dyfi.map &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.map</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<div class="viewcode-block" id="Map"><a class="viewcode-back" href="../../dyfi.html#dyfi.map.Map">[docs]</a><span class="k">class</span> <span class="nc">Map</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :synopsis: Collects data to create a static map</span>
+<span class="sd">    :param str name: Name for the map</span>
+<span class="sd">    :param event: A :py:class:`dyfi.Event` object</span>
+<span class="sd">    :param data: Aggregated data in `GeoJSON` format</span>
+<span class="sd">    :param config: A :py:class:`dyfiConfig` object</span>
+<span class="sd">    :param str eventDir: (optional) event directory (default `data/[eventid]/`)</span>
+
+<span class="sd">    This handles the rendering of DYFI data (aggregated entries in GeoJSON format) into plottable data for `Leaflet`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">config</span><span class="p">,</span><span class="n">eventDir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Map: Creating&#39;</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="s1">&#39;object.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">=</span><span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">=</span><span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">=</span><span class="n">eventDir</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">eventDir</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">=</span><span class="s1">&#39;data/&#39;</span><span class="o">+</span><span class="n">event</span><span class="o">.</span><span class="n">eventid</span>
+
+        <span class="n">data</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">data</span>
+
+        <span class="c1"># Add epicenter data</span>
+        <span class="n">epicenter</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;Feature&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Point&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;coordinates&#39;</span><span class="p">:[</span><span class="n">event</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span><span class="n">event</span><span class="o">.</span><span class="n">lat</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;Epicenter&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;magnitude&#39;</span><span class="p">:</span><span class="n">event</span><span class="o">.</span><span class="n">mag</span><span class="p">,</span>
+                <span class="s1">&#39;depth&#39;</span><span class="p">:</span><span class="n">event</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">:</span><span class="n">event</span><span class="o">.</span><span class="n">eventid</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">epicenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">data</span>
+
+
+<div class="viewcode-block" id="Map.toGeoJSON"><a class="viewcode-back" href="../../dyfi.html#dyfi.map.Map.toGeoJSON">[docs]</a>    <span class="k">def</span> <span class="nf">toGeoJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Convert this map object into GeoJSON</span>
+<span class="sd">        :param str filename: (optional) filename</span>
+<span class="sd">        :returns: prettyprinted GeoJSON text</span>
+
+
+<span class="sd">        This prints out the GeoJSON data used for the static images, not the actual GeoJSON data. Hence it&#39;s only used for debugging.</span>
+
+<span class="sd">        If `filename` is specified, the data is saved to that file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">text</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="Map.toImage"><a class="viewcode-back" href="../../dyfi.html#dyfi.map.Map.toImage">[docs]</a>    <span class="k">def</span> <span class="nf">toImage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Creates the PNG static image</span>
+<span class="sd">        :returns: The resulting filename</span>
+
+<span class="sd">        Calls :py:func:`GeoJSONtoImage` with the appropriate parameters. Normally, this is called during the processing of a :py:class:`dyfi.products.Product` object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+        <span class="n">outputfile</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/dyfi_</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span><span class="n">dataName</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Map</span><span class="o">.</span><span class="n">GeoJSONtoImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">outputfile</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Map.GeoJSONtoImage"><a class="viewcode-back" href="../../dyfi.html#dyfi.map.Map.GeoJSONtoImage">[docs]</a>    <span class="k">def</span> <span class="nf">GeoJSONtoImage</span><span class="p">(</span><span class="n">inputdata</span><span class="p">,</span><span class="n">outputfile</span><span class="p">,</span><span class="n">config</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :synopsis: Create a static image from a GeoJSON file</span>
+<span class="sd">        :param inputdata: The input GeoJSON file (str) or GeoJSON object</span>
+<span class="sd">        :param str outputfile: The resulting PNG file</span>
+<span class="sd">        :returns: The resulting output file</span>
+
+<span class="sd">        Creates the static image using Leaflet to render the map and a screenshot application. See the :ref:`Creating static products` for details.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">leafletdir</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">directories</span><span class="p">[</span><span class="s1">&#39;leaflet&#39;</span><span class="p">]</span>
+        <span class="n">leafletdatafile</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/data.js&#39;</span> <span class="o">%</span> <span class="n">leafletdir</span>
+        <span class="n">pngfile</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/screenshot.png&#39;</span> <span class="o">%</span> <span class="n">leafletdir</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pngfile</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pngfile</span><span class="p">)</span>
+
+        <span class="c1"># This creates a data.js file in the leaflet directory which is just</span>
+        <span class="c1"># a GeoJSON file but with VAR= to make it valid JavaScript.</span>
+        <span class="c1"># This is a lot easier than dealing with browser CORS shenanigans.</span>
+
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputdata</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputdata</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">jsonText</span><span class="p">:</span>
+                <span class="n">outputtext</span><span class="o">=</span><span class="n">jsonText</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outputtext</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">inputdata</span><span class="p">,</span><span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">tmpfilename</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tmp.Map.&#39;</span><span class="p">,</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.js&#39;</span><span class="p">,</span><span class="nb">dir</span><span class="o">=</span><span class="n">leafletdir</span><span class="p">,</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+            <span class="n">tmpfilename</span><span class="o">=</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;data=&#39;</span><span class="o">+</span><span class="n">outputtext</span><span class="o">+</span><span class="s1">&#39;;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">tmpfilename</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">tmpfilename</span><span class="p">,</span><span class="n">leafletdatafile</span><span class="p">)</span>
+        <span class="n">command</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">executables</span><span class="p">[</span><span class="s1">&#39;screenshot&#39;</span><span class="p">]</span>
+        <span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;__ABSPATH__&#39;</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">leafletdir</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">command</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">leafletdir</span><span class="o">+</span><span class="s1">&#39;/log.stdout.txt&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">logOut</span><span class="p">,</span><span class="nb">open</span><span class="p">(</span><span class="n">leafletdir</span><span class="o">+</span><span class="s1">&#39;/log.stderr.txt&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">logErr</span><span class="p">:</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Map.GeoJSONtoImage: Running subprocess with command:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">command</span><span class="p">,</span><span class="n">cwd</span><span class="o">=</span><span class="n">leafletdir</span><span class="p">,</span><span class="n">stdout</span><span class="o">=</span><span class="n">logOut</span><span class="p">,</span><span class="n">stderr</span><span class="o">=</span><span class="n">logErr</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Something wrong with subprocess call!&#39;</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Map.GeoJSONtoImage: ...Done.&#39;</span><span class="p">)</span>
+
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">pngfile</span><span class="p">,</span><span class="n">outputfile</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outputfile</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

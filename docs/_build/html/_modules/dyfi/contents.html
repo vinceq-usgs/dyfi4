@@ -1,0 +1,322 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dyfi.contents &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.contents</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">defusedxml.minidom</span> <span class="k">as</span> <span class="nn">minidom</span>
+
+<div class="viewcode-block" id="Contents"><a class="viewcode-back" href="../../dyfi.html#dyfi.contents.Contents">[docs]</a><span class="k">class</span> <span class="nc">Contents</span><span class="p">:</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Create a :ref:`contents.xml` file</span>
+<span class="sd">    :parameter container: A :class:`dyfi.dyfiContainer` object containing the event data</span>
+
+<span class="sd">    The :ref:`contents.xml` file is a list of DYFI products to be exported online. It is used by the USGS Earthquake Pages webserver to populate the DYFI page for this event. See the :ref:`Implementation Guide` for details.</span>
+
+<span class="sd">    This module checks each member of :py:attr:`PRODUCT_TYPES` and :py:attr:`FORMAT_TYPES` to see which files exist in the event directory and uses that to populate :ref:`contents.xml`.</span>
+
+<span class="sd">    .. py:attribute:: PRODUCT_TYPES</span>
+
+<span class="sd">        An `OrderedDict` of DYFI product types and the titles.</span>
+
+<span class="sd">    .. py:attribute:: FORMAT_TYPES</span>
+
+<span class="sd">        An `OrderedDict` of the available formats and their corresponding MIME types.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PRODUCT_TYPES</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">((</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI City Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;cityMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by city or ZIP code&quot;</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim_geo&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geocoded Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geoMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim_geocode&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geocoded Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geoMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim_zoom&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Zoom Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;zoomMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by city or ZIP code&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim_zoomin&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Zoom Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;zoomMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by city or ZIP code&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_ciim_zoomout&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Zoomout Map&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;zoomoutMap&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by city or ZIP code&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_plot_atten&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity vs. Distance Plot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intDistPlot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Plot of intensity vs. distance from hypocenter&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;_plot_numresp&quot;</span><span class="p">,{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Responses vs. Time Plot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;respTimePlot&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Plot of number or responses since event origin&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;cdi_zip&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity Summary&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intZipList&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Intensities aggregated by city or ZIP code&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;cdi_geo&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity Summary (Geocoded)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intGeoList&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Intensities aggregated by UTM geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;cdi_geo_1km&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity Summary (Geocoded, 1km spacing)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intGeoList&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Intensities aggregated by UTM geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;cdi_geo_10km&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity Summary (Geocoded, 10km spacing)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intGeoList&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Intensities aggregated by UTM geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;cdi_geocode&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Intensity Summary (Geocoded)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intGeoList&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Intensities aggregated by UTM geocoded location&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Combined Geospatial Data&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geospatial&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Combined maps for geospatial browsers&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi_zip&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geospatial Data, ZIP and city aggregated&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geospatial&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Combined maps for geospatial browsers&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi_geo_1km&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geospatial Data, UTM aggregated (1km spacing)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geospatial&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Combined maps for geospatial browsers&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi_geo_10km&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geospatial Data, UTM aggregated (10km spacing)&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geospatial&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Combined maps for geospatial browsers&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi_plot_atten&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Plotting data for intensity-distance graph&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intDistData&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Location intensities, mean, median and predicted values by hypocentral distance&quot;</span><span class="p">,</span>
+        <span class="p">}),</span>
+      <span class="p">(</span><span class="s2">&quot;dyfi_plot_numresp&quot;</span><span class="p">,{</span>
+          <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;Plotting data for cumulative time graph&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;intTimeData&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Time past origin for cumulative number of entries&quot;</span><span class="p">,</span>
+        <span class="p">})</span>
+    <span class="p">))</span>
+
+    <span class="n">FORMAT_TYPES</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span>
+        <span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">,</span><span class="s1">&#39;text/plain&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;xml&#39;</span><span class="p">,</span><span class="s1">&#39;text/xml&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;jpg&#39;</span><span class="p">,</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;png&#39;</span><span class="p">,</span><span class="s1">&#39;image/png&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pdf&#39;</span><span class="p">,</span><span class="s1">&#39;application/pdf&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span><span class="s1">&#39;application/postscript&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;json&#39;</span><span class="p">,</span><span class="s1">&#39;application/json&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;geojson&#39;</span><span class="p">,</span><span class="s1">&#39;application/json&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;_imap.html&#39;</span><span class="p">,</span><span class="s1">&#39;text/html&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;kmz&#39;</span><span class="p">,</span><span class="s1">&#39;application/vnd.google-earth.kmz&#39;</span><span class="p">)</span>
+    <span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">container</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">=</span><span class="n">container</span><span class="o">.</span><span class="n">event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">=</span><span class="n">container</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">dir</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">minidom</span><span class="o">.</span><span class="n">parseString</span><span class="p">(</span><span class="s1">&#39;&lt;?xml version=&quot;1.0&quot;?&gt;&lt;contents /&gt;&#39;</span><span class="p">)</span>
+        <span class="n">xml</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="c1">#root=xml.appendChild(xml.createElement(&#39;contents&#39;))</span>
+        <span class="n">root</span><span class="o">=</span><span class="n">xml</span><span class="o">.</span><span class="n">childNodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">xml</span><span class="o">.</span><span class="n">createComment</span><span class="p">(</span><span class="s1">&#39;Full listing of files&#39;</span><span class="p">))</span>
+
+        <span class="c1"># Iterate through all product types and file types</span>
+
+        <span class="k">for</span> <span class="n">ptype</span><span class="p">,</span><span class="n">pdata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">PRODUCT_TYPES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">basename</span><span class="o">=</span><span class="n">ptype</span>
+            <span class="k">if</span> <span class="n">ptype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;_&#39;</span><span class="p">:</span>
+                <span class="n">basename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">eventid</span><span class="o">+</span><span class="n">ptype</span>
+
+            <span class="c1"># Create XML node but don&#39;t attach it yet</span>
+
+            <span class="n">filenode</span><span class="o">=</span><span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">)</span>
+            <span class="n">filenode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+            <span class="n">filenode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+            <span class="n">caption</span><span class="o">=</span><span class="n">filenode</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span>
+                <span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;caption&#39;</span><span class="p">))</span>
+            <span class="n">caption</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">xml</span><span class="o">.</span><span class="n">createCDATASection</span><span class="p">(</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;caption&#39;</span><span class="p">]))</span>
+
+            <span class="n">found</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">filext</span> <span class="ow">in</span> <span class="n">Contents</span><span class="o">.</span><span class="n">FORMAT_TYPES</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">filext</span><span class="p">:</span>
+                    <span class="n">fullname</span><span class="o">=</span><span class="n">basename</span><span class="o">+</span><span class="n">filext</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fullname</span><span class="o">=</span><span class="n">basename</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="o">+</span><span class="n">filext</span>
+
+                <span class="n">pathname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">fullname</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Found this file</span>
+                <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="n">fullname</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="n">filext</span><span class="p">})</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Some files were found. Attach node now.</span>
+
+            <span class="n">root</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">filenode</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">fullname</span><span class="o">=</span><span class="n">filetype</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="n">filext</span><span class="o">=</span><span class="n">filetype</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+                <span class="n">formatnode</span><span class="o">=</span><span class="n">filenode</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span>
+                    <span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;format&#39;</span><span class="p">))</span>
+                <span class="n">formatnode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">,</span><span class="n">fullname</span><span class="p">)</span>
+                <span class="n">formatnode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span><span class="n">Contents</span><span class="o">.</span><span class="n">FORMAT_TYPES</span><span class="p">[</span><span class="n">filext</span><span class="p">])</span>
+
+        <span class="c1"># Now self.data is filled</span>
+
+
+<div class="viewcode-block" id="Contents.toXML"><a class="viewcode-back" href="../../dyfi.html#dyfi.contents.Contents.toXML">[docs]</a>    <span class="k">def</span> <span class="nf">toXML</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Create an XML file from this object</span>
+<span class="sd">        :param bool save: If `True`, save to file</span>
+<span class="sd">        :param str filename: Output file (default `[data]/[evid]/contents.xml`)</span>
+<span class="sd">        :returns: If `save` is true, return the filename; otherwise, return the XML as text</span>
+
+<span class="sd">        Usage::</span>
+
+<span class="sd">          contents=Contents(dyficontainer)</span>
+<span class="sd">          xmltext=contents.toXML()           # create text output</span>
+<span class="sd">          filename=contents.toXML(save=True) # save to file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">toprettyxml</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="s1">&#39;  &#39;</span><span class="p">,</span><span class="n">newl</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">save</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="o">+</span><span class="s1">&#39;/contents.xml&#39;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

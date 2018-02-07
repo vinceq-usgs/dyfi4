@@ -1,0 +1,218 @@
+
+
+<!doctype html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dyfi.event &#8212; DYFI V4 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="DYFI V4 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.event</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">geojson</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">.db</span> <span class="k">import</span> <span class="n">Db</span>
+
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../dyfi.html#dyfi.event.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Class for handling Event objects</span>
+<span class="sd">    :param event: A :py:class:`dyfi.Event` object or event ID string</span>
+<span class="sd">    :param config: A :py:class:`dyfiConfig` object</span>
+
+<span class="sd">    This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Access the data in this object with the keys in</span>
+<span class="sd">        :py:obj:`columns` as attributes, e.g. `event.evid`,</span>
+<span class="sd">        `event.region`, etc.</span>
+
+<span class="sd">    .. data:: columns</span>
+
+<span class="sd">    A list of all the columns in the event table.</span>
+
+<span class="sd">    .. attribute:: raw</span>
+
+<span class="sd">    A reference to the raw database output of the event data.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;eventid&#39;</span><span class="p">,</span><span class="s1">&#39;region&#39;</span><span class="p">,</span><span class="s1">&#39;source&#39;</span><span class="p">,</span><span class="s1">&#39;mag&#39;</span><span class="p">,</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;eventdatetime&#39;</span><span class="p">,</span><span class="s1">&#39;eventlocaltime&#39;</span><span class="p">,</span><span class="s1">&#39;loc&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;nresponses&#39;</span><span class="p">,</span><span class="s1">&#39;newresponses&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;max_intensity&#39;</span><span class="p">,</span><span class="s1">&#39;code_version&#39;</span><span class="p">,</span><span class="s1">&#39;event_version&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;createdtime&#39;</span><span class="p">,</span><span class="s1">&#39;process_timestamp&#39;</span><span class="p">,</span><span class="s1">&#39;orig_id&#39;</span><span class="p">,</span><span class="s1">&#39;good_id&#39;</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="s1">&#39;./config.yml&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;event&#39;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+          <span class="n">evid</span><span class="o">=</span><span class="n">event</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">=</span><span class="n">Db</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+          <span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">loadEvent</span><span class="p">(</span><span class="n">evid</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+          <span class="n">evid</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;eventid&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot create Event with no data&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="o">=</span><span class="n">event</span>
+
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">toGeoJSON</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">props</span><span class="o">=</span><span class="p">{}</span>
+        <span class="n">rawdata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">raw</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;lat&#39;</span><span class="p">:</span>
+                <span class="n">latitude</span><span class="o">=</span><span class="n">val</span>
+            <span class="k">elif</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;lon&#39;</span><span class="p">:</span>
+                <span class="n">longitude</span><span class="o">=</span><span class="n">val</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">props</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">val</span>
+
+        <span class="n">feature</span><span class="o">=</span><span class="n">geojson</span><span class="o">.</span><span class="n">Feature</span><span class="p">(</span>
+            <span class="n">geometry</span><span class="o">=</span><span class="n">geojson</span><span class="o">.</span><span class="n">Point</span><span class="p">((</span><span class="n">latitude</span><span class="p">,</span><span class="n">longitude</span><span class="p">)),</span>
+            <span class="n">properties</span><span class="o">=</span><span class="n">props</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">rawdata</span><span class="p">[</span><span class="s1">&#39;eventid&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">feature</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Event.update"><a class="viewcode-back" href="../../dyfi.html#dyfi.event.Event.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Save the contents of this Event object to the DB event table.</span>
+<span class="sd">        :returns: none</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TODO: Event.update: disabled for now&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+    <span class="c1"># Generic getattr method for parameters (no setattr)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+
+        <span class="c1"># Change text datetime to Datetime object suitable for time arithmetic</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="s1">&#39;eventDateTime&#39;</span><span class="p">:</span>
+            <span class="n">dTime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eventdatetime</span>
+            <span class="n">tFormat</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+            <span class="n">dTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">dTime</span><span class="p">,</span><span class="n">tFormat</span><span class="p">)</span>
+            <span class="n">dTime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">dTime</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Event: Invalid column &#39;</span><span class="o">+</span><span class="n">name</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;[Event: </span><span class="si">%s</span><span class="s1"> M</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eventid</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mag</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">loc</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eventdatetime</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rawlist</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
+                <span class="n">rawlist</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">column</span><span class="p">:</span><span class="n">val</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">rawlist</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DYFI V4 Manual</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Vince Quitoriano.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>
