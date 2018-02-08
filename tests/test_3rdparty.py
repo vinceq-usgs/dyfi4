@@ -62,3 +62,9 @@ def test_utm():
     assert utm.from_latlon(80,42)[2]==37
     assert utm.latitude_to_zone_letter(-81)==None
 
+
+def test_phantomjs():
+    import shutil
+    assert shutil.which('phantomjs')
+
+

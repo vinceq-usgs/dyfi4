@@ -1,0 +1,18 @@
+name: dyfi
+channels:
+- conda-forge
+- defaults
+dependencies:
+- geopy
+- numpy
+- phantomjs
+- pytest
+- pytest-cov
+- python=3.5
+- pyyaml
+- pip:
+  - apng
+  - codecov
+  - defusedxml
+  - geojson
+  - sphinx-argparse==0.2.1
