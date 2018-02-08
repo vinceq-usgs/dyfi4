@@ -1,0 +1,8 @@
+# Run this to update the Sphinx API docs
+sphinx-apidoc -o docs . modules/
+cd docs
+make clean
+make html
+#make latex
+#make latexpdf
+cd ..

@@ -8,7 +8,6 @@ dyfi/config.ini
 */*/*/*/__pycache__
 dyfi/modules/utm/__pychache__
 __pycache__
-makedoc
 docs/_templates
 docs/_build
 db.json
