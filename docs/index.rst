@@ -13,6 +13,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   includeme
+
    introduction.rst
    product-guide.rst
    scientific-guide.rst

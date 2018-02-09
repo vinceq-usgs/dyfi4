@@ -62,7 +62,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'USGS Did You Feel It? (DYFI)'
-copyright = '2016, Vince Quitoriano'
+copyright = '2016 USGS'
 author = 'Vince Quitoriano'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -107,7 +107,7 @@ add_function_parentheses = True
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
 #
-add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
