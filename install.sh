@@ -29,4 +29,5 @@ pip install -r requirements.txt
 
 # Tell the user they have to activate this environment
 echo "Type 'source activate $VENV' to use this new virtual environment."
-echo "To run tests, use 'pytest tests/'
+echo "To run tests, use 'pytest tests/'"
+
