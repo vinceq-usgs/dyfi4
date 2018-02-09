@@ -3,10 +3,10 @@ Introduction to Did You Feel It? (DYFI)
 
 |Travis| |CodeCov| |Codacy|
 
-.. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=master
+.. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=core
     :target: https://travis-ci.org/vinceq-usgs/dyfi4
     :alt: Travis Build Status
-.. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/master/graph/badge.svg
+.. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/core/graph/badge.svg
     :target: https://codecov.io/gh/vinceq-usgs/dyfi4
     :alt: Code Coverage Status
 .. |Codacy| image:: https://api.codacy.com/project/badge/Grade/cc5a3a34ef56478e897414ab5472d5dc    
@@ -37,8 +37,9 @@ NEXT STEPS
 - queue, incoming equivalents
 
 HISTORY
-V4.01: Rewrite modules for more modularity
-V4.02: Complete coverage for core functions
-V4.03: Remove queue/incoming for now
+
+- V4.01: Rewrite modules for more modularity
+- V4.02: Complete coverage for core functions
+- V4.03: Remove queue/incoming for now
 
 
