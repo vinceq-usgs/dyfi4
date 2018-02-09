@@ -17,22 +17,20 @@ Introduction to Did You Feel It? (DYFI)
 
 DYFI was developed to tap the abundant information available about earthquakes from the people who experience them. By taking advantage of the vast number of Internet users, we can get a more complete description of what people experienced, the effects of an earthquake, and the extent of damage. 
 
-This version (Version 2) is written in Python and is under development.
-
-For more information, see the DYFI Manual (build from this repository, or see https://https://vinceq-usgs.github.io/dyfi)
+This version (Version 4) is written in Python and is under development.
 
 INSTALLATION
 
-1. Run './install.sh'.
+    1. Run './install.sh'.
 
-2. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.
+    2. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
 
-3. Whenever you want to run DYFI programs, activate the virtual environment by typing:
-source activate dyfi
-(You may wish to alias this to something shorter, like "dyfi".)
+    3. Whenever you want to run DYFI programs, activate the virtual environment by typing:
 
-4. To make sure the installation is complete, run 'pytest tests/'.
+        `source activate dyfi`
+        (You may wish to alias this to something shorter, like "dyfi".)
 
+    4. To make sure the installation is complete, run 'pytest tests/'.
 
 NEXT STEPS
 
