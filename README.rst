@@ -21,16 +21,18 @@ This version (Version 4) is written in Python and is under development.
 
 INSTALLATION
 
-    1. Run './install.sh'.
+    1. Clone this repository. By default, this will install to the directory 'dyfi4'.
+    
+    2. Go to 'dyfi4' directory, then run './install.sh'. Note that miniconda is required for this step. (See https://conda.io/miniconda.html)
 
-    2. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
+    3. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
 
-    3. Whenever you want to run DYFI programs, activate the virtual environment by typing:
+    4. Whenever you want to run DYFI programs, activate the virtual environment by typing:
 
         `source activate dyfi`
         (You may wish to alias this to something shorter, like "dyfi".)
 
-    4. To make sure the installation is complete, run 'pytest tests/'.
+    5. To make sure the installation is complete, run 'pytest tests/'.
 
 NEXT STEPS
 

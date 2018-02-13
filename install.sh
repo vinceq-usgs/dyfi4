@@ -11,7 +11,7 @@ source deactivate
 
 conda=$(which conda)
 if [ ! "$conda" ] ; then
-    echo "Install miniconda2 before proceeding."
+    echo "Install miniconda before proceeding."
     exit
 fi
 
