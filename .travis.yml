@@ -1,4 +1,11 @@
-# This file is for Travis only
+# This file is for Travis only. It installs dependencies via pip.
+# It also runs codecov and codacy.
+#
+# For DYFI Travis CI page, see: https://travis-ci.org/vinceq-usgs/dyfi4
+# For Codecov, see: https://codecov.io/gh/vinceq-usgs/dyfi4/
+# For Codacy, see: https://app.codacy.com/app/vinceq-usgs/dyfi4/dashboard
+#
+# To install on your own machine, use 'install.sh' (uses conda) instead.
 
 # Need this else Travis gives warnings
 dist: trusty
