@@ -2,6 +2,9 @@ channels:
 - conda-forge
 - defaults
 dependencies:
+- codecov
+- defusedxml
+- geojson
 - geopy
 - numpy
 - phantomjs>=2.1.1
@@ -9,9 +12,6 @@ dependencies:
 - pytest-cov
 - python=3.5
 - pyyaml
+- sphinx-argparse>=0.2.1
 - pip:
   - apng
-  - codecov
-  - defusedxml
-  - geojson
-  - sphinx-argparse>=0.2.1
