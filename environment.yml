@@ -1,11 +1,10 @@
-name: dyfi
 channels:
 - conda-forge
 - defaults
 dependencies:
 - geopy
 - numpy
-- phantomjs
+- phantomjs>=2.1.1
 - pytest
 - pytest-cov
 - python=3.5
@@ -15,4 +14,4 @@ dependencies:
   - codecov
   - defusedxml
   - geojson
-  - sphinx-argparse==0.2.1
+  - sphinx-argparse>=0.2.1

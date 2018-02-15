@@ -17,7 +17,7 @@ fi
 
 # Create a conda virtual environment
 echo "Creating the $VENV virtual environment:"
-conda env create -f environment.yml
+conda env create --name $VENV -f environment.yml
 
 # Activate the new environment
 echo "Activating the $VENV virtual environment"
