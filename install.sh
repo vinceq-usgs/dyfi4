@@ -24,8 +24,8 @@ echo "Activating the $VENV virtual environment"
 source activate $VENV
 
 # This package
-echo "Installing..."
-pip install -r requirements.txt
+# echo "Installing..."
+# pip install -r requirements.txt
 
 # Tell the user they have to activate this environment
 echo "Type 'source activate $VENV' to use this new virtual environment."
