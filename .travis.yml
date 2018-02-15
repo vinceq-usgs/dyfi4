@@ -1,3 +1,5 @@
+# This file is for Travis only
+
 # Need this else Travis gives warnings
 dist: trusty
 language: python
@@ -5,11 +7,12 @@ python:
   - "3.5"
 #  - "3.6"
 
-# For mock mail service
+# For mock mail service. Not yet implemented.
+# See https://michaelthessel.com/mock-mail-setup-for-travis-ci/
 #  - sudo apt-get install -y -qq postfix
 
-# For mock mail service
 before_script:
+# For mock mail service. Not yet implemented.
 #  - sudo service postfix stop
 #  - smtp-sink -d "%d.%H.%M.%S" localhost:2500 1000 &
 #  - echo -e '#!/usr/bin/env bash\nexit 0' | sudo tee /usr/sbin/sendmail
@@ -18,22 +21,31 @@ before_script:
 notifications:
   email: false
 
-# command to install dependencies
+# This installs DYFI and its dependencies
 install: 
   - pip install .
   - pip install -r requirements.txt
   - pip install pytest-cov
 
-# command to run tests
+# After installation, test
 script: pytest --cov=dyfi 
 
-# Now run codecov
+# Now run code coverage tests
 after_success:
   - pip install codecov 
   - codecov
   - coverage xml
   - python-codacy-coverage -r coverage.xml
   - bash <(curl -s https://codecov.io/bash)
+
+# Test the creation of private environmental variables under Travis.
+#
+# This sets the private variable 'SECRET_SERVER' to the value 'good'.
+# However, only the author's Travis account should be able to decrypt
+# this value.
+#
+# This can be used to name private keys, internal servers, etc. for
+# testing without making their values public.
 
 env:
   secure: "c/QyOUIh2tRENnbL+w8uAJqPwVenlQISAg6Gqm7lVg8PgEFF2HuQrYkNXpzNVC/OmhulD2+kxyABr4gKioZUM+x8kg0+1jxx6E4DLVULeTcoH0RpFLq95hrHSaPmhGcPpWk8WcANYlG9Rjs6l2PrzvrFTIpP535dZygkvTCP2TQuauslZfG9rtLBq10SFpvqBWsZdGWhVIBEHgtnpx1AxZ2/HiS6CgL76FUYPDSMOoqoJyAk92t1UeFcouODJor7Sw+xBEmhkTH2In11dl1SzTmdQfUEJfhIFczQa9ylE1GpuaHjQDTUUJF4U194nmXPyNgiOHHGeYzb3cMA9eQ/7WsqTdbmdnrhkRtcCF8cxkkUS0HO6wsyhndxfo3cbFhjaiOZzdfAS8D6vXlCQ367HaDCXh/QsUDJR6BdO7BL3vRzYBp3jAqkvYTkF0w1ez+SkrvXvTkW/aNMHTJOBVCXLNa8VUrRepdAHGadwC6pq/XsEkw87+LmLK6miLP7CgFaqymVGAPTYtzXOVioSM/ZB6hOYeILvfiQT4GdzcpqlG6h80Yw6y69hUq6CZCjGRbGBKXwWo8J1dk4Hrun7WcV8uI9jKR/rsZOzZlJNJKzNp58FMuB/EreraJY0gD4Wu69Jh3cuKM5sXYNTdDAr8U+/Q44dfGGm4aLTtazGTMkIIE="

@@ -14,23 +14,29 @@ The implementation of DYFI Version 4 features a number of changes from previous 
 Installation
 ------------
 
-DYFI installation should be straightforward. Miniconda (https://conda.io) is the preferred package and environment manager. The install script (install.sh) should install these modules automatically.
+DYFI installation should be straightforward. Miniconda (https://conda.io) is the preferred package and environment manager. All required packages can be installed using conda (either its own packages or via `pip`). The install script (install.sh) should install these packages automatically.
+
+The file `environment.yml` file lists the DYFI dependencies.
 
 Python modules:
 
 ==========  =======  =============================================
-geojson     1.3.3+   For output products
-pyyaml               For configuration files
-numpy       1.11.2   Numerical manipulation in :py:obj:`graph.py`
-geopy       1.11.0+  Use great_circle for filtering and graphing
 apng                 For :py:obj:`makemovie.py`
-defusedxml  0.5.0+   For creating :py:obj:`contents.xml`
 codecov              For debugging only
+defusedxml  0.5.0+   For creating :py:obj:`contents.xml`
+geopy       1.11.0+  Use great_circle for filtering and graphing
+geojson     1.3.3+   For output products
+numpy       1.11.2   Numerical manipulation in :py:obj:`graph.py`
+pytest               For debugging only
 pytest-cov           For debugging only
+pyyaml               For configuration files
+sqlite               Implements the DYFI database
 ==========  =======  =============================================
 
 Implementation notes
 --------------------
+
+(The topics below are beyond the scope the core functionality and will be described later.)
 
 - Triggering of events
 
