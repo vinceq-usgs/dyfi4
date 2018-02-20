@@ -14,7 +14,7 @@ The implementation of DYFI Version 4 features a number of changes from previous 
 Installation
 ------------
 
-DYFI installation should be straightforward. Miniconda (https://conda.io) is the preferred package and environment manager. All required packages can be installed using conda (either its own packages or via `pip`). The install script (install.sh) should install these packages automatically.
+DYFI installation should be straightforward. Miniconda (https://conda.io) is the preferred package and environment manager. All required packages can be installed using conda (either its own packages or via `pip`). The install script (`install.sh`) should install these packages automatically.
 
 The file `environment.yml` file lists the DYFI dependencies.
 
@@ -33,18 +33,42 @@ pyyaml               For configuration files
 sqlite               Implements the DYFI database
 ==========  =======  =============================================
 
-Implementation notes
---------------------
+Additional dependencies
+-----------------------
 
-(The topics below are beyond the scope the core functionality and will be described later.)
+- PhantomJS <http://phantomjs.org/) renders maps into static images (PNG). This is installed from `conda` via the `install.sh` script.
 
-- Triggering of events
+- Leaflet (http://leafletjs.com) is used to render maps from GeoJSON-formatted data. DYFI installs Leaflet locally in the `leaflet/inc` directory. You can update those Leaflet components manually or use a CDN for the latest version (see the commented portion of the `leaflet/viewer.html` file for an example of invoking Leaflet via CDN.)
 
-- User data: the questionnaire, compatibility
+- utm (https://pypi.python.org/pypi/utm) is a Python package for converting latitude/longitude coordinates into UTM (Universal Transverse Mercator) strings. DYFI includes a local version of this module in the directory `dyfi/thirdparty/utm`.
 
-- User data: networks, security, liability
+The DYFI database
+-----------------
 
-- Output and web pages
+Describe Sqlite3
 
-- Data exchange
+Generation of map products
+--------------------------
+
+DYFI uses Leaflet to turn intensity data into dynamic map products. 
+
+
+Creation of static images
+-------------------------
+
+DYFI uses PhantomJS to turn Leaflet-based maps into static images.
+
+USGS Event Page integration
+---------------------------
+
+The following topics are beyond the scope the core functionality and are described elsewhere.
+
+
+- Event triggering
+
+- Implementation of the questionnaire
+
+- Transfer of user data to the backend servers
+
+- Product distribution: PDL, Event Pages
 

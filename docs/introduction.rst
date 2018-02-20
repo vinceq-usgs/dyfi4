@@ -7,6 +7,10 @@ DYFI intensity maps are made quickly (within minutes), and provide greater quant
 
 Web-based contributions also pose considerable challenges. After two decades of operational experience, we document a new implementation of the DYFI system using modern, open source programming and development tools.
 
+For a scientific overview of the DYFI system, see: 
+
+    Wald, D.J., V. Quitoriano, C.B. Worden, M. Hopper, and J. W. Dewey (2012). USGS “Did You Feel It?” Internet-based Macroseismic Intensity Maps. Annals of Geophysics, 54, No. 6, 2011; doi: 10.4401/ag-5354
+
 Organization of this manual
 ...........................
 
