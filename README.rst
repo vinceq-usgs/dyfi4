@@ -24,33 +24,34 @@ Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
 Manual: https://vinceq-usgs.github.io/dyfi4/
 
 INSTALLATION
+============
 
-    1. Clone this repository. By default, this will install to the directory 'dyfi4'.
+1. Clone this repository. By default, this will install to the directory 'dyfi4'.
     
-    2. Run the install script by typing:
+2. Run the install script by typing:
     
         `cd dyfi4; ./install.sh`
         
-        Note that miniconda is required for this step. See https://conda.io/miniconda.html to install.
+Note that miniconda is required for this step. See https://conda.io/miniconda.html to install.
 
-    3. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
+3. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
 
-    4. Whenever you want to run DYFI, activate the virtual environment by typing:
+4. Whenever you want to run DYFI, activate the virtual environment by typing:
 
         `source activate dyfi`
 
-        (You may wish to alias this to something shorter, like "dyfi".)
+(You may wish to alias this to something shorter, like "dyfi".)
 
-    5. To make sure the installation is complete, run 'pytest tests/'.
+5. To make sure the installation is complete, run 'pytest tests/'.
 
 NEXT STEPS
-
+==========
 - queue, incoming equivalents
 
 HISTORY
-
+=======
 - V4.01: Rewrite modules for more modularity
 - V4.02: Complete coverage for core functions
-- V4.03: Remove queue/incoming for now
+- V4.03: Remove queue/incoming for now; fork development to 'core'
 
 
