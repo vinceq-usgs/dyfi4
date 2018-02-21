@@ -19,6 +19,9 @@ DYFI was developed to tap the abundant information available about earthquakes f
 
 This version (Version 4) is written in Python and is under development.
 
+Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
+Manual: https://vinceq-usgs.github.io/dyfi4/
+
 INSTALLATION
 
     1. Clone this repository. By default, this will install to the directory 'dyfi4'.
