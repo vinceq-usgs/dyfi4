@@ -14,8 +14,6 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   includeme.rst
-
    introduction.rst
    product-guide.rst
    scientific-guide.rst
@@ -36,6 +34,8 @@ Commands and modules
    :maxdepth: 1
 
    dyfi
+   tests
+   validation
    
 Indices and tables
 ==================

@@ -89,7 +89,3 @@ dyfi.rawDbSqlite
 Subpackages
 -----------
 
-.. toctree::
-
-    dyfi.thirdparty
-

@@ -42,7 +42,10 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',
     'sphinxarg.ext',
+    'sphinx.ext.doctest'
 ]
+
+doctest_test_doctest_blocks = 'true'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -62,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'USGS Did You Feel It? (DYFI)'
-copyright = '2016 USGS'
+copyright = '2018 USGS'
 author = 'Vince Quitoriano'
 
 # The version info for the project you're documenting, acts as replacement for

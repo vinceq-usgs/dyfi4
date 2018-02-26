@@ -8,26 +8,39 @@ DYFI products are event-centric. Each product is tied to a specific Event ID.
 Dynamic Map Products
 ====================
 
-The files `dyfi_geo_1km.geojson` and `dyfi_geo_10km.geojson` are text files in GeoJSON format (see http://geojson.org/). These represent a collection of UTM block areas of either 1 km or 10 km size, wherein individual DYFI responses are aggregated (see the :ref:`Scientific Guide` for details.) 
+Filenames: `dyfi_geo_1km.geojson` and `dyfi_geo_10km.geojson` 
 
-Each file represents a GeoJSON file. FeatureCollection. The topmost object is a FeatureCollection keys:
+These are text files in GeoJSON format (see http://geojson.org/). These represent a collection of UTM block areas of either 1 km or 10 km size, wherein individual DYFI responses are aggregated (see the :ref:`Scientific Guide` for details.) 
 
------------------------------------------------
-name        The aggregation size (1km or 10 km)
-id          same
-type        FeatureCollection
-features    array of Features (see below)
-properties  see below
------------------------------------------------
+The topmost object of each file is a `FeatureCollection` with the following keys:
 
-The FeatureCollection also has the following properties:
+===========   =======================================
+name          The aggregation size (1km or 10 km)
+id            same
+type          FeatureCollection
+features      array of location Features, see below
+properties    see below
+===========   =======================================
 
------------------------------------------------------------------------------
+The `FeatureCollection` properties are:
+
+=========   ================================================================
 nresp       The number of individual responses in the dataset for this file
-maxint      The largest intensity value among aggregated areas
------------------------------------------------------------------------------
+maxint      The largest intensity value among aggregated locations
+=========   ================================================================
 
-Each feature in the FeatureCollection is one aggregated location.
+Each `Feature` in the `FeatureCollection` represents one aggregated location (geocode block). The location's `geometry` attribute is a GeoJSON `Polygon` which maps the four corners of the UTM block.
+
+The `Feature` properties for each location are:
+
+==========  ==============================================================
+type        Feature
+id          The UTM string for this location
+location    Same as ID
+nresp       The number of individual responses contributing to this block
+intensity   The aggregated intensity computed from these responses
+center      A `Point` GeoJSON indicating the center of this block
+==========  ==============================================================
 
 Static Map Products
 ===================

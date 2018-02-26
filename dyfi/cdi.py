@@ -28,7 +28,7 @@ cdiDamageValues=OrderedDict([
     (3,['_move','_chim','_found','_collapse','_porch','_majormodernchim','_tiltedwall'])
     ])
 
-def calculate(entries):
+def calculate(entries,cwsOnly=False):
     """
 
     :synopsis: Calculate the intensity for one entry, or list of entries
@@ -88,6 +88,8 @@ def calculate(entries):
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]
 
+    if cwsOnly:
+        return cws
 
     if cws <= 0:
         return 1
