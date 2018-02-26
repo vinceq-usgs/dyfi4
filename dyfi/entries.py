@@ -1,5 +1,3 @@
-from .aggregate import aggregate
-from .db import Db
 import datetime
 
 class Entries():
@@ -18,6 +16,9 @@ class Entries():
     """
 
     def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config='./config.yml',load=True):
+
+        from .aggregate import aggregate
+        from .db import Db
 
         if evid:
             self.evid=evid
