@@ -55,11 +55,19 @@ def calculate(entries,cwsOnly=False):
         indexCount=0
 
         for entry in entries:
-            if index=='damage' and 'd_text' in entry.__dict__:
-                val=getDamageFromText(entry.d_text)
+
+            #----------------------------------------------
+            # Special rules  for 'damage' and 'other_felt'
+            #----------------------------------------------
+            if index=='damage':
+                val=getDamageFromText(entry)
+
+            elif index=='felt':
+                val=getFeltFromOther(entry)
 
             elif index not in entry.__dict__:
                 val=None
+
             else:
                 val=entry.__dict__[index]
 
@@ -80,10 +88,11 @@ def calculate(entries,cwsOnly=False):
             indexTotal+=val
             indexCount+=1
 
-
         if indexCount:
             totalByIndex[index]=indexTotal/indexCount
 
+    print('totalByIndex:',totalByIndex)
+    print('cdiWeights:',cdiWeights)
     cws=0
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]
@@ -101,19 +110,26 @@ def calculate(entries,cwsOnly=False):
     return round(cdi,1)
 
 
-def getDamageFromText(d_text):
+def getDamageFromText(entry):
     """
 
     :synopsis: Convert a damage string to a damage value
-    :param str d_text: A damage string, see :py:data:`cdiDamageValues` for allowed values
+    :param entry: An `Entry` object or `str`
     :returns: float
 
+    This function takes either an `Entry` object or an actual d_text string.
     Multiple damage strings (separated by whitespace) are allowed.
 
     """
 
-    if d_text is None:
+    if isinstance(entry,str):
+        d_text=entry
+    elif 'd_text' not in entry.__dict__:
         return None
+    elif entry.d_text==None or entry.d_text=='':
+        return None
+    else:
+        d_text=entry.d_text
 
     damageTokens=d_text.split()
     damage=None
@@ -124,4 +140,35 @@ def getDamageFromText(d_text):
                 continue
 
     return damage
+
+
+def getFeltFromOther(entry):
+    """
+
+    :synopsis: Return felt index value modified by other_felt
+    :param entry: An `Entry` object
+    :returns: float
+
+    Modifies the 'felt' index for this entry when a value for 'other_felt' is entered.
+
+    """
+
+    # Need to store felt index (in case it doesn't exist)
+    if 'felt' not in entry.__dict__:
+        myFelt=None
+    else:
+        myFelt=entry.felt
+
+    if 'other_felt' not in entry.__dict__ or not entry.other_felt:
+        return myFelt
+
+    other_felt=entry.other_felt
+    if other_felt==2 and not myFelt:
+        return 0
+    if other_felt==2:
+        return 0.36
+    if other_felt==3:
+        return 0.72
+
+    return 1
 
