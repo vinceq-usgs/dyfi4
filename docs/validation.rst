@@ -4,10 +4,10 @@ Validation
 .. testsetup::
 
      from dyfi import cdi
-     from entries import Entry
+     from entry import Entry
 
 Here we show a series of validation tests to show results consistent with
-the algorithm as shown in:
+the algorithm as shown here:
 
       Utilization of the Internet for Rapid Community Intensity Maps
       David J. Wald  Vincent Quitoriano  Lori A. Dengler  James W. Dewey
@@ -34,14 +34,49 @@ The intensity is then computed as::
 
 Test 1. An entry composed of a single 'I felt it' response, which results in a CWS of 5. 
 
-      >>> entry=Entry({'felt':1})
-      >>> cdi.calculate(entry,cwsOnly=True)
-      5.0
+     >>> entry=Entry({'felt':1})
+     >>> cdi.calculate(entry,cwsOnly=True)
+     5.0
 
 For any 'felt' response, the minimum intensity is 2 (which corresponds to 'felt' on the MMI intensity scale).
 
-      >>> cdi.calculate(entry)
-      2
+     >>> cdi.calculate(entry)
+     2
 
-Test 2. For two entries 
+Test 2. An entry with multiple questions answered, resulting in a higher intensity.
+
+    >>> entry=Entry({'felt':1,'reaction':3,'stand':1,'shelf':1})
+    >>> cdi.calculate(entry,cwsOnly=True)
+    15.0
+    >>> cdi.calculate(entry)
+    4.8
+
+Test 3. When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation.
+
+    >>> entry_1=Entry({'felt':1,'reaction':0,'stand':0,'shelf':0})
+    >>> entry_2=Entry({'felt':1,'reaction':3,'stand':1,'shelf':1})
+    >>> cdi.calculate(entry_1,cwsOnly=True),cdi.calculate(entry_2,cwsOnly=True)
+    (5.0, 15.0)
+    >>> cdi.calculate(entry_1),cdi.calculate(entry_2)
+    (2, 4.8)
+
+    >>> agg_entries=[entry_1,entry_2]
+    >>> cdi.calculate(agg_entries,cwsOnly=True)
+    10.0
+    >>> cdi.calculate(agg_entries)
+    3.4
+
+Test 4. When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
+
+In the following example, the first entry does not have a 'reaction' value. Therefore, during aggregation, the reaction index only counts the value for the second entry.
+
+    >>> entry_1=Entry({'felt':1})
+    >>> entry_2=Entry({'felt':1,'reaction':5})
+    >>> cdi.calculate(entry_1,cwsOnly=True)
+    5.0
+    >>> cdi.calculate(entry_2,cwsOnly=True)
+    10.0
+    >>> cdi.calculate([entry_1,entry_2],cwsOnly=True)
+    10.0
+
 
