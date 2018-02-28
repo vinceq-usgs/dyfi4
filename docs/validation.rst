@@ -51,22 +51,136 @@ Test 2. An entry with multiple questions answered, resulting in a higher intensi
     >>> cdi.calculate(entry)
     4.8
 
-Test 3. When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation.
+Test 3. The questionnaire asks the user, "Did you feel the earthquake?" which populates the 'felt' index. We also ask a second question, "Did others feel the earthquake?" This modifies the value of the 'felt' index to produce partial 'felt' values.
 
-    >>> entry_1=Entry({'felt':1,'reaction':0,'stand':0,'shelf':0})
-    >>> entry_2=Entry({'felt':1,'reaction':3,'stand':1,'shelf':1})
+The 'other_felt' index corresponds to the following values:
+
+	===================   =========================  ===============
+	'other_felt' value    label                      'felt' value
+	===================   =========================  ===============
+	null                  Not specified              not changed
+	2                     No others felt it          0 or 0.36 
+	3                     Some felt it               0.72
+	4                     Most felt it               1
+	5                     Everyone/almost everyone   1
+	===================   =========================  ===============
+
+If the user indicates that neither they nor others felt anything, then the 'felt' index is 0.
+
+    >>> cdi.getFeltFromOther(Entry({'felt':0,'other_felt':0}))
+    0
+
+If the user indicates that they felt the earthquake (felt index = 1) but no others felt it (other_felt = 2), the 'felt' index is changed to 0.36.
+
+    >>> cdi.getFeltFromOther(Entry({'felt':1,'other_felt':2}))
+    0.36
+
+'other_felt' values of 3 and higher overwrite the 'felt' value.
+
+    >>> cdi.getFeltFromOther(Entry({'felt':0,'other_felt':3}))
+    0.72
+    >>> cdi.getFeltFromOther(Entry({'felt':0,'other_felt':4}))
+    1
+    >>> cdi.getFeltFromOther(Entry({'felt':0,'other_felt':5}))
+    1
+
+Test 4. The 'damage' index is populated by the user ticking on any number of boxes that indicate the damage they observe.  The following tests show the text string and damage value corresponding to each of the possible checkboxes on the questionnaire.
+
+    No damage:
+    
+    >>> cdi.getDamageFromText('_none')
+    0
+
+    Hairline cracks in walls:
+
+    >>> cdi.getDamageFromText('_crackmin')
+    0.5
+
+    A few large cracks in walls:
+
+    >>> cdi.getDamageFromText('_crackwallfew')
+    0.75
+
+    Many large cracks in walls:
+
+    >>> cdi.getDamageFromText('_crackwallmany')
+    1
+
+    Ceiling tiles or lighting fixtures fell:
+
+    >>> cdi.getDamageFromText('_tilesfell')
+    1
+
+    Cracks in chimney:
+
+    >>> cdi.getDamageFromText('_crackchim')
+    1
+
+    One or several cracked windows:
+
+    >>> cdi.getDamageFromText('_crackwindows')
+    0.5
+
+    Many windows cracked or some broken out:
+
+    >>> cdi.getDamageFromText('_brokenwindows')
+    2
+
+    Masonry fell from block or brick wall(s):
+
+    >>> cdi.getDamageFromText('_masonryfell')
+    2
+
+    Old chimney, major damage or fell down:
+
+    >>> cdi.getDamageFromText('_majoroldchim')
+    2
+
+    Modern chimney, major damage or fell down:
+
+    >>> cdi.getDamageFromText('_majormodernchim')
+    3
+
+    Outside wall(s) tilted over or collapsed completely:
+
+    >>> cdi.getDamageFromText('_tiltedwall')
+    3
+
+    Separation of porch, balcony, or other addition from building:
+
+    >>> cdi.getDamageFromText('_porch')
+    3
+
+    Building permanently shifted over foundation:
+
+    >>> cdi.getDamageFromText('_move')
+    3
+
+When multiple damage boxes are checked, the largest corresponding value is used.
+
+    >>> cdi.getDamageFromText('_crackmin _crackwallfew _masonry _porch')
+    3        
+
+Test 4. When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation, before calculating the intensity.
+
+In this example, the CWS for two entries is calculated separately, and for the aggregate of the two. 
+
+
+    >>> entry_1=Entry({'felt':1,'motion':0,'reaction':0,'stand':0,'shelf':0})
+    >>> entry_2=Entry({'felt':1,'motion':5,'reaction':3,'stand':1,'shelf':1})
     >>> cdi.calculate(entry_1,cwsOnly=True),cdi.calculate(entry_2,cwsOnly=True)
-    (5.0, 15.0)
+    (5.0, 20.0)
+    >>> cdi.calculate([entry_1,entry_2],cwsOnly=True)
+    12.5
+
+Now the intensities are calculated separately and for the aggregate. Note that the aggregate intensity is not the mean of the individual entry intensities.
+
     >>> cdi.calculate(entry_1),cdi.calculate(entry_2)
-    (2, 4.8)
+    (2, 5.8)
+    >>> cdi.calculate([entry_1,entry_2])
+    4.2
 
-    >>> agg_entries=[entry_1,entry_2]
-    >>> cdi.calculate(agg_entries,cwsOnly=True)
-    10.0
-    >>> cdi.calculate(agg_entries)
-    3.4
-
-Test 4. When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
+Test 5. When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
 
 In the following example, the first entry does not have a 'reaction' value. Therefore, during aggregation, the reaction index only counts the value for the second entry.
 

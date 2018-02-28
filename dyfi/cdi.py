@@ -91,8 +91,6 @@ def calculate(entries,cwsOnly=False):
         if indexCount:
             totalByIndex[index]=indexTotal/indexCount
 
-    print('totalByIndex:',totalByIndex)
-    print('cdiWeights:',cdiWeights)
     cws=0
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]

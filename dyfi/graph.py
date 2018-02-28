@@ -250,7 +250,7 @@ class Graph:
         :synopsis: Computes mean and median data for entries
         :returns: `list` of data, see below
 
-        Used by :py:meth:`getDataDistance`. Computes mean and median data for the entries in each distance bin. The output is a list of `dict`s, one for mean data and one for median data:
+        Used by :py:meth:`getDataDistance`. Computes mean and median data for the entries in each distance bin. The output is a list of `dict` objects, one for mean data and one for median data:
 
         =======    ================================
         id         'meanBinned' or 'medianBinned'
