@@ -179,12 +179,12 @@ def getUtmFromCoordinates(lat,lon,span=None):
     try:
         loc=from_latlon(lat,lon)
     except OutOfRangeError:
-        return
+        # Catchall for any location that cannot be geocoded
+        return None
 
     x,y,zonenum,zoneletter=loc
-    if span:
-        x=myFloor(x,span)
-        y=myFloor(y,span)
+    x=myFloor(x,span)
+    y=myFloor(y,span)
 
     utm='{} {} {} {}'.format(x,y,zonenum,zoneletter)
     return utm
@@ -208,7 +208,8 @@ def getUtmForEntry(entry,span):
         lat=float(entry.latitude)
         lon=float(entry.longitude)
     except TypeError:
-        return
+        # Catchall for bad lat/lon values
+        return None
 
     loc=getUtmFromCoordinates(lat,lon,span)
     return loc
