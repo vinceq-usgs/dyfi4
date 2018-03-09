@@ -45,7 +45,7 @@ def calculate(entries,cwsOnly=False):
 
     """
 
-    # Make a list, if not already one
+    # Make this into a list, if not already one
     if not isinstance(entries,list):
         entries=[entries]
 
@@ -57,7 +57,7 @@ def calculate(entries,cwsOnly=False):
         for entry in entries:
 
             #----------------------------------------------
-            # Special rules  for 'damage' and 'other_felt'
+            # Special rules for 'damage' and 'other_felt'
             #----------------------------------------------
             if index=='damage':
                 val=getDamageFromText(entry)
@@ -65,25 +65,13 @@ def calculate(entries,cwsOnly=False):
             elif index=='felt':
                 val=getFeltFromOther(entry)
 
-            elif index not in entry.__dict__:
-                val=None
-
             else:
-                val=entry.__dict__[index]
+                val=entry.index(index)
 
             # Indices with no value are not counted.
             # They DO NOT have zero value!
             if val is None:
                  continue
-
-            # Values might have additional text. Ignore it.
-            if isinstance(val,str) and ' ' in val:
-                    val=val.split(' ')[0]
-
-            try:
-                val=float(val)
-            except ValueError:
-                continue
 
             indexTotal+=val
             indexCount+=1
@@ -122,7 +110,7 @@ def getDamageFromText(entry):
 
     if isinstance(entry,str):
         d_text=entry
-    elif 'd_text' not in entry.__dict__:
+    elif not hasattr(entry,'d_text'):
         return None
     elif entry.d_text==None or entry.d_text=='':
         return None
@@ -135,7 +123,7 @@ def getDamageFromText(entry):
         for dstring in dstrings:
             if dstring in damageTokens:
                 damage=val
-                continue
+                break
 
     return damage
 
@@ -151,17 +139,12 @@ def getFeltFromOther(entry):
 
     """
 
-    # Need to store felt index (in case it doesn't exist)
-    if 'felt' not in entry.__dict__:
-        myFelt=None
-    else:
-        myFelt=entry.felt
+    felt=entry.index('felt')
+    other_felt=entry.index('other_felt')
 
-    if 'other_felt' not in entry.__dict__ or not entry.other_felt:
-        return myFelt
-
-    other_felt=entry.other_felt
-    if other_felt==2 and not myFelt:
+    if not other_felt or other_felt<2:
+        return felt
+    if other_felt==2 and not felt:
         return 0
     if other_felt==2:
         return 0.36
