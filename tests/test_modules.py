@@ -251,10 +251,9 @@ def test_dbentries():
 
 
 def test_entries():
-  from dyfi import Config,Event,Entries,Db,cdi,aggregate
+  from dyfi import Config,Event,Entries,Db,aggregate
 
-  if testid:
-      shutil.rmtree('data/'+testid,ignore_errors=True)
+  shutil.rmtree('data/'+testid,ignore_errors=True)
 
   config=Config(configfile)
 
@@ -285,23 +284,6 @@ def test_entries():
   badentries=Entries(testid,rawentries=[badentry],config=config)
   assert len(badentries)==1
 
-  print(entries)
-  single=[x for x in entries if x.subid==4279149][0]
-  print(single)
-  assert '[Entry:' in str(single)
-  user_cdi=cdi.calculate(single)
-  assert user_cdi>=2 or user_cdi==1
-
-  # test if entry has a missing required column
-  single.__dict__.pop('felt')
-  single.__dict__['badcolumn']=1
-  assert cdi.calculate(single)!=user_cdi
-
-  # test bad cdi
-  single.__dict__['felt']='a bad value'
-  single.__dict__['d_text']='_chim'
-  assert cdi.calculate(single)==4.8
-
   # Test aggregate
 
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
@@ -310,6 +292,7 @@ def test_entries():
       aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
 
+  single=entries.entries[0]
   assert isinstance(aggregate.getUtmForEntry(single,'1km'),str)
 
   utmstring='500000 3650000 11 S'
@@ -360,8 +343,7 @@ def test_products():
     import copy
     from dyfi import Config,Event,Entries,Products,Product,Map,Graph
 
-    if testid:
-        shutil.rmtree('data/'+testid,ignore_errors=True)
+    shutil.rmtree('data/'+testid,ignore_errors=True)
 
     config=Config(configfile)
     event=Event(testid,config=config)
