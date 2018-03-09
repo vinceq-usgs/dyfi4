@@ -22,9 +22,10 @@ To calculate a DYFI intensity, we first assign numerical values to individual an
           + 2 x "stand" (0-1)
           + 5 x "shelf" (0-3)
           + 2 x "picture" (0-1)
+          + 3 x "furniture" (0-1)
           + 5 x "damage" (0-3)
 
-      (Numbers in parentheses are the range of possible values)
+      Numbers in parentheses are the range of possible values for that index.
 
 The intensity is then computed as::
 
@@ -32,7 +33,10 @@ The intensity is then computed as::
 
 .. |ln| replace:: log\ :sub:`e`
 
-Test 1. An entry composed of a single 'I felt it' response, which results in a CWS of 5. 
+Test 1. Single entry
+---------------------------
+
+An entry composed of a single 'I felt it' response, which results in a CWS of 5. 
 
      >>> entry=Entry({'felt':1})
      >>> cdi.calculate(entry,cwsOnly=True)
@@ -43,15 +47,35 @@ For any 'felt' response, the minimum intensity is 2 (which corresponds to 'felt'
      >>> cdi.calculate(entry)
      2
 
-Test 2. An entry with multiple questions answered, resulting in a higher intensity.
 
-    >>> entry=Entry({'felt':1,'reaction':3,'stand':1,'shelf':1})
+Test 2. Multiple indices
+-----------------------------
+
+Entries with multiple questions answered, resulting in a higher intensity.
+
+    >>> entry=Entry({'felt':1,'motion':2,'reaction':1})
     >>> cdi.calculate(entry,cwsOnly=True)
-    15.0
+    8.0
     >>> cdi.calculate(entry)
-    4.8
+    2.7
 
-Test 3. The questionnaire asks the user, "Did you feel the earthquake?" which populates the 'felt' index. We also ask a second question, "Did others feel the earthquake?" This modifies the value of the 'felt' index to produce partial 'felt' values.
+    >>> entry=Entry({'felt':1,'motion':3,'reaction':3,'stand':1,'shelf':1})
+    >>> cdi.calculate(entry,cwsOnly=True)
+    18.0
+    >>> cdi.calculate(entry)
+    5.4
+
+    >>> entry=Entry({'felt':1,'motion':5,'reaction':5,'stand':1,'shelf':3,'picture':1,'furniture':1})
+    >>> cdi.calculate(entry,cwsOnly=True)
+    37.0
+    >>> cdi.calculate(entry)
+    7.9
+
+
+Test 3. The 'felt' and 'other_felt' indices
+---------------------------------------------
+
+The questionnaire asks the user, "Did you feel the earthquake?" which populates the 'felt' index. We also ask a second question, "Did others feel the earthquake?" This modifies the value of the 'felt' index to produce partial 'felt' values.
 
 The 'other_felt' index corresponds to the following values:
 
@@ -84,7 +108,10 @@ If the user indicates that they felt the earthquake (felt index = 1) but no othe
     >>> cdi.getFeltFromOther(Entry({'felt':0,'other_felt':5}))
     1
 
-Test 4. The 'damage' index is populated by the user ticking on any number of boxes that indicate the damage they observe.  The following tests show the text string and damage value corresponding to each of the possible checkboxes on the questionnaire.
+Test 4. The 'damage' index
+-------------------------------
+
+The 'damage' index is populated by the user ticking on any number of boxes that indicate the damage they observe.  The following tests show the text string and damage value corresponding to each of the possible checkboxes on the questionnaire.
 
     No damage:
     
@@ -161,7 +188,10 @@ When multiple damage boxes are checked, the largest corresponding value is used.
     >>> cdi.getDamageFromText('_crackmin _crackwallfew _masonry _porch')
     3        
 
-Test 4. When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation, before calculating the intensity.
+Test 5. Multiple entries
+--------------------------
+
+When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation, before calculating the intensity.
 
 In this example, the CWS for two entries is calculated separately, and for the aggregate of the two. 
 
@@ -180,7 +210,11 @@ Now the intensities are calculated separately and for the aggregate. Note that t
     >>> cdi.calculate([entry_1,entry_2])
     4.2
 
-Test 5. When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
+
+Test 6. Multiple entries with unanswered indices
+--------------------------------------------------
+
+When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
 
 In the following example, the first entry does not have a 'reaction' value. Therefore, during aggregation, the reaction index only counts the value for the second entry.
 
@@ -192,5 +226,11 @@ In the following example, the first entry does not have a 'reaction' value. Ther
     10.0
     >>> cdi.calculate([entry_1,entry_2],cwsOnly=True)
     10.0
+
+
+Test 7. Comparison with DYFI Version 3
+--------------------------------------------
+
+The following is a comparison of DYFI products from Version 3 (the current live version) and the new Version 4. The test event is the 2016-09-03 M5.8 event near Pawnee, Oklahoma.
 
 
