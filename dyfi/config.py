@@ -41,13 +41,12 @@ class Config:
         with open(file,'r') as f:
             configs=yaml.safe_load(f)
 
-        self.sections={}
+        self.sections=configs
 
-        for key in configs:
-            val=configs[key]
+        # This allows accessing each section as an attribute
 
-            self.sections[key]=val
-            setattr(self,key,val)
+        for section in configs:
+            setattr(self,section,self.sections[section])
 
 
     def __iter__(self):
