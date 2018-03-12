@@ -110,12 +110,12 @@ def getDamageFromText(entry):
 
     if isinstance(entry,str):
         d_text=entry
-    elif not hasattr(entry,'d_text'):
-        return None
-    elif entry.d_text==None or entry.d_text=='':
-        return None
+
     else:
-        d_text=entry.d_text
+        d_text=entry.index('d_text')
+
+    if not d_text:
+        return None
 
     damageTokens=d_text.split()
     damage=None
@@ -135,7 +135,7 @@ def getFeltFromOther(entry):
     :param entry: An `Entry` object
     :returns: float
 
-    Modifies the 'felt' index for this entry when a value for 'other_felt' is entered.
+    Returns a modified 'felt' value when 'other_felt' is entered.
 
     """
 

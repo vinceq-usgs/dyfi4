@@ -10,11 +10,6 @@ class Entry():
         An Entry object contains raw data and may have PII
         or invalid location data. DO NOT EXPORT `Entry` OBJECTS!
 
-    .. note::
-        Access the data in this object with the keys in
-        `Entry.columns` as attributes,  e.g. `entries.eventid`
-        or `event.felt`.
-
     .. data:: columns
 
         A list of all the columns in the extended tables.
@@ -42,19 +37,53 @@ class Entry():
     ]
 
     cdicolumns=[
-        'subid','table','latitude','longitude','felt','other_felt',
+        'felt','other_felt',
         'motion','reaction','stand','shelf','picture',
-        'furniture','damage'
+        'furniture','damage','d_text'
     ]
 
+
     def __init__(self,rawdata):
+
         self.table='extended'
 
+        # Initialize attributes
+
         for column in Entry.columns:
-            if column in rawdata.keys():
+            self.__dict__[column]=None
+            if column in rawdata:
                 self.__dict__[column]=rawdata[column]
+
+
+    def index(self,index):
+        """
+            :synopsis: Return the numeric, cleaned-up version of a questionnaire index for CDI computation
+            :param str index: name of an column
+
+        """
+
+        if index in Entry.cdicolumns:
+            val=self.__dict__[index]
+
+        else:
+            raise AttributeError('Invalid Entry index '+index)
+
+        # Special case for 'd_text' requires string
+
+        if index=='d_text':
+            return self.d_text
+
+        # For everything else, we need a numeric value. If the raw value is a string with comments, extract the numeric value.
+
+        if isinstance(val,str):
+            val=val.split(' ')[0]
+
+            if '.' in val:
+                val=float(val)
             else:
-                self.__dict__[column]=None
+                val=int(val)
+
+        return val
 
 
     def __str__(self):
@@ -66,9 +95,8 @@ class Entry():
     def __repr__(self):
         text=''
         for column in Entry.columns:
-            if self.__dict__[column]:
-                val=str(self.__dict__[column])
-                text=text+column+':'+val+','
+            val=str(self.__dict__[column])
+            text=text+column+':'+val+','
 
         text='Entry('+text[:-1]+')'
         return text
