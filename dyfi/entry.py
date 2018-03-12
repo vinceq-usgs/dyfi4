@@ -50,9 +50,8 @@ class Entry():
         # Initialize attributes
 
         for column in Entry.columns:
-            self.__dict__[column]=None
-            if column in rawdata:
-                self.__dict__[column]=rawdata[column]
+            val=rawdata[column] if column in rawdata else None
+            setattr(self,column,val)
 
 
     def index(self,index):
@@ -63,7 +62,7 @@ class Entry():
         """
 
         if index in Entry.cdicolumns:
-            val=self.__dict__[index]
+            val=getattr(self,index)
 
         else:
             raise AttributeError('Invalid Entry index '+index)
@@ -95,7 +94,7 @@ class Entry():
     def __repr__(self):
         text=''
         for column in Entry.columns:
-            val=str(self.__dict__[column])
+            val=str(getattr(self,column))
             text=text+column+':'+val+','
 
         text='Entry('+text[:-1]+')'
