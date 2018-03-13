@@ -53,9 +53,9 @@ class Db:
     TABLES.extend(EXTTABLES)
 
 
-    def __init__(self,config='./config.yml'):
+    def __init__(self,config=None):
 
-        self.rawdb=RawDb(config.db)
+        self.rawdb=RawDb(config.db) if config else None
         self.params=config.db
         self.latesttable=Db.EXTTABLES[-1]
         self.event=''

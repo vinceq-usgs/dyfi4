@@ -11,7 +11,7 @@ class Event:
     :param event: A :py:class:`dyfi.Event` object or event ID string
     :param config: A :py:class:`dyfiConfig` object
 
-    This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
+    This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the event data from the database).
 
     .. note::
         Access the data in this object with the keys in
@@ -35,14 +35,14 @@ class Event:
              'createdtime','process_timestamp','orig_id','good_id']
 
 
-    def __init__(self,event,config='./config.yml'):
-        self.db=None
+    def __init__(self,event,config=None):
+
         self.table='event'
 
         if isinstance(event,str):
           evid=event
-          self.db=Db(config)
-          event=self.db.loadEvent(evid)
+          db=Db(config) 
+          event=db.loadEvent(evid)
 
         elif isinstance(event,dict):
           evid=event['eventid']
@@ -53,8 +53,8 @@ class Event:
         self.raw=event
 
         for column in self.columns:
-            if column in event:
-                self.__dict__[column]=event[column]
+            val=event[column] if column in event else None
+            setattr(self,column,val)
 
 
     def toGeoJSON(self):
@@ -101,7 +101,7 @@ class Event:
             dTime.replace(tzinfo=datetime.timezone.utc)
             return dTime
 
-        if name not in self.columns and name not in self.__dict__:
+        if name not in self.columns:
             raise ValueError('Event: Invalid column '+name)
 
 
@@ -112,9 +112,8 @@ class Event:
     def __repr__(self):
         rawlist=[]
         for column in self.columns:
-            if column in self.__dict__:
-                val=str(self.__dict__[column])
-                rawlist.append({column:val})
+            val=str(getattr(self,column))
+            rawlist.append({column:val})
 
         return json.dumps(rawlist)
 

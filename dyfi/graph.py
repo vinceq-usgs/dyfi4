@@ -18,6 +18,7 @@ class Graph:
     :param Event event: An Event object
     :param dict mapparams: (optional) params from an eventMap
     :param dict data: Aggregated data in GeoJSON format
+    :param config: (optional) A `Config` object
 
     The data input should be the aggregated data from :py:obj:`dyfi.aggregate`. 
 
@@ -54,7 +55,7 @@ class Graph:
         }
 
 
-    def __init__(self,name,event,data,config='./config.yml',eventDir=None,title=None):
+    def __init__(self,name,event,data,config,eventDir=None,title=None):
 
         self.name=name
         self.event=event

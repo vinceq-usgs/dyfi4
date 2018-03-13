@@ -7,7 +7,13 @@ class Entries():
     """
 
     :synopsis: Handle a collection of entries and aggregation.
-    :param list rawdata: optional list of raw data (e.g. table rows)
+    :param str evid: (optional) event ID
+    :param event: (optional) `Event` object
+    :param str startdatetime: (optional) string of format 'YYYY-MM-DD HH:MM:SS'
+    :param cdifilter: (optional) `filter` object for filtering data
+    :param list rawentries: (optional) list of raw data (e.g. table rows)
+    :param config: (optional) A `Config` object
+    :param bool load:
 
     An Event object or startdatetime is necessary for db.loadEntries
     to know which extended tables to search.
@@ -18,7 +24,7 @@ class Entries():
 
     """
 
-    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config='./config.yml',load=True):
+    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True):
 
         if evid:
             self.evid=evid
@@ -44,7 +50,7 @@ class Entries():
             count+=1
 
 
-    def aggregate(self,name,force=False):
+    def aggregate(self,name):
         """
 
         :synopsis: Aggregate the entry data in this object

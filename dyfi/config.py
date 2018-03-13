@@ -36,9 +36,9 @@ class Config:
 
 """
 
-    def __init__(self,file='./config.yml'):
+    def __init__(self,configfile='./config.yml'):
 
-        with open(file,'r') as f:
+        with open(configfile,'r') as f:
             configs=yaml.safe_load(f)
 
         self.sections=configs
