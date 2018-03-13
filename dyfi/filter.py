@@ -29,7 +29,7 @@ class Filter:
         self.config=config.filter
 
         if ipe:
-            self.ipe=ipes.__dict__[ipe]
+            self.ipe=getattr(ipes,ipe)
 
 
     def filterFunction(self):

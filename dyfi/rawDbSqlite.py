@@ -216,18 +216,19 @@ class RawDb:
         c=self.getCursor(table)
         columns=self.getColumns(table)
 
-        if isinstance(obj,dict):
-            objDict=obj
-        else:
-            objDict=obj.__dict__
+        isDict=isinstance(obj,dict)
 
         saveList=[]
         for column in columns:
-            val=None
-            if column in objDict:
-                val=objDict[column]
-            saveList.append(val)
+            if isDict and column in obj:
+                val=obj[column]
+            elif not isDict and hasattr(obj,column):
+                val=getattr(obj,column)
+            else:
+                val=None
 
+            saveList.append(val)
+                
         query='INSERT OR REPLACE INTO '+table+' VALUES (%s)'
         query %=(','.join('?'*len(saveList)))
 

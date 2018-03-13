@@ -28,12 +28,13 @@ class Event:
 
 """
 
-    columns=['eventid','region','source','mag','lat','lon','depth',
-             'eventdatetime','eventlocaltime','loc',
-             'nresponses','newresponses',
-             'max_intensity','code_version','event_version',
-             'createdtime','process_timestamp','orig_id','good_id']
-
+    columns=['eventid','mag','lat','lon','depth',
+             'region','source','mainshock','loc','nresponses',
+             'eventdatetime','createdtime','newresponses',
+             'run_flag','citydb','zipdb','ciim_version','code_version',
+             'process_timestamp','max_intensity','sent_email',
+             'event_version','orig_id','eventlocaltime',
+             'invisible','good_id']
 
     def __init__(self,event,config=None):
 
