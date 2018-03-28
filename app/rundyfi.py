@@ -31,6 +31,11 @@ parser.add_argument(
     '--configfile',action='store',default='./config.yml',
     help='Specify config file'
 )
+parser.add_argument(
+    '--debug',action='store_true',default=None,
+    help='Special debug mode'
+)
+
 
 def main(args):
 
@@ -41,7 +46,7 @@ def main(args):
     print('Starting dyfi.py: ',time.asctime(time.localtime()))
 
     evid=args.evid
-
+    
     # TODO: Add directives like --create, --redo, --push
     container=DyfiContainer(evid)
     Contents(container).toXML(save=True)

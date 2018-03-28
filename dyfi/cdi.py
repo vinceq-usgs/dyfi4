@@ -16,8 +16,13 @@ A collection of functions to compute and manipulate intensity. For details, see 
 import math
 from collections import OrderedDict
 
-cdiWeights={'felt':5,'motion':1,'reaction':1,'stand':2,
-            'shelf':5,'picture':2,'furniture':3,'damage':5}
+#cdiWeights={'felt':5,'motion':1,'reaction':1,'stand':2,
+#            'shelf':5,'picture':2,'furniture':3,'damage':5}
+
+cdiWeights=OrderedDict([
+    ('felt',5),('motion',1),('reaction',1),('stand',2),
+    ('shelf',5),('picture',2),('furniture',3),('damage',5)
+])
 
 cdiDamageValues=OrderedDict([
     (0,['_none']),
@@ -28,7 +33,7 @@ cdiDamageValues=OrderedDict([
     (3,['_move','_chim','_found','_collapse','_porch','_majormodernchim','_tiltedwall'])
     ])
 
-def calculate(entries,cwsOnly=False):
+def calculate(entries,cwsOnly=False,debug=False):
     """
 
     :synopsis: Calculate the intensity for one entry, or list of entries
@@ -50,6 +55,9 @@ def calculate(entries,cwsOnly=False):
         entries=[entries]
 
     totalByIndex={}
+    debugInfo={}
+    debugTotal=[]
+
     for index in cdiWeights:
         indexTotal=0
         indexCount=0
@@ -66,7 +74,14 @@ def calculate(entries,cwsOnly=False):
                 val=getFeltFromOther(entry)
 
             else:
-                val=entry.index(index)
+                val=entry.cdiIndex(index)
+
+            # Store debugging information here
+            subid=entry.subid
+            if subid in debugInfo:
+                debugInfo[subid].append(val)
+            else:
+                debugInfo[subid]=[val]
 
             # Indices with no value are not counted.
             # They DO NOT have zero value!
@@ -76,24 +91,37 @@ def calculate(entries,cwsOnly=False):
             indexTotal+=val
             indexCount+=1
 
+        infoText=''
         if indexCount:
             totalByIndex[index]=indexTotal/indexCount
+            infoText='%s/%s' % (totalByIndex[index],indexCount)
+
+        debugTotal.append(infoText)
 
     cws=0
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]
 
     if cwsOnly:
-        return cws
+        returnVal=cws
 
-    if cws <= 0:
-        return 1
+    if cws<=0:
+        returnVal=1
 
-    cdi=math.log(cws) * 3.3996 - 4.3781
-    if cdi < 2:
-        return 2
+    else:
+        cdi=math.log(cws)*3.3996-4.3781
+        if cdi<2:
+            cdi=2
 
-    return round(cdi,1)
+        returnVal=round(cdi,1)
+
+    if debug:
+        returnVal={'debug':debugInfo,'total':debugTotal,'cdi':returnVal}
+
+#    if debug and len(debugInfo)>2 and len(debugInfo)<10:
+#        print(returnVal)
+
+    return returnVal
 
 
 def getDamageFromText(entry):
@@ -112,7 +140,7 @@ def getDamageFromText(entry):
         d_text=entry
 
     else:
-        d_text=entry.index('d_text')
+        d_text=entry.cdiIndex('d_text')
 
     if not d_text:
         return None
@@ -139,8 +167,8 @@ def getFeltFromOther(entry):
 
     """
 
-    felt=entry.index('felt')
-    other_felt=entry.index('other_felt')
+    felt=entry.cdiIndex('felt')
+    other_felt=entry.cdiIndex('other_felt')
 
     if not other_felt or other_felt<2:
         return felt

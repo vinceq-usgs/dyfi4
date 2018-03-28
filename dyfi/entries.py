@@ -50,18 +50,19 @@ class Entries():
             count+=1
 
 
-    def aggregate(self,name):
+    def aggregate(self,name,debug=False):
         """
 
         :synopsis: Aggregate the entry data in this object
         :param str name: The name of this aggregation
+        :param bool default: If true, store debugging info in the output
         :returns: A `GeoJSON` :py:obj:`FeatureCollection`
 
-        A wrapper to :py:obj:`Aggregate.aggregate`. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
+        A wrapper to the :py:obj:`aggregate` module. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
 
         """
 
-        locations=aggregate(self.entries,name)
+        locations=aggregate(self.entries,name,debug)
         if not self.filter:
             return locations
 
@@ -73,7 +74,7 @@ class Entries():
                goodLocations.append(location)
 
         locations.features=goodLocations
-        print('Entries: aggregate now has',len(locations.features),'locations.')
+        print('Entries: After filtering, aggregate now has',len(locations.features),'locations.')
         return locations
 
 

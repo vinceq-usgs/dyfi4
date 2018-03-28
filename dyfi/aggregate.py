@@ -13,12 +13,13 @@ from .thirdparty.utm import from_latlon,to_latlon,OutOfRangeError
 
 PRECISION=6  # Maximum precision of lat/lon coordinates of output
 
-def aggregate(entries,producttype):
+def aggregate(entries,producttype,debug=False):
     """
 
     :synopsis: Aggregate entries into geocoded boxes
     :param entries: :obj:`list` of :py:class:`Entry` objects
     :param producttype: The product type (zip, geo_1km, geo_10km)
+    :param bool debug: If true, store debugging info
     :returns: `GeoJSON` :py:obj:`FeatureCollection`, see below
 
     The return value is a `GeoJSON` :py:obj:`FeatureCollection` with
@@ -74,7 +75,7 @@ def aggregate(entries,producttype):
     npts=len(entries)
     nlocated=0
     for entry in entries:
-        location=aggregator(entry,resolutionMeters)
+        location=aggregator(entry,resolutionMeters,check=True)
 
         # location is now either a UTM or ZIP (string)
         # TODO: Filter based on precision of the input coords
@@ -117,7 +118,12 @@ def aggregate(entries,producttype):
         nresp=len(entries)
         totalresp+=nresp
 
-        thiscdi=cdi.calculate(entries)
+        thiscdi=cdi.calculate(entries,cwsOnly=False,debug=debug)
+        if debug:
+            debugInfo=thiscdi['debug']
+            debugTotal=thiscdi['total']
+            thiscdi=thiscdi['cdi']
+
         if thiscdi>maxcdi:
             maxcdi=thiscdi
 
@@ -131,6 +137,11 @@ def aggregate(entries,producttype):
                 'intensity':thiscdi
             }
         )
+
+        if debug:
+            pt.properties['debug']=debugInfo
+            pt.properties['total']=debugTotal
+
         features.append(pt)
 
     featurecollection=geojson.FeatureCollection(
@@ -169,12 +180,7 @@ def getUtmFromCoordinates(lat,lon,span=None):
 
     """
 
-    if span=='geo_1km' or span=='1km' or span==1000:
-        span=1000
-    elif span=='geo_10km' or span=='10km' or span==10000:
-        span=10000
-    else:
-        raise TypeError('Invalid span value '+str(span))
+    span=_floatSpan(span)
 
     try:
         loc=from_latlon(lat,lon)
@@ -190,17 +196,32 @@ def getUtmFromCoordinates(lat,lon,span=None):
     return utm
 
 
-def getUtmForEntry(entry,span):
+def _floatSpan(span):
+
+    if span=='geo_1km' or span=='1km' or span==1000:
+        span=1000
+    elif span=='geo_10km' or span=='10km' or span==10000:
+        span=10000
+    else:
+        raise TypeError('Invalid span value '+str(span))
+
+    return span
+
+    
+def getUtmForEntry(entry,span,check=False):
     """
 
     :synopsis: Find the UTM location for an entry
     :param entry: The :py:obj:`Entry` object to locate
     :param span: Size of the UTM box (see below)
+    :param check: if true, check `confidence` key
     :returns: UTM string with the correct resolution
 
     Compute the UTM block for an :py:obj:`Entry` object using :py:func:`getUtmFromCoordinates`. The UTM coordinate resolution is degraded via the :py:obj:`floor` function depending on the :py:obj:`span` parameter.
 
     :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10).
+
+    If the `check` flag is true, check the `confidence` key of this entry, and return null if the derived precision is less than `span`.
 
     """
 
@@ -211,8 +232,57 @@ def getUtmForEntry(entry,span):
         # Catchall for bad lat/lon values
         return None
 
+    if check and not checkConfidence(entry,span):
+        return None    
     loc=getUtmFromCoordinates(lat,lon,span)
+
     return loc
+
+
+def checkConfidence(entry,span):
+    """
+
+    If entry.span is specified, use it to check against the geocoding span.
+    Otherwise, use the length of the latitude and longitude strings.
+
+    """
+
+    conf=entry.confidence
+    if conf:
+        conf=float(conf)
+        if conf<=1:
+            checkSpan=100000
+        elif conf<=2:
+            checkSpan=10000
+        elif conf<=3:
+            checkSpan=1000
+        elif conf<=4:
+            checkSpan=100
+        else:
+            checkSpan=10
+
+        return checkSpan<=span
+
+    else:
+        (lat1,lat2)=_range(entry.latitude)
+        (lon1,lon2)=_range(entry.longitude)
+        loc1=getUtmFromCoordinates(lat1,lon1,span)
+        loc2=getUtmFromCoordinates(lat2,lon2,span)
+
+        return loc1==loc2
+
+
+def _range(val):
+
+    strVal=str(val)
+    if '.' not in strVal:
+        places=0
+    else:
+        places=len(strVal.split('.')[1])
+
+    # Places is how many digits to the right of the decimal point
+    halfspan=10**(-places)/2
+    return(val+halfspan,val-halfspan)
 
 
 def getUtmPolyFromString(utm,span):
