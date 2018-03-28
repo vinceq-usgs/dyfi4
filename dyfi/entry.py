@@ -1,3 +1,5 @@
+import re
+
 class Entry():
     """
 
@@ -54,10 +56,10 @@ class Entry():
             setattr(self,column,val)
 
 
-    def index(self,index):
+    def cdiIndex(self,index):
         """
             :synopsis: Return the numeric, cleaned-up version of a questionnaire index for CDI computation
-            :param str index: name of an column
+            :param str index: name of a CDI column
 
         """
 
@@ -75,10 +77,12 @@ class Entry():
         # For everything else, we need a numeric value. If the raw value is a string with comments, extract the numeric value.
 
         if isinstance(val,str):
-            val=val.split(' ')[0]
+            val=re.split('[ +]',val)[0]
 
             if '.' in val:
                 val=float(val)
+            elif val=='':
+                val=None
             else:
                 val=int(val)
 
