@@ -8,6 +8,7 @@ Filter.py
 from geopy.distance import great_circle
 import math
 from . import ipes
+
 class Filter:
     """
 
@@ -23,13 +24,15 @@ class Filter:
 
     """
 
-    def __init__(self,event,config,ipe='aww2014wna'):
+    def __init__(self,event,config,ipe='aww2014ena'):
 
         self.event=event
         self.config=config.filter
 
         if ipe:
             self.ipe=getattr(ipes,ipe)
+
+        print('Filter: Using IPE',ipe)
 
 
     def filterFunction(self):
