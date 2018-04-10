@@ -48,6 +48,8 @@ Static Map Products
 JPEG
 ----
 
+*NEW* Transparency
+
 KML
 ---
 

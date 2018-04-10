@@ -9,10 +9,9 @@ Validation
 Here we show a series of validation tests to show results consistent with
 the algorithm as shown here:
 
-      Utilization of the Internet for Rapid Community Intensity Maps
-      David J. Wald  Vincent Quitoriano  Lori A. Dengler  James W. Dewey
-      Seismological Research Letters (1999) 70 (6): 680-697
-      DOI: https://doi.org/10.1785/gssrl.70.6.680
+    USGS “Did You Feel It?” Internet-based macroseismic intensity maps.
+    David Jay Wald, Vincent Quitoriano, Charles Bruce Worden, Margaret Hopper, James W. Dewey.
+    ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354
 
 To calculate a DYFI intensity, we first assign numerical values to individual answers to each question in the questionnaire. For each "community" (i.e., geocoded block), the numerical values assigned to each questionnaire are averaged. A weighted sum of the community values for each question, the "Community Weighted Sum", is then computed based on the following equation::
 
@@ -231,6 +230,63 @@ In the following example, the first entry does not have a 'reaction' value. Ther
 Test 7. Comparison with DYFI Version 3
 --------------------------------------------
 
-The following is a comparison of DYFI products from Version 3 (the current live version) and the new Version 4. The test event is the 2016-09-03 M5.8 event near Pawnee, Oklahoma.
+The following is a comparison of DYFI products from Version 3 (the current live version) and the new Version 4. The test event is the 2016-09-03 M5.8 event near Pawnee, Oklahoma (USGS event ID us10006jxs).
 
+We compare the results of the 10km geocoded datasets, in particular the GeoJSON files. We assume that the latest version of DYFI4 was run to populate the data directory at '[root]/data/us10006jxs'. This test extracts the datafile 'dyfi_geo_10km.geojson' for that event. For comparison, a copy of the equivalent file from DYFI3 is stored at '[root]/tests/data/us10006jxs' (last processed 30-03-2018).
+
+Both DYFI3 and DYFI4 runs are using the same input data with 61,961 raw entries.
+
+    >>> import json
+    >>> json_dyfi3=json.load(open('../tests/data/us10006jxs/dyfi_geo_10km.geojson','r'))
+    >>> json_dyfi4=json.load(open('../data/us10006jxs/dyfi_geo_10km.geojson','r'))
+
+We parse the raw GeoJSON file for the DYFI4 dataset and extract the intensity at each location (which is indexed by the UTM geolocation string).
+
+    >>> dyfi4intensity={}
+    >>> for location in json_dyfi4['features']:
+    ...     utmstring=location['properties']['location']
+    ...     dyfi4intensity[utmstring]=location['properties']['intensity']
+    >>> print('DYFI4 dataset has',len(dyfi4intensity),'locations.')
+    DYFI4 dataset has 5204 locations.
+
+We do the same for the DYFI3 dataset.
+
+.. testcode::
+    :hide:
+
+    import re
+    def dyfi3todyfi4format(string):
+
+        parsed=re.search('UTM:\((\d+)(.) (\d+) (\d+) (\d+)\)',string)
+        (zonenum,zoneletter,x,y,span)=parsed.groups()
+
+        x=str(int(x)*int(span))
+        y=str(int(y)*int(span))
+        utm=' '.join([x,y,zonenum,zoneletter])
+        return utm
+
+Note that the old DYFI3 style UTM string is converted to the DYFI4 style string (e.g. '650000 3990000 11 S') so that they can be compared directly.
+
+    >>> dyfi3intensity={}
+    >>> for location in json_dyfi3['features']:
+    ...     utmstring=location['properties']['name']
+    ...     utmstring=dyfi3todyfi4format(utmstring)
+    ...     dyfi3intensity[utmstring]=location['properties']['cdi']
+    >>> print('DYFI3 dataset has',len(dyfi3intensity),'locations.')
+    DYFI3 dataset has 5204 locations.
+
+Now we compare the locations at each dataset and make sure they are the same.
+
+    >>> commonLocations=dyfi3intensity.keys() & dyfi4intensity.keys()
+    >>> print('There are',len(commonLocations),'locations in common.')
+    There are 5204 locations in common.
+
+Finally we compare the intensities computed at each location and make sure they are the same.
+
+    >>> count=0
+    >>> for utm in commonLocations:
+    ...     if dyfi3intensity[utm]==dyfi4intensity[utm]:
+    ...         count+=1
+    >>> print('There are',count,'locations with the same intensity.')
+    There are 5204 locations with the same intensity.
 
