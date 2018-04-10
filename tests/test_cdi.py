@@ -7,7 +7,7 @@ testid='ci37511872'
 configfile='tests/testconfig.yml'
 
 def test_cdi():
-  from dyfi import Entry,cdi,aggregate
+  from dyfi import Entry,cdi
 
   single=Entry({'felt':1,'furniture':1})
   user_cdi=cdi.calculate(single)

@@ -44,7 +44,6 @@ def aw2007ceus(mag,r,inverse=False,fine=False,enaCorrection=False):
         mag=0
         return mag
 
-    mlogr = mag * logr
     ii = C[1] + C[2]*(mag-6) + C[3]*(mag-6)**2 + C[4]*logr + C[5]*R + C[6]*B + C[7]*mag*logr
 
     if not fine:
@@ -56,9 +55,6 @@ def aw2007ceus(mag,r,inverse=False,fine=False,enaCorrection=False):
     return ii
 
 
-
-
-# AWW 2014
 def aww2014ena(mag,r,inverse=False,fine=False):
     return aww2014(mag,r,inverse=inverse,fine=fine,enaCorrection=True)
 
@@ -117,5 +113,5 @@ aww2014ena.name = 'Atkinson, Worden, Wald 2014 (ENA)'
 aw2007ceus.name = 'Atkinson, Wald 2007 (Central/Eastern US)'
 
 # Define this last since these functions must be defined first
-ipelist=[ aww2014wna,aww2014ena ]
+ipelist=[ aww2014wna,aww2014ena,aw2007ceus ]
 
