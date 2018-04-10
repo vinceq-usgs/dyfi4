@@ -24,7 +24,7 @@ class Entries():
 
     """
 
-    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True,loadSuspect=False):
 
         if evid:
             self.evid=evid
@@ -38,7 +38,7 @@ class Entries():
 
         if rawentries==None and load==True:
             db=Db(config)
-            rawentries=db.loadEntries(evid=evid,event=event,startdatetime=startdatetime)
+            rawentries=db.loadEntries(evid=evid,event=event,startdatetime=startdatetime,loadSuspect=loadSuspect)
 
         count=0
         for row in rawentries:
@@ -63,13 +63,16 @@ class Entries():
         """
 
         locations=aggregate(self.entries,name,debug)
+
         if not self.filter:
             return locations
 
         print('Entries: aggregate has',len(locations.features),'locations.')
         goodLocations=[]
         for location in locations.features:
-            bad=self.filter(location)
+
+            if not bad=self.filter(location,debug=debugLoc)
+            # This value is not used now but maybe later for debugging
             if not bad:
                goodLocations.append(location)
 
