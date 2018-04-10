@@ -33,7 +33,7 @@ cdiDamageValues=OrderedDict([
     (3,['_move','_chim','_found','_collapse','_porch','_majormodernchim','_tiltedwall'])
     ])
 
-def calculate(entries,cwsOnly=False,debug=False):
+def calculate(entries,cwsOnly=False,fine=False,debug=False):
     """
 
     :synopsis: Calculate the intensity for one entry, or list of entries
@@ -104,22 +104,31 @@ def calculate(entries,cwsOnly=False,debug=False):
 
     if cwsOnly:
         returnVal=cws
+        if debug:
+            returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':cdi,'cdi':returnVal}
 
+        return returnVal
+
+    cdi=1
     if cws<=0:
         returnVal=1
 
     else:
         cdi=math.log(cws)*3.3996-4.3781
+        # This step is necessary for compatibility of DYFI3 and DYFI4 values
+        cdi=float('%.4f' % cdi)
+
         if cdi<2:
             cdi=2
 
+    if fine:
+        returnVal=cdi
+
+    else:
         returnVal=round(cdi,1)
 
     if debug:
-        returnVal={'debug':debugInfo,'total':debugTotal,'cdi':returnVal}
-
-#    if debug and len(debugInfo)>2 and len(debugInfo)<10:
-#        print(returnVal)
+        returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':cdi,'cdi':returnVal}
 
     return returnVal
 
