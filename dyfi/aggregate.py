@@ -119,9 +119,11 @@ def aggregate(entries,producttype,debug=False):
         totalresp+=nresp
 
         thiscdi=cdi.calculate(entries,cwsOnly=False,debug=debug)
+        thiscdiFine=cdi.calculate(entries,fine=True)
         if debug:
             debugInfo=thiscdi['debug']
             debugTotal=thiscdi['total']
+            debugRawcdi=thiscdi['rawcdi']
             thiscdi=thiscdi['cdi']
 
         if thiscdi>maxcdi:
@@ -134,13 +136,15 @@ def aggregate(entries,producttype,debug=False):
                 'location':location,
                 'nresp':nresp,
                 'center':center,
-                'intensity':thiscdi
+                'intensity':thiscdi,
+                'intensityFine':thiscdiFine
             }
         )
 
         if debug:
             pt.properties['debug']=debugInfo
             pt.properties['total']=debugTotal
+            pt.properties['rawcdi']=debugRawcdi
 
         features.append(pt)
 
