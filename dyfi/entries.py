@@ -71,7 +71,7 @@ class Entries():
         goodLocations=[]
         for location in locations.features:
 
-            if not bad=self.filter(location,debug=debugLoc)
+            bad=self.filter(location)
             # This value is not used now but maybe later for debugging
             if not bad:
                goodLocations.append(location)
