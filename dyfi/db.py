@@ -143,7 +143,7 @@ class Db:
 
     def loadEntries(self,evid=None,event=None,
                     table=None,startdatetime=None,
-                    querytext=None):
+                    querytext=None,loadSuspect=False):
         """
 
         :synopsis: Search the extended tables for entries matching a query
@@ -200,6 +200,9 @@ class Db:
         if startdatetime:
             myclauses.append('time_now>=?')
             mysubs.append(startdatetime)
+
+        if not loadSuspect:
+            myclauses.append('(suspect="" or suspect=0 or suspect is null)')
 
         # Finally, combine queries
 
