@@ -8,7 +8,6 @@ Filter.py
 from geopy.distance import great_circle
 import math
 from . import ipes
-from . import cdi
 
 class Filter:
     """
@@ -22,7 +21,7 @@ class Filter:
           entries=Entries(event,config,filter)
 
           (in Entries)
-         
+
           for location in locations.features:
             result=filter(location)
             if not bad:

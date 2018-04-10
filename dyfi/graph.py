@@ -20,7 +20,7 @@ class Graph:
     :param dict data: Aggregated data in GeoJSON format
     :param config: (optional) A `Config` object
 
-    The data input should be the aggregated data from :py:obj:`dyfi.aggregate`. 
+    The data input should be the aggregated data from :py:obj:`dyfi.aggregate`.
 
     .. note::
 

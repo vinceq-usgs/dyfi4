@@ -68,7 +68,7 @@ class Db:
         :param obj: Data object
         :returns: Success or failure
 
-        Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function. 
+        Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function.
 
         For consistency, if the object is an `Entry` object, this will automagically overwrite the `table` attribute.
 
@@ -246,7 +246,7 @@ class Db:
             if table=='latest':
                 table=self.latesttable
 
-            if table in Db.TABLES: 
+            if table in Db.TABLES:
                 outtables.append(table)
 
             elif 'extended_'+table in Db.TABLES:
@@ -266,7 +266,7 @@ class Db:
         :param dict row: A `dict`, such as extracted from an `extended` table
         :returns: :py:obj:`GeoJSON` object
 
-        This returns a `GeoJSON` object by extracting the latitude and longitude. 
+        This returns a `GeoJSON` object by extracting the latitude and longitude.
 
         """
         lat=row['latitude']

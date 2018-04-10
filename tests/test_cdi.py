@@ -2,7 +2,6 @@
 # pytest tests/test_cdi.py
 
 import pytest
-import shutil
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'

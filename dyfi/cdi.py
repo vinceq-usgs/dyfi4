@@ -105,7 +105,7 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
     if cwsOnly:
         returnVal=cws
         if debug:
-            returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':cdi,'cdi':returnVal}
+            returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':returnVal,'cdi':returnVal}
 
         return returnVal
 

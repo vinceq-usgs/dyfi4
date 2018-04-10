@@ -8,7 +8,7 @@ Command line tool to create a .png static image from DYFI
 aggregated GeoJSON data.
 
 Usage:
-app/makescreenshot.py [GeoJSON file] 
+app/makescreenshot.py [GeoJSON file]
 This attempts to create an image file from a GeoJSON file.
 
 """

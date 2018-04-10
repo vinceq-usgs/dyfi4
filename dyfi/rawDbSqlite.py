@@ -228,7 +228,7 @@ class RawDb:
                 val=None
 
             saveList.append(val)
-                
+
         query='INSERT OR REPLACE INTO '+table+' VALUES (%s)'
         query %=(','.join('?'*len(saveList)))
 

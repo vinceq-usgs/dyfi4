@@ -54,7 +54,7 @@ class Products:
     def create(self,p):
         """
 
-        :synopsis: Create a :py:class:`Product` object and underlying product 
+        :synopsis: Create a :py:class:`Product` object and underlying product
         :param dict p: Set of parameters
         :returns: Number of products created
 

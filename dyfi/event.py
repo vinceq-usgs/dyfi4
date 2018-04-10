@@ -42,7 +42,7 @@ class Event:
 
         if isinstance(event,str):
           evid=event
-          db=Db(config) 
+          db=Db(config)
           event=db.loadEvent(evid)
 
         elif isinstance(event,dict):

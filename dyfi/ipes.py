@@ -20,8 +20,8 @@ def aw2007ceus(mag,r,inverse=False,fine=False,enaCorrection=False):
     :param bool enaCorrection: If true, apply correction for Eastern North America
     :returns: Intensity; or, if `inverse` is true, magnitude
 
-    Implementation of Atkinson, Wald (2007). 
-    
+    Implementation of Atkinson, Wald (2007).
+
     If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.
 
     """

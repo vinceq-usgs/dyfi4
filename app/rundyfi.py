@@ -46,7 +46,7 @@ def main(args):
     print('Starting dyfi.py: ',time.asctime(time.localtime()))
 
     evid=args.evid
-    
+
     # TODO: Add directives like --create, --redo, --push
     container=DyfiContainer(evid)
     Contents(container).toXML(save=True)

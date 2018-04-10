@@ -211,7 +211,7 @@ def _floatSpan(span):
 
     return span
 
-    
+
 def getUtmForEntry(entry,span,check=False):
     """
 
@@ -237,7 +237,8 @@ def getUtmForEntry(entry,span,check=False):
         return None
 
     if check and not checkConfidence(entry,span):
-        return None    
+        return None
+
     loc=getUtmFromCoordinates(lat,lon,span)
 
     return loc
@@ -352,47 +353,46 @@ def getUtmPolyFromString(utm,span):
 # Zipcode Helper Functions
 #-------------------------
 
-"""
-def getZipLocation(entry,resolution):
-
-    :synopsis: Find the ZIP code of an entry.
-    :param entry: The :py:obj:`Entry` object to locate
-    :param resolution: (ignored)
-    :return: The ZIP code (in str format)
-
-    This reads the 'zip' attribute of the Entry object.
-    If that is blank, it checks for a :code:`citydb` that has
-    the :code:`zip` database.
-    If it is, then this returns the :code:`cityid` value.
-
-    Finally, if neither exists, create a 'city' circle instead.
-
-
-    if entry.zip:
-        return entry.zip
-
-    if entry.citydb:
-        return '%s:%s' % (entry.citydb,entry.cityid)
-
-
-def getZipCoordinates(zipcode):
-
-    :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
-    :param zipcode: A UTM string
-    :return: :py:obj:`dict`, see below
-
-    The return value has two keys:
-
-    ======  =========================
-    center  A GeoJSON Point object
-    bounds  A GeoJSON Polygon object
-    ======  =========================
-
-
-    # TODO: Look up ZIP code or cityid coordinates
-    # Disabled for now
-    return
-"""
+#def getZipLocation(entry,resolution):
+#
+#    :synopsis: Find the ZIP code of an entry.
+#    :param entry: The :py:obj:`Entry` object to locate
+#    :param resolution: (ignored)
+#    :return: The ZIP code (in str format)
+#
+#    This reads the 'zip' attribute of the Entry object.
+#    If that is blank, it checks for a :code:`citydb` that has
+#    the :code:`zip` database.
+#    If it is, then this returns the :code:`cityid` value.
+#
+#    Finally, if neither exists, create a 'city' circle instead.
+#
+#
+#    if entry.zip:
+#        return entry.zip
+#
+#    if entry.citydb:
+#        return '%s:%s' % (entry.citydb,entry.cityid)
+#
+#
+#def getZipCoordinates(zipcode):
+#
+#    :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
+#    :param zipcode: A UTM string
+#    :return: :py:obj:`dict`, see below
+#
+#    The return value has two keys:
+#
+#    ======  =========================
+#    center  A GeoJSON Point object
+#    bounds  A GeoJSON Polygon object
+#    ======  =========================
+#
+#
+#    # TODO: Look up ZIP code or cityid coordinates
+#    # Disabled for now
+#
+#    return
 
 #-------------------------
 # Utility Functions

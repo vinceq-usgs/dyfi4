@@ -11,8 +11,8 @@ class DyfiContainer:
     :param str evid: Event ID
     :param str configfile: YAML file with configuration options (default `./cofig.yml`)
 
-    This implements a container for all DYFI data about a particular event: event data, entries, aggregated intensities, and products. 
-    
+    This implements a container for all DYFI data about a particular event: event data, entries, aggregated intensities, and products.
+
     Creating an instance also initiates DYFI processing:
 
     1. Load event data for this event ID from the database.
