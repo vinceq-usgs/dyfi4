@@ -15,7 +15,7 @@ import apng
 
 parser=argparse.ArgumentParser(
     prog='app/makemovie.py',
-    description='Create movie frames for a given event. This runs successive processes of DYFI on larger and larger timeslices of data. The output is an APNG file (default `./movie.apng`).'
+    description='Create movie frames for a given event. This runs the DYFI process successively on larger and larger timeslices of data. The output is an APNG file (default `./movie.apng`).'
 )
 parser.add_argument(
     'evid',type=str,

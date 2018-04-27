@@ -78,9 +78,9 @@ Number of entries    Opacity level (1=solid)
 KML
 ...
 
-Filename: 
+Filename: dyfi_combined.kmz
 
-KML (Keyhole Markup Language) is a file format used to display geographic data in an Earth browser such as Google Earth. For more information see https://developers.google.com/kml/.
+KML (Keyhole Markup Language) is a file format used to display geographic data in an Earth browser such as Google Earth. The *.kmz* extension means that the data has been zipped (compressed). For more information see https://developers.google.com/kml/.
 
 This KML dataset contains three layers:
 
@@ -98,14 +98,16 @@ The file `contents.xml` is used only by the USGS Event Pages website to indicate
 Graph Products
 ==============
 
+Note that a static image is no longer provided by DYFI. The USGS Event Pages are expected to take this data and render it on a browser via the :obj:`D3` visualization package.
+
+Instead, the graph data is packaged in a JSON file. Each dataset is stored in a **dataset** array (see details of each file below), along with the title and x and y axis labels for plotting.
+
 Distance vs Intensity Datafile
 ..............................
 
 Filename: dyfi_plot_atten.json
 
 This file is a summary of the DYFI data in a format suitable for plotting in a graph that compares intensity with distance. The **x** axis in each dataset is **epicentral distance**. The **y** axis is intensity. Data that is deemed suspect of filtered out is not included in these datasets.
-
-Note that a static image is no longer provided by DYFI. The USGS Event Pages are expected to take this data and render it on a browser via the :obj:D3 graphical package.
 
 The datasets included in this file are:
 
@@ -132,15 +134,15 @@ id       meanBinned
 legend   Mean intensity in bin
 ======   ===============================
 
-For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the mean value and standard deviation of the intensities of all aggregated blocks inside the bin. Each point has the following data:
+For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the mean value and standard deviation of the intensities of all aggregated blocks inside the bin. Each point (bin) has the following data:
 
-=======  =======================================================
-min_x    The minimum distance of this bin
-max_x    The maximum distance of this bin
-x        The log mean distance of this bin (for plotting)
-y        The mean of the intensities of all blocks in this bin
-stdev    The standard deviation of the intensities
-=======  =======================================================
+    =======  =======================================================
+    min_x    The minimum distance of this bin
+    max_x    The maximum distance of this bin
+    x        The log mean distance of this bin (for plotting)
+    y        The mean of the intensities of all blocks in this bin
+    stdev    The standard deviation of the intensities
+    =======  =======================================================
 
 Median of aggregated data
 ++++++++++++++++++++++++++++
@@ -152,25 +154,40 @@ id       medianBinned
 legend   Median intensity in bin
 =======  ===============================
 
-For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the median value of the intensities of all aggregated blocks inside the bin. Each point has the following data:
+For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the median value of the intensities of all aggregated blocks inside the bin. Each point (bin) has the following data:
 
-=======  =======================================================
-min_x    The minimum distance of this bin
-max_x    The maximum distance of this bin
-x        The log mean distance of this bin (for plotting)
-y        The median of the intensities of all blocks in this bin
-=======  =======================================================
+    =======  =======================================================
+    min_x    The minimum distance of this bin
+    max_x    The maximum distance of this bin
+    x        The log mean distance of this bin (for plotting)
+    y        The median of the intensities of all blocks in this bin
+    =======  =======================================================
 
 
-estimated_1
-+++++++++++
+Estimated Intensity 1
++++++++++++++++++++++
+=======  ===================================================
+class    estimated_1
+data     x,y pairs of distance and intensity
+id       ipe_aww2014_wna
+legend   Atkinson, Worden, Wald 2014 (WNA)
+=======  ===================================================
+
+This dataset is used for comparing an IPE (Intensity Prediction Equation) to the actual DYFI data. The IPE used to compute the expected intensity for a typical earthquake of this magnitude, calculated at evenly spaced intervals for plotting.
+
+In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). For more on IPEs, see the :obj:`Scientific Guide`.
+
 
 estimated_2
 +++++++++++
+=======  ===================================================
+class    estimated_2
+data     x,y pairs of distance and intensity
+id       ipe_aww2014_ena
+legend   Atkinson, Worden, Wald 2014 (ENA)
+=======  ===================================================
 
-
-
-
+Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). For more on IPEs, see the :obj:`Scientific Guide`.
 
 Time vs Responses Datafile
 ..........................

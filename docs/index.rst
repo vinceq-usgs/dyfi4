@@ -10,7 +10,8 @@ Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
 
 Manual: https://vinceq-usgs.github.io/dyfi4/
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2

@@ -1,8 +1,11 @@
-tests package
-=============
+Test Package
+============
 
-Submodules
-----------
+tests.test_run module
+---------------------
+
+.. automodule:: tests.test_run
+    :members:
 
 tests.test_3rdparty module
 --------------------------
@@ -20,12 +23,6 @@ tests.test_modules module
 -------------------------
 
 .. automodule:: tests.test_modules
-    :members:
-
-tests.test_run module
----------------------
-
-.. automodule:: tests.test_run
     :members:
 
 tests.test_screenshot module

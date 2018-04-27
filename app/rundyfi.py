@@ -13,11 +13,11 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/rundyfi.py',
-    description='Create DYFI products for a given event.'
+    description='Create DYFI products. An event ID is required. See the :obj:`Product Guide` for an explanation of the output products.'
 )
 parser.add_argument(
     'evid',type=str,
-    help='Event ID'
+    help='Event ID (required)'
 )
 parser.add_argument(
     '--push',action='store_true',
