@@ -10,7 +10,6 @@ Flowchart
 Aggregation
 ===========
 
-
 Intensity calculation
 =====================
 

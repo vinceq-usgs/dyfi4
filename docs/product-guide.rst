@@ -10,9 +10,22 @@ Dynamic Map Products
 
 Filenames: `dyfi_geo_1km.geojson` and `dyfi_geo_10km.geojson` 
 
-These are text files in GeoJSON format (see http://geojson.org/). These represent a collection of UTM block areas of either 1 km or 10 km size, wherein individual DYFI responses are aggregated (see the :ref:`Scientific Guide` for details.) 
+These are text files in GeoJSON format (see http://geojson.org/). Each file is a GeoJSON `FeatureCollection` where each `Feature` represents a UTM block area of either 1km or 10km size. This makes it easy to compare intensities at the same locations for different events.
 
-The topmost object of each file is a `FeatureCollection` with the following keys:
+Each `Feature` in the `FeatureCollection` represents one aggregated location (geocode block). For more information see :ref:`Aggregation`. 
+
+Each `Feature` containts the following properties:
+
+==========  ==============================================================
+type        **Feature**
+id          The UTM string for this location
+location    Same as *id*
+nresp       The number of individual responses contributing to this block
+intensity   The aggregated intensity computed from these responses
+center      A GeoJSON `Point` object indicating the center of this block
+==========  ==============================================================
+
+In addition, the `FeatureCollection` object has its own keys and properties:
 
 ===========   =======================================
 name          The aggregation size (1km or 10 km)
@@ -29,41 +42,138 @@ nresp       The number of individual responses in the dataset for this file
 maxint      The largest intensity value among aggregated locations
 =========   ================================================================
 
-Each `Feature` in the `FeatureCollection` represents one aggregated location (geocode block). The location's `geometry` attribute is a GeoJSON `Polygon` which maps the four corners of the UTM block.
-
-The `Feature` properties for each location are:
-
-==========  ==============================================================
-type        Feature
-id          The UTM string for this location
-location    Same as ID
-nresp       The number of individual responses contributing to this block
-intensity   The aggregated intensity computed from these responses
-center      A `Point` GeoJSON indicating the center of this block
-==========  ==============================================================
+We consider the GeoJSON products to be the "standard" DYFI product from which other products (static maps and graphs) are derived.
 
 Static Map Products
 ===================
 
 JPEG
-----
+....
 
-*NEW* Transparency
+Filenames: `dyfi_geo_1km.png` and `dyfi_geo_10km.png` 
+
+These PNG files are graphical representations of the GeoJSON data. There is one static image for each version of the aggregation (1 km and 10 km). The aggregated blocks are plotted with colors corresponding to intensity; the color scale is the same used by previous versions.
+
+In addition to the GeoJSON, we include the following data on the map legend:
+
+- Event ID
+- Event information (magnitude, date/time)
+- Maximum intensity
+- Number of entries represented in the database (note that some entries might be off-map)
+- The basemap from OpenStreetMaps (https://www.openstreetmap.org/)
+
+**New in DYFI Version 4**
+
+While the previous version of DYFI used Generic Mapping Tools (GMT) for static map creation, DYFI now uses `Leaflet` for map generation. See `Creation of static images` for details.
+
+DYFI now has the the ability to plot the intensity data with different levels of transparency, depending on how many entries (not including filtered or suspect entries) which were used in computing the intensity in a particular aggregated block. This provides an intuitive sense of where the DYFI data is most robust (solid colored blocks) and where the intensity is uncertain because there are fewer data points in that location (transparent blocks).
+
+==================  ==========================
+Number of entries    Opacity level (1=solid)
+------------------  --------------------------
+<1                    0.3
+10+                   1.0
+==================  ==========================
 
 KML
----
+...
 
-GeoJSON
---------
+Filename: 
+
+KML (Keyhole Markup Language) is a file format used to display geographic data in an Earth browser such as Google Earth. For more information see https://developers.google.com/kml/.
+
+This KML dataset contains three layers:
+
+- epicenter data (latitude/longitude/event time) 
+- the 1km aggregated dataset
+- the 10km aggregated datast
 
 XML
----
+...
 
-The file `contents.xml` is used only by the USGS Event Pages website to indicate which DYFI products will be available for download. It includes a full listing of each product along with the available file formats. If you are not exporting to the Event Pages, this file is not necessary.
+Filename: `contents.xml`
+
+The file `contents.xml` is used only by the USGS Event Pages website to indicate which DYFI products will be available for display and/or download. It includes a full listing of each product along with the available file formats. If you are not exporting to the USGS Event Pages, this file is not necessary.
 
 Graph Products
 ==============
 
-- Distance vs Intensity Graph
-- Time vs Responses Graph
+Distance vs Intensity Datafile
+..............................
+
+Filename: dyfi_plot_atten.json
+
+This file is a summary of the DYFI data in a format suitable for plotting in a graph that compares intensity with distance. The **x** axis in each dataset is **epicentral distance**. The **y** axis is intensity. Data that is deemed suspect of filtered out is not included in these datasets.
+
+Note that a static image is no longer provided by DYFI. The USGS Event Pages are expected to take this data and render it on a browser via the :obj:D3 graphical package.
+
+The datasets included in this file are:
+
+Aggregated data
+++++++++++++++++++
+
+=======  ===============================
+class    scatterplot1
+data     epicentral distance, intensity
+id       scatterdata
+legend   Aggregated geo_10km data
+=======  ===============================
+
+This dataset is the intensity and **epicentral** distance for each aggregated block. Each datapoint represents one UTM block. The **x** of each datapoint is the epicentral distance computed to the geographical center of the block. The **y** coordinate is the computed intensity for all entries in that block.
+
+
+Mean of aggregated data
+++++++++++++++++++++++++++
+
+======   ===============================
+class    mean
+data     see below
+id       meanBinned
+legend   Mean intensity in bin
+======   ===============================
+
+For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the mean value and standard deviation of the intensities of all aggregated blocks inside the bin. Each point has the following data:
+
+=======  =======================================================
+min_x    The minimum distance of this bin
+max_x    The maximum distance of this bin
+x        The log mean distance of this bin (for plotting)
+y        The mean of the intensities of all blocks in this bin
+stdev    The standard deviation of the intensities
+=======  =======================================================
+
+Median of aggregated data
+++++++++++++++++++++++++++++
+
+=======  ===============================
+class    median
+data     see below
+id       medianBinned
+legend   Median intensity in bin
+=======  ===============================
+
+For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the median value of the intensities of all aggregated blocks inside the bin. Each point has the following data:
+
+=======  =======================================================
+min_x    The minimum distance of this bin
+max_x    The maximum distance of this bin
+x        The log mean distance of this bin (for plotting)
+y        The median of the intensities of all blocks in this bin
+=======  =======================================================
+
+
+estimated_1
++++++++++++
+
+estimated_2
++++++++++++
+
+
+
+
+
+Time vs Responses Datafile
+..........................
+
+Filename:
 

@@ -3,9 +3,9 @@ Introduction to Did You Feel It? (DYFI)
 
 The U.S. Geological Survey (USGS) “Did You Feel It?” (DYFI) system is an automated approach for rapidly collecting macroseismic intensity data from Internet users’ shaking and damage reports and generating intensity maps immediately following earthquakes. It has been operating since 1999.
 
-DYFI intensity maps are made quickly (within minutes), and provide greater quantities and coverage of data, and higher resolution, than traditional intensity maps. They also provide for citizen input and engagement which crucial in the days and weeks following an event. DYFI is now a vast source of macroseismic data from the USA and around the globe. 
+DYFI intensity maps are made quickly (within minutes), and provide greater quantities and coverage of data, at higher resolution, than traditional intensity maps. They also provide for citizen input and engagement which is crucial in the days and weeks following an event. Finally, after decades of operations, DYFI is now a vast source of historic macroseismic data from the USA and around the globe. 
 
-Web-based contributions also pose considerable challenges. After two decades of operational experience, we document a new implementation of the DYFI system using modern, open source programming and development tools.
+However, web-based contributions also pose considerable challenges compared to traditional methods. We document a new implementation of the DYFI system using modern, open source programming and development tools.
 
 For a scientific overview of the DYFI system, see: 
 

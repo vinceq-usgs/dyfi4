@@ -7,6 +7,7 @@ USGS Did You Feel It? (DYFI) Manual
 ===================================
 
 Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
+
 Manual: https://vinceq-usgs.github.io/dyfi4/
 
 Contents:
