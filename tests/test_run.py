@@ -3,20 +3,11 @@
 
 import pytest
 import shutil
-import os
 from argparse import Namespace
 import warnings
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
-
-def test_privatekey():
-    key=os.environ.get('SECRET_SERVER')
-    if key and key=='good':
-        return
-
-    warnings.warn('Test of environmental variable SECRET_SERVER failed. To remove this warning, set SECRET_SERVER=good in your environment setup.')
-
 
 def test_run():
     from app import rundyfi
