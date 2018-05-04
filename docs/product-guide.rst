@@ -3,7 +3,7 @@ Product Guide
 
 This section lists the available DYFI products and formats. 
 
-DYFI products are event-centric. Each product is tied to a specific Event ID.
+DYFI products are event-centric. Each product is tied to a specific Event ID. All products are created in its own subdirectory under that data directory, e.g. *data/nc72663506/*.
 
 Dynamic Map Products
 ====================
@@ -107,9 +107,9 @@ Distance vs Intensity Datafile
 
 Filename: dyfi_plot_atten.json
 
-This file is a summary of the DYFI data in a format suitable for plotting in a graph that compares intensity with distance. The **x** axis in each dataset is **epicentral distance**. The **y** axis is intensity. Data that is deemed suspect of filtered out is not included in these datasets.
+This file is a summary of the DYFI data in a format suitable for plotting in a graph that compares intensities with distance. The **x** axis in each dataset is **epicentral distance**. The **y** axis is intensity. Data that is deemed suspect of filtered out is not included in these datasets.
 
-The datasets included in this file are:
+In addition to the aggregated data (i.e. "real world" data), this file includes the mean and median of the data at various distance bins, for plotting; and "expected" intensities based on various Intensity Prediction Equations.
 
 Aggregated data
 ++++++++++++++++++
@@ -175,11 +175,11 @@ legend   Atkinson, Worden, Wald 2014 (WNA)
 
 This dataset is used for comparing an IPE (Intensity Prediction Equation) to the actual DYFI data. The IPE used to compute the expected intensity for a typical earthquake of this magnitude, calculated at evenly spaced intervals for plotting.
 
-In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). For more on IPEs, see the :obj:`Scientific Guide`.
+In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). This IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Guide`.
 
 
-estimated_2
-+++++++++++
+Estimated Intensity 2
++++++++++++++++++++++
 =======  ===================================================
 class    estimated_2
 data     x,y pairs of distance and intensity
@@ -187,10 +187,25 @@ id       ipe_aww2014_ena
 legend   Atkinson, Worden, Wald 2014 (ENA)
 =======  ===================================================
 
-Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). For more on IPEs, see the :obj:`Scientific Guide`.
+Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). this IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Guide`.
 
 Time vs Responses Datafile
 ..........................
 
-Filename:
+Filename: dyfi_plot_numresp.json
+
+This file is a history of the DYFI entries submitted as a function of time after the event. The **x** axis in each dataset is the cumulative number of entries adn the **y** axis is the number of minutes or hours after the event (depending on the age of the event).
+
+There is only one dataset included in this JSON file, called *data*. Each point represents a single entry, arranged in chronological order, with the following information.
+
+
+    ==========  =======================================================
+    t_absolute  the timestamp when this entry was received
+    t_seconds   number of seconds between t_absolute and the event
+    x           **t_seconds** scaled by the preferred unit
+    y           cumulative number of responses
+    ==========  =======================================================
+
+The JSON data also has **preferred_unit**, either 'minutes' or 'hours'; and **preferred_conversion**, which converts the preferred unit from seconds.
+
 
