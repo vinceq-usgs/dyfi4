@@ -213,7 +213,7 @@ Now the intensities are calculated separately and for the aggregate. Note that t
 Test 6. Multiple entries with unanswered indices
 --------------------------------------------------
 
-When an entry does not have a value for an index (i.e., the user did not answer that particular question on the questionnaire), then that questionnaire is not counted for that particular index.
+When an entry does not have a value for an index (the user did not answer that particular portion of the questionnaire, i.e. a "null response"), then that questionnaire is not counted for that particular index.
 
 In the following example, the first entry does not have a 'reaction' value. Therefore, during aggregation, the reaction index only counts the value for the second entry.
 
@@ -225,6 +225,29 @@ In the following example, the first entry does not have a 'reaction' value. Ther
     10.0
     >>> cdi.calculate([entry_1,entry_2],cwsOnly=True)
     10.0
+
+Test 7. Null response vs no response
+--------------------------------------
+
+To show the difference between a null response and a "No" response, we set up the following example: 9 entries with 'reaction' indices set to null,  and one entry with a 'reaction' index of 1.
+
+    >>> entries=[]
+    >>> entries.append(Entry({'reaction':1}))
+    >>> for a in range(0,9):
+    ...     entries.append(Entry({'reaction':None}))
+    >>> cdi.calculate(entries,cwsOnly=True)
+    1.0
+
+We then set up a different set of 9 entries with 'reaction' indices set to 0, and one entry set to 1.
+
+    >>> entries=[]
+    >>> entries.append(Entry({'reaction':1}))
+    >>> for a in range(0,9):
+    ...     entries.append(Entry({'reaction':0}))
+    >>> cdi.calculate(entries,cwsOnly=True)
+    0.1
+
+In the first case, the responses with null values don't count in the computation, so only the first response (with positive reaction) counts. In the second case, each of the zero value responses have the same weight as the one with a positive value.
 
 
 Test 7. Comparison with DYFI Version 3

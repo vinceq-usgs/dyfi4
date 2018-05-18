@@ -11,6 +11,15 @@ The implementation of DYFI Version 4 features a number of changes from previous 
 
 - The database is now implemented in Sqlite3 for its lighter resource footprint.
 
+System flowchart
+----------------
+
+The following diagram shows the ideal configuration for the DYFI system, including adjunct systems for data input and output. This CORE manual only concerns itself with the functionality of the backend server.
+
+Note the two independent inputs to the DYFI system: event triggers (which include earthquake origin information) and user responses (which may or may not be event-aware).
+
+.. image:: diagram_systems.svg
+
 Installation
 ------------
 
@@ -65,14 +74,14 @@ The file has five sections:
 
 - *filter:* This holds settings for filtering entries (to reject bogus or suspect ones). See :obj:`Filtering of entries`.
 
-The DYFI database
------------------
+Database implementation
+------------------------------
 
 The DYFI database is currently implemented as a Sqlite3 database. A sample set of databases is included with installation in */tests/db/*. 
 
-We recommend that the tables be placed in a directory such as */db/*. To change the database location, modify the settings for each database file in :file:`config.yml` file under *db:files*.
+We recommend that the tables be placed in a directory such as */db/*. To change the database location, modify the settings for each database file in :file:`config.yml` file under *db:files*. Each table is a separate file.
 
-Each table is a separate file.
+For details on the various database tables see :doc:`Technical Guide` under :doc:`Database operations`. 
 
 Event table
 +++++++++++
@@ -84,53 +93,9 @@ Table name   *event*
 
 This table holds data for individual earthquake events; most importantly, event earthquake location and time. Each row corresponds to one event.
 
-This table is normally populated by event information from the USGS Comprehensive Earthquake Catalog, or ComCat (https://earthquake.usgs.gov/data/comcat/). This table holds data information for individual earthquake events. A sample table is included (beginning from 2015). 
+This table is normally populated by event information from the USGS Comprehensive Earthquake Catalog, or ComCat (https://earthquake.usgs.gov/data/comcat/). This table holds data information for individual earthquake events. 
 
-The event data is described below. 
-
-=====================  =========================================================================
-Column                 Description
----------------------  -------------------------------------------------------------------------
-eventid                USGS event ID, usually 10 characters; primary key
-mag                    Magnitude
-lat                    Epicentral latitude 
-lon                    Epicentral longitude
-depth                  Hypocentral depth
-region                 obsolete
-source                 2 letter network code
-mainshock              obsolete
-loc                    Text description of the location (e.g. "9km ENE of San Simeon, CA") 
-nresponses             Number of DYFI responses attached to this event
-eventdatetime          Earthquake event time in YYYY-MM-DD HH:MM:SS format
-createdtime            Time that this row was last created or updated
-newresponses           Number of DYFI responses for this event since the last time this was run
-run_flag               obsolete
-citydb                 obsolete
-zipdb                  obsolete
-ciim_version           Incremented whenever :obj:`rundyfi.py` runs
-code_version           Current version of DYFI when this event was last run
-process_timestamp      Time when :obj:`rundyfi.py` was last run
-max_intensity          Maximum computed intensity
-sent_email             obsolete
-event_version          Event information version (from ComCat) 
-orig_id                Original USGS event ID 
-eventlocaltime         Event local time (from ComCat)
-invisible              see below
-good_id                obsolete
-=====================  =========================================================================
-
-Notes:
-
-All columns are Sqlite text fields.
-
-The column *newresponses* is updated by the backend whenever a new user response is processed, and is reset to zero whenever the :obj:`rundyfi.py` runs. This is how the backend knows when :obj:`rundyfi.py` should be triggered.
-
-The column *orig_id* is initially the same as *eventid*. This allows the 
-first event ID to be archived in case the event ID is manually changed.
-
-The column *invisible* is set to true when an event is no longer valid, and DYFI products are no longer applicable. Examples are bogus, duplicate, or non-authoritative events. These events will not be exported, and responses will not be automatically associated to them. (They may still be run manually.)
-
-Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.
+A sample table is included (beginning from 2015). 
 
 Extended tables
 +++++++++++++++
@@ -146,67 +111,34 @@ Because of the size of the DYFI response data (2 million+ responses as of 2018),
 
 Sample extended tables for 2015 and 2016 are included, with personally identifiable information (PII) redacted.
 
-The extended table data is described below. 
 
-=====================  =========================================================================
-Column                 Description
----------------------  -------------------------------------------------------------------------
-subid                  Integer type unique primary key for each row
-eventid                Event ID that this response is associated to
-orig_id                Original event ID when response was processed
-region                 text
-time_now               text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
-suspect                text
+Generation of dynamic and static image maps
+--------------------------------------------
 
-The text,orig_id text,suspect text,region text,usertime text,time_now text,latitude text,longitude text,geo_source text,zip text,zip_4 text,city text,admin_region text,country text,street text,name text,email text,phone text,situation text,building text,asleep text,felt text,other_felt text,motion text,duration text,reaction text,response text,stand text,sway text,creak text,shelf text,picture text,furniture text,heavy_appliance text,walls text,slide_1_foot text,d_text text,damage text,building_details text,comments text,user_cdi text,city_latitude text,city_longitude text,city_population text,zip_latitude text,zip_longitude text,location text,tzoffset text,confidence text,version text,citydb text,cityid text
+.. note::
 
-Notes:
+    The `PhantomJS` package must be installed to create static images. This is a change from the previous version of DYFI which used Generic Mapping Tools (GMT) for plotting and map generation.
 
-All columns are Sqlite text fields unless indicated otherwise.
+DYFI uses PhantomJS to turn Leaflet-based maps into static images. This section outlines the procedure used by DYFI for creating these products. See individual module entries for details.
 
-The column *newresponses* is updated by the backend whenever a new user response is processed, and is reset to zero whenever the :obj:`rundyfi.py` runs. This is how the backend knows when :obj:`rundyfi.py` should be triggered.
+1. The :py:obj:`Aggregate` module creates the aggregated data in GeoJSON format aggregated entries and the computed intensities.
 
-The column *orig_id* is initially the same as *eventid*. For responses that were not originally attached to an event ("unassociated entries"), both fields would have the value "unknown". This allows the original data to be archived in case the this entry is associated or manually updated.
+2. The :py:obj:`Map` class adds the event data (epicentral location and magnitude).
 
-The column *invisible* is set to true when an event is no longer valid, and DYFI products are no longer applicable. Examples are bogus, duplicate, or non-authoritative events. These events will not be exported, and responses will not be automatically associated to them. (They may still be run manually.)
+3. The :py:obj:`Map.toImage` saves the GeoJSON data into a temporary file in the :file:`leaflet` directory.
 
-Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.
+4. The file :file:`leaflet/viewer.html` is an HTML Leaflet file that loads the GeoJSON file and renders the map. By default, the open source `OpenStreetMaps` basemap is used.
 
+5. `PhantomJS` is run on the HTML page. This renders the HTML into a static PNG file.
 
+Auxiliary processes
+--------------------
 
-Generation of map products
---------------------------
+The following topics are beyond the scope this CORE manual because they describe systems exclusive to the USGS. These topics will be described elsewhere.
 
-DYFI uses Leaflet to turn intensity data into dynamic map products. 
+- USGS Event Page integration
 
-
-Creation of static images
--------------------------
-
-DYFI uses PhantomJS to turn Leaflet-based maps into static images.
-
-USGS Event Page integration
----------------------------
-
-The following topics are beyond the scope the core functionality and are described elsewhere.
-
+- USGS Product Distribution Layer, or `PDL <https://usgs.github.io/pdl/>`
 
 - Event triggering
 

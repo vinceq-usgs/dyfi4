@@ -175,7 +175,7 @@ legend   Atkinson, Worden, Wald 2014 (WNA)
 
 This dataset is used for comparing an IPE (Intensity Prediction Equation) to the actual DYFI data. The IPE used to compute the expected intensity for a typical earthquake of this magnitude, calculated at evenly spaced intervals for plotting.
 
-In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). This IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Guide`.
+In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). This IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Discussion`.
 
 
 Estimated Intensity 2
@@ -187,7 +187,7 @@ id       ipe_aww2014_ena
 legend   Atkinson, Worden, Wald 2014 (ENA)
 =======  ===================================================
 
-Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). this IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Guide`.
+Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). this IPE may be changed in the future. For more on IPEs, see the :obj:`Scientific Discussion`.
 
 Time vs Responses Datafile
 ..........................

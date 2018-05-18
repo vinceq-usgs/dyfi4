@@ -18,7 +18,7 @@ Contents
 
    introduction.rst
    product-guide.rst
-   scientific-guide.rst
+   scientific-discussion.rst
    technical-guide.rst
    implementation-guide.rst
 
