@@ -140,7 +140,7 @@ class Map:
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
-            shutil.move(tmpfilename+'.png',outputfile) 
+            shutil.move(tmpfilename+'.png',outputfile)
             print('Map.GeoJSONtoImage: ...Done.')
             os.remove(tmpfilename)
 

@@ -4,7 +4,6 @@
 import pytest
 import shutil
 from argparse import Namespace
-import warnings
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
