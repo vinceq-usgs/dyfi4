@@ -101,15 +101,10 @@ class Map:
         """
 
         leafletdir=config.directories['leaflet']
-        leafletdatafile='%s/data.js' % leafletdir
-        pngfile='%s/screenshot.png' % leafletdir
-        if os.path.isfile(pngfile):
-            os.remove(pngfile)
 
         # This creates a data.js file in the leaflet directory which is just
         # a GeoJSON file but with VAR= to make it valid JavaScript.
         # This is a lot easier than dealing with browser CORS shenanigans.
-
 
         if isinstance(inputdata,str):
             with open(inputdata,'r') as jsonText:
@@ -125,12 +120,15 @@ class Map:
         if (not tmpfilename
             or not os.path.isfile(tmpfilename)
             or os.path.getsize(tmpfilename)<10):
+            print('WARNING: bad or missing temporary JSON file, removing.')
+            os.remove(tmpfilename)
             return
 
-        shutil.move(tmpfilename,leafletdatafile)
         command=config.executables['screenshot']
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
+        command.append(tmpfilename)
+        command.append(tmpfilename+'.png')
 
         with open(leafletdir+'/log.stdout.txt','wb') as logOut,open(leafletdir+'/log.stderr.txt','wb') as logErr:
 
@@ -142,9 +140,9 @@ class Map:
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
+            shutil.move(tmpfilename+'.png',outputfile) 
             print('Map.GeoJSONtoImage: ...Done.')
-
-            shutil.copyfile(pngfile,outputfile)
+            os.remove(tmpfilename)
 
         return outputfile
 

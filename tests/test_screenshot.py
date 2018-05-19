@@ -13,15 +13,6 @@ def test_staticmap():
 
     config=Config('tests/testconfig.yml')
 
-    # Test that old PNG file is properly removed
-    screenshotfile='leaflet/screenshot.png'
-    with open(screenshotfile,'w') as tmp:
-      tmp.write('Test output')
-
-    output=Map.GeoJSONtoImage(blankfile,outfile,config)
-    assert output==None
-    assert not os.path.isfile(screenshotfile)
-
     output=Map.GeoJSONtoImage(blankfile,'/bad_directory',config)
     assert output==None
 
