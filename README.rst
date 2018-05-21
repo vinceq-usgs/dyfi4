@@ -42,7 +42,7 @@ Note that miniconda is required for this step. See https://conda.io/miniconda.ht
 
 (You may wish to alias this to something shorter, like "dyfi".)
 
-5. To make sure the installation is complete, run 'pytest tests/'.
+5. To make sure the installation is complete, go to the repo root directory and run 'pytest'.
 
 NEXT STEPS
 ==========
@@ -53,5 +53,7 @@ HISTORY
 - V4.01: Rewrite modules for more modularity
 - V4.02: Complete coverage for core functions
 - V4.03: Remove queue/incoming for now; fork development to 'core'
+- V4.rc1: Release Candidate 1
+
 
 
