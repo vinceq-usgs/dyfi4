@@ -53,7 +53,7 @@ HISTORY
 - V4.01: Rewrite modules for more modularity
 - V4.02: Complete coverage for core functions
 - V4.03: Remove queue/incoming for now; fork development to 'core'
-- V4.rc1: Release Candidate 1
+- V4.04.rc1: Release Candidate 1
 
 
 
