@@ -68,9 +68,9 @@ The file has five sections:
 
   - *leaflet:* This points to the directory where Leaflet processing is done. See :obj:`Generation of map products`.
 
-- *executables:* This lists various external programs used by DYFI. The *screenshot* line is used to call `PhantomJS` (see :ref:`Generation of dynamic and static image maps`).
+- *executables:* This lists various external programs used by DYFI. The *screenshot* line is used to call `PhantomJS` (see :ref:`Generation of dynamic and static image maps`). Do not change this unless you are modifying the static image generation process.
 
-- *products:* 
+- *products:* This is a link to :file:`lib/products.yml` which lists the supported output types and formats. The DYFI process iterates through this file to create its output products.
 
 - *filter:* This holds settings for filtering entries (to reject bogus or suspect ones). See :obj:`Filtering of entries`.
 
