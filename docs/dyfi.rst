@@ -9,7 +9,6 @@ dyfi.aggregate
 .. automodule:: dyfi.aggregate
     :members:
     :undoc-members:
-    :show-inheritance:
 
 dyfi.cdi
 ---------------
@@ -17,7 +16,6 @@ dyfi.cdi
 .. automodule:: dyfi.cdi
     :members:
     :undoc-members:
-    :show-inheritance:
 
 dyfi.config
 ------------------
@@ -25,7 +23,6 @@ dyfi.config
 .. automodule:: dyfi.config
     :members:
     :undoc-members:
-    :show-inheritance:
 
 dyfi.contents
 --------------------
@@ -45,7 +42,6 @@ dyfi.dyfiContainer
 .. automodule:: dyfi.dyfiContainer
     :members:
     :undoc-members:
-    :show-inheritance:
 
 dyfi.entries
 -------------------
@@ -71,21 +67,12 @@ dyfi.ipes
 .. automodule:: dyfi.ipes
     :members:
 
-dyfi.mail
-----------------
-
-.. automodule:: dyfi.mail
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 dyfi.map
 ---------------
 
 .. automodule:: dyfi.map
     :members:
     :undoc-members:
-    :show-inheritance:
 
 dyfi.products
 --------------------
@@ -98,13 +85,7 @@ dyfi.rawDbSqlite
 
 .. automodule:: dyfi.rawDbSqlite
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
-
-.. toctree::
-
-    dyfi.thirdparty
 

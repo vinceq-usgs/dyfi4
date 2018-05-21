@@ -1,5 +1,6 @@
 .DS_Store
 .cache
+.pytest_cache
 dyfi/config.ini
 *.pyc
 */__pycache__
@@ -8,7 +9,6 @@ dyfi/config.ini
 */*/*/*/__pycache__
 dyfi/modules/utm/__pychache__
 __pycache__
-makedoc
 docs/_templates
 docs/_build
 db.json
@@ -31,5 +31,6 @@ screenshot.png
 setup_env.sh.disabled
 log.*
 tests/db/*
+tests/db/*.db
 movie/*.apng
 

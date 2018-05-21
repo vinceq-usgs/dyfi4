@@ -31,27 +31,94 @@ def test_config():
 
 
 def test_db():
-  from dyfi import Config,Db
+  from dyfi import Config,Db,Event
 
-  db=Db(Config(configfile))
+  config=Config(configfile)
+  db=Db(config)
+  rawdb=db.rawdb
+
   raw=db.loadEvent(testid)
   assert isinstance(raw['lat'],float)
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-  pasttime=db.timeago(3)
-  assert pasttime.year>1990
+ # These functions are unused right now but maybe useful later
+
+  assert Db.timeago(60).year>2016
+  assert '2018' in Db.epochToString(1515565764)
+
+  import datetime
+  year = datetime.datetime.utcnow().year
+  assert str(year) in Db.epochToString()
+
+  # Test save function
+  assert rawdb.updateRow('event',testid,'mag',3)==1
+  event=Event(testid,config)
+  mag=event.mag
+  print('Saving id',testid,'mag:',mag)
+
+  # Make a change and save...
+  event.__dict__['mag']=11
+  assert 1==db.save(event)
+  event=Event(testid,config)
+  assert event.mag==11
+
+  # Now change it back
+  event.__dict__['mag']=mag
+  assert 1==db.save(event)
+  event=Event(testid,config)
+  assert event.mag==mag
+
+  # Test missing table
+  event.__dict__['table']=None
+  with pytest.raises(ValueError) as exception:
+    db.save(event)
+  assert 'table not specified' in str(exception.value)
+
+  # Test invalid table
+  event.__dict__['table']='invalidtable'
+  with pytest.raises(RuntimeError) as exception:
+    db.save(event)
+  assert 'unsupported table' in str(exception.value)
 
   # Test RawDb
-
-  rawdb=db.rawdb
 
   with pytest.raises(NameError) as exception:
     rawdb.querySingleTable('badtable','suspect=1')
   assert 'getCursor could not find table' in str(exception.value)
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(RuntimeError) as exception:
     rawdb.querySingleTable('event','invalid command')
+  assert 'Operational error' in str(exception.value)
+
+  testtable='extended_2015'
+  subid=3996577
+
+  assert rawdb.updateRow(testtable,subid,'comments','foo')==1
+  row=rawdb.querySingleTable(testtable,'subid=?',subid)
+  assert row[0]['comments']=='foo'
+
+  assert rawdb.updateRow(testtable,subid,'comments','bar')==1
+  row=rawdb.querySingleTable(testtable,'subid=?',subid)
+  assert row[0]['comments']=='bar'
+
+  # Test rawdb.save
+  with pytest.raises(RuntimeError) as exception:
+    testentry=row[0]
+    testentry['subid']='invalidstring'
+    rawdb.save('extended_2015',testentry)
+  assert 'Operational error' in str(exception.value)
+
+  # Test updateRow increment
+  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert rawdb.updateRow('event',testid,'newresponses',99)
+  assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
+  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert testevent['newresponses']==100
+  rawdb.updateRow('event',testid,'newresponses',0)
+
+  with pytest.raises(RuntimeError) as exception:
+    rawdb.updateRow('event',testid,'badcolumn',None)
   assert 'Operational error' in str(exception.value)
 
 
@@ -99,6 +166,7 @@ def test_dbentries():
   db=Db(Config(configfile))
   entries=db.loadEntries(evid=testid,table='extended_2016')
   assert len(entries)==913
+
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
@@ -114,17 +182,16 @@ def test_dbentries():
     entries=db.loadEntries(evid=testid,table='1999,2000')
   assert 'no such table' in str(exception.value)
 
-  querytext='suspect is not null'
+  querytext='suspect is not null or suspect=0'
   entries1=db.loadEntries(table='2015',querytext=querytext)
   entries2=db.loadEntries(table='2016',querytext=querytext)
   entries3=db.loadEntries(table='2015,2016',querytext=querytext)
   entries4=db.loadEntries(table=[2015,2016],querytext=querytext)
   e1=len(entries1)
   e2=len(entries2)
-  assert e1==2017
-  assert e2==7
-  assert len(entries3)==e1+e2
-  assert len(entries4)==e1+e2
+  assert e1>=2017 # This might change from testing
+  assert e2>=7
+  assert len(entries3)==len(entries4)
 
   # Test loading entries by event object
   event=Event(db.loadEvent(testid))
@@ -149,30 +216,50 @@ def test_dbentries():
     db.loadEntries(startdatetime='Stardate 1312.4')
   assert 'Bad year' in str(exception.value)
 
+  # Test row2geojson
   testentry=entries[0]
-  testentry['orig_id']=''
   feature=db.row2geojson(testentry)
+  assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
   coords=list(geojson.utils.coords(feature))
-  assert len(coords)==1
+  assert coords[0][0]==testentry['longitude']
   assert isinstance(coords[0][0],float)
+  assert coords[0][1]==testentry['latitude']
   assert isinstance(coords[0][1],float)
 
-  testentry['lat']=None
+  # Test null column value
+  testentry['mag']='null'
   feature=db.row2geojson(testentry)
+  assert feature.properties['mag']==None
+
+  # Test of saving an entry
+  testsubid=testentry['subid']
+  assert testsubid!=None
+  testtable=testentry['table']
+  assert testtable!='extended'
+
+  # Test entry save
+  testentry['street']='test street'
+  assert db.save(testentry,table='extended')==1
+
+  row=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)
+  testentry=row[0]
+  assert testentry['street']=='test street'
+
+  testentry['street']='[REDACTED]'
+  assert db.save(testentry,testtable)==1
 
 
 def test_entries():
-  from dyfi import Config,Event,Entries,Db,cdi,aggregate
+  from dyfi import Config,Event,Entries,Db,aggregate
 
-  if testid:
-      shutil.rmtree('data/'+testid,ignore_errors=True)
-            
+  shutil.rmtree('data/'+testid,ignore_errors=True)
+
   config=Config(configfile)
 
   with pytest.raises(RuntimeError) as exception:
       Entries()
   assert 'No evid or Event object' in str(exception.value)
-          
+
   # Test loading Entries with raw data
 
   rawentries=Db(config).loadEntries(testid,table='extended_2016')
@@ -196,23 +283,6 @@ def test_entries():
   badentries=Entries(testid,rawentries=[badentry],config=config)
   assert len(badentries)==1
 
-  print(entries)
-  single=[x for x in entries if x.subid=='4279149'][0]
-  print(single)
-  assert '[Entry:' in str(single)
-  user_cdi=cdi.calculate(single)
-  assert user_cdi>=2 or user_cdi==1
-
-  # test if entry has a missing required column
-  single.__dict__.pop('felt')
-  single.__dict__['badcolumn']=1
-  assert cdi.calculate(single)!=user_cdi
-
-  # test bad cdi
-  single.__dict__['felt']='a bad value'
-  single.__dict__['d_text']='_chim'
-  assert cdi.calculate(single)==4.8
-
   # Test aggregate
 
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
@@ -221,6 +291,7 @@ def test_entries():
       aggregate.aggregate(entries,'geo_11km')
   assert 'unknown type' in str(exception.value)
 
+  single=entries.entries[0]
   assert isinstance(aggregate.getUtmForEntry(single,'1km'),str)
 
   utmstring='500000 3650000 11 S'
@@ -271,8 +342,7 @@ def test_products():
     import copy
     from dyfi import Config,Event,Entries,Products,Product,Map,Graph
 
-    if testid:
-        shutil.rmtree('data/'+testid,ignore_errors=True)
+    shutil.rmtree('data/'+testid,ignore_errors=True)
 
     config=Config(configfile)
     event=Event(testid,config=config)
@@ -336,20 +406,6 @@ def test_products():
     data['data']=[]
     graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
     assert graph.data['preferred_unit']=='minutes'
-
-
-def test_cdi():
-  from dyfi import cdi
-
-  assert cdi.getDamageFromText('_none')==0
-  assert cdi.getDamageFromText('_crackmin')==0.5
-  assert cdi.getDamageFromText('_crackwallfew')==0.75
-  assert cdi.getDamageFromText('_crackwall')==1
-  assert cdi.getDamageFromText('_crackwallfew _crackwall')==1
-  assert cdi.getDamageFromText('_crack')==None
-  assert cdi.getDamageFromText('_masonryfell')==2
-  assert cdi.getDamageFromText('_crackmin _pipe')==2
-  assert cdi.getDamageFromText('_crackmin _crackwall _wall _chim')==3
 
 
 def test_container():

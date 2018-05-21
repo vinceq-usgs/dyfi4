@@ -13,15 +13,15 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/rundyfi.py',
-    description='Create DYFI products for a given event ID'
+    description='Create DYFI products. An event ID is required. See the :obj:`Product Guide` for an explanation of the output products.'
 )
 parser.add_argument(
     'evid',type=str,
-    help='Event ID'
+    help='Event ID (required)'
 )
 parser.add_argument(
     '--push',action='store_true',
-    help='Push event products to PDL'
+    help='Push event products to PDL (not yet implemented)'
 )
 parser.add_argument(
     '--redo',action='store_true',
@@ -31,6 +31,11 @@ parser.add_argument(
     '--configfile',action='store',default='./config.yml',
     help='Specify config file'
 )
+parser.add_argument(
+    '--debug',action='store_true',default=None,
+    help='Special debug mode'
+)
+
 
 def main(args):
 

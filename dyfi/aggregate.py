@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-A collection of functions to aggregate lists of entries into geocoded boxes or ZIP code locations and compute their aggregated intensities. (*Note*: ZIP codes not yet implemented)
+Functions to aggregate lists of entries or :py:class:`Entry` objects into geocoded boxes or ZIP code locations. (*Note*: ZIP codes not yet implemented)
 
 """
 
@@ -11,18 +11,30 @@ import geojson
 from . import cdi
 from .thirdparty.utm import from_latlon,to_latlon,OutOfRangeError
 
-PRECISION=4  # Maximum precision of lat/lon coordinates of output
+PRECISION=6  # Maximum precision of lat/lon coordinates of output
 
-def aggregate(entries,producttype):
+def aggregate(entries,producttype,debug=False):
     """
 
     :synopsis: Aggregate entries into geocoded boxes
-    :param entries: list of :py:class:`Entry` objects
+    :param entries: :obj:`list` of :py:class:`Entry` objects
     :param producttype: The product type (zip, geo_1km, geo_10km)
-    :returns: `GeoJSON` :py:obj:`FeatureCollection`
+    :param bool debug: If true, store debugging info
+    :returns: `GeoJSON` :py:obj:`FeatureCollection`, see below
 
     The return value is a `GeoJSON` :py:obj:`FeatureCollection` with
-    the following properties:
+    one feature for each aggregated location (geocoded block or
+    ZIP code).  Each Feature in the `GeoJSON` FeatureCollection has an `id`
+    attribute (the UTM string or ZIP code) and the following properties:
+
+    ==========  =========================================================
+    location    UTM string or ZIP code
+    center      Center of this location, for plotting (`GeoJSON Point`)
+    nresp       number of responses in this location
+    intensity   aggregated intensity for this location
+    ==========  =========================================================
+
+    The `FeatureCollection` also has the following properties:
 
     ======  ========================================
     name    Same as :py:attr:`producttype`
@@ -30,21 +42,6 @@ def aggregate(entries,producttype):
     nresp   Total number of responses from each valid location
     maxint  Maximum intensity from each valid location
     ======  ========================================
-
-    Each Feature in the `GeoJSON` FeatureCollection has the attribute:
-
-    ===   =================================================
-    id    UTM string or ZIP code of this Feature's location
-    ===   =================================================
-
-    and the following properties:
-
-    ==========  ==========================================
-    location    same as id
-    center      Center of this location, for plotting (GeoJSON Point)
-    nresp       number of responses in this location
-    intensity   aggregated intensity for this location
-    ==========  ==========================================
 
     """
 
@@ -64,12 +61,10 @@ def aggregate(entries,producttype):
         else:
             aggregator=None
 
-        """
-    elif 'zip' in producttype:
-        aggregatetype='zip'
-        aggregator=getZipForEntry
-        resolutionMeters=0
-        """
+    #elif 'zip' in producttype:
+    #    aggregatetype='zip'
+    #    aggregator=getZipForEntry
+    #    resolutionMeters=0
 
     if not aggregator:
         raise ValueError('Aggregate: got unknown type '+producttype)
@@ -80,7 +75,7 @@ def aggregate(entries,producttype):
     npts=len(entries)
     nlocated=0
     for entry in entries:
-        location=aggregator(entry,resolutionMeters)
+        location=aggregator(entry,resolutionMeters,check=True)
 
         # location is now either a UTM or ZIP (string)
         # TODO: Filter based on precision of the input coords
@@ -107,10 +102,9 @@ def aggregate(entries,producttype):
         geometry=None
         if aggregatetype=='geo':
             geometry=getUtmPolyFromString(location,resolutionMeters)
-            """
-        elif aggregatetype=='zip':
-            geometry=getZipCoordinates(location)
-            """
+
+        #elif aggregatetype=='zip':
+        #    geometry=getZipCoordinates(location)
 
         # Catchall if from_latlon created a valid UTM string
         # from a latlon, but to_latlon could not create a
@@ -124,7 +118,14 @@ def aggregate(entries,producttype):
         nresp=len(entries)
         totalresp+=nresp
 
-        thiscdi=cdi.calculate(entries)
+        thiscdi=cdi.calculate(entries,cwsOnly=False,debug=debug)
+        thiscdiFine=cdi.calculate(entries,fine=True)
+        if debug:
+            debugInfo=thiscdi['debug']
+            debugTotal=thiscdi['total']
+            debugRawcdi=thiscdi['rawcdi']
+            thiscdi=thiscdi['cdi']
+
         if thiscdi>maxcdi:
             maxcdi=thiscdi
 
@@ -135,9 +136,16 @@ def aggregate(entries,producttype):
                 'location':location,
                 'nresp':nresp,
                 'center':center,
-                'intensity':thiscdi
+                'intensity':thiscdi,
+                'intensityFine':thiscdiFine
             }
         )
+
+        if debug:
+            pt.properties['debug']=debugInfo
+            pt.properties['total']=debugTotal
+            pt.properties['rawcdi']=debugRawcdi
+
         features.append(pt)
 
     featurecollection=geojson.FeatureCollection(
@@ -168,13 +176,31 @@ def getUtmFromCoordinates(lat,lon,span=None):
     :param span: (optional) Size of the UTM box (see below)
     :returns: UTM string with the correct resolution
 
-    Convert lat/lon coordinates into a UTM string using the :py:obj:`UTM` package. If :py:obj:`span` is specified, the output is degraded via the :py:obj:`floor` function.
+    Convert lat/lon coordinates into a UTM string using the :py:obj:`UTM` package. If :py:obj:`span` is specified, the output resolution is degraded via the :py:obj:`floor` function.
 
     :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10).
 
     This will NOT filter the location based on precision of the input coordinates.
 
     """
+
+    span=_floatSpan(span)
+
+    try:
+        loc=from_latlon(lat,lon)
+    except OutOfRangeError:
+        # Catchall for any location that cannot be geocoded
+        return None
+
+    x,y,zonenum,zoneletter=loc
+    x=myFloor(x,span)
+    y=myFloor(y,span)
+
+    utm='{} {} {} {}'.format(x,y,zonenum,zoneletter)
+    return utm
+
+
+def _floatSpan(span):
 
     if span=='geo_1km' or span=='1km' or span==1000:
         span=1000
@@ -183,31 +209,23 @@ def getUtmFromCoordinates(lat,lon,span=None):
     else:
         raise TypeError('Invalid span value '+str(span))
 
-    try:
-        loc=from_latlon(lat,lon)
-    except OutOfRangeError:
-        return
-
-    x,y,zonenum,zoneletter=loc
-    if span:
-        x=myFloor(x,span)
-        y=myFloor(y,span)
-
-    utm='{} {} {} {}'.format(x,y,zonenum,zoneletter)
-    return utm
+    return span
 
 
-def getUtmForEntry(entry,span):
+def getUtmForEntry(entry,span,check=False):
     """
 
     :synopsis: Find the UTM location for an entry
     :param entry: The :py:obj:`Entry` object to locate
     :param span: Size of the UTM box (see below)
+    :param check: if true, check `confidence` key
     :returns: UTM string with the correct resolution
 
     Compute the UTM block for an :py:obj:`Entry` object using :py:func:`getUtmFromCoordinates`. The UTM coordinate resolution is degraded via the :py:obj:`floor` function depending on the :py:obj:`span` parameter.
 
     :py:obj:`span` accepts the values 'geo_10km', 'geo_1km', or the size of the UTM box in meters (should be a power of 10).
+
+    If the `check` flag is true, check the `confidence` key of this entry, and return null if the derived precision is less than `span`.
 
     """
 
@@ -215,10 +233,61 @@ def getUtmForEntry(entry,span):
         lat=float(entry.latitude)
         lon=float(entry.longitude)
     except TypeError:
-        return
+        # Catchall for bad lat/lon values
+        return None
+
+    if check and not checkConfidence(entry,span):
+        return None
 
     loc=getUtmFromCoordinates(lat,lon,span)
+
     return loc
+
+
+def checkConfidence(entry,span):
+    """
+
+    If entry.span is specified, use it to check against the geocoding span.
+    Otherwise, use the length of the latitude and longitude strings.
+
+    """
+
+    conf=entry.confidence
+    if conf:
+        conf=float(conf)
+        if conf<=1:
+            checkSpan=100000
+        elif conf<=2:
+            checkSpan=10000
+        elif conf<=3:
+            checkSpan=1000
+        elif conf<=4:
+            checkSpan=100
+        else:
+            checkSpan=10
+
+        return checkSpan<=span
+
+    else:
+        (lat1,lat2)=_range(entry.latitude)
+        (lon1,lon2)=_range(entry.longitude)
+        loc1=getUtmFromCoordinates(lat1,lon1,span)
+        loc2=getUtmFromCoordinates(lat2,lon2,span)
+
+        return loc1==loc2
+
+
+def _range(val):
+
+    strVal=str(val)
+    if '.' not in strVal:
+        places=0
+    else:
+        places=len(strVal.split('.')[1])
+
+    # Places is how many digits to the right of the decimal point
+    halfspan=10**(-places)/2
+    return(val+halfspan,val-halfspan)
 
 
 def getUtmPolyFromString(utm,span):
@@ -227,9 +296,9 @@ def getUtmPolyFromString(utm,span):
     :synopsis: Compute the (lat/lon) bounds and center from a UTM string
     :param utm: A UTM string
     :param int span: The size of the UTM box in meters
-    :return: dict
+    :return: :py:obj:`dict`, see below
 
-    Get the bounding box and center point for a UTM string suitable for plotting.
+    Get the bounding box polygon and center point for a UTM string suitable for plotting.
 
     The return value has two keys:
 
@@ -249,16 +318,24 @@ def getUtmPolyFromString(utm,span):
     # to_latlon function returns lat/lon and geojson requires lon/lat.
     # Rounding needed otherwise lat/lon coordinates are arbitrarily long
 
-    def _reverse(tup):
-        (x,y)=tup
+    ebound=zone*6-180
+    wbound=ebound-6
+
+    def _reverse(tup,eastborder=None):
+
+        (y,x)=tup
+        if eastborder and x>ebound:
+            x=ebound
+        elif x<wbound:
+            x=wbound
         x=round(x,PRECISION)
         y=round(y,PRECISION)
-        return (y,x)
+        return (x,y)
 
     p1=_reverse(to_latlon(x,y,zone,zoneletter))
     p2=_reverse(to_latlon(x,y+span,zone,zoneletter))
-    p3=_reverse(to_latlon(x+span,y+span,zone,zoneletter))
-    p4=_reverse(to_latlon(x+span,y,zone,zoneletter))
+    p3=_reverse(to_latlon(x+span,y+span,zone,zoneletter),'e')
+    p4=_reverse(to_latlon(x+span,y,zone,zoneletter),'e')
     bounds=geojson.Polygon([[p1,p2,p3,p4,p1]])
 
     # Compute center
@@ -276,47 +353,46 @@ def getUtmPolyFromString(utm,span):
 # Zipcode Helper Functions
 #-------------------------
 
-"""
-def getZipLocation(entry,resolution):
-
-    :synopsis: Find the ZIP code of an entry.
-    :param entry: The :py:obj:`Entry` object to locate
-    :param resolution: (ignored)
-    :return: The ZIP code (in str format)
-
-    This reads the 'zip' attribute of the Entry object.
-    If that is blank, it checks for a :code:`citydb` that has
-    the :code:`zip` database.
-    If it is, then this returns the :code:`cityid` value.
-
-    Finally, if neither exists, create a 'city' circle instead.
-
-
-    if entry.zip:
-        return entry.zip
-
-    if entry.citydb:
-        return '%s:%s' % (entry.citydb,entry.cityid)
-
-
-def getZipCoordinates(zipcode):
-
-    :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
-    :param zipcode: A UTM string
-    :return: dict
-
-    The return value has two keys:
-
-    ======  =========================
-    center  A GeoJSON Point object
-    bounds  A GeoJSON Polygon object
-    ======  =========================
-
-
-    # TODO: Look up ZIP code or cityid coordinates
-    # Disabled for now
-    return
-"""
+#def getZipLocation(entry,resolution):
+#
+#    :synopsis: Find the ZIP code of an entry.
+#    :param entry: The :py:obj:`Entry` object to locate
+#    :param resolution: (ignored)
+#    :return: The ZIP code (in str format)
+#
+#    This reads the 'zip' attribute of the Entry object.
+#    If that is blank, it checks for a :code:`citydb` that has
+#    the :code:`zip` database.
+#    If it is, then this returns the :code:`cityid` value.
+#
+#    Finally, if neither exists, create a 'city' circle instead.
+#
+#
+#    if entry.zip:
+#        return entry.zip
+#
+#    if entry.citydb:
+#        return '%s:%s' % (entry.citydb,entry.cityid)
+#
+#
+#def getZipCoordinates(zipcode):
+#
+#    :synopsis: Get the ZIP polygon and center of a ZIP code or cityid.
+#    :param zipcode: A UTM string
+#    :return: :py:obj:`dict`, see below
+#
+#    The return value has two keys:
+#
+#    ======  =========================
+#    center  A GeoJSON Point object
+#    bounds  A GeoJSON Polygon object
+#    ======  =========================
+#
+#
+#    # TODO: Look up ZIP code or cityid coordinates
+#    # Disabled for now
+#
+#    return
 
 #-------------------------
 # Utility Functions

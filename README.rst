@@ -3,10 +3,10 @@ Introduction to Did You Feel It? (DYFI)
 
 |Travis| |CodeCov| |Codacy|
 
-.. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=master
+.. |Travis| image:: https://travis-ci.org/vinceq-usgs/dyfi4.svg?branch=core
     :target: https://travis-ci.org/vinceq-usgs/dyfi4
     :alt: Travis Build Status
-.. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/master/graph/badge.svg
+.. |CodeCov| image:: https://codecov.io/gh/vinceq-usgs/dyfi4/branch/core/graph/badge.svg
     :target: https://codecov.io/gh/vinceq-usgs/dyfi4
     :alt: Code Coverage Status
 .. |Codacy| image:: https://api.codacy.com/project/badge/Grade/cc5a3a34ef56478e897414ab5472d5dc    
@@ -19,53 +19,43 @@ THIS IS NOT THE CURRENT VERSION. SEE BRANCH NAMED 'core'.
 
 DYFI was developed to tap the abundant information available about earthquakes from the people who experience them. By taking advantage of the vast number of Internet users, we can get a more complete description of what people experienced, the effects of an earthquake, and the extent of damage. 
 
-This version (Version 2) is written in Python and is under development.
+This version (Version 4) is written in Python and is under development.
 
-For more information, see the DYFI Manual (included in this repository, or https://gitlab.cr.usgs.gov/vinceq/pydyfi/blob/master/doc/_build/html/index.html)
+Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
 
-.. note:: 
-
-    Gitlab has disabled viewing of HTML direct from source. To access this manual:
-
-    1. Build this repository, then point your browser to file:///[repo]/doc/_build/html/index.html. 
-
-    OR
-
-    2. Download the PDF version from this repository: https://gitlab.cr.usgs.gov/vinceq/pydyfi/blob/master/doc/_build/latex/modules.pdf
-
-    OR
-
-    3. Use the Github repository (coming soon).
+Manual: https://vinceq-usgs.github.io/dyfi4/
 
 INSTALLATION
+============
 
-1. Install miniconda2. Take note of where you installed it.
+1. Clone this repository. By default, this will install to the directory 'dyfi4'.
+    
+2. Run the install script by typing:
+    
+        `cd dyfi4; ./install.sh`
+        
+Note that miniconda is required for this step. See https://conda.io/miniconda.html to install.
 
-2. Edit the file 'setup_env.sh' and point the MINICONDA_DIR variable to the correct miniconda2 directory.
+3. (ADVANCED USERS ONLY) If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' and make sure the 'db' section has the correct information.  
 
-3. Edit the file 'env_vars.sh' and point the PYTHONPATH variable to this installation.
+4. Whenever you want to run DYFI, activate the virtual environment by typing:
 
-4. If you are using different event and entry datasets from the included DYFI dataset, edit the file 'tests/config.yml' amd make sure the 'db' section has the correct information.
+        `source activate dyfi`
 
-5. Run:
-./setup_env.sh
-This will, in addition to installing Python modules, put env_vars.sh
-in your miniconda environment so it will set PYTHONPATH whenever you
-run step 5.
+(You may wish to alias this to something shorter, like "dyfi".)
 
-(You will only need to run steps 1-4 once.)
-
-5. Whenever you want to run DYFI programs, activate the virtual environment by typing:
-source activate dyfi
-(You may wish to alias this to something shorter, like "dyfigo".)
-
+5. To make sure the installation is complete, go to the repo root directory and run 'pytest'.
 
 NEXT STEPS
-
-- Static map: time vs. responses
+==========
 - queue, incoming equivalents
 
 HISTORY
-V4.01: Rewrite modules for more modularity
+=======
+- V4.01: Rewrite modules for more modularity
+- V4.02: Complete coverage for core functions
+- V4.03: Remove queue/incoming for now; fork development to 'core'
+- V4.04.rc1: Release Candidate 1
+
 
 

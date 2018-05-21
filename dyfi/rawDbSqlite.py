@@ -3,7 +3,7 @@
 rawDbSqlite
 ===========
 
-.. note:: There are two versions of this module: :file:`rawDbSqlite.py` and :file:`rawDbMysql.py`. Change the header section of :file:`Db.py` to point to the correct implementation and make sure your :file:`db.json` file has the correct login information.
+.. note:: The database currently implemented in SQLite 3. Low-level database operations are separated into this module in case we wish to reimplement to MySQL (or another solution) in the future.
 
 
 """
@@ -11,22 +11,29 @@ rawDbSqlite
 import sqlite3
 import shutil
 import os
-import time
-
-intcolumns=['nresponses','newresponses']
-floatcolumns=['lat','lon','mag','depth',
-              'latitude','longitude',
-              'lat_offset','lon_offset','lat_span','lon_span']
 
 class RawDb:
     """
 
     :synopsis: Open a Sqlite connection.
-    :param str dbparams: The name of a Config object (see config.py).
+    :param dbparams: A configuration `dict`, usually the 'db' section of a :py:obj:`dyfi.config.Config` object.
 
     Handles raw database transactions.
 
+    .. data:: intcolumns
+
+        A list of database columns that must be converted to type `int`.
+
+    .. data:: floatcolumns
+
+        A list of database columns that must be converted to type `float`.
+
     """
+
+    intcolumns=['nresponses','newresponses']
+    floatcolumns=['lat','lon','mag','depth',
+        'latitude','longitude',
+        'lat_offset','lon_offset','lat_span','lon_span']
 
     def __init__(self,dbparams):
 
@@ -38,9 +45,10 @@ class RawDb:
     def getCursor(self,table):
         """
 
-        :synopsis: Create a Sqlite3 cursor to a particular table.
-        :param str table: A single table.
-        :param str dbparams: The name of a Config object (see config.py).
+        :synopsis: Create a Sqlite3 cursor to a particular table
+        :param str table: Name of a single table
+
+        This creates a Sqlite cursor, which is how Sqlite handles database transactions.
 
         """
 
@@ -106,21 +114,22 @@ class RawDb:
         :returns: list of rows returned by query
 
         No checking of table names is done at this step.
+        Automagically fills in the 'table' key of each item.
 
         """
 
         c=self.getCursor(table)
-        query='SELECT * FROM '+table
+        query='SELECT * FROM %s' % table
         if clause:
-            query+=' WHERE '+clause
+            query+=' WHERE %s' % clause
 
-        if isinstance(subs,str):
+        if not isinstance(subs,list):
             subs=[subs]
 
         try:
             c.execute(query,subs)
         except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
         results=[]
         for row in c:
@@ -133,9 +142,9 @@ class RawDb:
             for col,val in rowdict.items():
                 if val is None:
                     continue
-                if col in intcolumns:
+                if col in self.intcolumns:
                     rowdict[col]=int(val)
-                elif col in floatcolumns:
+                elif col in self.floatcolumns:
                     rowdict[col]=float(val)
 
             # Now make a list
@@ -149,15 +158,17 @@ class RawDb:
         return results
 
 
-    def updateRow(self,table,id,column,val,increment=False):
+    def updateRow(self,table,subid,column,val,increment=False):
         """
 
         :synopsis: Update a table row
         :param str table: table to be saved
-        :param str id: primary key value
+        :param str subid: primary key value
         :param str column: column to be updated
         :param str val: new value
         :returns: number of rows changed
+
+        This function is used to update a single row if the primary key is known (subid for extended tables, event ID for everything else.)
 
         """
 
@@ -173,7 +184,7 @@ class RawDb:
             # increment manually
 
             clause='%s = ?' % primaryKey
-            row=self.querySingleTable(table,clause,id)[0]
+            row=self.querySingleTable(table,clause,subid)[0]
             oldVal=row[column]
             if oldVal:
                 val+=oldVal
@@ -182,11 +193,11 @@ class RawDb:
         query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey
         try:
-            c.execute(query,[val,id])
+            c.execute(query,[val,subid])
             self.connectors[table].commit()
 
         except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
         return c.rowcount
 
@@ -194,25 +205,28 @@ class RawDb:
     def save(self,table,obj):
         """
 
-        :synopsis: Save an object to the specifed table
+        :synopsis: Save an object to the specified table
         :param str table: table to be saved
         :returns: list of rows changed
+
+        This saves an `Event` or `Entry` object to the database.
 
         """
 
         c=self.getCursor(table)
         columns=self.getColumns(table)
 
-        if isinstance(obj,dict):
-            objDict=obj
-        else:
-            objDict=obj.__dict__
+        isDict=isinstance(obj,dict)
 
         saveList=[]
         for column in columns:
-            val=None
-            if column in objDict:
-                val=objDict[column]
+            if isDict and column in obj:
+                val=obj[column]
+            elif not isDict and hasattr(obj,column):
+                val=getattr(obj,column)
+            else:
+                val=None
+
             saveList.append(val)
 
         query='INSERT OR REPLACE INTO '+table+' VALUES (%s)'
@@ -221,20 +235,22 @@ class RawDb:
         try:
             c.execute(query,saveList)
             self.connectors[table].commit()
+            return c.rowcount
 
-            if 'extended' in table:
-                return c.lastrowid
-            else:
-                return c.rowcount
-            
-        except sqlite3.OperationalError as e:
-            raise NameError('sqlite3 Operational error: '+str(e))
+        except (sqlite3.OperationalError,sqlite3.IntegrityError) as e:
+            raise RuntimeError('sqlite3 Operational error: '+str(e))
 
 
     def getColumns(self,table):
         """
 
-        :synopsis:
+        :synopsis: Read columns from a database table
+        :param str table: A database table to read
+        :returns: List of columns
+
+        This is used to get the list of columns in table, so that the save function can save a row properly.
+
+        This will also populate the `columns` attribute.
 
         """
 
@@ -243,7 +259,7 @@ class RawDb:
 
         # Cursor is saved, this won't open a duplicate cursor
         c=self.getCursor(table)
-        c.execute('SELECT * FROM '+table)
+        c.execute('SELECT * FROM %s' % table)
         columns=[tuple[0] for tuple in c.description]
         self.columns[table]=columns
 
@@ -251,6 +267,15 @@ class RawDb:
 
 
     def createTable(self,tablefile,table=None):
+        """
+
+        :synopsis: Create a database table from a template
+        :param str tablefile: The name of the table file
+
+        This creates a new table from a table template (the DYFI tables are implemented in Sqlite, one .sql file per table.) The template is a blank table file with the extension '.template' in the same directory as the other Sqlite tables.
+
+        """
+
 
         templatefile=tablefile+'.template'
         if 'extended' in tablefile:

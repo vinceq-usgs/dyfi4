@@ -1,7 +1,6 @@
 import json
 import geojson
 import datetime
-import time
 
 from .db import Db
 
@@ -9,8 +8,10 @@ class Event:
     """
 
     :synopsis: Class for handling Event objects
-    
-    This holds data about a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the data itself).
+    :param event: A :py:class:`dyfi.Event` object or event ID string
+    :param config: A :py:class:`dyfiConfig` object
+
+    This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the event data from the database).
 
     .. note::
         Access the data in this object with the keys in
@@ -25,39 +26,36 @@ class Event:
 
     A reference to the raw database output of the event data.
 
-    .. attribute:: duplicates
-
-    A list of duplicates for this event, if filled in by createFromContents
 """
 
-    columns=['eventid','region','source','mag','lat','lon','depth',
-             'eventdatetime','eventlocaltime','loc',
-             'nresponses','newresponses',
-             'max_intensity','code_version','event_version',
-             'createdtime','process_timestamp','orig_id','good_id']
+    columns=['eventid','mag','lat','lon','depth',
+             'region','source','mainshock','loc','nresponses',
+             'eventdatetime','createdtime','newresponses',
+             'run_flag','citydb','zipdb','ciim_version','code_version',
+             'process_timestamp','max_intensity','sent_email',
+             'event_version','orig_id','eventlocaltime',
+             'invisible','good_id']
 
+    def __init__(self,event,config=None):
 
-    def __init__(self,data,config=None):
-        self.db=None
         self.table='event'
-        self.duplicates=None
 
-        if isinstance(data,str):
-          evid=data
-          self.db=Db(config)
-          data=self.db.loadEvent(evid)
+        if isinstance(event,str):
+          evid=event
+          db=Db(config)
+          event=db.loadEvent(evid)
 
-        elif isinstance(data,dict):
-          evid=data['eventid']
+        elif isinstance(event,dict):
+          evid=event['eventid']
 
-        if not data:
+        if not event:
             raise RuntimeError('Cannot create Event with no data')
 
-        self.raw=data
+        self.raw=event
 
         for column in self.columns:
-            if column in data:
-                self.__dict__[column]=data[column]
+            val=event[column] if column in event else None
+            setattr(self,column,val)
 
 
     def toGeoJSON(self):
@@ -95,7 +93,7 @@ class Event:
     # Generic getattr method for parameters (no setattr)
 
     def __getattr__(self,name):
- 
+
         # Change text datetime to Datetime object suitable for time arithmetic
         if name=='eventDateTime':
             dTime=self.eventdatetime
@@ -104,7 +102,7 @@ class Event:
             dTime.replace(tzinfo=datetime.timezone.utc)
             return dTime
 
-        if name not in self.columns and name not in self.__dict__:
+        if name not in self.columns:
             raise ValueError('Event: Invalid column '+name)
 
 
@@ -115,69 +113,9 @@ class Event:
     def __repr__(self):
         rawlist=[]
         for column in self.columns:
-            if column in self.__dict__:
-                val=str(self.__dict__[column])
-                rawlist.append({column:val})
+            val=str(getattr(self,column))
+            rawlist.append({column:val})
 
         return json.dumps(rawlist)
 
-
-    @classmethod
-    def createFromContents(self,contents):
-        rawdata={'id':contents['id']}
-                
-        relevant=['place','time','mag','ids','net']
-        for key in relevant:
-            rawdata[key]=contents['properties'][key]
-
-        coords=['lon','lat','depth']
-        rawdata.update(zip(coords,contents['geometry']['coordinates']))
-
-        # TODO: Update event_version, code_version
-        rawdata['eventdatetime']=Db.epochToString(rawdata['time']/1000)
-        rawdata['createdtime']=Db.epochToString()
-
-        # Now turn raw values into table values
-
-        conversion={
-            'eventid':'id',
-            'loc':'place',
-            'source':'net',
-            'orig_id':'id'
-        }
-
-        converted={}
-        for key in self.columns:
-            if key in rawdata:
-                converted[key]=rawdata[key]
-            elif key in conversion:
-                converted[key]=rawdata[conversion[key]]
-            else:
-                converted[key]=None
-
-        event=Event(converted)
-
-        dups=Event.readDuplicatesFromContents(contents)
-        if dups:
-            event.duplicates=dups
-
-        return event
-
-
-    @classmethod
-    def readDuplicatesFromContents(self,contents):
-        if 'ids' in contents['properties']:
-            duptext=contents['properties']['ids']
-        else:
-            return
-      
-        dups=[]
-        goodid=contents['id']
-        for id in duptext.split(','):
-            if not id or id=='': continue
-            if id==goodid: continue
-            dups.append(id)
-
-        if dups:
-            return dups
 

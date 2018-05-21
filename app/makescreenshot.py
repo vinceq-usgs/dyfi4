@@ -8,7 +8,7 @@ Command line tool to create a .png static image from DYFI
 aggregated GeoJSON data.
 
 Usage:
-app/makescreenshot.py GeoJSON file --output file.png
+app/makescreenshot.py [GeoJSON file]
 This attempts to create an image file from a GeoJSON file.
 
 """
@@ -20,7 +20,7 @@ import sys
 
 parser=argparse.ArgumentParser(
     prog='app/makescreenshot.py',
-    description='Create static image .png files for a given event'
+    description='Create a static image .png file for a given event. The DYFI output must already exist; (run :obj:`rundyfi.py` first). The output is a PNG file (default `./screenshot.png`).'
 )
 parser.add_argument(
     'input',type=str,
@@ -28,7 +28,7 @@ parser.add_argument(
 )
 parser.add_argument(
     'output',type=str,nargs='?',default='screenshot.png',
-    help='output (default is screenshot.png)'
+    help='output filename'
 )
 parser.add_argument(
     '--configfile',action='store',default='./config.yml',

@@ -1,0 +1,6 @@
+# Run this to validate Sphinx API doctests
+#sphinx-apidoc -o docs . modules/
+cd ~/repos/dyfi4/docs
+make doctest
+echo "Done with validation."
+

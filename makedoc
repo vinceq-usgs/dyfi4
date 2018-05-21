@@ -1,0 +1,14 @@
+# Run this to update the Sphinx API docs
+sphinx-apidoc -o docs . modules/
+cd ~/repos/dyfi4/docs
+make doctest
+make html
+#make latex
+#make latexpdf
+cd ~/repos/manual-dyfi4/html
+git add .
+git commit -m "rebuilt docs"
+git push origin gh-pages
+cd ~/repos/dyfi4
+
+echo "Check https://vinceq-usgs.github.io/dyfi4/ for changes."

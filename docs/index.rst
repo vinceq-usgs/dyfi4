@@ -6,16 +6,19 @@
 USGS Did You Feel It? (DYFI) Manual
 ===================================
 
-Source code and documentation can be found at https://gitlab.cr.usgs.gov/vinceq/pydyfi
+Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
 
-Contents:
+Manual: https://vinceq-usgs.github.io/dyfi4/
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
    introduction.rst
    product-guide.rst
-   scientific-guide.rst
+   scientific-discussion.rst
    technical-guide.rst
    implementation-guide.rst
 
@@ -33,6 +36,8 @@ Commands and modules
    :maxdepth: 1
 
    dyfi
+   tests
+   validation
    
 Indices and tables
 ==================

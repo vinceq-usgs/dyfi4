@@ -3,22 +3,10 @@
 
 import pytest
 import shutil
-import os
 from argparse import Namespace
 
-testid='us10006u0q'
+testid='ci37511872'
 configfile='tests/testconfig.yml'
-
-def test_privatekey():
-    key=os.environ.get('SECRET_SERVER')
-    if key and key=='good':
-        return
-
-    if key:
-        raise RuntimeError('BAD SECRET')
-    else:
-        raise RuntimeError('NO SECRET')
-
 
 def test_run():
     from app import rundyfi
