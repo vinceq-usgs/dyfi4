@@ -8,7 +8,7 @@ The following diagram shows the flowchart for the creation of DYFI products. Obj
 
 .. image:: diagram_flowchart.svg
 
-.. note::
+.. warning::
 
     In the above diagrams, items shown in **red** contain or transfer personally identifiable information (PII). Care must be taken to make sure that data in these sections are properly handled.
 
@@ -19,9 +19,9 @@ Input streams
 Earthquake events
 .................
 
-TODO
+DYFI maintains its own database table of earthquake events. An external mechanism is required to populate this database and trigger the DYFI process after an earthquake. 
 
-The event data is described below.
+In the event table, each earthquake is described by a separate row. The event data is described below.
 
 =====================  =========================================================================
 Column                 Description
@@ -71,9 +71,15 @@ first event ID to be archived in case the event ID is manually changed.
 User responses
 .................
 
-TODO
+DYFI maintains its own database table of earthquake user responses. An external mechanism is required to populate this database and possibly trigger the DYFI process when a possible earthquake has occured. 
 
-The extended table data is described below.
+For one possible method of triggering DYFI without an earthquake notification, see the BETA project `DYFI Autolocator <https://github.com/vinceq-usgs/autolocator>`.
+
+.. warning:: 
+
+    User reponses have the possibility of containing PII (Personally Identifiable Information) data. In particular, the fields *name*, *street*, *phone*, *email*, and *comments* ask for PII data; but all user-filled fields have the potential of taking PII data. Make sure that this table, and data transfer mechanisms that access it, are secure.
+
+In the response table (called 'extended table' for historic reasons), each user response is described by a separate row. The response data is described below.
 
 =====================  =========================================================================
 Column                 Description
@@ -134,6 +140,8 @@ cityid                 obsolete
 =====================  =========================================================================
 
 All columns are Sqlite text fields unless indicated otherwise.
+
+* Columns marked **DYFI Felt Report** are populated from the online form.
 
 * *orig_id* is initially copied from *eventid*. For responses that were not originally attached to an event ("unassociated entries"), both fields would have the value "unknown". When this entry is associated to an event or updated to a different ID, this field will show the original value.
 

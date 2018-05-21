@@ -45,7 +45,7 @@ sqlite               Implements the DYFI database
 Additional dependencies
 -----------------------
 
-- PhantomJS <http://phantomjs.org/) renders maps into static images (PNG). Normally, the :file:`install.sh` script installs this via `conda`.
+- PhantomJS (http://phantomjs.org/) renders maps into static images (PNG). Normally, the :file:`install.sh` script installs this via `conda`.
 
 - Leaflet (http://leafletjs.com) is used to render maps from GeoJSON-formatted data. DYFI installs Leaflet locally in the `leaflet/inc` directory. You can update those Leaflet components manually or use a CDN for the latest version (see the commented portion of the `leaflet/viewer.html` file for an example of invoking Leaflet via CDN.)
 
@@ -68,7 +68,7 @@ The file has five sections:
 
   - *leaflet:* This points to the directory where Leaflet processing is done. See :obj:`Generation of map products`.
 
-- *executables:*
+- *executables:* This lists various external programs used by DYFI. The *screenshot* line is used to call `PhantomJS` (see :ref:`Generation of dynamic and static image maps`).
 
 - *products:* 
 
@@ -81,7 +81,7 @@ The DYFI database is currently implemented as a Sqlite3 database. A sample set o
 
 We recommend that the tables be placed in a directory such as */db/*. To change the database location, modify the settings for each database file in :file:`config.yml` file under *db:files*. Each table is a separate file.
 
-For details on the various database tables see :doc:`Technical Guide` under :doc:`Database operations`. 
+For details on the various database tables see :ref:`Input streams`. 
 
 Event table
 +++++++++++
@@ -125,11 +125,19 @@ DYFI uses PhantomJS to turn Leaflet-based maps into static images. This section 
 
 2. The :py:obj:`Map` class adds the event data (epicentral location and magnitude).
 
-3. The :py:obj:`Map.toImage` saves the GeoJSON data into a temporary file in the :file:`leaflet` directory.
+3. The :py:obj:`Map.toImage` saves the GeoJSON data into a temporary JavaScript file in the :file:`leaflet` directory. It also creates a temporary filename for the output (PNG) image.
 
-4. The file :file:`leaflet/viewer.html` is an HTML Leaflet file that loads the GeoJSON file and renders the map. By default, the open source `OpenStreetMaps` basemap is used.
+4. :py:obj:`Map.toImage` calls the script :file:`leaflet/capture.js` and the temporary datafile as arguments. 
 
-5. `PhantomJS` is run on the HTML page. This renders the HTML into a static PNG file.
+5. The :file:`leaflet/capture.js` script takes uses the file :file:`leaflet/viewer.html.template` as a template to create a temporary viewer HTML file. This HTML file will load the JavaScript data (step 3) directly as an inline script.
+
+6. :file:`leaflet/capture.js` calls `PhantomJS` on the viewer HTML and renders it into a static (PNG) image with the temporary output filename (step 3).
+
+7. :py:obj:`MaptoImage` moves the temporary output into the correct event ID's :file:`data` directory.
+
+.. note::
+
+    Rather than dynamically loading the event and response data, this method was chosen as the simplest, most robust way avoid CORS and other browser permission issues, and asynchronous loading problems with PhantomJS.
 
 Auxiliary processes
 --------------------
@@ -138,7 +146,7 @@ The following topics are beyond the scope this CORE manual because they describe
 
 - USGS Event Page integration
 
-- USGS Product Distribution Layer, or `PDL <https://usgs.github.io/pdl/>`
+- USGS Product Distribution Layer, or PDL (https://usgs.github.io/pdl/)
 
 - Event triggering
 

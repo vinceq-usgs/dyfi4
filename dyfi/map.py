@@ -102,7 +102,7 @@ class Map:
 
         leafletdir=config.directories['leaflet']
 
-        # This creates a data.js file in the leaflet directory which is just
+        # This creates a temporary JS file in ./leaflet which is just
         # a GeoJSON file but with VAR= to make it valid JavaScript.
         # This is a lot easier than dealing with browser CORS shenanigans.
 
