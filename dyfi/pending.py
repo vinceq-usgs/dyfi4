@@ -10,14 +10,8 @@ Foreach event:
 
 """
 
-import sys
-import argparse
-import os.path
-import time
-
 from .config import Config
 from .db import Db
-from .comcat import Comcat
 
 class Pending:
 
@@ -69,7 +63,6 @@ class Pending:
 
             # TODO: check duplicate entries and grab them
 
-            container=dyfiContainer(evid)
             db.resetNewResponses(evid)
             self.eventsRun+=1
 
@@ -86,6 +79,6 @@ class Pending:
             return
 
         event=self.events[0]
-        print('Priority is event %s with %i responses.' % 
+        print('Priority is event %s with %i responses.' %
             (event['eventid'],event['newresponses']))
 

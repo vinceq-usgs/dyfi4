@@ -5,14 +5,14 @@ TODO: Documentation
 
 */
 
-var fs = require('fs');
-var system = require('system');
+var fs = require("fs");
+var system = require("system");
 
 var args = system.args;
 if (args.length < 3) {
-    console.log('Usage: phantomjs capture.js data.js output.png');
-    console.log('data.js: file that contains event GeoJSON data');
-    console.log('output.png: output image file');
+    console.log("Usage: phantomjs capture.js data.js output.png");
+    console.log("data.js: file that contains event GeoJSON data");
+    console.log("output.png: output image file");
 
     phantom.exit();
 }
@@ -27,10 +27,10 @@ var tmpinput = "tmp.viewer." + system.pid + ".html";
 // easier to just make a temporary copy of the viewer.html that
 // reads a temporary data.js file
 
-var html = fs.read(template).replace('__DATAFILE__',input);
+var html = fs.read(template).replace("__DATAFILE__",input);
 
-console.log('Saving to ' + tmpinput);
-var f = fs.open(tmpinput,{mode:'w',charset:'UTF=8'});
+console.log("Saving to " + tmpinput);
+var f = fs.open(tmpinput,{mode:"w",charset:"UTF=8"});
 f.writeLine(html);
 f.close();
 
@@ -44,9 +44,9 @@ page.open(tmpinput,function() {
 
   page.viewportSize = { width: 612, height: 684 };
   //page.paperSize = { width: "612px", height: "684px", margin: "0px" };
-  //page.evaluate(function() { document.body.bgColor = 'white'; });
+  //page.evaluate(function() { document.body.bgColor = "white"; });
 
-  console.log('Now rendering to ' + output);
+  console.log("Now rendering to " + output);
   page.render(output);
 
   // If we make it to this point, delete the temporary file

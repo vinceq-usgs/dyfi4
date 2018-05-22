@@ -14,7 +14,7 @@ For each response:
   If event doesn't exist in table:
     Save stub in event table (invisible=1)
     Run getEvent.py (separate process)
-    
+
 
 """
 

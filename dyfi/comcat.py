@@ -6,7 +6,7 @@ class Comcat:
     SERVER = 'earthquake' #comcat server name
     URLBASE = 'https://[SERVER].usgs.gov/fdsnws/event/1/query?'.replace('[SERVER]',SERVER)
     ALLPRODURL = 'https://earthquake.usgs.gov/fdsnws/event/1/query?'
-    
+
     def __init__(self,query):
         
         url=Comcat.URLBASE+query+'&format=geojson'
@@ -15,7 +15,7 @@ class Comcat:
 
         try:
             contents=urllib.request.urlopen(url).read().decode('utf8')
-        except:
+        except urllib.error.URLError:
             contents=None
             
         self.contents=contents

@@ -31,7 +31,7 @@ parser.add_argument(
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Lock,Config,Db
+    from dyfi import Lock,Config
 
     config=Config(args.config)
     incomingDir=config.directories['incoming']
@@ -50,7 +50,7 @@ def main(args):
     for remote in remotes.split(','):
         remoteServer=template.format(server=remote)
         print('Checking remote',remoteServer)
-    
+
 
 if __name__=='__main__':
     args=parser.parse_args()

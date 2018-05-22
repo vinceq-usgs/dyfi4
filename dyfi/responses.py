@@ -5,14 +5,10 @@ Responses
 
 """
 
-import sys
-import argparse
 import os
 import shutil
-import time
 import subprocess
 import re
-import datetime
 
 from .config import Config
 from .db import Db
@@ -115,11 +111,11 @@ class Responses:
         server=server.format(server=remote)
         remoteDir=remoteDir.format(server=remote)
 
-        commands=[ssh,server,'ls','-1',remoteDir,'|','wc','-l'] 
+        commands=[ssh,server,'ls','-1',remoteDir,'|','wc','-l']
         if self.verbose:
             print('Command:\n',' '.join(commands))
         results=subprocess.run(commands,stdout=subprocess.PIPE)
-      
+
         count=int(results.stdout)
         return count
 
@@ -157,13 +153,9 @@ class Responses:
 
         return found
 
-    """
-
-    if checkEvid, get authoritative id for this eventid.
-    if different, change entry's eventid.
-    increment the latest eventid.
-
-    """
+    # if checkEvid, get authoritative id for this eventid.
+    # if different, change entry's eventid.
+    # increment the latest eventid.
 
     def processFile(self,file,checkEvid=True,save=True):
         entry=self.readFile(file)
@@ -197,7 +189,6 @@ class Responses:
                 return
 
         return entry
-
 
     def readFile(self,file):
         with open(file,'r') as f:
@@ -241,7 +232,7 @@ class Responses:
         # 3. Calculate user_cdi
         entry=Entry(data)
         entry.user_cdi=CdiCalculate(entry)
-        return entry 
+        return entry
 
 
     def removeFile(self,file):

@@ -12,7 +12,6 @@ A stub to Pending.py
 import sys
 import argparse
 import os.path
-import time
 
 parser=argparse.ArgumentParser(
     prog='app/queue.py',
