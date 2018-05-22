@@ -1,5 +1,6 @@
 .DS_Store
 .cache
+.pytest_cache
 dyfi/config.ini
 *.pyc
 */__pycache__

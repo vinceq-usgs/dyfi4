@@ -16,8 +16,13 @@ A collection of functions to compute and manipulate intensity. For details, see 
 import math
 from collections import OrderedDict
 
-cdiWeights={'felt':5,'motion':1,'reaction':1,'stand':2,
-            'shelf':5,'picture':2,'furniture':3,'damage':5}
+#cdiWeights={'felt':5,'motion':1,'reaction':1,'stand':2,
+#            'shelf':5,'picture':2,'furniture':3,'damage':5}
+
+cdiWeights=OrderedDict([
+    ('felt',5),('motion',1),('reaction',1),('stand',2),
+    ('shelf',5),('picture',2),('furniture',3),('damage',5)
+])
 
 cdiDamageValues=OrderedDict([
     (0,['_none']),
@@ -28,7 +33,7 @@ cdiDamageValues=OrderedDict([
     (3,['_move','_chim','_found','_collapse','_porch','_majormodernchim','_tiltedwall'])
     ])
 
-def calculate(entries):
+def calculate(entries,cwsOnly=False,fine=False,debug=False):
     """
 
     :synopsis: Calculate the intensity for one entry, or list of entries
@@ -45,72 +50,108 @@ def calculate(entries):
 
     """
 
-    # Make a list, if not already one
+    # Make this into a list, if not already one
     if not isinstance(entries,list):
         entries=[entries]
 
     totalByIndex={}
+    debugInfo={}
+    debugTotal=[]
+
     for index in cdiWeights:
         indexTotal=0
         indexCount=0
 
         for entry in entries:
-            if index=='damage' and 'd_text' in entry.__dict__:
-                val=getDamageFromText(entry.d_text)
 
-            elif index not in entry.__dict__:
-                val=None
+            #----------------------------------------------
+            # Special rules for 'damage' and 'other_felt'
+            #----------------------------------------------
+            if index=='damage':
+                val=getDamageFromText(entry)
+
+            elif index=='felt':
+                val=getFeltFromOther(entry)
+
             else:
-                val=entry.__dict__[index]
+                val=entry.cdiIndex(index)
+
+            # Store debugging information here
+            subid=entry.subid
+            if subid in debugInfo:
+                debugInfo[subid].append(val)
+            else:
+                debugInfo[subid]=[val]
 
             # Indices with no value are not counted.
             # They DO NOT have zero value!
             if val is None:
                  continue
 
-            # Values might have additional text. Ignore it.
-            if isinstance(val,str) and ' ' in val:
-                    val=val.split(' ')[0]
-
-            try:
-                val=float(val)
-            except ValueError:
-                continue
-
             indexTotal+=val
             indexCount+=1
 
-
+        infoText=''
         if indexCount:
             totalByIndex[index]=indexTotal/indexCount
+            infoText='%s/%s' % (totalByIndex[index],indexCount)
+
+        debugTotal.append(infoText)
 
     cws=0
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]
 
+    if cwsOnly:
+        returnVal=cws
+        if debug:
+            returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':returnVal,'cdi':returnVal}
 
-    if cws <= 0:
-        return 1
+        return returnVal
 
-    cdi=math.log(cws) * 3.3996 - 4.3781
-    if cdi < 2:
-        return 2
+    cdi=1
+    if cws<=0:
+        returnVal=1
 
-    return round(cdi,1)
+    else:
+        cdi=math.log(cws)*3.3996-4.3781
+        # This step is necessary for compatibility of DYFI3 and DYFI4 values
+        cdi=float('%.4f' % cdi)
+
+        if cdi<2:
+            cdi=2
+
+    if fine:
+        returnVal=cdi
+
+    else:
+        returnVal=round(cdi,1)
+
+    if debug:
+        returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':cdi,'cdi':returnVal}
+
+    return returnVal
 
 
-def getDamageFromText(d_text):
+def getDamageFromText(entry):
     """
 
-    :synopsis: Convert a damage string to a damage value.
-    :param str d_text: A damage string, see :py:data:`cdiDamageValues` for allowed values
+    :synopsis: Convert a damage string to a damage value
+    :param entry: An `Entry` object or `str`
     :returns: float
 
+    This function takes either an `Entry` object or an actual d_text string.
     Multiple damage strings (separated by whitespace) are allowed.
 
     """
 
-    if d_text is None:
+    if isinstance(entry,str):
+        d_text=entry
+
+    else:
+        d_text=entry.cdiIndex('d_text')
+
+    if not d_text:
         return None
 
     damageTokens=d_text.split()
@@ -119,7 +160,33 @@ def getDamageFromText(d_text):
         for dstring in dstrings:
             if dstring in damageTokens:
                 damage=val
-                continue
+                break
 
     return damage
+
+
+def getFeltFromOther(entry):
+    """
+
+    :synopsis: Return felt index value modified by other_felt
+    :param entry: An `Entry` object
+    :returns: float
+
+    Returns a modified 'felt' value when 'other_felt' is entered.
+
+    """
+
+    felt=entry.cdiIndex('felt')
+    other_felt=entry.cdiIndex('other_felt')
+
+    if not other_felt or other_felt<2:
+        return felt
+    if other_felt==2 and not felt:
+        return 0
+    if other_felt==2:
+        return 0.36
+    if other_felt==3:
+        return 0.72
+
+    return 1
 

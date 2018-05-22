@@ -8,28 +8,41 @@ Filter.py
 from geopy.distance import great_circle
 import math
 from . import ipes
+
 class Filter:
     """
 
         Returns a filter function
         Usage:
-        filter=Filter(event,config).filterFunction()
-        result=filter(entry)
 
-        result values:
+          (in dyfiContainer)
+
+          filter=Filter(event,config).filterFunction()
+          entries=Entries(event,config,filter)
+
+          (in Entries)
+
+          for location in locations.features:
+            result=filter(location)
+            if not bad:
+                # store this
+
+        Result values:
         null : good
         1 : greater than ipe threshold
         2 : greater than maxdist
 
     """
 
-    def __init__(self,event,config,ipe='aww2014wna'):
+    def __init__(self,event,config,ipe='aww2014ena'):
 
         self.event=event
         self.config=config.filter
 
         if ipe:
-            self.ipe=ipes.__dict__[ipe]
+            self.ipe=getattr(ipes,ipe)
+
+        print('Filter: Using IPE',ipe)
 
 
     def filterFunction(self):
@@ -50,9 +63,10 @@ class Filter:
             if edepth:
                 r=math.sqrt(r**2+edepth**2)
             return r
-        
-        
-        def func(entry):
+
+
+        # This is the function returned by filterFunction()
+        def func(entry,debug=False):
 
             # Get coordinates
             if 'properties' in entry and 'center' in entry['properties']:
@@ -64,27 +78,34 @@ class Filter:
                 print(entry)
                 raise ValueError('Cannot find coordinates')
 
-            # Check maximum distance
+            # Is this further than the maximum distance?
             r=dist(epicenter,loccoords,edepth)
+
             if r>config['maxdist']:
                 return 2
 
-            intensity=entry['properties']['intensity']
+            # If there are lots of responses, do not filter
+            if 'nresp_do_not_filter' in config and 'nresp' in entry['properties']:
+                threshold=config['nresp_do_not_filter']
+                nresp=entry['properties']['nresp']
+                if nresp>=threshold:
+                    return 0
+
             if self.ipe:
-                expectedInt=self.ipe(emag,r,fine=True)
 
-            # Check distance based on IPE
-            if expectedInt<config['int_low_threshold']:
-                return 1
+                # Is expected int at this dist < int_low_threshold?
+                expectedI=self.ipe(emag,r,fine=True)
+                if expectedI<config['int_low_threshold']:
+                    return 1
 
-            # Check max intensity based on IPE
-            if intensity:
-                if intensity>(expectedInt+config['int_diff_threshold']):
+                # Is this this intensity > exp_I + threshold?
+                ii=entry['properties']['intensityFine']
+                if ii>(expectedI+config['int_diff_threshold']):
                     return 1
 
             return
 
         return func
-        
+
 
 

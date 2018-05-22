@@ -42,7 +42,10 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',
     'sphinxarg.ext',
+    'sphinx.ext.doctest'
 ]
+
+doctest_test_doctest_blocks = 'true'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -62,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'USGS Did You Feel It? (DYFI)'
-copyright = '2016, Vince Quitoriano'
+copyright = '2018 USGS'
 author = 'Vince Quitoriano'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -93,7 +96,7 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '__pycache__']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '__pycache__', 'geojsontest']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -107,7 +110,7 @@ add_function_parentheses = True
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
 #
-add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.
@@ -132,7 +135,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'bizstyle'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -146,7 +149,7 @@ html_theme = 'bizstyle'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-html_title = 'DYFI v2.0 Manual'
+html_title = 'DYFI V4 Manual'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -183,7 +186,7 @@ html_static_path = ['_static']
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
 #
-# html_use_smartypants = True
+#html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #

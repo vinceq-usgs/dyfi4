@@ -1,16 +1,22 @@
+import datetime
 from .aggregate import aggregate
 from .db import Db
-import datetime
+from .entry import Entry
 
 class Entries():
     """
 
     :synopsis: Handle a collection of entries and aggregation.
-    :param list rawdata: optional list of raw data (e.g. table rows)
+    :param str evid: (optional) event ID
+    :param event: (optional) `Event` object
+    :param str startdatetime: (optional) string of format 'YYYY-MM-DD HH:MM:SS'
+    :param cdifilter: (optional) `filter` object for filtering data
+    :param list rawentries: (optional) list of raw data (e.g. table rows)
+    :param config: (optional) A `Config` object
+    :param bool load:
 
-    The Event object is necessary/useful because db.loadEntries
-    needs the object's event date attribute to calculate which
-    extended tables to search.
+    An Event object or startdatetime is necessary for db.loadEntries
+    to know which extended tables to search.
 
     .. data:: entries
 
@@ -18,8 +24,7 @@ class Entries():
 
     """
 
-    # TODO: Capability of handling raw entries instead of evid
-    def __init__(self,evid=None,event=None,filter=None,rawentries=None,config=None,load=True):
+    def __init__(self,evid=None,event=None,startdatetime=None,cdifilter=None,rawentries=None,config=None,load=True,loadSuspect=False):
 
         if evid:
             self.evid=evid
@@ -29,11 +34,11 @@ class Entries():
             raise RuntimeError('Entries: No evid or Event object specified')
 
         self.entries=[]
-        self.filter=filter
+        self.filter=cdifilter
 
         if rawentries==None and load==True:
             db=Db(config)
-            rawentries=db.loadEntries(evid=evid,event=event)
+            rawentries=db.loadEntries(evid=evid,event=event,startdatetime=startdatetime,loadSuspect=loadSuspect)
 
         count=0
         for row in rawentries:
@@ -45,30 +50,34 @@ class Entries():
             count+=1
 
 
-    def aggregate(self,name,force=False):
+    def aggregate(self,name,debug=False):
         """
 
         :synopsis: Aggregate the entry data in this object
         :param str name: The name of this aggregation
+        :param bool default: If true, store debugging info in the output
         :returns: A `GeoJSON` :py:obj:`FeatureCollection`
-        
-        A wrapper to :py:obj:`Aggregate.aggregate`. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
+
+        A wrapper to the :py:obj:`aggregate` module. The :py:attr:`name` indicates the kind of aggregation (e.g. 'geo_1km' or 'geo_10km').
 
         """
 
-        locations=aggregate(self.entries,name)
+        locations=aggregate(self.entries,name,debug)
+
         if not self.filter:
             return locations
 
         print('Entries: aggregate has',len(locations.features),'locations.')
         goodLocations=[]
         for location in locations.features:
+
             bad=self.filter(location)
+            # This value is not used now but maybe later for debugging
             if not bad:
-               goodLocations.append(location) 
+               goodLocations.append(location)
 
         locations.features=goodLocations
-        print('Entries: aggregate now has',len(locations.features),'locations.')
+        print('Entries: After filtering, aggregate now has',len(locations.features),'locations.')
         return locations
 
 
@@ -79,7 +88,7 @@ class Entries():
         :param str datatype: Usually 'time'
         :returns: A dict of times data
 
-        The return value is a dict with the following values:
+        Used to create the Time vs. Responses graph. The return value is a dict with the following values:
 
         =====    =============================================
         id       'numresp'
@@ -128,79 +137,5 @@ class Entries():
           text+=repr(entry)+'\n'
 
         text='Entries['+text[:-1]+']'
-        return text
-
-
-class Entry():
-    """
-
-    :synopsis: Class for handling user questionnaire responses
-    :param dict rawdata: raw data from one row of an extended table
-
-    .. warning::
-        An Entry object contains raw data and may have PII
-        or invalid location data. DO NOT EXPORT `Entry` OBJECTS!
-
-    .. note::
-        Access the data in this object with the keys in
-        `Entry.columns` as attributes,  e.g. `entries.eventid`
-        or `event.felt`.
-
-    .. data:: columns
-
-        A list of all the columns in the extended tables.
-
-    .. data:: cdicolumns
-
-        A subset of extended columns used for intensity calculation.
-
-    """
-
-    columns=[
-        'subid','eventid','orig_id','suspect',
-        'region','usertime','time_now',
-        'latitude','longitude','geo_source','zip','zip_4',
-        'city','admin_region','country',
-        'street','name','email','phone',
-        'situation','building','asleep',
-        'felt','other_felt','motion','duration','reaction',
-        'response','stand','sway','creak','shelf',
-        'picture','furniture','heavy_appliance','walls','slide_1_foot',
-        'd_text','damage','building_details','comments','user_cdi',
-        'city_latitude','city_longitude','city_population',
-        'zip_latitude','zip_longitude','location','tzoffset',
-        'confidence','version','citydb','cityid'
-    ]
-
-    cdicolumns=[
-        'subid','table','latitude','longitude','felt','other_felt',
-        'motion','reaction','stand','shelf','picture',
-        'furniture','damage'
-    ]
-
-    def __init__(self,rawdata):
-        self.table='extended'
-
-        for column in Entry.columns:
-            if column in rawdata.keys():
-                self.__dict__[column]=rawdata[column]
-            else:
-                self.__dict__[column]=None
-
-
-    def __str__(self):
-        text='[Entry: subid:%s, intensity:%s]' % (
-            self.subid,self.user_cdi)
-        return text
-
-
-    def __repr__(self):
-        text=''
-        for column in Entry.columns:
-            if self.__dict__[column]:
-                val=str(self.__dict__[column])
-                text=text+column+':'+val+','
-
-        text='Entry('+text[:-1]+')'
         return text
 

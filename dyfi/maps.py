@@ -65,7 +65,7 @@ class Map():
 
         self.rawdata=rawdata
         for column in rawdata:
-            self.__dict__[column]=rawdata[column]
+            setattr(self,column,rawdata[column])
 
     def __str__(self):
         text='Map %s %s "%s"' % (self.subid,self.mapid,self.name)

@@ -8,7 +8,7 @@ from .map import Map
 class Products:
     """
 
-    :synopsis: Handle the generation of all the products 
+    :synopsis: Handle the generation of all the products
     :param event: A :py:obj:`dyfi.event.Event` object
     :param entries: A :py:obj:`dyfi.entries.Entries` object
     :param config: A :py:obj:`dyfi.config.Config` object
@@ -38,7 +38,7 @@ class Products:
         :synopsis: Loop through all product types and create them
         :returns: how many products were created
 
-        The list of products and parameters in the :file:`product.yml` are used as parameters for the :py:meth:`create` method.
+        This uses the list of products and parameters in the :file:`product.yml`.
 
         """
 
@@ -54,7 +54,7 @@ class Products:
     def create(self,p):
         """
 
-        :synopsis: Create a :py:class:`Product` object and underlying thing
+        :synopsis: Create a :py:class:`Product` object and underlying product
         :param dict p: Set of parameters
         :returns: Number of products created
 
@@ -65,7 +65,7 @@ class Products:
         - format (geojson, png, json)
         - type (map or graph)
 
-        If the `dataset` parameter is specified (e.g. 'geo' or 'time'), that dataset will be computed. 
+        If the `dataset` parameter is specified (e.g. 'geo' or 'time'), that dataset will be computed.
 
         If the 'formatType'  is specified, the :py:class:`Product` initializer will create the product as well (see :py:meth:`Product.create`).
 
@@ -183,8 +183,6 @@ class Product:
 
         """
 
-        dir=self.dir
-
         name=self.name
         if not filename:
             filename='%s/%s.%s' % (self.dir,name,productFormat)
@@ -205,7 +203,7 @@ class Product:
         elif productFormat=='png':
             if hasattr(data,'toImage'):
 
-                os.makedirs(dir,exist_ok=True)
+                os.makedirs(self.dir,exist_ok=True)
                 data.toImage()
                 product='FILE'
 
@@ -213,8 +211,8 @@ class Product:
             raise RuntimeError('Cannot save '+self.name+' as format '+productFormat)
 
         if isinstance(product,str) and product!='FILE':
-            if dir:
-                os.makedirs(dir,exist_ok=True)
+            if self.dir:
+                os.makedirs(self.dir,exist_ok=True)
             with open(filename,'w') as f:
                 f.write(product)
 

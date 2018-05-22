@@ -7,11 +7,14 @@ import copy
 
 class Map:
     """
-        :synopsis: Collects data to create a static map
-        :param str filename: The filename to create
-        :param event: A :py:class:`dyfi.Event` object
-        :param dict mapparams: A dict of params
-        :param dict data: Aggregated data in `GeoJSON` format
+    :synopsis: Collects data to create a static map
+    :param str name: Name for the map
+    :param event: A :py:class:`dyfi.Event` object
+    :param data: Aggregated data in `GeoJSON` format
+    :param config: A :py:class:`dyfiConfig` object
+    :param str eventDir: (optional) event directory (default `data/[eventid]/`)
+
+    This handles the rendering of DYFI data (aggregated entries in GeoJSON format) into plottable data for `Leaflet`.
 
     """
 
@@ -51,7 +54,7 @@ class Map:
     def toGeoJSON(self,filename=None):
         """
 
-        :synopsis: Convert the map data into GeoJSON
+        :synopsis: Convert this map object into GeoJSON
         :param str filename: (optional) filename
         :returns: prettyprinted GeoJSON text
 
@@ -85,11 +88,11 @@ class Map:
         return Map.GeoJSONtoImage(self.data,outputfile,self.config)
 
     @staticmethod
-    def GeoJSONtoImage(input,outputfile,config):
+    def GeoJSONtoImage(inputdata,outputfile,config):
 
         """
         :synopsis: Create a static image from a GeoJSON file
-        :param input: The input GeoJSON file (str) or GeoJSON object
+        :param inputdata: The input GeoJSON file (str) or GeoJSON object
         :param str outputfile: The resulting PNG file
         :returns: The resulting output file
 
@@ -98,21 +101,16 @@ class Map:
         """
 
         leafletdir=config.directories['leaflet']
-        leafletdatafile='%s/data.js' % leafletdir
-        pngfile='%s/screenshot.png' % leafletdir
-        if os.path.isfile(pngfile):
-            os.remove(pngfile)
 
-        # This creates a data.js file in the leaflet directory which is just
+        # This creates a temporary JS file in ./leaflet which is just
         # a GeoJSON file but with VAR= to make it valid JavaScript.
         # This is a lot easier than dealing with browser CORS shenanigans.
 
-
-        if isinstance(input,str):
-            with open(input,'r') as jsonText:
+        if isinstance(inputdata,str):
+            with open(inputdata,'r') as jsonText:
                 outputtext=jsonText.read()
         else:
-            outputtext=json.dumps(input,sort_keys=True,indent=2)
+            outputtext=json.dumps(inputdata,sort_keys=True,indent=2)
 
         tmpfilename=None
         with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
@@ -122,12 +120,15 @@ class Map:
         if (not tmpfilename
             or not os.path.isfile(tmpfilename)
             or os.path.getsize(tmpfilename)<10):
+            print('WARNING: bad or missing temporary JSON file, removing.')
+            os.remove(tmpfilename)
             return
 
-        shutil.move(tmpfilename,leafletdatafile)
         command=config.executables['screenshot']
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
+        command.append(tmpfilename)
+        command.append(tmpfilename+'.png')
 
         with open(leafletdir+'/log.stdout.txt','wb') as logOut,open(leafletdir+'/log.stderr.txt','wb') as logErr:
 
@@ -139,9 +140,9 @@ class Map:
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
+            shutil.move(tmpfilename+'.png',outputfile)
             print('Map.GeoJSONtoImage: ...Done.')
-
-            shutil.copyfile(pngfile,outputfile)
+            os.remove(tmpfilename)
 
         return outputfile
 
