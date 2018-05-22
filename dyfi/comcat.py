@@ -8,7 +8,7 @@ class Comcat:
     ALLPRODURL = 'https://earthquake.usgs.gov/fdsnws/event/1/query?'
 
     def __init__(self,query):
-        
+
         url=Comcat.URLBASE+query+'&format=geojson'
         print('Requesting:')
         print(url)
