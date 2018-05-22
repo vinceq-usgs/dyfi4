@@ -92,7 +92,7 @@ def test_db():
   assert 'Operational error' in str(exception.value)
 
   testtable='extended_2015'
-  subid=3996577
+  subid=3996579
 
   assert rawdb.updateRow(testtable,subid,'comments','foo')==1
   row=rawdb.querySingleTable(testtable,'subid=?',subid)
@@ -182,7 +182,7 @@ def test_dbentries():
     entries=db.loadEntries(evid=testid,table='1999,2000')
   assert 'no such table' in str(exception.value)
 
-  querytext='suspect is not null or suspect=0'
+  querytext='suspect is null or suspect=0'
   entries1=db.loadEntries(table='2015',querytext=querytext)
   entries2=db.loadEntries(table='2016',querytext=querytext)
   entries3=db.loadEntries(table='2015,2016',querytext=querytext)
@@ -192,6 +192,7 @@ def test_dbentries():
   assert e1>=2017 # This might change from testing
   assert e2>=7
   assert len(entries3)==len(entries4)
+  assert e1+e2==len(entries3)
 
   # Test loading entries by event object
   event=Event(db.loadEvent(testid))
