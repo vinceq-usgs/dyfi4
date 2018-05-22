@@ -33,4 +33,5 @@ setup_env.sh.disabled
 log.*
 tests/db/*
 movie/*.apng
+event.db
 
