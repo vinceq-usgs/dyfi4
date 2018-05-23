@@ -20,15 +20,6 @@ directories:
     data: data
     leaflet: leaflet
 
-# Using chrome headless on Travis
-#executables:
-#    screenshot: 
-#      - google-chrome-stable
-#      - --headless
-#      - --disable-gpu
-#      - --screenshot
-#      - file://__ABSPATH__/viewer.html 
-
 # Using phantomjs on Travis
 executables:
     screenshot: 
