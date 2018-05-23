@@ -12,3 +12,5 @@ from .map import Map
 from .graph import Graph
 from .contents import Contents
 from .rawDbSqlite import RawDb
+
+from .lock import Lock

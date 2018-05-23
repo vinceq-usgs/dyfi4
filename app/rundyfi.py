@@ -35,12 +35,13 @@ parser.add_argument(
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import DyfiContainer,Contents
+    from dyfi import DyfiContainer,Contents,Lock
 
     print('--------------------')
-    print('Starting dyfi.py: ',time.asctime(time.localtime()))
+    print('Starting rundyfi.py: ',time.asctime(time.localtime()))
 
     evid=args.evid
+    Lock('rundyfi.'+evid)
 
     # TODO: Add directives like --create, --redo, --push
     container=DyfiContainer(evid)
