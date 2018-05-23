@@ -2,12 +2,6 @@
 # Executables and tests must be run in the package root directory
 # Hence data directories, databases, etc. should be specified from package root
 
-mail:
-    to: alerts@server.gov
-    operator: operator@server.gov
-    smtp: smtp.server.gov
-    mailbin: /usr/bin/mail
-
 db:
     # type is either mysql or sqlite3
     type: sqlite3
@@ -19,21 +13,7 @@ db:
 directories:        
     data: data
     leaflet: leaflet
-    incoming: data/incoming
-    badincoming: data/badincoming
 
-# Use google chrome headless
-#executables:
-#    screenshot: 
-      # Use this for Mac; alias does not work for subprocess.run
-      #- /Applications/Google Chrome.app/Contents/MacOS/Google Chrome  
-      #- --headless
-      #- --disable-gpu
-      #- --screenshot
-      #- file://__ABSPATH__/viewer.html 
-      #- file://__ABSPATH__/capture.js
-
-# Use phantomjs
 executables:
     screenshot: 
       - phantomjs
@@ -45,15 +25,8 @@ products:
     file: lib/products.yml
 
 filter:
-    maxdist: 1000
-    resps_do_not_filter: 50
-    int_diff_threshold: 3
+    maxdist: 3000
+    nresp_do_not_filter: 3
+    int_diff_threshold: 2
     int_low_threshold: 0
 
-responses:
-    serverTemplate: vinceq@{server}-acquisition.cr.usgs.gov
-    remoteDir: /data/write/{server}/earthquake-dyfi-response/incoming.vmdyfit
-    remotes: dev01,dev02,prod01,prod02
-    #serverTemplate: localhost
-    #remoteDir: tests/incoming
-    #remotes: test
