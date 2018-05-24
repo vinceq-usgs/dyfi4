@@ -128,7 +128,7 @@ class Event:
     @classmethod
     def createFromContents(self,contents):
         rawdata={'id':contents['id']}
-                
+
         relevant=['place','time','mag','ids','net']
         for key in relevant:
             rawdata[key]=contents['properties'][key]
@@ -173,13 +173,13 @@ class Event:
             duptext=contents['properties']['ids']
         else:
             return
-      
+
         dups=[]
         goodid=contents['id']
-        for id in duptext.split(','):
-            if not id or id=='': continue
-            if id==goodid: continue
-            dups.append(id)
+        for tryid in duptext.split(','):
+            if not tryid or tryid=='': continue
+            if tryid==goodid: continue
+            dups.append(tryid)
 
         if dups:
             return dups
