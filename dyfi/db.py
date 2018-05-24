@@ -117,30 +117,6 @@ class Db:
         return results
 
 
-    def loadMaps(self,evid):
-        """
-
-        :synopsis: Read database for a list of maps for an event ID
-        :param str evid: event ID, e.g. 'us1000abcd'
-        :returns: list of rows suitable for input to a :py:obj:`Maps` instance
-
-        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.
-
-        Each item in the return list is a dict with keys
-        being columns to the `maps` table.
-
-        """
-
-        table='maps'
-        clause='eventid=?'
-        results=self.rawdb.query(table,clause,evid)
-        if not results:
-            return
-
-        # We expect multiple rows
-        return results
-
-
     def loadEntries(self,evid=None,event=None,
                     table=None,startdatetime=None,
                     querytext=None,loadSuspect=False):

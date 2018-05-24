@@ -3,8 +3,9 @@
 
 run from cron
 
-Usage: app/queue.py --check --config [configfile]
+Usage: app/queueTriggers.py --check --config [configfile]
 
+This program runs through the event table and finds events to run.
 A stub to Pending.py
 
 """
@@ -14,7 +15,7 @@ import argparse
 import os.path
 
 parser=argparse.ArgumentParser(
-    prog='app/queue.py',
+    prog='app/queueTriggers.py',
     description='Check for events with pending responses and run them'
 )
 parser.add_argument(
