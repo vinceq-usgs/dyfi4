@@ -136,7 +136,7 @@ class Map:
             print(' '.join(command))
 
             try:
-                subprocess.call(command,cwd=leafletdir,stdout=logOut,stderr=logErr,timeout=30)
+                subprocess.call(command,cwd=leafletdir,stdout=logOut,stderr=logErr,timeout=60)
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
