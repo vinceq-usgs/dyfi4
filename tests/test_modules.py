@@ -22,7 +22,6 @@ def test_config():
     # test databases should exist
     assert conf.db['type']=='sqlite3' or conf.db['type']=='mysql'
     assert os.path.isfile(conf.db['files']['event'])
-    assert os.path.isfile(conf.db['files']['maps'])
     assert '__EXTENDED__' in conf.db['files']['extended']
 
     assert 'mailbin' in conf.mail
@@ -144,7 +143,7 @@ def test_event():
   assert geo.properties['mag']==3.0
 
   # Test attributes
-  attr=event.process_timestamp
+  attr=event.eventdatetime
   assert isinstance(attr,str)
   assert testid in repr(event)
 
@@ -321,22 +320,6 @@ def test_entries():
       single.latitude='badvalue'
       aggregate.getUtmForEntry(single,'1km')
   assert 'could not convert string' in str(exception.value)
-
-
-def test_maps():
-    from dyfi import Config,Db,Maps
-
-    db=Db(Config(configfile))
-    maps=Maps(db.loadMaps(testid))
-    assert len(maps.maplist)>0
-
-    for thismap in maps.maplist.values():
-        assert thismap.eventid==testid
-        assert 'Map' in str(thismap)
-
-    # Test an event with no maps entry
-    maps=Maps(db.loadMaps('blank'))
-    assert maps.maplist=={}
 
 
 def test_products():
