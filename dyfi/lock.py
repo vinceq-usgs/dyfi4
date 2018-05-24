@@ -4,11 +4,9 @@ Simple lockfiles using flock
 Allows processes to run in crontab without worrying about multiple instances
 
 Usage:
-try:
-    Lock('program_name',flagDir=['optional directory'])
+Lock('program_name',flagDir=['optional directory']):
 
-except:
-    exit()
+[will throw exception if failed]
 
 """
 
@@ -26,15 +24,10 @@ class Lock:
 
         os.makedirs(flagDir,exist_ok=True)
 
-        try:
-            self.f=open(self.lockfile,'wb')
-            fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
-            atexit.register(self.removeLock)
-            print('Lock: creating lock "%s"' % self.name)
-
-        except:
-            print('Lock: Could not lock "%s", stopping.' % self.name)
-            exit()
+        self.f=open(self.lockfile,'wb')
+        fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
+        atexit.register(self.removeLock)
+        print('Lock: creating lock "%s"' % self.name)
 
 
     def removeLock(self):

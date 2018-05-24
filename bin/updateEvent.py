@@ -16,7 +16,7 @@ import urllib.request
 import subprocess
 
 # Global database handler
-global DB
+DB=None
 
 parser=argparse.ArgumentParser(
     prog='app/readEvent.py',
@@ -81,8 +81,8 @@ class ComcatEvent:
         if contents:
             try:
                 contents=json.loads(contents)
-            except:
-                print('Possible malformed contents from fdsnws')
+            except json.JSONDecodeError as e:
+                print('Possible malformed contents: '+e.msg)
                 return
 
         self.contents=contents
@@ -164,7 +164,7 @@ def main(args):
 
     if args.check:
         print('Stopping.')
-        exit() 
+        exit()
 
     print('Saving to event table.')
     DB=Db(Config(args.configfile))

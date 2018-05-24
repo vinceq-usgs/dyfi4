@@ -219,7 +219,7 @@ class RawDb:
         This saves an `Event` or `Entry` object to the database.
 
         """
-        
+
         if not self.validateTable(table):
             raise ValueError('Invalid table '+table)
 
