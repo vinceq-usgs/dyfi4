@@ -59,10 +59,10 @@ def main(args):
             proc=subprocess.Popen(command,stdout=subprocess.PIPE)
             results=proc.stdout.read()
 
-            # Remove one for 'total' line 
+            # Remove one for 'total' line
             num=len(results.splitlines())-1
             print(remoteServer,'has',num,'responses.')
-        
+
         else:
             remove='' if args.nodelete else '--remove-sent-files'
             remoteCommand=resp['remoteGet'].format(
