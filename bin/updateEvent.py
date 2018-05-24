@@ -1,8 +1,10 @@
 #! /usr/bin/env python
 
 """
-readEvent.py
+updateEvent.py
 ============
+
+This will update or create an event from ComCat or a file
 
 """
 
@@ -10,10 +12,15 @@ import os
 import sys
 import json
 import argparse
+import urllib.request
+import subprocess
+
+# Global database handler
+global DB
 
 parser=argparse.ArgumentParser(
     prog='app/readEvent.py',
-    description='Read event data from USGS'
+    description='Read event data from USGS ComCat'
 )
 parser.add_argument(
     'evid',type=str,
@@ -28,19 +35,99 @@ parser.add_argument(
     help='Print raw feed and exit'
 )
 parser.add_argument(
-    '--save',action='store_true',
-    help='Save to database'
+    '--check',action='store_true',default=False,
+    help='Check only but no database write'
+)
+parser.add_argument(
+    '--trigger',action='store_true',default=False,
+    help='Trigger this event'
 )
 parser.add_argument(
     '--configfile',action='store',default='./config.yml',
     help='Specify config file'
 )
 
+class Comcat:
+
+    SERVER = 'earthquake' #comcat server name
+    URLBASE = 'https://[SERVER].usgs.gov/fdsnws/event/1/query?'.replace('[SERVER]',SERVER)
+    ALLPRODURL = 'https://earthquake.usgs.gov/fdsnws/event/1/query?'
+    TIMEOUT = 30;
+
+    def __init__(self,query):
+
+        url=self.URLBASE+query+'&format=geojson'
+        print('Requesting:',url)
+
+        try:
+            contents=urllib.request.urlopen(url,timeout=self.TIMEOUT).read().decode('utf8')
+
+        except urllib.error.URLError:
+            contents=None
+
+        self.contents=contents
+
+
+class ComcatEvent:
+
+    QUERY='format=geojson&includesuperseded=[SUPERCEDED]&eventid=[EVENTID]'
+
+    def __init__(self,evid,includeSuperseded=False):
+        query=self.QUERY.replace('[EVENTID]',evid)
+        superseded='true' if includeSuperseded else 'false'
+        query=query.replace('[SUPERCEDED]',superseded)
+
+        contents=Comcat(query).contents
+        if contents:
+            try:
+                contents=json.loads(contents)
+            except:
+                print('Possible malformed contents from fdsnws')
+                return
+
+        self.contents=contents
+
+#####
+#
+# Functions to handle duplicates
+#
+#####
+
+def createStubEvent(data):
+    global DB
+
+    if 'eventid' not in data:
+        raise ValueError('Cannot create event without evid')
+
+    print('Db: Creating stub event for',data['eventid'])
+    results=DB.rawdb.save('event',data)
+    return results
+
+
+def saveDuplicates(goodid,dups):
+    global DB
+
+    for dupid in dups:
+
+        dupevent=DB.loadEvent(dupid)
+        if not dupevent:
+            stub={'eventid':dupid,'good_id':goodid}
+            createStubEvent(stub)
+            continue
+
+        if 'good_id' in dupevent and dupevent['good_id']!=goodid:
+            print('Db: Updating goodid for',dupid)
+            DB.rawdb.updateRow('event',dupid,'good_id',goodid)
+
+        print('TODO: Still need to grab newresponses')
+        continue
+
 
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Config,ComcatEvent,Event,Db
+    from dyfi import Config,Event,Db
+    global DB
 
     evid=args.evid
 
@@ -56,35 +143,52 @@ def main(args):
         print(json.dumps(contents,indent=2))
         exit()
 
-    event=Event.createFromContents(contents)
-    if not event:
+    if not contents:
         print('No data found.')
         exit()
 
+    event=Event.createFromContents(contents)
+    if not event:
+        print('Could not read raw contents.')
+        exit()
+
     if event.eventid!=evid:
+        print('WARNING! WARNING! WARNING!')
         print('Event ID changed from %s to %s' % (evid,event.eventid))
+        print('WARNING! WARNING! WARNING!')
         evid=event.eventid
 
-    print('Event data:')
-    print(event)
+    print('Event data:',event)
+    if event.duplicates:
+        print('Duplicates:',event.duplicates)
 
-    if args.save:
-        print('Saving to event table.')
-        db=Db(Config(args.configfile))
-        # TODO: Don't clobber newresponses
-        saved=db.save(event)
+    if args.check:
+        print('Stopping.')
+        exit() 
 
-        if saved:
-            print('Saved',saved,'in database.')
-        else:
-            print('Warning: problem saving this event.')
+    print('Saving to event table.')
+    DB=Db(Config(args.configfile))
+    # TODO: Don't clobber newresponses
+    saved=DB.save(event)
 
-        print('Dups:',event.duplicates)
-        if event.duplicates:
-            db.saveDuplicates(evid,event.duplicates)
+    if saved:
+        print('Saved',saved,'in database.')
+    else:
+        print('Warning: problem saving this event, stopping.')
+        exit()
+
+    if event.duplicates:
+        saveDuplicates(evid,event.duplicates)
+
+    if not args.trigger:
+        print('Not running event.')
+        exit()
+
+    print('Running event.')
+    subprocess.run(['app/rundyfi.py',evid])
 
     print('Done with',evid)
-
+    exit()
 
 if __name__=='__main__':
     args=parser.parse_args()

@@ -10,6 +10,7 @@ getEntries.py
 import os
 import sys
 import argparse
+import subprocess
 
 parser=argparse.ArgumentParser(
     prog='app/getEntries.py',
@@ -20,39 +21,68 @@ parser.add_argument(
     help='Check servers instead of processing'
 )
 parser.add_argument(
-    '--nodelete',action='store_true',default=True,
+    '--nodelete',action='store_true',default=False,
     help='Keep remote responses (for testing only)'
 )
 parser.add_argument(
-    '--config',action='store',default='./config.yml',
+    '--config',action='store',default='bin/config.yml',
     help='Specify config file'
 )
+
 
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
     from dyfi import Lock,Config
 
-    config=Config(args.config)
-    incomingDir=config.directories['incoming']
-
     Lock('getEntries')
+
+    config=Config(args.config)
+    resp=config.responses
+    incomingDir=config.directories['incoming']
 
     if not os.path.isdir(incomingDir):
         os.makedirs(incomingDir,exist_ok=True)
 
-    if args.check:
-        exit()
+    # This architecture is specific to the USGS Earthquake Pages server.
 
-    template=config.responses['serverTemplate']
-    remotes=config.responses['remotes']
-    print('Got remotes:',remotes)
-    for remote in remotes.split(','):
-        remoteServer=template.format(server=remote)
-        print('Checking remote',remoteServer)
+    for remote in resp['servers']:
+        remoteServer=remote['server']
+        remoteDir=remote['dir']
+
+        if args.check:
+            remoteCommand=resp['remoteCheck'].format(
+                server=remoteServer,
+                dir=remoteDir)
+
+            command=remoteCommand.split()
+            proc=subprocess.Popen(command,stdout=subprocess.PIPE)
+            results=proc.stdout.read()
+
+            # Remove one for 'total' line 
+            num=len(results.splitlines())-1
+            print(remoteServer,'has',num,'responses.')
+        
+        else:
+            remove='' if args.nodelete else '--remove-sent-files'
+            remoteCommand=resp['remoteGet'].format(
+                remove=remove,
+                server=remoteServer,
+                dir=remoteDir,
+                destination=incomingDir)
+
+            print(remoteCommand)
+            command=remoteCommand.split()
+            proc=subprocess.Popen(command,stdout=subprocess.PIPE)
+            results=proc.stdout.read()
 
 
 if __name__=='__main__':
     args=parser.parse_args()
+    if 0:
+        print('DEBUG')
+        args.nodelete=True
+        args.check=True
+
     main(args)
 
