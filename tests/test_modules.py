@@ -82,9 +82,9 @@ def test_db():
 
   # Test RawDb
 
-  with pytest.raises(NameError) as exception:
+  with pytest.raises(ValueError) as exception:
     rawdb.querySingleTable('badtable','suspect=1')
-  assert 'getCursor could not find table' in str(exception.value)
+  assert 'Invalid table' in str(exception.value)
 
   with pytest.raises(RuntimeError) as exception:
     rawdb.querySingleTable('event','invalid command')

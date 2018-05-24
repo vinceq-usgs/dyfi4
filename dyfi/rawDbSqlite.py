@@ -11,6 +11,7 @@ rawDbSqlite
 import sqlite3
 import shutil
 import os
+import re
 
 class RawDb:
     """
@@ -118,6 +119,9 @@ class RawDb:
 
         """
 
+        if not self.validateTable(table):
+            raise ValueError('Invalid table '+table)
+
         c=self.getCursor(table)
         query='SELECT * FROM %s' % table
         if clause:
@@ -172,6 +176,9 @@ class RawDb:
 
         """
 
+        if not self.validateTable(table):
+            raise ValueError('Invalid table '+table)
+
         c=self.getCursor(table)
         if 'extended' in table:
             primaryKey='subid'
@@ -212,6 +219,9 @@ class RawDb:
         This saves an `Event` or `Entry` object to the database.
 
         """
+        
+        if not self.validateTable(table):
+            raise ValueError('Invalid table '+table)
 
         c=self.getCursor(table)
         columns=self.getColumns(table)
@@ -254,6 +264,9 @@ class RawDb:
 
         """
 
+        if not self.validateTable(table):
+            raise ValueError('Invalid table '+table)
+
         if table in self.columns:
             return self.columns[table]
 
@@ -276,6 +289,8 @@ class RawDb:
 
         """
 
+        if table and not self.validateTable(table):
+            raise ValueError('Invalid table '+table)
 
         templatefile=tablefile+'.template'
         if 'extended' in tablefile:
@@ -294,4 +309,15 @@ class RawDb:
             c.execute('ALTER TABLE extended RENAME TO '+table)
             connector.commit()
 
+    @staticmethod
+    def validateTable(table):
+
+        if table=='event':
+            return True
+        if table=='extended_pre':
+            return True
+        if re.search('^extended_\d{4}$',table):
+            return True
+
+        return False
 
