@@ -25,7 +25,7 @@ parser.add_argument(
     help='Keep remote responses (for testing only)'
 )
 parser.add_argument(
-    '--config',action='store',default='bin/config.yml',
+    '--config',action='store',default='bin/localconfig.yml',
     help='Specify config file'
 )
 
