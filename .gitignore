@@ -34,5 +34,5 @@ log.*
 tests/db/*
 movie/*.apng
 event.db
-bin/config.yml
+bin/localconfig.yml
 
