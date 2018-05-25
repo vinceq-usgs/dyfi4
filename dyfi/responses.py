@@ -190,7 +190,9 @@ class Responses:
 
         return entry
 
-    def readFile(self,file):
+
+    @staticmethod
+    def readFile(file):
         with open(file,'r') as f:
             raw=f.read()
 
