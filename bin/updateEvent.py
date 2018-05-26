@@ -104,22 +104,36 @@ def createStubEvent(data):
     return results
 
 
-def saveDuplicates(goodid,dups):
+def handleDuplicates(goodid,dups):
     global DB
 
     for dupid in dups:
+        dupevent=Event(dupid,missing_ok=True)
 
-        dupevent=DB.loadEvent(dupid)
+        # If the dup event doesn't yet exist, create a stub
+        # to warn future entries where to go
+
         if not dupevent:
-            stub={'eventid':dupid,'good_id':goodid}
-            createStubEvent(stub)
+            DB.createStubEvent(dupid,{'good_id':goodid})
             continue
 
         if 'good_id' in dupevent and dupevent['good_id']!=goodid:
             print('Db: Updating goodid for',dupid)
             DB.rawdb.updateRow('event',dupid,'good_id',goodid)
 
-        print('TODO: Still need to grab newresponses')
+
+        nMoved=0
+
+        print('TODO: Still need to grab newresponses from',dupid)
+        # entriesToMove=<all entries with eventid=dupid>
+        # foreach entry in entriesToMove: 
+        #     DB.rawdb.updateRow(table,subid,'eventid',goodid
+        #     movedentries++
+        
+        if nMoved: 
+            print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
+            DB.addNewresponse(goodid,movedentries)
+
         continue
 
 
@@ -178,7 +192,7 @@ def main(args):
         exit()
 
     if event.duplicates:
-        saveDuplicates(evid,event.duplicates)
+        handleDuplicates(evid,event.duplicates)
 
     if not args.trigger:
         print('Not running event.')

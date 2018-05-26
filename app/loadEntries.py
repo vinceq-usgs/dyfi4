@@ -70,7 +70,7 @@ def main(args):
         count+=1 
         print('Processing',file)
         # This will save file and increment newresponses
-        entry=incoming.processFile(file)
+        entry=incoming.saveFile(file)
 
         if not entry:
             print('Ignoring file',file)

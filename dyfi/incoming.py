@@ -89,7 +89,7 @@ class Incoming:
         return files
 
 
-    def processFile(self,file):
+    def saveFile(self,file):
 
         entry=self.readFile(file)
         if not entry:
@@ -100,8 +100,8 @@ class Incoming:
 
         event=Event(evid,config=self.config,missing_ok=True)
 
-        # This checks if the event has an updated good_id column. 
-        # If it does, change this entry's evid to the correct one.
+        # Does the associated event exist and have a different good_id?
+        # Then move this evid to the correct one.
 
         if event.good_id and evid!=event.good_id:
             goodid=event.good_id
@@ -110,21 +110,17 @@ class Incoming:
             entry.eventid=goodid
 
         # Now save
-
         subid=db.save(entry)
-
         if not subid:
-            print('WARNING: Incoming.processFile could not save',file,'to database')
+            print('WARNING: Incoming.saveFile could not save',file)
             return None
 
-
-        print('Saved to subid',subid)
         entry.subid=subid
 
         # Lastly, increment the correct row in the event table
-        event.incrementNewresponses()
+        db.addNewresponse(evid)
 
-        return event
+        return entry
 
 
     def readFile(self,file):
@@ -170,7 +166,7 @@ class Incoming:
 
         # 2. Make sure time_now exists
         if 'time_now' not in data or not data['time_now']:
-            print('WARNING: Incoming.processFile found no timestamp for',file)
+            print('WARNING: Incoming.readFile found no timestamp for',file)
             return
         data['time_now']=Db.epochToString(int(data['time_now']))
 

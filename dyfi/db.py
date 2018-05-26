@@ -332,4 +332,30 @@ class Db:
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 
+    def createStubEvent(evid,data):
+
+       event=self.loadEvent(evid,missing_ok=True)
+       if event:
+           raise RuntimeError('db.createStubEvent attempting to create stub for existing event')
+           return None
+
+       stub={'table':event,'eventid':evid}
+       if data:
+           for k,v in data:
+               stub[k]=v
+       self.save(stub)
+           
+
+    def addNewresponse(self,evid,increment=1):
+
+        # This will increment the newresponses column of an event.
+        # If the event does not exist, a stub will be created
+
+        event=self.loadEvent(evid)
+        if not event:
+            return self.createStubEvent(evid,{'invisible':1,'newresponses':increment})
+                        
+        newresponses=event['newresponses'] or 0
+        newresponses+=increment
+        return self.save(event)
 

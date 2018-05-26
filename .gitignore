@@ -30,6 +30,8 @@ tests/data/*.png
 testdyfi
 screenshot.png
 setup_env.sh.disabled
+*.log
+*.err
 log.*
 tests/db/*
 movie/*.apng
