@@ -335,8 +335,8 @@ class Db:
     def createStubEvent(evid,data):
 
        event=self.loadEvent(evid,missing_ok=True)
-       if event:
-           raise RuntimeError('db.createStubEvent attempting to create stub for existing event')
+       if event or evid=='unknown':
+           raise RuntimeError('db.createStubEvent got existing event or "unknown"')
            return None
 
        stub={'table':event,'eventid':evid}

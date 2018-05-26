@@ -90,24 +90,35 @@ class Incoming:
 
 
     def saveFile(self,file):
+        """
 
-        entry=self.readFile(file)
+        1. Parse data
+        2. Check if event exists and has a different good_id
+           (if so, correct this entry's evid)
+        3. Save entry
+        4. Increment event newresponses
+
+        """
+        if isinstance(file,dict):
+            entry=file 
+        else:
+           entry=self.readFile(file)
+
         if not entry:
             return
-
         evid=entry.eventid
         db=self.db
 
-        event=Event(evid,config=self.config,missing_ok=True)
+        if evid!='unknown':
+            event=Event(evid,config=self.config,missing_ok=True)
 
-        # Does the associated event exist and have a different good_id?
-        # Then move this evid to the correct one.
-
-        if event.good_id and evid!=event.good_id:
-            goodid=event.good_id
-            print('WARNING: switching evid from',evid,'to',goodid)
-            evid=goodid
-            entry.eventid=goodid
+            # Does the associated event exist and have a different good_id?
+            # Then move this evid to the correct one.
+            if event.good_id and evid!=event.good_id:
+                goodid=event.good_id
+                print('WARNING: switching evid from',evid,'to',goodid)
+                evid=goodid
+                entry.eventid=goodid
 
         # Now save
         subid=db.save(entry)
@@ -118,7 +129,8 @@ class Incoming:
         entry.subid=subid
 
         # Lastly, increment the correct row in the event table
-        db.addNewresponse(evid)
+        if evid!='unknown':
+            db.addNewresponse(evid)
 
         return entry
 
