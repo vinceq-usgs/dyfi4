@@ -1,3 +1,3 @@
 Auxillary functions go here. They are dependent on USGS server architecture so keep these programs separate from the core DYFI system.
 
-config files may have local server information; do not export.
+localconfig.yml has local server information; do not export.
