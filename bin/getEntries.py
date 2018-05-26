@@ -25,6 +25,10 @@ parser.add_argument(
     help='Keep remote responses (for testing only)'
 )
 parser.add_argument(
+    '--nosave',action='store_true',default=False,
+    help='Do not save entries into database'
+)
+parser.add_argument(
     '--config',action='store',default='bin/localconfig.yml',
     help='Specify config file'
 )
@@ -74,15 +78,24 @@ def main(args):
             print(remoteCommand)
             command=remoteCommand.split()
             proc=subprocess.Popen(command,stdout=subprocess.PIPE)
-            results=proc.stdout.read()
+            results=proc.stdout.read().decode('utf-8')
+            print(results)
+
+    if args.check or args.nosave:
+        exit()
+
+    proc=subprocess.Popen(['app/loadEntries.py'],stdout=subprocess.PIPE)
+    results=proc.stdout.read().decode('utf-8')
+    print(results)
 
 
 if __name__=='__main__':
     args=parser.parse_args()
-    if 0:
+    if False:
         print('DEBUG')
         args.nodelete=True
         args.check=True
+        args.nosave=True
 
     main(args)
 
