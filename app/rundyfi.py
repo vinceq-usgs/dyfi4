@@ -44,7 +44,7 @@ def main(args):
     Lock('rundyfi.'+evid)
 
     # TODO: Add directives like --create, --redo, --push
-    container=DyfiContainer(evid)
+    container=DyfiContainer(evid,configfile=args.configfile)
     Contents(container).toXML(save=True)
 
     # TODO: Push should be a separate object
