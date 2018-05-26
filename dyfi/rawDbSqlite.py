@@ -214,7 +214,7 @@ class RawDb:
 
         :synopsis: Save an object to the specified table
         :param str table: table to be saved
-        :returns: list of rows changed
+        :returns: primary key (subid of eventid)
 
         This saves an `Event` or `Entry` object to the database.
 
@@ -245,10 +245,14 @@ class RawDb:
         try:
             c.execute(query,saveList)
             self.connectors[table].commit()
-            return c.lastrowid
 
         except (sqlite3.OperationalError,sqlite3.IntegrityError) as e:
             raise RuntimeError('sqlite3 Operational error: '+str(e))
+
+        if 'extended' in table:
+            return c.lastrowid
+        else:
+            return obj['eventid'] if isDict else obj.eventid
 
 
     def getColumns(self,table):

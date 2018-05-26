@@ -29,98 +29,6 @@ def test_config():
     #assert(os.path.isfile(conf.mail['mailbin']))
 
 
-def test_db():
-  from dyfi import Config,Db,Event
-
-  config=Config(configfile)
-  db=Db(config)
-  rawdb=db.rawdb
-
-  raw=db.loadEvent(testid)
-  assert isinstance(raw['lat'],float)
-  assert isinstance(raw['lon'],float)
-  assert isinstance(raw['mag'],float)
-
- # These functions are unused right now but maybe useful later
-
-  assert Db.timeago(60).year>2016
-  assert '2018' in Db.epochToString(1515565764)
-
-  import datetime
-  year = datetime.datetime.utcnow().year
-  assert str(year) in Db.epochToString()
-
-  # Test save function
-  assert rawdb.updateRow('event',testid,'mag',3)==1
-  event=Event(testid,config)
-  mag=event.mag
-  print('Saving id',testid,'mag:',mag)
-
-  # Make a change and save...
-  event.__dict__['mag']=11
-  assert 1==db.save(event)
-  event=Event(testid,config)
-  assert event.mag==11
-
-  # Now change it back
-  event.__dict__['mag']=mag
-  assert 1==db.save(event)
-  event=Event(testid,config)
-  assert event.mag==mag
-
-  # Test missing table
-  event.__dict__['table']=None
-  with pytest.raises(ValueError) as exception:
-    db.save(event)
-  assert 'table not specified' in str(exception.value)
-
-  # Test invalid table
-  event.__dict__['table']='invalidtable'
-  with pytest.raises(RuntimeError) as exception:
-    db.save(event)
-  assert 'unsupported table' in str(exception.value)
-
-  # Test RawDb
-
-  with pytest.raises(ValueError) as exception:
-    rawdb.querySingleTable('badtable','suspect=1')
-  assert 'Invalid table' in str(exception.value)
-
-  with pytest.raises(RuntimeError) as exception:
-    rawdb.querySingleTable('event','invalid command')
-  assert 'Operational error' in str(exception.value)
-
-  testtable='extended_2015'
-  subid=3996579
-
-  assert rawdb.updateRow(testtable,subid,'comments','foo')==1
-  row=rawdb.querySingleTable(testtable,'subid=?',subid)
-  assert row[0]['comments']=='foo'
-
-  assert rawdb.updateRow(testtable,subid,'comments','bar')==1
-  row=rawdb.querySingleTable(testtable,'subid=?',subid)
-  assert row[0]['comments']=='bar'
-
-  # Test rawdb.save
-  with pytest.raises(RuntimeError) as exception:
-    testentry=row[0]
-    testentry['subid']='invalidstring'
-    rawdb.save('extended_2015',testentry)
-  assert 'Operational error' in str(exception.value)
-
-  # Test updateRow increment
-  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
-  assert rawdb.updateRow('event',testid,'newresponses',99)
-  assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
-  testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
-  assert testevent['newresponses']==100
-  rawdb.updateRow('event',testid,'newresponses',0)
-
-  with pytest.raises(RuntimeError) as exception:
-    rawdb.updateRow('event',testid,'badcolumn',None)
-  assert 'Operational error' in str(exception.value)
-
-
 def test_event():
   import geojson
   from dyfi import Config,Db,Event
@@ -208,16 +116,24 @@ def test_dbentries():
     querytext='eventid="%s"' % testid)
   assert len(entries)>0
 
-  entries=db.loadEntries(startdatetime=datetime.datetime(2016,1,1),
-    querytext='eventid="%s"' % testid)
-  assert len(entries)>0
-
   with pytest.raises(ValueError) as exception:
     db.loadEntries(startdatetime='Stardate 1312.4')
   assert 'Bad year' in str(exception.value)
 
-  # Test row2geojson
+  # Tests on a single entry
+
+  entries=db.loadEntries(startdatetime=datetime.datetime(2016,1,1),
+    querytext='eventid="%s"' % testid)
+  assert len(entries)>0
+
   testentry=entries[0]
+
+  testsubid=testentry['subid']
+  assert testsubid!=None
+  testtable=testentry['table']
+  assert testtable=='extended_2016'
+
+  # Test row2geojson
   feature=db.row2geojson(testentry)
   assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
   coords=list(geojson.utils.coords(feature))
@@ -230,23 +146,6 @@ def test_dbentries():
   testentry['mag']='null'
   feature=db.row2geojson(testentry)
   assert feature.properties['mag']==None
-
-  # Test of saving an entry
-  testsubid=testentry['subid']
-  assert testsubid!=None
-  testtable=testentry['table']
-  assert testtable!='extended'
-
-  # Test entry save
-  testentry['street']='test street'
-  assert db.save(testentry,table='extended')==1
-
-  row=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)
-  testentry=row[0]
-  assert testentry['street']=='test street'
-
-  testentry['street']='[REDACTED]'
-  assert db.save(testentry,testtable)==1
 
 
 def test_entries():

@@ -1,5 +1,5 @@
 # To use MySQL,
-# 1. change line 6 from .rawDbSqlite to .rawDbMysql
+# 1. change import from .rawDbSqlite to .rawDbMysql
 # 2. same for dyfi/__init__.py
 
 import warnings
@@ -70,24 +70,31 @@ class Db:
 
         Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function.
 
+        If the primary exists on this table (eventid or subid), this will rewrite the row. Otherwise, it will create a new row.
+
         For consistency, if the object is an `Entry` object, this will automagically overwrite the `table` attribute.
 
         """
 
-        if not table and hasattr(obj,'table'):
-            table=obj.table
+        isDict=isinstance(obj,dict)
+        if not table: 
+            if hasattr(obj,'table'):
+                table=obj.table
+            elif isDict:
+                table=obj['table']
 
         if not table:
             raise ValueError('Db.save: table not specified')
 
         if table=='extended':
-            table=self.getExtendedTablesByDatetime(obj['time_now'])[0]
+            time_now=obj['time_now'] if isDict else obj.time_now
+            table=self.getExtendedTablesByDatetime(time_now)[0]
 
         if table=='event' or 'extended' in table:
-            if hasattr(obj,'table'):
-                obj.table=table
-            else:
+            if isDict:
                 obj['table']=table
+            else:
+                obj.table=table
             return self.rawdb.save(table,obj)
 
         raise RuntimeError('Db.save: unsupported table')
@@ -323,4 +330,6 @@ class Db:
             dt=datetime.datetime.utcnow()
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+
 
