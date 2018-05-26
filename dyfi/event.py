@@ -36,9 +36,10 @@ class Event:
              'event_version','orig_id','eventlocaltime',
              'invisible','good_id']
 
-    def __init__(self,event,config=None):
+    def __init__(self,event,config=None,missing_ok=False):
 
         self.table='event'
+        self.raw=None
 
         if isinstance(event,str):
           evid=event
@@ -48,13 +49,13 @@ class Event:
         elif isinstance(event,dict):
           evid=event['eventid']
 
-        if not event:
+        if not event and not missing_ok:
             raise RuntimeError('Cannot create Event with no data')
 
         self.raw=event
 
         for column in self.columns:
-            val=event[column] if column in event else None
+            val=event[column] if event and column in event else None
             setattr(self,column,val)
 
 
@@ -121,7 +122,7 @@ class Event:
 #######
 #
 # This section is for functions used for populating the event directory
-# via readEvent
+# via updateEvent
 #
 #######
 
@@ -184,3 +185,6 @@ class Event:
         if dups:
             return dups
 
+
+    #@classmethod  
+    #def incrementNewresponses(evid):

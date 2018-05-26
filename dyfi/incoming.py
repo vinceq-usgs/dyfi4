@@ -9,13 +9,14 @@ import os
 import shutil
 import subprocess
 import re
+import urllib.parse
 
-from .config import Config
 from .db import Db
+from .event import Event
 from .entries import Entry
 from .cdi import calculate as CdiCalculate
 
-class Responses:
+class Incoming:
 
     translateColumns={
         'server' : 'server',
@@ -70,56 +71,61 @@ class Responses:
         'ciim_mapZip' : 'zip'
 }
 
-    def __init__(self,configfile,verbose=False):
+    def __init__(self,config,verbose=False):
 
-        self.config=Config(configfile)
+        self.config=config
         self.verbose=verbose
         self.processed=0
         self.downloaded=0
-        self.db=None
+        self.db=Db(config)
 
-        os.makedirs(self.config.directories['incoming'],exist_ok=True)
+        os.makedirs(config.directories['incoming'],exist_ok=True)
 
 
-    def checkIncomingDir(self):
+    def checkIncoming(self):
         incomingDir=self.config.directories['incoming']
         files=next(os.walk(incomingDir))[2]
         files=[incomingDir+'/'+x for x in files]
         return files
 
 
-    def processFile(self,file,checkEvid=True,save=True):
+    def processFile(self,file):
+
         entry=self.readFile(file)
         if not entry:
             return
 
-        if save or checkEvid:
-            if not self.db:
-                self.db=Db(self.config)
-
         evid=entry.eventid
-        if checkEvid:
+        db=self.db
 
-            # This updates the event table newresponses column.
-            # It will check if the event
-            # has an updated good_id column. If it does, change
-            # this entry's evid to the correct one..
+        event=Event(evid,config=self.config,missing_ok=True)
 
-            goodid=self.db.checkIncrementEvid(evid)
-            if goodid and goodid!=evid:
-                entry.eventid=goodid
-                evid=goodid
+        # This checks if the event has an updated good_id column. 
+        # If it does, change this entry's evid to the correct one.
 
-        if save:
-            subid=self.db.save(entry)
-            if subid:
-                entry.subid=subid
-                return entry
-            else:
-                print('WARNING: Responses.processFile could not save',file,'to database')
-                return
+        if event.good_id and evid!=event.good_id:
+            goodid=event.good_id
+            print('WARNING: switching evid from',evid,'to',goodid)
+            evid=goodid
+            entry.eventid=goodid
 
-        return entry
+        # Now save
+
+        subid=db.save(entry)
+
+        if not subid:
+            print('WARNING: Incoming.processFile could not save',file,'to database')
+            return None
+
+
+        print('Saved to subid',subid)
+        entry.subid=subid
+
+        # Lastly, increment the correct row in the event table
+        event.incrementNewresponses()
+
+        return event
+
 
     def readFile(self,file):
         with open(file,'r') as f:
@@ -129,14 +135,20 @@ class Responses:
         # and handling characters properly
         # but just in case, don't blindly accept keys
 
-        data={}
-        for val in raw.split('&'):
-            if '=' not in val:
-                continue
+        if '.json' in file:
+            rawdata=json.decode(raw)
 
-            (k,v)=val.split('=')[0:2]
-            if k in Responses.translateColumns:
-                data[Responses.translateColumns[k]]=v
+        else:
+            urllib.parse.unquote_plus(raw,encoding='utf-8',errors='replace')
+            rawdata=urllib.parse.parse_qs(raw)
+
+        data={}
+        for k,v in rawdata.items():
+
+            # parse_qs returns a { k:[v], k:[v], k:[v]... }
+            v=v[0]
+            if k in self.translateColumns:
+                data[self.translateColumns[k]]=v
             else:
                 print('Unknown key',k)
 
@@ -145,7 +157,7 @@ class Responses:
 
         # Keys that require special processing
 
-        # 1. Unknown evid
+        # 1. Unknown evid and orig_id
         if 'eventid' not in data:
             data['eventid']='unknown'
 
@@ -154,20 +166,43 @@ class Responses:
             evid='unknown'
             data['eventid']=evid
 
+        data['orig_id']=evid
+
         # 2. Make sure time_now exists
         if 'time_now' not in data or not data['time_now']:
-            print('WARNING: Responses.processFile found no timestamp for',file)
+            print('WARNING: Incoming.processFile found no timestamp for',file)
             return
         data['time_now']=Db.epochToString(int(data['time_now']))
 
-        # 3. Calculate user_cdi
+        # 3. Rebase longitude
+        data['longitude']=self.rebaseLongitude(data['longitude'])
+
+        # 4. Calculate user_cdi
         entry=Entry(data)
         entry.user_cdi=CdiCalculate(entry)
+
         return entry
 
 
     def remove(self,file,bad=False):
-        badDir=self.config.directories['badincoming']
-        os.makedirs(badDir,exist_ok=True)
 
+        badDir=self.config.directories['trashincoming']
+        if bad:
+            badDir=self.config.directories['badincoming']
+
+        os.makedirs(badDir,exist_ok=True)
+        print('Moving this file to',badDir) 
         return shutil.move(file,badDir)
+
+
+    @staticmethod
+    def rebaseLongitude(x):
+        if not x: return x
+        x=float(x)
+        while True:
+            if x>180: x-=360
+            elif x<-180: x+=360
+            else: break
+
+        return str(x) 
+

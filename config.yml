@@ -13,6 +13,9 @@ db:
 directories:        
     data: data
     leaflet: leaflet
+    incoming: data/incoming
+    trashincoming: data/.trash-incoming
+    badincoming : data/badincoming
 
 executables:
     screenshot: 
