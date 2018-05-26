@@ -55,8 +55,6 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
         entries=[entries]
 
     totalByIndex={}
-    debugInfo={}
-    debugTotal=[]
 
     for index in cdiWeights:
         indexTotal=0
@@ -76,12 +74,7 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
             else:
                 val=entry.cdiIndex(index)
 
-            # Store debugging information here
             subid=entry.subid
-            if subid in debugInfo:
-                debugInfo[subid].append(val)
-            else:
-                debugInfo[subid]=[val]
 
             # Indices with no value are not counted.
             # They DO NOT have zero value!
@@ -96,17 +89,12 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
             totalByIndex[index]=indexTotal/indexCount
             infoText='%s/%s' % (totalByIndex[index],indexCount)
 
-        debugTotal.append(infoText)
-
     cws=0
     for index in totalByIndex:
         cws += totalByIndex[index] * cdiWeights[index]
 
     if cwsOnly:
         returnVal=cws
-        if debug:
-            returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':returnVal,'cdi':returnVal}
-
         return returnVal
 
     cdi=1
@@ -126,9 +114,6 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
 
     else:
         returnVal=round(cdi,1)
-
-    if debug:
-        returnVal={'debug':debugInfo,'total':debugTotal,'rawcdi':cdi,'cdi':returnVal}
 
     return returnVal
 

@@ -120,12 +120,6 @@ def aggregate(entries,producttype,debug=False):
 
         thiscdi=cdi.calculate(entries,cwsOnly=False,debug=debug)
         thiscdiFine=cdi.calculate(entries,fine=True)
-        if debug:
-            debugInfo=thiscdi['debug']
-            debugTotal=thiscdi['total']
-            debugRawcdi=thiscdi['rawcdi']
-            thiscdi=thiscdi['cdi']
-
         if thiscdi>maxcdi:
             maxcdi=thiscdi
 
@@ -140,11 +134,6 @@ def aggregate(entries,producttype,debug=False):
                 'intensityFine':thiscdiFine
             }
         )
-
-        if debug:
-            pt.properties['debug']=debugInfo
-            pt.properties['total']=debugTotal
-            pt.properties['rawcdi']=debugRawcdi
 
         features.append(pt)
 
