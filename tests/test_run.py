@@ -8,6 +8,12 @@ from argparse import Namespace
 testid='ci37511872'
 configfile='tests/testconfig.yml'
 
+def test_lock():
+    from dyfi import Lock
+    lock=Lock('testlock')
+    lock.removeLock()
+
+
 def test_run():
     from app import rundyfi
 

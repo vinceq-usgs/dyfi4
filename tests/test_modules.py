@@ -70,6 +70,8 @@ def test_entries():
   import datetime
   import geojson
 
+  testtable='extended_2016'
+
   shutil.rmtree('data/'+testid,ignore_errors=True)
 
   config=Config(configfile)
@@ -81,7 +83,7 @@ def test_entries():
 
   # Test loading Entries with raw data
 
-  rawentries=db.loadEntries(testid,table='extended_2016')
+  rawentries=db.loadEntries(testid,table=testtable)
   entries=Entries(testid,rawentries=rawentries)
   assert len(entries)>9
 
@@ -118,10 +120,10 @@ def test_entries():
   testentry=entries.entries[0]
 
   testsubid=testentry.subid
+  assert '[Entry: %s:%s' % (testtable,testsubid) in str(testentry)
   assert testsubid!=None
-  testtable=testentry.table
-  assert testtable=='extended_2016'
-
+  assert testentry.table==testtable
+  
   # Test aggregate
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
 

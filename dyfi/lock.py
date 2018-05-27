@@ -31,7 +31,10 @@ class Lock:
 
 
     def removeLock(self):
-        print('Lock: removing lock "%s"' % self.name)
-        fcntl.flock(self.f,fcntl.LOCK_UN)
-        os.remove(self.lockfile)
+        if self.lockfile:        
+            print('Lock: removing lock "%s"' % self.name)
+            fcntl.flock(self.f,fcntl.LOCK_UN)
+            os.remove(self.lockfile)
+            self.lockfile=None
+            
 

@@ -21,8 +21,7 @@ def aw2007ceus(mag,r,inverse=False,fine=False,enaCorrection=False):
     :returns: Intensity; or, if `inverse` is true, magnitude
 
     Implementation of Atkinson, Wald (2007).
-
-    If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.
+    This IPE inverse function is not implemented.
 
     """
 
@@ -40,9 +39,7 @@ def aw2007ceus(mag,r,inverse=False,fine=False,enaCorrection=False):
     #    ecorr = 0.7 + 0.001*r + max(0,0.8*math.log(min(r,150)/50))
 
     if inverse:
-        ii=mag
-        mag=0
-        return mag
+        return None
 
     ii = C[1] + C[2]*(mag-6) + C[3]*(mag-6)**2 + C[4]*logr + C[5]*R + C[6]*B + C[7]*mag*logr
 
