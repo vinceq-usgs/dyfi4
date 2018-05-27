@@ -73,7 +73,7 @@ class RawDb:
         connector=sqlite3.connect(tablefile)
         connector.row_factory = sqlite3.Row
 
-        print('RawDb: New cursor for',table)
+        # print('RawDb: New cursor for',table)
         cursor=connector.cursor()
         self.cursors[table]=cursor
         self.connectors[table]=connector

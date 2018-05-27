@@ -197,9 +197,9 @@ class Incoming:
         badDir=self.config.directories['trashincoming']
         if bad:
             badDir=self.config.directories['badincoming']
+            print('Moving this file to',badDir) 
 
         os.makedirs(badDir,exist_ok=True)
-        print('Moving this file to',badDir) 
         return shutil.move(file,badDir)
 
 

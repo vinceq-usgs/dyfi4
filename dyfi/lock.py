@@ -6,7 +6,7 @@ Allows processes to run in crontab without worrying about multiple instances
 Usage:
 Lock('program_name',flagDir=['optional directory']):
 
-[will throw exception if failed]
+[will exit if failed]
 
 """
 
@@ -25,7 +25,12 @@ class Lock:
         os.makedirs(flagDir,exist_ok=True)
 
         self.f=open(self.lockfile,'wb')
-        fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print('Could not create lock for',name)
+            exit()
+
         atexit.register(self.removeLock)
         print('Lock: creating lock "%s"' % self.name)
 

@@ -47,7 +47,7 @@ def main(args):
     from dyfi import Lock,Incoming,Config
 
     if not args.check:
-        Lock('incoming')
+        Lock('loadEntries')
 
     incoming=Incoming(Config(args.configfile))
     pendingFiles=incoming.checkIncoming()
@@ -77,8 +77,7 @@ def main(args):
             incoming.remove(file,bad=True)
             continue
 
-        subid=entry.subid
-        print('Saved this file to subid '+subid+', now deleting')
+        print('Saved to subid %s, deleting' % entry.subid)
         incoming.remove(file)
         continue
 

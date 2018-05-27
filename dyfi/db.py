@@ -332,16 +332,17 @@ class Db:
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 
-    def createStubEvent(evid,data):
+    def createStubEvent(self,evid,data):
 
-       event=self.loadEvent(evid,missing_ok=True)
+       event=self.loadEvent(evid)
        if event or evid=='unknown':
            raise RuntimeError('db.createStubEvent got existing event or "unknown"')
            return None
 
-       stub={'table':event,'eventid':evid}
+       createdtime=self.epochToString()
+       stub={'table':'event','eventid':evid,'createdtime':createdtime}
        if data:
-           for k,v in data:
+           for k,v in data.items():
                stub[k]=v
        self.save(stub)
            
