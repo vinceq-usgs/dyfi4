@@ -104,7 +104,7 @@ def createStubEvent(data):
     return results
 
 
-def handleDuplicates(goodid,dups):
+def handleDuplicates(goodid,dups,startdate):
     global DB
 
     for dupid in dups:
@@ -124,11 +124,10 @@ def handleDuplicates(goodid,dups):
 
         nMoved=0
 
-        print('TODO: Still need to grab newresponses from',dupid)
-        # entriesToMove=<all entries with eventid=dupid>
-        # foreach entry in entriesToMove: 
-        #     DB.rawdb.updateRow(table,subid,'eventid',goodid
-        #     movedentries++
+        entriesToMove=DB.loadEntries(evid=dupid,loadSuspect=True,startdate=startdate)
+        foreach entry in entriesToMove: 
+             DB.rawdb.updateRow(entry.table,entry.subid,'eventid',goodid)
+             movedentries++
         
         if nMoved: 
             print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
@@ -192,7 +191,7 @@ def main(args):
         exit()
 
     if event.duplicates:
-        handleDuplicates(evid,event.duplicates)
+        handleDuplicates(evid,event.duplicates,event.eventdatetime)
 
     if not args.trigger:
         print('Not running event.')
