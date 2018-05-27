@@ -93,6 +93,27 @@ def test_db():
     rawdb.querySingleTable('event','invalid command')
   assert 'Operational error' in str(exception.value)
 
+  with pytest.raises(ValueError) as exception:
+    rawdb.getCursor('badtable')
+  assert 'getCursor could not find table' in str(exception.value)
+
+  with pytest.raises(ValueError) as exception:
+    rawdb.getColumns('badtable')
+  assert 'Invalid table' in str(exception.value)
+
+  with pytest.raises(ValueError) as exception:
+    rawdb.updateRow('badtable',999,'k','v')
+  assert 'Invalid table' in str(exception.value)
+
+  with pytest.raises(ValueError) as exception:
+    rawdb.save('badtable',{'k':'v'})
+  assert 'Invalid table' in str(exception.value)
+
+  with pytest.raises(ValueError) as exception:
+    rawdb.createTable('dbfile',table='badtable')
+  assert 'Invalid table' in str(exception.value)
+
+
 
 def test_saveEvent():
 

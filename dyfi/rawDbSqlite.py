@@ -64,7 +64,7 @@ class RawDb:
             tablefile=self.dbfiles[table]
 
         else:
-            raise NameError('getCursor could not find table '+table)
+            raise ValueError('getCursor could not find table '+table)
 
         if not os.path.isfile(tablefile):
             print('RawDb: Creating table',tablefile)

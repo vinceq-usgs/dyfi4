@@ -1,3 +1,5 @@
+import pytest
+
 rawentry={
     'felt':'1 yes',
     'other_felt':'0.36 some',
@@ -18,6 +20,12 @@ def test_cdi():
     assert testentry.cdiIndex('shelf')==3
     assert testentry.cdiIndex('other_felt')==0.36
     assert testentry.cdiIndex('d_text')==rawentry['d_text']
+    assert testentry.cdiIndex('picture')==None
+
+    with pytest.raises(AttributeError) as exception:
+        testentry.cdiIndex('badindex')
+    assert 'Invalid Entry index' in str(exception.value)
+
 
 
 def test_ipes():
@@ -29,6 +37,9 @@ def test_ipes():
 
     val=ipes.aw2007ceus(3,400,fine=True)
     assert abs(val-1.592)<0.001
+
+    assert ipes.aw2007ceus(3,400)==2
+    assert ipes.aw2007ceus(3,1000)==1
 
     # aw2007ceus cannot do inverse
     assert ipes.aw2007ceus(5,50,inverse=True)==None
