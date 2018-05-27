@@ -65,95 +65,15 @@ def test_event():
   assert 'Cannot create Event' in str(exception.value)
 
 
-def test_dbentries():
-  import geojson
-  import datetime
-  from dyfi import Db,Config,Event
-
-  db=Db(Config(configfile))
-  entries=db.loadEntries(evid=testid,table='extended_2016')
-  assert len(entries)==913
-
-  entries=db.loadEntries(evid=testid,table='2015')
-  assert len(entries)==0
-  entries=db.loadEntries(evid=testid,table='all')
-  assert len(entries)==913
-  entries=db.loadEntries(evid=testid,table='latest')
-  assert len(entries)==0
-
-  with pytest.raises(ValueError) as exception:
-    entries=db.loadEntries(evid=testid,table='2099')
-  assert 'no such table' in str(exception.value)
-
-  with pytest.raises(ValueError) as exception:
-    entries=db.loadEntries(evid=testid,table='1999,2000')
-  assert 'no such table' in str(exception.value)
-
-  querytext='suspect is null or suspect=0'
-  entries1=db.loadEntries(table='2015',querytext=querytext)
-  entries2=db.loadEntries(table='2016',querytext=querytext)
-  entries3=db.loadEntries(table='2015,2016',querytext=querytext)
-  entries4=db.loadEntries(table=[2015,2016],querytext=querytext)
-  e1=len(entries1)
-  e2=len(entries2)
-  assert e1>=2017 # This might change from testing
-  assert e2>=7
-  assert len(entries3)==len(entries4)
-  assert e1+e2==len(entries3)
-
-  # Test loading entries by event object
-  event=Event(db.loadEvent(testid))
-  entries=db.loadEntries(event=event)
-  assert len(entries)>0
-
-  # Test loading entries by date and query
-  entries=db.loadEntries(
-    startdatetime='2016-01-01',
-    querytext='eventid="%s"' % testid)
-  assert len(entries)>0
-
-  entries=db.loadEntries(startdatetime=1990,
-    querytext='eventid="%s"' % testid)
-  assert len(entries)>0
-
-  with pytest.raises(ValueError) as exception:
-    db.loadEntries(startdatetime='Stardate 1312.4')
-  assert 'Bad year' in str(exception.value)
-
-  # Tests on a single entry
-
-  entries=db.loadEntries(startdatetime=datetime.datetime(2016,1,1),
-    querytext='eventid="%s"' % testid)
-  assert len(entries)>0
-
-  testentry=entries[0]
-
-  testsubid=testentry['subid']
-  assert testsubid!=None
-  testtable=testentry['table']
-  assert testtable=='extended_2016'
-
-  # Test row2geojson
-  feature=db.row2geojson(testentry)
-  assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
-  coords=list(geojson.utils.coords(feature))
-  assert coords[0][0]==testentry['longitude']
-  assert isinstance(coords[0][0],float)
-  assert coords[0][1]==testentry['latitude']
-  assert isinstance(coords[0][1],float)
-
-  # Test null column value
-  testentry['mag']='null'
-  feature=db.row2geojson(testentry)
-  assert feature.properties['mag']==None
-
-
 def test_entries():
   from dyfi import Config,Event,Entries,Db,aggregate
+  import datetime
+  import geojson
 
   shutil.rmtree('data/'+testid,ignore_errors=True)
 
   config=Config(configfile)
+  db=Db(config)
 
   with pytest.raises(RuntimeError) as exception:
       Entries()
@@ -161,7 +81,7 @@ def test_entries():
 
   # Test loading Entries with raw data
 
-  rawentries=Db(config).loadEntries(testid,table='extended_2016')
+  rawentries=db.loadEntries(testid,table='extended_2016')
   entries=Entries(testid,rawentries=rawentries)
   assert len(entries)>9
 
@@ -177,13 +97,32 @@ def test_entries():
   testentries=Entries(testid,rawentries=entries.entries,config=config)
   assert len(testentries)==count
 
-  # test single entry
-  badentry={'subid':1,'table':'extended_pre','badcolumn':0}
-  badentries=Entries(testid,rawentries=[badentry],config=config)
-  assert len(badentries)==1
+  # Test row2geojson
+  row=rawentries[0]
+  feature=db.row2geojson(row)
+  assert feature['properties']['street']=='[REDACTED]' or feature['properties']['street']=='test street'
+  coords=list(geojson.utils.coords(feature))
+  assert coords[0][0]==row['longitude']
+  assert isinstance(coords[0][0],float)
+  assert coords[0][1]==row['latitude']
+  assert isinstance(coords[0][1],float)
+
+  # Test null column value
+  row['mag']='null'
+  feature=db.row2geojson(row)
+  assert feature.properties['mag']==None
+
+  # Tests on a single entry
+
+  assert len(entries)>0
+  testentry=entries.entries[0]
+
+  testsubid=testentry.subid
+  assert testsubid!=None
+  testtable=testentry.table
+  assert testtable=='extended_2016'
 
   # Test aggregate
-
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
 
   with pytest.raises(ValueError) as exception:
@@ -221,76 +160,6 @@ def test_entries():
   assert 'could not convert string' in str(exception.value)
 
 
-def test_products():
-    import copy
-    from dyfi import Config,Event,Entries,Products,Product,Map,Graph
-
-    shutil.rmtree('data/'+testid,ignore_errors=True)
-
-    config=Config(configfile)
-    event=Event(testid,config=config)
-    entries=Entries(testid,config=config)
-
-    products=Products(event,entries,config)
-    assert str(products)=='Products:[]'
-
-    # Test product with no format
-    assert Product(products,name='test',dataset='time')
-
-    with pytest.raises(RuntimeError) as exception:
-        Product(products,name='blank',dataset='bad')
-    assert 'Unknown datatype' in str(exception.value)
-
-    with pytest.raises(RuntimeError) as exception:
-        Product(products,name='test',productFormat='bad')
-    assert 'Cannot save' in str(exception.value)
-
-    # Test Map blank directory, GeoJSON output
-    products.dir=None
-    product=Product(products,name='testmap',dataset='geo_10km',productType='map')
-    product.create('geojson','tests/testProduct.geojson')
-    myMap=product.data
-    assert type(myMap).__name__=='Map'
-
-    # Test Map without directory
-    data=myMap.data
-    myMap=Map('test_geo_10km',event,data,config)
-    assert myMap.toGeoJSON(filename='tests/testMap.geojson')
-
-    badconfig=copy.deepcopy(config)
-    badconfig.executables['screenshot']='badexec'
-    with pytest.raises(RuntimeError) as exception:
-        Map.GeoJSONtoImage('tests/testMap.geojson','tests/testMap.png',badconfig)
-    assert 'subprocess call' in str(exception.value)
-
-    # Test blank product
-    assert products.create({})==0
-
-    # Test graph functions
-
-    with pytest.raises(RuntimeError) as exception:
-        graph=Graph('badtype',event=event,data=None,config=config)
-    assert 'Graph got unknown graph type' in str(exception.value)
-
-    # Test when redoing graph data
-    data=entries.aggregate('geo_10km')
-    graph=Graph('plot_atten',event=event,data=data,config=config,eventDir='test')
-    graph.getScatterData()
-    graph.getDistBins()
-    assert 'data' in graph.toJSON()
-
-    # Test time graph
-
-    data=entries.getTimes('plot_numresp')
-    graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
-
-    # Test no time data
-
-    data['data']=[]
-    graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
-    assert graph.data['preferred_unit']=='minutes'
-
-
 def test_container():
   from dyfi import DyfiContainer
 
@@ -300,4 +169,5 @@ def test_container():
   with pytest.raises(RuntimeError) as e:
     DyfiContainer('blank')
   assert 'Cannot create Event' in str(e.value)
+
 
