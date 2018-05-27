@@ -107,6 +107,7 @@ def createStubEvent(data):
 def handleDuplicates(goodid,dups,startdate):
     global DB
 
+    nMoved=0
     for dupid in dups:
         dupevent=Event(dupid,missing_ok=True)
 
@@ -117,23 +118,25 @@ def handleDuplicates(goodid,dups,startdate):
             DB.createStubEvent(dupid,{'good_id':goodid})
             continue
 
+        # If dup event already exists, update its good_id
+
         if 'good_id' in dupevent and dupevent['good_id']!=goodid:
             print('Db: Updating goodid for',dupid)
             DB.rawdb.updateRow('event',dupid,'good_id',goodid)
 
+        # Then find dup's entries and move them
 
-        nMoved=0
-
-        entriesToMove=DB.loadEntries(evid=dupid,loadSuspect=True,startdate=startdate)
+        entriesToMove=DB.loadEntries(
+            evid=dupid,
+            loadSuspect=True,
+            startdate=startdate)
         foreach entry in entriesToMove: 
              DB.rawdb.updateRow(entry.table,entry.subid,'eventid',goodid)
              movedentries++
-        
-        if nMoved: 
-            print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
-            DB.addNewresponse(goodid,movedentries)
 
-        continue
+    if nMoved: 
+        print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
+        DB.addNewresponse(goodid,movedentries)
 
 
 def main(args):
