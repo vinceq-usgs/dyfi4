@@ -114,7 +114,6 @@ def test_db():
   assert 'Invalid table' in str(exception.value)
 
 
-
 def test_saveEvent():
 
   from dyfi import Event
@@ -162,22 +161,22 @@ def test_saveEntry():
   testyear=2016
   testtable='extended_'+str(testyear)
 
-  entries=db.loadEntries(
+  rows=db.loadEntries(
     startdatetime=datetime.datetime(testyear,1,1),
     querytext='eventid="%s"' % testid)
-  testentry=entries[0]
-  testsubid=testentry['subid']
+  row=rows[0]
+  testsubid=row['subid']
   # Test overwriting this entry
 
-  testentry['street']='test street'
-  subid=db.save(testentry,table='extended')
+  row['street']='test street'
+  subid=db.save(row,table='extended')
   assert subid==testsubid
 
-  testentry2=rawdb.querySingleTable(testtable,'subid=?',subid)[0]
-  assert testentry2['street']==testentry['street']
+  row2=rawdb.querySingleTable(testtable,'subid=?',subid)[0]
+  assert row2['street']==row['street']
 
-  testentry2['street']='[REDACTED]'
-  subid=db.save(testentry,testtable)
+  row['street']='[REDACTED]'
+  subid=db.save(row,testtable)
   assert subid==testsubid
 
 
@@ -190,21 +189,40 @@ def test_saveRawdb():
   testsubid=3996579
 
   # Test rawdb.save
-  testentry=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
-  origcomment=testentry['comments']
+  row=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
+  origcomment=row['comments']
+
+  assert rawdb.save(testtable,row)==testsubid
+
+  del row['comments']
+  assert rawdb.save(testtable,row)==testsubid
+  testrow=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
+  assert testrow['comments']==None
+
+  row['comments']=origcomment
+  assert rawdb.save(testtable,row)==testsubid
+  testrow=db.rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
+  assert testrow['comments']==origcomment
+
+
+  row['comments']=origcomment
+  assert rawdb.save(testtable,row)==testsubid
 
   with pytest.raises(RuntimeError) as exception:
-    testentry['subid']='invalidstring'
-    rawdb.save(testtable,testentry)
+    row['subid']='invalidstring'
+    rawdb.save(testtable,row)
   assert 'Operational error' in str(exception.value)
+  
+
+  # Test updateRow
 
   assert rawdb.updateRow(testtable,testsubid,'comments','foo')==1
-  testentry=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
-  assert testentry['comments']=='foo'
+  row=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
+  assert row['comments']=='foo'
 
   assert rawdb.updateRow(testtable,testsubid,'comments',origcomment)==1
-  testentry=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
-  assert testentry['comments']==origcomment
+  row=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
+  assert row['comments']==origcomment
 
  # Test updateRow increment
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]

@@ -4,7 +4,8 @@ rawentry={
     'felt':'1 yes',
     'other_felt':'0.36 some',
     'stand':'2',
-    'shelf':'3', 
+    'shelf':'3',
+    'picture':'',
     'd_text':'_chim'
 }
 
@@ -20,6 +21,7 @@ def test_cdi():
     assert testentry.cdiIndex('shelf')==3
     assert testentry.cdiIndex('other_felt')==0.36
     assert testentry.cdiIndex('d_text')==rawentry['d_text']
+    assert testentry.cdiIndex('motion')==None
     assert testentry.cdiIndex('picture')==None
 
     with pytest.raises(AttributeError) as exception:
