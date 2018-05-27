@@ -55,6 +55,9 @@ class Entry():
             val=rawdata[column] if column in rawdata else None
             setattr(self,column,val)
 
+        if 'table' in rawdata:
+            self.table=rawdata['table']
+
 
     def cdiIndex(self,index):
         """
@@ -90,8 +93,8 @@ class Entry():
 
 
     def __str__(self):
-        text='[Entry: subid:%s, intensity:%s]' % (
-            self.subid,self.user_cdi)
+        text='[Entry: %s:%s, intensity:%s]' % (
+            self.table,self.subid,self.user_cdi)
         return text
 
 
