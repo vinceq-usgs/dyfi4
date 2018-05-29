@@ -61,7 +61,7 @@ def main(args):
     for file in pendingFiles:
         if args.maxfiles and count>=args.maxfiles:
             print('Processed',count,'files, stopping.')
-            exit()
+            break
 
         if 'healthcheck' in file:
             os.remove(file)
@@ -80,6 +80,9 @@ def main(args):
         print('Saved to subid %s, deleting' % entry.subid)
         incoming.remove(file)
         continue
+
+    # Continue processing here
+    return count
 
 
 if __name__=='__main__':

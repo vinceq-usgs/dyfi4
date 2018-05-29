@@ -358,5 +358,6 @@ class Db:
                         
         newresponses=event['newresponses'] or 0
         newresponses+=increment
+        event['newresponses']=newresponses
         return self.save(event)
 

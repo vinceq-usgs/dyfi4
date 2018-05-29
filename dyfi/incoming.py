@@ -6,7 +6,6 @@ Incoming
 """
 
 import os
-import shutil
 import subprocess
 import re
 import urllib.parse
@@ -130,6 +129,7 @@ class Incoming:
 
         # Lastly, increment the correct row in the event table
         if evid!='unknown':
+            print('Incrementing newresponses for',evid)
             db.addNewresponse(evid)
 
         return entry
@@ -200,7 +200,7 @@ class Incoming:
             print('Moving this file to',badDir) 
 
         os.makedirs(badDir,exist_ok=True)
-        return shutil.move(file,badDir)
+        return os.rename(file,badDir+'/'+os.path.basename(file))
 
 
     @staticmethod
