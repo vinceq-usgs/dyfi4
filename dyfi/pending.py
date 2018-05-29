@@ -12,62 +12,50 @@ Foreach event:
 
 from .config import Config
 from .db import Db
+from .event import Event
 
 class Pending:
 
     def __init__(self,maxruns,configfile):
 
-        config=Config(configfile)
-        self.db=Db(config)
+        self.db=Db(Config(configfile))
         self.maxruns=maxruns
-        self.events=[]
+        self.events=self.db.getPendingEvents()
         self.eventsRun=0
-
-
-    def countEvents(self):
-        events=self.db.getPendingEvents()
-        events=sorted(events,
-           key=lambda x:x['newresponses'],
-           reverse=True)
-        self.events=events
-        return self.events
 
 
     def loop(self):
         maxruns=self.maxruns
-        while True:
-            if not self.loopEvents():
-                print('Pending: No events found')
-                return
+        for row in self.events:
 
             if maxruns>0 and self.eventsRun>=maxruns:
                 print('Pending: %i events processed' % maxruns)
-                return
+                break
+
+            if self.processEvent(row):
+                 self.eventsRun+=1
+
+        # Continue processing here
+        return True
 
 
-    def loopEvents(self):
-        self.countEvents()
-        if not self.events: return
+    def processEvent(self,row):
 
-        self.events=[x['eventid'] for x in self.events]
+        event=Event(row)
+        evid=event.eventid
+        print('Pending: Running event',evid)
 
-        recalculate=False
-        for evid in self.events:
-            print('Pending: Running event',evid)
+        # TODO: check duplicate entries and grab them
 
-            newevid=self.moveDuplicates(evid)
-            if newevid!=evid:
-                print('Pending: recalculating loop after this.')
-                evid=newid
-                recalculate=True
+        1. if good event, 
+        #newevid=self.moveDuplicates(evid)
+        #if newevid!=evid:
+        #    print('Pending: recalculating loop after this.')
+        #    evid=newid
+        #    recalculate=True
 
-            # TODO: check duplicate entries and grab them
 
-            db.resetNewResponses(evid)
-            self.eventsRun+=1
-
-            if recalculate: break
-            if self.maxruns>0 and self.eventsRun>=maxruns: break
+        #db.resetNewResponses(evid)
 
         return True
 

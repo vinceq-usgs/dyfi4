@@ -331,6 +331,11 @@ class Db:
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
+################################
+#
+# Methods for loadEntries
+#
+################################
 
     def createStubEvent(self,evid,data):
 
@@ -360,4 +365,18 @@ class Db:
         newresponses+=increment
         event['newresponses']=newresponses
         return self.save(event)
+
+################################
+#
+# Methods for loadEntries
+#
+################################
+
+    def getPendingEvents(self):
+
+        table='event'
+        clause='newresponses>0 order by cast(newresponses as int) desc'
+        results=self.rawdb.query(table,clause)
+
+        return results
 

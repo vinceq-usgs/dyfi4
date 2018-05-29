@@ -81,7 +81,7 @@ class RawDb:
         return cursor
 
 
-    def query(self,tables,clause,subs):
+    def query(self,tables,clause,subs=None):
         """
 
         :synopsis: Query the database, splitting multiple tables if necessary
@@ -127,11 +127,12 @@ class RawDb:
         if clause:
             query+=' WHERE %s' % clause
 
-        if not isinstance(subs,list):
+        if subs and not isinstance(subs,list):
             subs=[subs]
 
         try:
-            c.execute(query,subs)
+            c.execute(query,subs) if subs else c.execute(query)
+
         except sqlite3.OperationalError as e:
             raise RuntimeError('sqlite3 Operational error: '+str(e))
 

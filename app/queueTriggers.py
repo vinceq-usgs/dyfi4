@@ -23,7 +23,7 @@ parser.add_argument(
     help='Check for pending events but don\'t run them'
 )
 parser.add_argument(
-    '--maxruns',action='store',type=int,default=5,
+    '--maxruns',action='store',type=int,default=1,
     help='Maximum number of event runs before exiting'
 )
 parser.add_argument(
@@ -39,13 +39,11 @@ def main(args):
     from dyfi import Pending
 
     if not args.check:
-        Lock('queue')
+        Lock('queueTriggers')
 
-    print(vars(args))
-    pending=Pending(maxruns=0,configfile=args.configfile)
+    pending=Pending(maxruns=args.maxruns,configfile=args.configfile)
 
     if args.check:
-        pending.countEvents()
         pending.displayEvents()
         exit()
 
@@ -54,7 +52,10 @@ def main(args):
 
 if __name__=='__main__':
     args=parser.parse_args()
-    main(args)
 
+    print('DEBUG')
+    args.maxruns=1
+
+    main(args)
 
 
