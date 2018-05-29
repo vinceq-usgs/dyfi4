@@ -4,6 +4,9 @@ import shutil
 testid='ci37511872'
 configfile='tests/testconfig.yml'
 
+import os
+import glob
+
 def test_products():
     import copy
     from dyfi import Config,Event,Entries,Products,Product,Map,Graph
@@ -41,10 +44,14 @@ def test_products():
     assert myMap.toGeoJSON(filename='tests/testMap.geojson')
 
     badconfig=copy.deepcopy(config)
-    badconfig.executables['screenshot']='badexec'
+    badconfig.executables['screenshot']=['badexec']
     with pytest.raises(RuntimeError) as exception:
         Map.GeoJSONtoImage('tests/testMap.geojson','tests/testMap.png',badconfig)
     assert 'subprocess call' in str(exception.value)
+    # Clean up leftover temp file in leaflet directory
+    for fn in glob.glob('leaflet/tmp*.js'):
+        os.remove(fn)
+    assert len(glob.glob('leaflet/tmp*.js'))==0
 
     # Test blank product
     assert products.create({})==0
