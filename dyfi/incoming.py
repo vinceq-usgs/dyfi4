@@ -88,7 +88,7 @@ class Incoming:
         return files
 
 
-    def saveFile(self,file):
+    def saveFile(self,rawfile):
         """
 
         1. Parse data
@@ -98,13 +98,13 @@ class Incoming:
         4. Increment event newresponses
 
         """
-        if isinstance(file,dict):
-            entry=file 
+        if isinstance(rawfile,dict):
+            entry=rawfile 
         else:
-           entry=self.readFile(file)
-
+           entry=self.readFile(rawfile)
         if not entry:
             return
+
         evid=entry.eventid
         db=self.db
 
@@ -122,7 +122,7 @@ class Incoming:
         # Now save
         subid=db.save(entry)
         if not subid:
-            print('WARNING: Incoming.saveFile could not save',file)
+            print('WARNING: Incoming.saveFile could not save',rawfile)
             return None
 
         entry.subid=subid
@@ -130,20 +130,20 @@ class Incoming:
         # Lastly, increment the correct row in the event table
         if evid!='unknown':
             print('Incrementing newresponses for',evid)
-            db.addNewresponse(evid)
+            db.setNewresponse(evid,value=1,increment=True)
 
         return entry
 
 
-    def readFile(self,file):
-        with open(file,'r') as f:
+    def readFile(self,rawfile):
+        with open(rawfile,'r') as f:
             raw=f.read()
 
         # Trust that earthquake-dyfi-responses is doing its job
         # and handling characters properly
         # but just in case, don't blindly accept keys
 
-        if '.json' in file:
+        if '.json' in rawfile:
             rawdata=json.decode(raw)
 
         else:
@@ -178,7 +178,7 @@ class Incoming:
 
         # 2. Make sure time_now exists
         if 'time_now' not in data or not data['time_now']:
-            print('WARNING: Incoming.readFile found no timestamp for',file)
+            print('WARNING: Incoming.readFile found no timestamp for',rawfile)
             return
         data['time_now']=Db.epochToString(int(data['time_now']))
 
@@ -192,7 +192,7 @@ class Incoming:
         return entry
 
 
-    def remove(self,file,bad=False):
+    def remove(self,rawfile,bad=False):
 
         badDir=self.config.directories['trashincoming']
         if bad:
@@ -200,7 +200,7 @@ class Incoming:
             print('Moving this file to',badDir) 
 
         os.makedirs(badDir,exist_ok=True)
-        return os.rename(file,badDir+'/'+os.path.basename(file))
+        return os.rename(rawfile,badDir+'/'+os.path.basename(rawfile))
 
 
     @staticmethod
