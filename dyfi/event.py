@@ -186,5 +186,3 @@ class Event:
             return dups
 
 
-    #@classmethod  
-    #def incrementNewresponses(evid):
