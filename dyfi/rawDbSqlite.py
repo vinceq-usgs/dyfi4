@@ -195,13 +195,15 @@ class RawDb:
             row=self.querySingleTable(table,clause,subid)[0]
             oldVal=row[column]
             if oldVal:
-                val+=oldVal
+                try:
+                    val+=int(oldVal)
+                except:
+                    print('rawDbSqlite.updateRow: Could not increment %s key=%s val=%s, setting to %s instead.' % (subid,column,oldVal,val))
 
-        val=str(val)
         query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey
         try:
-            c.execute(query,[val,subid])
+            c.execute(query,[str(val),subid])
             self.connectors[table].commit()
 
         except sqlite3.OperationalError as e:
