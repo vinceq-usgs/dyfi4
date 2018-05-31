@@ -16,23 +16,29 @@ import fcntl
 
 class Lock:
 
-    def __init__(self,name,flagDir='./flags'):
+    def __init__(self,name,flagDir='./flags',fail_ok=False):
 
         self.lockfile='%s/%s.lock' % (flagDir,name)
         self.name=name
         self.f=None
+        self.success=False
 
         os.makedirs(flagDir,exist_ok=True)
 
         self.f=open(self.lockfile,'wb')
         try:
             fcntl.flock(self.f,fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self.success=True
         except BlockingIOError:
             print('Could not create lock for',name)
-            exit()
+            if fail_ok:
+                self.success=False
+                return
+            else:
+                exit()
 
         atexit.register(self.removeLock)
-        print('Lock: creating lock "%s"' % self.name)
+        print('Lock: created lock "%s"' % self.name)
 
 
     def removeLock(self):
