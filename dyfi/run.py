@@ -28,17 +28,21 @@ class Run:
         self.event=None
 
 
-    def update(self,evid,raw=None,save=True,check=False):
+    def update(self,evid,raw=False,save=True,inputJson=None):
 
-        if not raw:
+        if not inputJson:
             comcat=Comcat(config=self.config)
-            raw=comcat.event(evid)
+            inputJson=comcat.event(evid,raw=raw)
 
-        if not raw:
+        if not inputJson or inputJson=='NOT FOUND':
             print('Run.update: Could not get data for',evid)
-            return
+            return None
 
-        event=Event.createFromContents(raw)
+        if inputJson=='DELETED':
+            self.event='DELETED'
+            return None
+
+        event=Event.createFromContents(inputJson)
         self.event=event
         self.duplicates=self.event.duplicates
 
@@ -48,18 +52,15 @@ class Run:
             print('Event ID changed from %s to %s' % (evid,event.eventid))
             print('WARNING! WARNING! WARNING!')
 
-        if check:
-            print(raw)
-            return
-
         if save:
             # Don't overwrite newresponses
             originalData=self.db.loadEvent(evid)
             if originalData:
                 event.newresponses=originalData['newresponses']
             saved=self.db.save(event)
+            print('Run.update: Saved %s with %i newresponses' % (event.eventid,event.newresponses))
 
-        return self.evid
+        return event.eventid
 
 
     def runEvent(self,evid,update=True,findDuplicates=True,test=False):
@@ -67,32 +68,55 @@ class Run:
         # 1. Update self.event from Comcat or file (and save)
         if update:
             print('Run.runEvent: Updating and saving this event.')
-            evid=self.update(evid)
+            self.update(evid)
             # If authoritative ID changed, evid will change too
-        else:
-            self.event=self.db.loadEvent(evid)
 
         if not self.event:
+            raw=self.db.loadEvent(evid)
+            # No guarantee that self.duplicates exist (unless
+            # self.update() was run beforehand)
+            if raw:
+                self.event=Event(raw)
+
+        event=self.event
+
+        if not event: 
             print('Run.runEvent: No data found')
-            return
+            return None
+
+        # Check if stub
+        if isinstance(event,Event) and not event.eventdatetime:
+            print('Run.runEvent: Cannot run on stub event.')
+            return None
+
+        if event=='DELETED':
+            print('Run.runEvent: Deleting',evid)
+            if not test:
+                self.deleteEvent(evid)
+            return evid
 
         # 2. Update will populate event.duplicates, go through that
         if self.duplicates:
             print('Run.runEvent: Moving duplicates.')
-            self.moveDuplicates()
+            if not test:
+                self.moveDuplicates()
 
         # 3.
         # call dyficontainer instead of running rundyfi.py
         print('Run.runEvent: Creating products.')
-        proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)
-        results=proc.stdout.read().decode('utf-8')
-        print(results)
+        if not test:
+            proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)
+            results=proc.stdout.read().decode('utf-8')
+            print(results)
 
         # 4. Set new responses to zero 
         print('Run.runEvent: Resetting newresponses.')
-        self.db.setNewresponse(evid,value=0,increment=False)
+        if not test:
+            self.db.setNewresponse(evid,value=0,increment=False)
 
         # 5. Set process_timestamp,increment ciim_version
+
+        # 6. export to web
 
         return evid
 
@@ -131,7 +155,7 @@ class Run:
             entriesToMove=db.loadEntries(
                 evid=dupid,
                 loadSuspect=True,
-                startdatetime=self.event.eventdatetime)
+                startdatetime=event.eventdatetime)
 
             if not entriesToMove:
                 continue
@@ -142,10 +166,20 @@ class Run:
                 nMoved+=1
 
             db.setNewresponse(dupid,value=0,increment=False)
+            db.rawdb.updateRow('event',dupid,'invisible',1)
 
         if nMoved:
             print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
             db.setNewresponse(goodid,value=nMoved,increment=True)
 
+        return nMoved 
 
+
+    def deleteEvent(self,evid):
+        db=self.db
+
+        event=db.loadEvent(evid)
+        if 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
+            db.rawdb.updateRow('event',evid,'invisible',1)
+        return
 

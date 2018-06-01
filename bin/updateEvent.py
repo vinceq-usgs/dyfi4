@@ -28,19 +28,15 @@ parser.add_argument(
 )
 parser.add_argument(
     '--file',action='store',
-    help='Read from file instead of feed (implies --noupdate)'
+    help='Read from JSON file instead of feed (implies --noexternal)'
 )
 parser.add_argument(
     '--raw',action='store_true',default=False,
     help='Print raw feed and exit'
 )
 parser.add_argument(
-    '--noupdate',action='store_true',default=False,
-    help='Do not do external update'
-)
-parser.add_argument(
-    '--check',action='store_true',default=False,
-    help='Check update but don\'t write or process'
+    '--noexternal',action='store_true',default=False,
+    help='Do not look for external update'
 )
 parser.add_argument(
     '--trigger',action='store_true',default=False,
@@ -56,22 +52,37 @@ def main(args):
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
     from dyfi import Config,Event,Db,Run
 
-    update=False if args.noupdate else True
     evid=args.evid
 
     run=Run(configfile='./bin/localconfig.yml')
 
-    if args.check:
-        evid=run.update(evid,check=True)
+    if args.raw:
+        print('Getting raw comcat data only.')
+        evid=run.update(evid,raw=True)
         exit()
 
     if args.file:
+        print('Reading from file',args.file)
         with open(args.file,'r') as f:
             triggerjson=json.load(f)
-        evid=run.update(evid,raw=triggerjson)
-        update=False
+        evid=run.update(evid,inputJson=triggerjson)
+        # This will populate run.duplicates if necessary
 
-    run.runEvent(evid,update=update,findDuplicates=True)
+    if not args.noexternal and not args.file:
+        # Call comcat
+        # This will populate run.duplicates if necessary
+        run.update(evid)
+
+    if (run.event=='DELETED'):
+        print('Got deleted eventid',evid)
+
+    if args.trigger:
+        run.runEvent(evid,update=False,findDuplicates=True)
+    else:
+        print('Stopping, use --trigger to continue.')
+        exit()
+
+    print('Done with updateEvent.py.')
     exit()
 
 if __name__=='__main__':
