@@ -128,6 +128,9 @@ class Event:
 
     @classmethod
     def createFromContents(self,contents):
+        if not contents:
+            return
+
         rawdata={'id':contents['id']}
 
         relevant=['place','time','mag','ids','net']

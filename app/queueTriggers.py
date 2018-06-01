@@ -27,7 +27,11 @@ parser.add_argument(
     help='Maximum number of event runs before exiting'
 )
 parser.add_argument(
-    '--configfile',action='store',default='./config.yml',
+    '--test',action='store_true',default=False,
+    help='Test regime'
+)
+parser.add_argument(
+    '--configfile',action='store',default='bin/localconfig.yml',
     help='Specify config file'
 )
 
@@ -47,7 +51,7 @@ def main(args):
         pending.displayEvents()
         exit()
 
-    pending.loop()
+    pending.loop(test=args.test)
 
 
 if __name__=='__main__':

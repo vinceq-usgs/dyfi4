@@ -16,3 +16,5 @@ from .rawDbSqlite import RawDb
 from .lock import Lock
 from .incoming import Incoming
 from .pending import Pending
+from .comcat import Comcat
+from .run import Run

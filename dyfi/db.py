@@ -331,11 +331,23 @@ class Db:
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
+
+    @staticmethod
+    def stringToAge(string):
+        # Turn '2017-01-01 12:00:00' into seconds ago
+
+        now=datetime.datetime.utcnow()
+        dt=datetime.datetime.strptime(string,'%Y-%m-%d %H:%M:%S')
+
+        return (now-dt).total_seconds()
+
+
 ################################
 #
 # Methods for loadEntries
 #
 ################################
+
 
     def createStubEvent(self,evid,data):
 
@@ -352,23 +364,30 @@ class Db:
        self.save(stub)
            
 
-    def addNewresponse(self,evid,increment=1):
+    def setNewresponse(self,evid,value,increment):
 
         # This will increment the newresponses column of an event.
         # If the event does not exist, a stub will be created
 
         event=self.loadEvent(evid)
         if not event:
-            return self.createStubEvent(evid,{'invisible':1,'newresponses':increment})
-                        
-        newresponses=event['newresponses'] or 0
-        newresponses+=increment
-        event['newresponses']=newresponses
+            invisible=1 if not value else 0
+            print('db.setnewresponse: Creating stub',evid)
+            return self.createStubEvent(evid,{'invisible':invisible,'newresponses':value})
+
+        if increment and event['newresponses']:
+            try:
+                value+=int(event['newresponses'])
+            except(ValueError):
+                print('db.setNewresponse: WARNING: Could not parse old value for newresponses, ignoring') 
+
+        #print('db.setNewresponse: newresponses=%i, saving.' % value)
+        event['newresponses']=value
         return self.save(event)
 
 ################################
 #
-# Methods for loadEntries
+# Methods for queueTriggers
 #
 ################################
 
@@ -379,4 +398,6 @@ class Db:
         results=self.rawdb.query(table,clause)
 
         return results
+
+
 

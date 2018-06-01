@@ -13,60 +13,113 @@ Foreach event:
 from .config import Config
 from .db import Db
 from .event import Event
+from .run import Run
+from .lock import Lock
+
 
 class Pending:
 
     def __init__(self,maxruns,configfile):
 
-        self.db=Db(Config(configfile))
+        config=Config(configfile)
+
+        self.configfile=configfile # Store this for Run
+        self.db=Db(config)
+        self.conf=config.pending
         self.maxruns=maxruns
-        self.events=self.db.getPendingEvents()
+        self.events=[]
         self.eventsRun=0
 
 
-    def loop(self):
-        maxruns=self.maxruns
-        for row in self.events:
+    def displayEvents(self):
+        self.events=self.db.getPendingEvents()
 
-            if maxruns>0 and self.eventsRun>=maxruns:
+        print('Got %i events to process.' % len(self.events))
+        nevents=len(self.events)
+        if nevents==0:  return
+        elif nevents>10: maxdisplay=10
+        else: maxdisplay=nevents
+
+        for i in range(0,maxdisplay):
+            event=self.events[i]
+            print('%i: %s has %i responses.' %
+              (i,event['eventid'],event['newresponses']))
+
+
+    def loop(self,test=False):
+        maxruns=self.maxruns
+        self.events=self.db.getPendingEvents()
+        processed=False
+        finishedEvents=[]
+
+        while True:
+            if maxruns and self.eventsRun>=maxruns:
                 print('Pending: %i events processed' % maxruns)
                 break
 
-            if self.processEvent(row):
-                 self.eventsRun+=1
+            # Refresh queue only if an event was run successfully
+            if processed:
+                self.events=self.db.getPendingEvents()
+                processed=False
 
-        # Continue processing here
+            if not self.events:
+                break
+
+            row=self.events.pop(0)
+            evid=row['eventid']
+            newresponses=row['newresponses']
+
+            # Skip events currently running or recently processed
+            if evid in finishedEvents:
+                continue
+            if self.isLocked(evid):
+                continue
+            if self.checkRunRecent(row):
+                continue
+
+            if test:
+                print('Pending: loop test:',evid)
+                runevid=evid
+            else:
+                print('Pending: loop processing %s with %i responses.' % (evid,newresponses))
+                run=Run(self.configfile)
+                runevid=run.runEvent(evid)
+
+            finishedEvents.append(evid)
+
+            if runevid:
+                self.eventsRun+=1
+                if runevid!=evid:
+                    finishedEvents.append(runevid)
+                        
+                # for test, iterate through all events
+                if not test:
+                    processed=True
+
+        # Now either we hit maxruns or self.events is empty
         return True
 
 
-    def processEvent(self,row):
+    @staticmethod
+    def isLocked(evid):
 
-        event=Event(row)
-        evid=event.eventid
-        print('Pending: Running event',evid)
+        lock=Lock('rundyfi.'+evid,fail_ok=True)
+        if lock.success:
+            lock.removeLock()
+            return False
 
-        # TODO: check duplicate entries and grab them
-
-        1. if good event, 
-        #newevid=self.moveDuplicates(evid)
-        #if newevid!=evid:
-        #    print('Pending: recalculating loop after this.')
-        #    evid=newid
-        #    recalculate=True
-
-
-        #db.resetNewResponses(evid)
-
+        print('Pending.isLocked:',evid,'is locked.')
         return True
 
 
-    def displayEvents(self):
+    def checkRunRecent(self,row):
 
-        print('Got %i events to process.' % len(self.events))
-        if len(self.events)==0:
-            return
+        if not 'process_timestamp' in row or not row['process_timestamp']:
+            return None
 
-        event=self.events[0]
-        print('Priority is event %s with %i responses.' %
-            (event['eventid'],event['newresponses']))
+        age=self.db.stringToAge(row['process_timestamp'])
+        if age<self.conf['delay']:
+            return True
+
+        return False
 
