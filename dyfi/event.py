@@ -94,8 +94,13 @@ class Event:
         print('TODO: Event.update: disabled for now')
         return
 
+    def setattr(self,name,val):
+        if name not in self.columns:
+            raise ValueError('Event: Invalid column '+name)
+        self.__setattr__(name,val)
+ 
 
-    # Generic getattr method for parameters (no setattr)
+    # Generic getattr method for parameters
 
     def __getattr__(self,name):
 

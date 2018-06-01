@@ -187,10 +187,6 @@ class RawDb:
             primaryKey='eventid'
 
         if increment:
-            # incrementing does not work if original value is null
-            # need to read the original column, then
-            # increment manually
-
             clause='%s = ?' % primaryKey
             row=self.querySingleTable(table,clause,subid)[0]
             oldVal=row[column]

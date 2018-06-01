@@ -19,6 +19,8 @@ from .comcat import Comcat
 
 class Run:
 
+    noOverwriteColumns=['nresponses','newresponses','ciim_version','process_timestamp','orig_id']
+
     def __init__(self,configfile):
 
         self.config=Config(configfile)
@@ -52,13 +54,16 @@ class Run:
             print('Event ID changed from %s to %s' % (evid,event.eventid))
             print('WARNING! WARNING! WARNING!')
 
+        # Don't overwrite certain columns
+        originalData=self.db.loadEvent(evid)
+        if originalData:
+            for k in (self.noOverwriteColumns):
+                print('Setting',k,'to',originalData[k])
+                event.setattr(k,originalData[k])
+
         if save:
-            # Don't overwrite newresponses
-            originalData=self.db.loadEvent(evid)
-            if originalData:
-                event.newresponses=originalData['newresponses']
             saved=self.db.save(event)
-            print('Run.update: Saved %s with %i newresponses' % (event.eventid,event.newresponses))
+            print('Run.update: Saved %s with %i newresponses' % (event.eventid,event.newresponses or 0))
 
         return event.eventid
 
@@ -69,51 +74,60 @@ class Run:
         if update:
             print('Run.runEvent: Updating and saving this event.')
             self.update(evid)
+            event=self.event
             # If authoritative ID changed, evid will change too
 
-        if not self.event:
+            # 1a. Check if Comcat gave delete or no ID
+            if event=='DELETED' or event=='NOT FOUND':
+                print('Run.runEvent: Got',event,'- deleting',evid)
+                if not test:
+                    self.db.deleteEvent(evid)
+                return evid
+
+        # 2. If update doesn't work, read database
+        event=self.event
+        if not event:
             raw=self.db.loadEvent(evid)
             # No guarantee that self.duplicates exist (unless
             # self.update() was run beforehand)
             if raw:
                 self.event=Event(raw)
+            event=self.event
 
-        event=self.event
-
+        # 2a. Check if no data
         if not event: 
             print('Run.runEvent: No data found')
             return None
 
-        # Check if stub
-        if isinstance(event,Event) and event.isStub:
+        # 2b. Some other Comcat error
+        if isinstance(event,str):
+            print('Run.runEvent: Got',event,'for',evid,'ignoring.')
+            return None
+
+        # 2c. Check if stub
+        if event.isStub:
             print('Run.runEvent: Cannot run on stub event.')
             return None
 
-        if event=='DELETED' or event=='NOT FOUND':
-            print('Run.runEvent: Got',event'- deleting',evid)
-            if not test:
-                self.deleteEvent(evid)
-            return evid
-
-        # 2. Update will populate event.duplicates 
+      
+       # 3. Update will populate event.duplicates 
         if self.duplicates:
             print('Run.runEvent: Moving duplicates.')
             if not test:
                 self.moveDuplicates()
 
-        # 3. Create event products
+        # 4. Create event products
         print('Run.runEvent: Creating products.')
         if not test:
             proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)
             results=proc.stdout.read().decode('utf-8')
             print(results)
 
-        # 4. Set new responses to zero 
-        print('Run.runEvent: Resetting newresponses.')
+        # 5. Set new responses to zero and increment version
+        print('Run.runEvent: Updating event parameters.')
         if not test:
             self.db.setNewresponse(evid,value=0,increment=False)
-
-        # 5. Set process_timestamp,increment ciim_version
+            self.db.updateEventVersion(evid)
 
         # 6. export to web
 
@@ -173,12 +187,4 @@ class Run:
 
         return nMoved 
 
-
-    def deleteEvent(self,evid):
-        db=self.db
-
-        event=db.loadEvent(evid)
-        if 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
-            db.rawdb.updateRow('event',evid,'invisible',1)
-        return
 

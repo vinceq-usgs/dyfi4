@@ -402,4 +402,24 @@ class Db:
         return results
 
 
+    def deleteEvent(self,evid):
+        event=self.loadEvent(evid)
+        if 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
+            self.rawdb.updateRow('event',evid,'invisible',1)
+        return
+
+
+
+    def updateEventVersion(self,evid):
+
+        timestamp=self.epochToString()
+        self.rawdb.updateRow('event',evid,'process_timestamp',timestamp)
+        self.rawdb.updateRow('event',evid,'ciim_version',1,increment=True)
+
+        event=self.loadEvent(evid)
+        timestamp=event['process_timestamp']
+        ciim_version=event['ciim_version']
+
+        print('Updated',evid,'to version',ciim_version,timestamp)
+
 
