@@ -85,24 +85,23 @@ class Run:
             return None
 
         # Check if stub
-        if isinstance(event,Event) and not event.eventdatetime:
+        if isinstance(event,Event) and event.isStub:
             print('Run.runEvent: Cannot run on stub event.')
             return None
 
-        if event=='DELETED':
-            print('Run.runEvent: Deleting',evid)
+        if event=='DELETED' or event=='NOT FOUND':
+            print('Run.runEvent: Got',event'- deleting',evid)
             if not test:
                 self.deleteEvent(evid)
             return evid
 
-        # 2. Update will populate event.duplicates, go through that
+        # 2. Update will populate event.duplicates 
         if self.duplicates:
             print('Run.runEvent: Moving duplicates.')
             if not test:
                 self.moveDuplicates()
 
-        # 3.
-        # call dyficontainer instead of running rundyfi.py
+        # 3. Create event products
         print('Run.runEvent: Creating products.')
         if not test:
             proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)

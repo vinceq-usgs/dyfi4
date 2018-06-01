@@ -40,6 +40,7 @@ class Event:
 
         self.table='event'
         self.raw=None
+        self.isStub=False
 
         if isinstance(event,str):
           evid=event
@@ -57,6 +58,9 @@ class Event:
         for column in self.columns:
             val=event[column] if event and column in event else None
             setattr(self,column,val)
+
+        if not event['eventdatetime']:
+            self.isStub=True
 
 
     def toGeoJSON(self):

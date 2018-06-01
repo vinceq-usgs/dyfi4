@@ -362,6 +362,8 @@ class Db:
            for k,v in data.items():
                stub[k]=v
        self.save(stub)
+
+       return Event(stub)
            
 
     def setNewresponse(self,evid,value,increment):
