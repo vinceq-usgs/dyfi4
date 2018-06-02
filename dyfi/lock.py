@@ -16,12 +16,13 @@ import fcntl
 
 class Lock:
 
-    def __init__(self,name,flagDir='./flags',fail_ok=False):
+    def __init__(self,name,flagDir='./flags',silent=False,fail_ok=False):
 
         self.lockfile='%s/%s.lock' % (flagDir,name)
         self.name=name
         self.f=None
         self.success=False
+        self.silent=silent
 
         os.makedirs(flagDir,exist_ok=True)
 
@@ -38,12 +39,14 @@ class Lock:
                 exit()
 
         atexit.register(self.removeLock)
-        print('Lock: created lock "%s"' % self.name)
+        if not silent:
+            print('Lock: created lock "%s"' % self.name)
 
 
     def removeLock(self):
         if self.lockfile:        
-            print('Lock: removing lock "%s"' % self.name)
+            if not self.silent:
+                print('Lock: removing lock "%s"' % self.name)
             fcntl.flock(self.f,fcntl.LOCK_UN)
             os.remove(self.lockfile)
             self.lockfile=None
