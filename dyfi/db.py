@@ -281,6 +281,9 @@ class Db:
 
         """
 
+        if not date:
+            raise ValueError('ERROR: getExtendedTablesByDateTime: Got blank date')
+
         year=None
         if isinstance(date,str):
           try:
@@ -362,9 +365,7 @@ class Db:
            for k,v in data.items():
                stub[k]=v
        self.save(stub)
-
-       return Event(stub)
-           
+       return True
 
     def setNewresponse(self,evid,value,increment):
 
