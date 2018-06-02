@@ -43,7 +43,7 @@ def main(args):
     from dyfi import Pending
 
     if not args.check:
-        Lock('queueTriggers')
+        Lock('queueTriggers',silent=True)
 
     pending=Pending(maxruns=args.maxruns,configfile=args.configfile)
 
