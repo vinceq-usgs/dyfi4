@@ -73,8 +73,10 @@ class Pending:
             if evid in finishedEvents:
                 continue
             if self.isLocked(evid):
+                print('Event',evid,'is locked, skipping.')
                 continue
             if self.checkRunRecent(row):
+                print('Event',evid,'run recently, skipping.')
                 continue
 
             if test:
@@ -97,18 +99,18 @@ class Pending:
                     processed=True
 
         # Now either we hit maxruns or self.events is empty
+        print('Pending.loop: No more events.')
         return True
 
 
     @staticmethod
     def isLocked(evid):
 
-        lock=Lock('rundyfi.'+evid,fail_ok=True)
+        lock=Lock('rundyfi.'+evid,fail_ok=True,silent=True)
         if lock.success:
             lock.removeLock()
             return False
 
-        print('Pending.isLocked:',evid,'is locked.')
         return True
 
 
