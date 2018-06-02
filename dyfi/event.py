@@ -59,7 +59,7 @@ class Event:
             val=event[column] if event and column in event else None
             setattr(self,column,val)
 
-        if not event['eventdatetime']:
+        if not self.eventdatetime:
             self.isStub=True
 
 
