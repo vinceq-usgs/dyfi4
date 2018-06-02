@@ -70,6 +70,7 @@ class Run:
 
     def runEvent(self,evid,update=True,findDuplicates=True,test=False):
 
+        print('--------------------------------')
         # 1. Update self.event from Comcat or file (and save)
         if update:
             print('Run.runEvent: Updating and saving this event.')
@@ -168,7 +169,7 @@ class Run:
             entriesToMove=db.loadEntries(
                 evid=dupid,
                 loadSuspect=True,
-                startdatetime=event.eventdatetime)
+                startdatetime=self.event.eventdatetime)
 
             if not entriesToMove:
                 continue
