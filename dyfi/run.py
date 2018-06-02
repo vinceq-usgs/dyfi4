@@ -26,7 +26,6 @@ class Run:
         self.config=Config(configfile)
         self.db=Db(self.config)
         self.duplicates=None
-        self.evid=None
         self.event=None
 
 
@@ -38,17 +37,16 @@ class Run:
 
         if not inputJson or inputJson=='NOT FOUND':
             print('Run.update: Could not get data for',evid)
-            return None
+            return evid
 
         if inputJson=='DELETED':
             self.event='DELETED'
-            return None
+            return evid
 
         event=Event.createFromContents(inputJson)
         self.event=event
         self.duplicates=self.event.duplicates
 
-        self.evid=event.eventid
         if event.eventid!=evid: 
             print('WARNING! WARNING! WARNING!')
             print('Event ID changed from %s to %s' % (evid,event.eventid))
@@ -71,29 +69,29 @@ class Run:
     def runEvent(self,evid,update=True,findDuplicates=True,test=False):
 
         print('--------------------------------')
+        event=self.event
+
         # 1. Update self.event from Comcat or file (and save)
         if update:
             print('Run.runEvent: Updating and saving this event.')
             self.update(evid)
             event=self.event
-            # If authoritative ID changed, evid will change too
 
             # 1a. Check if Comcat gave delete or no ID
             if event=='DELETED' or event=='NOT FOUND':
-                print('Run.runEvent: Got',event,'- deleting',evid)
+                print('Run.runEvent: Got',event,'- deleting',authid)
                 if not test:
-                    self.db.deleteEvent(evid)
-                return evid
+                    self.db.deleteEvent(authid)
+                return authid
 
-        # 2. If update doesn't work, read database
-        event=self.event
+        # 2. If no update or update doesn't work, read database
         if not event:
             raw=self.db.loadEvent(evid)
             # No guarantee that self.duplicates exist (unless
             # self.update() was run beforehand)
             if raw:
                 self.event=Event(raw)
-            event=self.event
+                event=self.event
 
         # 2a. Check if no data
         if not event: 
@@ -102,14 +100,13 @@ class Run:
 
         # 2b. Some other Comcat error
         if isinstance(event,str):
-            print('Run.runEvent: Got',event,'for',evid,'ignoring.')
+            print('Run.runEvent: Got',event,'for',authid,'ignoring.')
             return None
 
         # 2c. Check if stub
         if event.isStub:
             print('Run.runEvent: Cannot run on stub event.')
             return None
-
       
        # 3. Update will populate event.duplicates 
         if self.duplicates:
@@ -117,8 +114,9 @@ class Run:
             if not test:
                 self.moveDuplicates()
 
-        # 4. Create event products
-        print('Run.runEvent: Creating products.')
+        # 4. Create event products. At this point switch to authoritative id
+        evid=event.eventid
+        print('Run.runEvent: Creating products for',evid)
         if not test:
             proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)
             results=proc.stdout.read().decode('utf-8')
@@ -137,7 +135,7 @@ class Run:
 
     def moveDuplicates(self):
         db=self.db
-        goodid=self.evid
+        goodid=self.event.eventid
 
         if not self.duplicates:
             return
