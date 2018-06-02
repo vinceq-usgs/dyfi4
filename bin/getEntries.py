@@ -91,11 +91,5 @@ def main(args):
 
 if __name__=='__main__':
     args=parser.parse_args()
-    if False:
-        print('DEBUG')
-        args.nodelete=True
-        args.check=True
-        args.nosave=True
-
     main(args)
 
