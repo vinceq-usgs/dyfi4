@@ -34,7 +34,8 @@ setup_env.sh.disabled
 *.err
 log.*
 tests/db/*
-movie/*.apng
 event.db
+movie/*.apng
 bin/localconfig.yml
+bin/get_entries_simple.sh
 

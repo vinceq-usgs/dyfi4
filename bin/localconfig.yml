@@ -1,0 +1,28 @@
+# Sample config.yml
+# Executables and tests must be run in the package root directory
+# Hence data directories, databases, etc. should be specified from package root 
+
+db:
+    # type is either mysql or sqlite3
+    type: sqlite3
+    files:
+        event: tests/db/event.db
+        maps: tests/db/maps.db
+        extended: tests/db/__EXTENDED__.db
+
+directories:        
+    incoming: data/incoming
+
+executables:
+
+products:
+    file: lib/products.yml
+
+pending:
+    delay: 120
+
+comcat:
+    server: earthquake.usgs.gov
+    urlbase: https://__SERVER__/fdsnws/event/1/query?
+    timeout: 1
+
