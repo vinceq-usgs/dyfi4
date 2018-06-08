@@ -118,7 +118,8 @@ class Run:
         evid=event.eventid
         print('Run.runEvent: Creating products for',evid)
         if not test:
-            proc=subprocess.Popen(['app/rundyfi.py',evid],stdout=subprocess.PIPE)
+            runCommand=self.config.executables['run'].split(' ').append(evid)
+            proc=subprocess.Popen(runCommand,stdout=subprocess.PIPE)
             results=proc.stdout.read().decode('utf-8')
             print(results)
 
@@ -129,6 +130,11 @@ class Run:
             self.db.updateEventVersion(evid)
 
         # 6. export to web
+        if not test:
+            runCommand=self.config.executables['push'].split(' ').append(evid)
+            proc=subprocess.Popen(runCommand,stdout=subprocess.PIPE)
+            results=proc.stdout.read().decode('utf-8')
+            print(results)
 
         return evid
 

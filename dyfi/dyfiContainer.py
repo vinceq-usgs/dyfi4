@@ -3,6 +3,7 @@ from .event import Event
 from .entries import Entries
 from .filter import Filter
 from .products import Products
+from .db import Db
 
 class DyfiContainer:
     """
@@ -43,4 +44,14 @@ class DyfiContainer:
 
         self.products=Products(self.event,self.entries,config=config)
         self.products.createAll()
+
+        nresponses=len(self.entries)
+        products=self.products.data
+
+        # Get signature product's stats
+        product=[p for p in self.products.data if p['id']=='geo_10km']
+        if product:
+            db=Db(config)
+            p=product[0]['properties']
+            db.updateEventResponses(evid,nresponses=p['nresp'],maxint=p['maxint'])
 

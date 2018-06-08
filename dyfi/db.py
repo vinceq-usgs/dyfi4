@@ -410,7 +410,6 @@ class Db:
         return
 
 
-
     def updateEventVersion(self,evid):
 
         timestamp=self.epochToString()
@@ -422,5 +421,15 @@ class Db:
         ciim_version=event['ciim_version']
 
         print('Updated',evid,'to version',ciim_version,timestamp)
+
+
+    def updateEventResponses(self,evid,nresponses=None,maxint=None):
+
+        if nresponses is not None:
+            self.rawdb.updateRow('event',evid,'nresponses',nresponses)
+            print('Updated',evid,'nresponses to',nresponses)
+        if maxint is not None:
+            self.rawdb.updateRow('event',evid,'max_intensity',maxint)
+            print('Updated',evid,'max_intensity to',maxint)
 
 
