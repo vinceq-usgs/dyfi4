@@ -39,6 +39,10 @@ parser.add_argument(
     help='Do not look for external update'
 )
 parser.add_argument(
+    '--norun',action='store_true',default=False,
+    help='Do not run rundyfi.py'
+)
+parser.add_argument(
     '--trigger',action='store_true',default=False,
     help='Trigger this event'
 )
@@ -77,7 +81,7 @@ def main(args):
         print('Got deleted eventid',evid)
 
     if args.trigger:
-        run.runEvent(evid,update=False,findDuplicates=True)
+        run.runEvent(evid,update=False,findDuplicates=True,norun=args.norun)
     else:
         print('Stopping, use --trigger to continue.')
         exit()

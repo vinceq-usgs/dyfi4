@@ -66,7 +66,7 @@ class Run:
         return event.eventid
 
 
-    def runEvent(self,evid,update=True,findDuplicates=True,test=False):
+    def runEvent(self,evid,update=True,findDuplicates=True,test=False,norun=False):
 
         print('--------------------------------')
         event=self.event
@@ -116,12 +116,10 @@ class Run:
 
         # 4. Create event products. At this point switch to authoritative id
         evid=event.eventid
-        print('Run.runEvent: Creating products for',evid)
-        if not test:
-            runCommand=self.config.executables['run'].split(' ').append(evid)
-            proc=subprocess.Popen(runCommand,stdout=subprocess.PIPE)
-            results=proc.stdout.read().decode('utf-8')
-            print(results)
+        if not test and not norun:
+            print('Run.runEvent: Creating products for',evid)
+            runCommand=self.config.executables['run'].split(' ')+[evid]
+            proc=subprocess.Popen(runCommand)
 
         # 5. Set new responses to zero and increment version
         print('Run.runEvent: Updating event parameters.')
@@ -131,10 +129,8 @@ class Run:
 
         # 6. export to web
         if not test:
-            runCommand=self.config.executables['push'].split(' ').append(evid)
-            proc=subprocess.Popen(runCommand,stdout=subprocess.PIPE)
-            results=proc.stdout.read().decode('utf-8')
-            print(results)
+            runCommand=self.config.executables['push'].split(' ')+[evid]
+            proc=subprocess.Popen(runCommand)
 
         return evid
 
