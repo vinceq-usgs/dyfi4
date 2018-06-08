@@ -17,8 +17,8 @@
     <script src="inc/leaflet.js"></script>
 	<style>
 		#map {
-			width: 800px;
-			height: 600px;
+			width: 612px;
+			height: 612px;
 		}
         .info {
             padding: 6px 8px;
