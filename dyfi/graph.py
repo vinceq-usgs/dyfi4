@@ -181,9 +181,16 @@ class Graph:
                 }
             xydata.append(pt)
 
+        if '10km' in rawdata.id:
+            legend='User entries (10 km aggregated)'
+        elif '1km' in rawdata.id:
+            legend='user entries (1 km aggregated)'
+        else:
+            legend='User entries'
+
         scatterdata={
             'id':'scatterdata',
-            'legend':'Aggregated %s data' % (rawdata.id),
+            'legend':legend,
             'class':'scatterplot1',
             'data':xydata
             }
@@ -202,7 +209,7 @@ class Graph:
         =======    ================================
         id         'ipe_[IPE name]'
         legend     IPE name
-        class      'estimated_n' where n is unique
+        class      'estimated[n]' where [n] is unique
         data       List of points (see below)
         =======    ================================
 
@@ -237,8 +244,9 @@ class Graph:
             dataset={
                 'id':'ipe_'+ipe.name,
                 'legend':ipe.name,
-                'class':'estimated_'+str(counter),
-                'data':ipedata
+                'class':'estimated'+str(counter),
+                'data':ipedata,
+                'showpoints':'true'
             }
             multipleipes.append(dataset)
 
@@ -316,8 +324,9 @@ class Graph:
         return [{
             'id':'meanBinned',
             'legend':'Mean intensity in bin',
-            'class':'mean',
-            'data':means
+            'class':'binned',
+            'data':means,
+            'showPoints':'true'
             },
                 {
             'id':'medianBinned',
