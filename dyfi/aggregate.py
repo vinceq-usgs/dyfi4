@@ -139,6 +139,7 @@ def aggregate(entries,producttype,debug=False):
 
     featurecollection=geojson.FeatureCollection(
         id=producttype,
+        name=producttype,
         features=features,
         properties={
             'nresp':totalresp,
@@ -146,7 +147,6 @@ def aggregate(entries,producttype,debug=False):
         }
     )
 
-    featurecollection.name=producttype
     print('Aggregate: %i pts into %i locations, maxint=%i' %
           (npts,len(features),maxcdi))
     return featurecollection

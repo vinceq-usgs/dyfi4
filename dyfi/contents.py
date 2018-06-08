@@ -25,22 +25,23 @@ class Contents:
 
     """
 
+    # TODO: Turn this into yaml file
     PRODUCT_TYPES=OrderedDict((
       ("_ciim",{
             "title":"DYFI City Map",
             "id":"cityMap",
             "caption":"Map of responses by city or ZIP code"
         }),
-      ("_ciim_geo",{
-            "title":"DYFI Geocoded Map",
-            "id":"geoMap",
-            "caption":"Map of responses by geocoded location",
-        }),
-      ("_ciim_geocode",{
-            "title":"DYFI Geocoded Map",
-            "id":"geoMap",
-            "caption":"Map of responses by geocoded location",
-        }),
+#      ("_ciim_geo",{
+#            "title":"DYFI Geocoded Map",
+#            "id":"geoMap",
+#            "caption":"Map of responses by geocoded location",
+#        }),
+#      ("_ciim_geocode",{
+#            "title":"DYFI Geocoded Map",
+#            "id":"geoMap",
+#            "caption":"Map of responses by geocoded location",
+#        }),
       ("_ciim_zoom",{
             "title":"DYFI Zoom Map",
             "id":"zoomMap",
