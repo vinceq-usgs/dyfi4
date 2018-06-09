@@ -119,7 +119,7 @@ class Run:
         if not test and not norun:
             print('Run.runEvent: Creating products for',evid)
             runCommand=self.config.executables['run'].split(' ')+[evid]
-            proc=subprocess.Popen(runCommand)
+            proc=subprocess.call(runCommand)
 
         # 5. Set new responses to zero and increment version
         print('Run.runEvent: Updating event parameters.')
@@ -130,7 +130,7 @@ class Run:
         # 6. export to web
         if not test:
             runCommand=self.config.executables['push'].split(' ')+[evid]
-            proc=subprocess.Popen(runCommand)
+            proc=subprocess.call(runCommand)
 
         return evid
 
