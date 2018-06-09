@@ -447,10 +447,10 @@ class Graph:
             pt['x']=round(pt['t_seconds']/prefConversion,2)
 
         self.data={
-            'datasets':{
+            'datasets':[{
                 'class':'histogram',
                 'data':d
-            },
+            }],
             'xlabel':'Time since earthquake (%s)' % prefUnit,
             'ylabel':'Number of responses',
             'title':'Responses vs. Time Plot',
