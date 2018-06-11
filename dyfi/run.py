@@ -74,7 +74,7 @@ class Run:
         # 1. Update self.event from Comcat or file (and save)
         if update:
             print('Run.runEvent: Updating and saving this event.')
-            self.update(evid)
+            authid=self.update(evid)
             event=self.event
 
             # 1a. Check if Comcat gave delete or no ID
