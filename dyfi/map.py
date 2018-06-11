@@ -124,6 +124,10 @@ class Map:
             os.remove(tmpfilename)
             return
 
+        # Make a copy in leaflet directory for debugging purposes
+        shutil.copy(tmpfilename,leafletdir+'/data.js')
+
+        # Now run screenshot program
         command=config.executables['screenshot']
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
