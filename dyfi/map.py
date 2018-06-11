@@ -4,6 +4,7 @@ import os
 import subprocess
 import json
 import copy
+import datetime
 
 class Map:
     """
@@ -43,11 +44,22 @@ class Map:
                 'name':'Epicenter',
                 'magnitude':event.mag,
                 'depth':event.depth,
-                'id':event.eventid
+                'id':event.eventid,
             }
         }
-
         data['features'].append(epicenter)
+
+        # Add map display data to data.properties
+        p=data['properties']
+        p['id']=event.eventid
+        p['date']=event.eventdatetime+' (UTC)'
+        p['mag']=event.mag
+        p['lat']=event.lat
+        p['lon']=event.lon
+        p['depth']=event.depth
+        p['process_time']=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') 
+        p['version']=event.ciim_version or 1
+
         self.data=data
 
 
