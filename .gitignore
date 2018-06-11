@@ -36,6 +36,11 @@ log.*
 tests/db/*
 event.db
 movie/*.apng
+
+# These auxiliary commands are local server dependent (and not properly
+# generalized), don't export yet
 bin/localconfig.yml
 bin/get_entries_simple.sh
-
+bin/event_dataTemplate.yml
+bin/push.py
+bin/restore_db.sh
