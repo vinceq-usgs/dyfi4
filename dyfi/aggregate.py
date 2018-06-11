@@ -135,7 +135,7 @@ def aggregate(entries,producttype,debug=False):
             }
         )
 
-        # USGS Event Pages look for different names for these properties.
+        # HACK: USGS Event Pages look for different names for these properties.
         pt.properties['cdi']=thiscdi
         pt.properties['name']='UTM:(%s)' % location
 
