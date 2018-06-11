@@ -44,3 +44,5 @@ bin/get_entries_simple.sh
 bin/event_dataTemplate.yml
 bin/push.py
 bin/restore_db.sh
+bin/cron_*
+
