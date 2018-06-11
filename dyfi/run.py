@@ -117,6 +117,7 @@ class Run:
         # 4. Create event products. At this point switch to authoritative id
         evid=event.eventid
         if not test and not norun:
+            self.db.updateEventVersion(evid)
             print('Run.runEvent: Creating products for',evid)
             runCommand=self.config.executables['run'].split(' ')+[evid]
             proc=subprocess.call(runCommand)
@@ -125,7 +126,6 @@ class Run:
         print('Run.runEvent: Updating event parameters.')
         if not test:
             self.db.setNewresponse(evid,value=0,increment=False)
-            self.db.updateEventVersion(evid)
 
         # 6. export to web
         if not test:
