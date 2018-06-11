@@ -135,6 +135,12 @@ def aggregate(entries,producttype,debug=False):
             }
         )
 
+        # USGS Event Pages look for different names for these properties.
+
+        altProps={
+            'cdi':thiscdi,
+            'name':location
+        }
         features.append(pt)
 
     featurecollection=geojson.FeatureCollection(

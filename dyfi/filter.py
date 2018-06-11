@@ -23,7 +23,7 @@ class Filter:
           (in Entries)
 
           for location in locations.features:
-            result=filter(location)
+            result=filter(location[,addDistance=True])
             if not bad:
                 # store this
 
@@ -31,6 +31,8 @@ class Filter:
         null : good
         1 : greater than ipe threshold
         2 : greater than maxdist
+
+        By default, this will modify location by adding properties['dist']
 
     """
 
@@ -45,7 +47,7 @@ class Filter:
         print('Filter: Using IPE',ipe)
 
 
-    def filterFunction(self):
+    def filterFunction(self,addDistance=True):
         """
         Returns a function
 
@@ -78,9 +80,13 @@ class Filter:
                 print(entry)
                 raise ValueError('Cannot find coordinates')
 
-            # Is this further than the maximum distance?
+            # Hypocentral distance
             r=dist(epicenter,loccoords,edepth)
 
+            if addDistance:
+                entry['properties']['dist']=round(r,1)
+
+            # Is this greater than the maximum possible distance?
             if r>config['maxdist']:
                 return 2
 
