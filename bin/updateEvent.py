@@ -52,7 +52,7 @@ parser.add_argument(
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Event,Db,Run
+    from dyfi import Run
 
     evid=args.evid
 

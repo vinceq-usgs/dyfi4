@@ -129,7 +129,7 @@ def test_entries():
   assert '[Entry: %s:%s' % (testtable,testsubid) in str(testentry)
   assert testsubid!=None
   assert testentry.table==testtable
-  
+
   # Test aggregate
   assert isinstance(aggregate.aggregate(entries,'geo_1km'),dict)
 

@@ -193,7 +193,7 @@ class RawDb:
             try:
                 if not oldVal: oldVal=0
                 val+=int(oldVal)
-            except:
+            except (TypeError,ValueError):
                 print('rawDbSqlite.updateRow: Could not increment %s key=%s val=%s, skipping.' % (subid,column,oldVal))
                 return
 

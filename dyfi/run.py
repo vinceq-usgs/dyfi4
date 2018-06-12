@@ -130,7 +130,7 @@ class Run:
         # 6. export to web
         if not test:
             runCommand=self.config.executables['push'].split(' ')+[evid]
-            proc=subprocess.call(runCommand)
+            subprocess.call(runCommand)
 
         return evid
 
