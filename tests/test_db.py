@@ -169,9 +169,10 @@ def test_saveRawdb():
   row=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
   assert row['comments']==origcomment
 
- # Test updateRow increment
+  # Test updateRow increment
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
-  assert rawdb.updateRow('event',testid,'newresponses','badvalue',increment=True)
+  assert not rawdb.updateRow('event',testid,'newresponses','badvalue',increment=True)
+
   assert rawdb.updateRow('event',testid,'newresponses',99)
   assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]

@@ -319,8 +319,6 @@ def getUtmPolyFromString(utm,span):
         (y,x)=tup
         if eastborder and x>ebound:
             x=ebound
-        elif x<wbound:
-            x=wbound
         x=round(x,PRECISION)
         y=round(y,PRECISION)
         return (x,y)
