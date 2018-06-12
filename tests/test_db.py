@@ -63,7 +63,6 @@ def test_saveEvent():
 
   from dyfi import Event
   db=Db(config)
-  rawdb=db.rawdb
 
   # Test saving dict
   obj={'eventid':'testid','table':'event'}
@@ -161,7 +160,7 @@ def test_saveRawdb():
     row['subid']='invalidstring'
     rawdb.save(testtable,row)
   assert 'Operational error' in str(exception.value)
-  
+
 
   # Test updateRow
 

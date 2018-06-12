@@ -12,7 +12,6 @@ Foreach event:
 
 from .config import Config
 from .db import Db
-from .event import Event
 from .run import Run
 from .lock import Lock
 
@@ -93,7 +92,7 @@ class Pending:
                 self.eventsRun+=1
                 if runevid!=evid:
                     finishedEvents.append(runevid)
-                        
+
                 # for test, iterate through all events
                 if not test:
                     processed=True

@@ -57,7 +57,7 @@ class Map:
         p['lat']=event.lat
         p['lon']=event.lon
         p['depth']=event.depth
-        p['process_time']=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') 
+        p['process_time']=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
         p['version']=event.ciim_version or 1
 
         self.data=data

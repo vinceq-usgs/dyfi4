@@ -22,7 +22,6 @@ import sys
 import argparse
 import os
 import os.path
-import time
 
 parser=argparse.ArgumentParser(
     prog='app/loadEntries.py',
@@ -67,7 +66,7 @@ def main(args):
             os.remove(file)
             continue
 
-        count+=1 
+        count+=1
         print('Processing',file)
         # This will save file and increment newresponses
         entry=incoming.saveFile(file)

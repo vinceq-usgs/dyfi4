@@ -65,16 +65,15 @@ def test_event():
       event=Event('blank',config=config)
   assert 'Cannot create Event' in str(exception.value)
 
-  # Test an event with bad column
+  # Test setattr
+  event.setattr('mag',9)
   with pytest.raises(ValueError) as exception:
       event.setattr('badcolumn',1)
   assert 'Invalid column' in str(exception.value)
 
-  
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,aggregate
-  import datetime
   import geojson
 
   testtable='extended_2016'

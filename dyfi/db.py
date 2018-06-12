@@ -77,7 +77,7 @@ class Db:
         """
 
         isDict=isinstance(obj,dict)
-        if not table: 
+        if not table:
             if hasattr(obj,'table'):
                 table=obj.table
             elif isDict:
@@ -357,7 +357,6 @@ class Db:
        event=self.loadEvent(evid)
        if event or evid=='unknown':
            raise RuntimeError('db.createStubEvent got existing event or "unknown"')
-           return None
 
        createdtime=self.epochToString()
        stub={'table':'event','eventid':evid,'createdtime':createdtime}
@@ -382,7 +381,7 @@ class Db:
             try:
                 value+=int(event['newresponses'])
             except(ValueError):
-                print('db.setNewresponse: WARNING: Could not parse old value for newresponses, ignoring') 
+                print('db.setNewresponse: WARNING: Could not parse old value for newresponses, ignoring')
 
         #print('db.setNewresponse: newresponses=%i, saving.' % value)
         event['newresponses']=value

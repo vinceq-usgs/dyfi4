@@ -6,8 +6,6 @@ Incoming
 """
 
 import os
-import subprocess
-import re
 import urllib.parse
 
 from .db import Db
@@ -99,7 +97,7 @@ class Incoming:
 
         """
         if isinstance(rawfile,dict):
-            entry=rawfile 
+            entry=rawfile
         else:
            entry=self.readFile(rawfile)
         if not entry:
@@ -197,7 +195,7 @@ class Incoming:
         badDir=self.config.directories['trashincoming']
         if bad:
             badDir=self.config.directories['badincoming']
-            print('Moving this file to',badDir) 
+            print('Moving this file to',badDir)
 
         os.makedirs(badDir,exist_ok=True)
         return os.rename(rawfile,badDir+'/'+os.path.basename(rawfile))
@@ -212,5 +210,5 @@ class Incoming:
             elif x<-180: x+=360
             else: break
 
-        return str(x) 
+        return str(x)
 

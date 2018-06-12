@@ -44,11 +44,11 @@ class Lock:
 
 
     def removeLock(self):
-        if self.lockfile:        
+        if self.lockfile:
             if not self.silent:
                 print('Lock: removing lock "%s"' % self.name)
             fcntl.flock(self.f,fcntl.LOCK_UN)
             os.remove(self.lockfile)
             self.lockfile=None
-            
+
 

@@ -74,8 +74,6 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
             else:
                 val=entry.cdiIndex(index)
 
-            subid=entry.subid
-
             # Indices with no value are not counted.
             # They DO NOT have zero value!
             if val is None:
@@ -84,10 +82,8 @@ def calculate(entries,cwsOnly=False,fine=False,debug=False):
             indexTotal+=val
             indexCount+=1
 
-        infoText=''
         if indexCount:
             totalByIndex[index]=indexTotal/indexCount
-            infoText='%s/%s' % (totalByIndex[index],indexCount)
 
     cws=0
     for index in totalByIndex:

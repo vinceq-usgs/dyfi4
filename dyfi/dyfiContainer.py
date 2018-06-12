@@ -45,9 +45,6 @@ class DyfiContainer:
         self.products=Products(self.event,self.entries,config=config)
         self.products.createAll()
 
-        nresponses=len(self.entries)
-        products=self.products.data
-
         # Get signature product's stats
         product=[p for p in self.products.data if p['id']=='geo_10km']
         if product:
