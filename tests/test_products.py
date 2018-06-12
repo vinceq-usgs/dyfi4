@@ -69,6 +69,18 @@ def test_products():
     graph.getDistBins()
     assert 'data' in graph.toJSON()
 
+    # Test alternate getScatterData settings
+    data=entries.aggregate('geo_1km')
+    graph=Graph('plot_atten',event=event,data=data,config=config,eventDir='test')
+    scatterdata=graph.getScatterData()
+    assert '1 km' in scatterdata['legend']
+
+    data.id='Alternate aggregation'
+    graph=Graph('plot_atten',event=event,data=data,config=config,eventDir='test')
+    scatterdata=graph.getScatterData()
+    assert scatterdata['legend']=='User entries'
+
+
     # Test time graph
 
     data=entries.getTimes('plot_numresp')

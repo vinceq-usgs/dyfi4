@@ -190,11 +190,12 @@ class RawDb:
             clause='%s = ?' % primaryKey
             row=self.querySingleTable(table,clause,subid)[0]
             oldVal=row[column]
-            if oldVal:
-                try:
-                    val+=int(oldVal)
-                except:
-                    print('rawDbSqlite.updateRow: Could not increment %s key=%s val=%s, setting to %s instead.' % (subid,column,oldVal,val))
+            try:
+                if not oldVal: oldVal=0
+                val+=int(oldVal)
+            except (TypeError,ValueError):
+                print('rawDbSqlite.updateRow: Could not increment %s key=%s val=%s, skipping.' % (subid,column,oldVal))
+                return
 
         query='UPDATE %s SET %s=?' % (table,column)
         query+=' WHERE %s=?' % primaryKey

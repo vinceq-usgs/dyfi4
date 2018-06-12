@@ -11,6 +11,11 @@ configfile='tests/testconfig.yml'
 def test_lock():
     from dyfi import Lock
     lock=Lock('testlock')
+    trylock=Lock('testlock',fail_ok=True)
+    assert trylock.success is False
+
+    with pytest.raises(SystemExit):
+        Lock('testlock')
     lock.removeLock()
 
 

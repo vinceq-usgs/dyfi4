@@ -9,7 +9,7 @@ rawentry={
     'd_text':'_chim'
 }
 
- 
+
 def test_cdi():
     from dyfi import cdi,Entry
 
@@ -31,9 +31,9 @@ def test_cdi():
 
 
 def test_ipes():
-    from dyfi import ipes,Entry
-
-    testentry=Entry(rawentry)
+    from dyfi import ipes
+ 
+    #testentry=Entry(rawentry)
     val=ipes.aw2007ceus(7,20)
     assert abs(val-8.759)<0.001
 

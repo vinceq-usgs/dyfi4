@@ -98,7 +98,7 @@ class Event:
         if name not in self.columns:
             raise ValueError('Event: Invalid column '+name)
         self.__setattr__(name,val)
- 
+
 
     # Generic getattr method for parameters
 

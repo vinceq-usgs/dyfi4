@@ -160,8 +160,7 @@ class Contents:
             filenode=xml.createElement('file')
             filenode.setAttribute('title',pdata['title'])
             filenode.setAttribute('id',pdata['id'])
-            caption=filenode.appendChild(
-                xml.createElement('caption'))
+            caption=filenode.appendChild(xml.createElement('caption'))
             caption.appendChild(xml.createCDATASection(pdata['caption']))
 
             found=[]

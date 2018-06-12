@@ -63,7 +63,10 @@ def test_saveEvent():
 
   from dyfi import Event
   db=Db(config)
-  rawdb=db.rawdb
+
+  # Test saving dict
+  obj={'eventid':'testid','table':'event'}
+  db.save(obj)
 
   # Test missing table
   event=Event(testid,config)
@@ -157,7 +160,7 @@ def test_saveRawdb():
     row['subid']='invalidstring'
     rawdb.save(testtable,row)
   assert 'Operational error' in str(exception.value)
-  
+
 
   # Test updateRow
 
@@ -169,8 +172,10 @@ def test_saveRawdb():
   row=rawdb.querySingleTable(testtable,'subid=?',testsubid)[0]
   assert row['comments']==origcomment
 
- # Test updateRow increment
+  # Test updateRow increment
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert not rawdb.updateRow('event',testid,'newresponses','badvalue',increment=True)
+
   assert rawdb.updateRow('event',testid,'newresponses',99)
   assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
@@ -182,4 +187,4 @@ def test_saveRawdb():
   assert 'Operational error' in str(exception.value)
 
   assert rawdb.updateRow('event',testid,'mag',3)==1
- 
+

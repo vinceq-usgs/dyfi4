@@ -12,8 +12,6 @@ import os
 import sys
 import json
 import argparse
-import urllib.request
-import subprocess
 
 # Global database handler
 DB=None
@@ -54,7 +52,7 @@ parser.add_argument(
 def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Config,Event,Db,Run
+    from dyfi import Run
 
     evid=args.evid
 

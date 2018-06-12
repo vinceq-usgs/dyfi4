@@ -61,6 +61,6 @@ class Comcat:
                 return 'DELETED'
             if meta['status']==404 and 'Not Found' in meta['error']:
                 return 'NOT FOUND'
-        
+
         return contents
 

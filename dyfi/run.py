@@ -47,7 +47,7 @@ class Run:
         self.event=event
         self.duplicates=self.event.duplicates
 
-        if event.eventid!=evid: 
+        if event.eventid!=evid:
             print('WARNING! WARNING! WARNING!')
             print('Event ID changed from %s to %s' % (evid,event.eventid))
             print('WARNING! WARNING! WARNING!')
@@ -60,7 +60,7 @@ class Run:
                 event.setattr(k,originalData[k])
 
         if save:
-            saved=self.db.save(event)
+            self.db.save(event)
             print('Run.update: Saved %s with %i newresponses' % (event.eventid,event.newresponses or 0))
 
         return event.eventid
@@ -94,7 +94,7 @@ class Run:
                 event=self.event
 
         # 2a. Check if no data
-        if not event: 
+        if not event:
             print('Run.runEvent: No data found')
             return None
 
@@ -107,8 +107,8 @@ class Run:
         if event.isStub:
             print('Run.runEvent: Cannot run on stub event.')
             return None
-      
-       # 3. Update will populate event.duplicates 
+
+       # 3. Update will populate event.duplicates
         if self.duplicates:
             print('Run.runEvent: Moving duplicates.')
             if not test:
@@ -120,7 +120,7 @@ class Run:
             self.db.updateEventVersion(evid)
             print('Run.runEvent: Creating products for',evid)
             runCommand=self.config.executables['run'].split(' ')+[evid]
-            proc=subprocess.call(runCommand)
+            subprocess.call(runCommand)
 
         # 5. Set new responses to zero and increment version
         print('Run.runEvent: Updating event parameters.')
@@ -130,7 +130,7 @@ class Run:
         # 6. export to web
         if not test:
             runCommand=self.config.executables['push'].split(' ')+[evid]
-            proc=subprocess.call(runCommand)
+            subprocess.call(runCommand)
 
         return evid
 
@@ -186,6 +186,6 @@ class Run:
             print('Moved %i entries from %s to %s' % (nMoved,dupid,goodid))
             db.setNewresponse(goodid,value=nMoved,increment=True)
 
-        return nMoved 
+        return nMoved
 
 

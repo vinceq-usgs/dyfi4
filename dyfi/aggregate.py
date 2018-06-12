@@ -240,7 +240,7 @@ def getUtmForEntry(entry,span,check=False):
 def checkConfidence(entry,span):
     """
 
-    If entry.span is specified, use it to check against the geocoding span.
+    If entry confidence is specified, use it to check against the geocoding span.
     Otherwise, use the length of the latitude and longitude strings.
 
     """
@@ -312,15 +312,15 @@ def getUtmPolyFromString(utm,span):
     # Rounding needed otherwise lat/lon coordinates are arbitrarily long
 
     ebound=zone*6-180
-    wbound=ebound-6
+    #wbound=ebound-6
 
     def _reverse(tup,eastborder=None):
 
         (y,x)=tup
         if eastborder and x>ebound:
             x=ebound
-        elif x<wbound:
-            x=wbound
+        #elif x<wbound:
+        #    x=wbound
         x=round(x,PRECISION)
         y=round(y,PRECISION)
         return (x,y)
