@@ -98,7 +98,10 @@ class Pending:
                     processed=True
 
         # Now either we hit maxruns or self.events is empty
-        print('Pending.loop: No more events.')
+        if self.eventsRun:
+            print('Pending.loop: No more events.')
+        else:
+            print('.',end='',flush=True)
         return True
 
 
