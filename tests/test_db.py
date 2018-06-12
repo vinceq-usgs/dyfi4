@@ -65,6 +65,10 @@ def test_saveEvent():
   db=Db(config)
   rawdb=db.rawdb
 
+  # Test saving dict
+  obj={'eventid':'testid','table':'event'}
+  db.save(obj)
+
   # Test missing table
   event=Event(testid,config)
   event.__dict__['table']=None
@@ -184,4 +188,4 @@ def test_saveRawdb():
   assert 'Operational error' in str(exception.value)
 
   assert rawdb.updateRow('event',testid,'mag',3)==1
- 
+

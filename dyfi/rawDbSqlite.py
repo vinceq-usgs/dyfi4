@@ -148,7 +148,6 @@ class RawDb:
                 if val is None:
                     continue
                 if col in self.intcolumns:
-                    print(col,':',val)
                     rowdict[col]=int(val)
                 elif col in self.floatcolumns:
                     rowdict[col]=float(val)

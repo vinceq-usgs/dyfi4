@@ -16,6 +16,7 @@ def test_lock():
 
     with pytest.raises(SystemExit):
         Lock('testlock')
+    lock.removeLock()
 
 
 def test_run():

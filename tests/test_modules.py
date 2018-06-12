@@ -65,6 +65,12 @@ def test_event():
       event=Event('blank',config=config)
   assert 'Cannot create Event' in str(exception.value)
 
+  # Test an event with bad column
+  with pytest.raises(ValueError) as exception:
+      event.setattr('badcolumn',1)
+  assert 'Invalid column' in str(exception.value)
+
+  
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,aggregate
@@ -174,6 +180,12 @@ def test_entries():
   single.latitude=33.8
   single.longitude=-117.1
   assert not aggregate.checkConfidence(single,'10km')
+  single.latitude=34
+  assert not aggregate.checkConfidence(single,'10km')
+
+  with pytest.raises(ValueError) as exception:
+      db.getExtendedTablesByDatetime(None)
+  assert 'Got blank date' in str(exception.value)
 
 
 def test_container():
