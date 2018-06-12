@@ -184,7 +184,7 @@ class Graph:
         if '10km' in rawdata.id:
             legend='User entries (10 km aggregated)'
         elif '1km' in rawdata.id:
-            legend='user entries (1 km aggregated)'
+            legend='User entries (1 km aggregated)'
         else:
             legend='User entries'
 

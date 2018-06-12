@@ -240,7 +240,7 @@ def getUtmForEntry(entry,span,check=False):
 def checkConfidence(entry,span):
     """
 
-    If entry.span is specified, use it to check against the geocoding span.
+    If entry confidence is specified, use it to check against the geocoding span.
     Otherwise, use the length of the latitude and longitude strings.
 
     """

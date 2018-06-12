@@ -171,6 +171,7 @@ def test_saveRawdb():
 
  # Test updateRow increment
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
+  assert rawdb.updateRow('event',testid,'newresponses','badvalue',increment=True)
   assert rawdb.updateRow('event',testid,'newresponses',99)
   assert rawdb.updateRow('event',testid,'newresponses',1,increment=True)
   testevent=rawdb.querySingleTable('event','eventid=?',testid)[0]
