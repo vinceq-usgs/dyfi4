@@ -1,0 +1,434 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dyfi.db &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.db</h1><div class="highlight"><pre>
+<span></span><span class="c1"># To use MySQL,</span>
+<span class="c1"># 1. change line 6 from .rawDbSqlite to .rawDbMysql</span>
+<span class="c1"># 2. same for dyfi/__init__.py</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">.rawDbSqlite</span> <span class="k">import</span> <span class="n">RawDb</span>
+
+<span class="kn">import</span> <span class="nn">geojson</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<div class="viewcode-block" id="Db"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db">[docs]</a><span class="k">class</span> <span class="nc">Db</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Open a connection to access the DYFI database</span>
+<span class="sd">    :param config: (optional) :py:class:`Config` object</span>
+
+<span class="sd">    This connection is required to run all database queries.</span>
+<span class="sd">    The database is currently implemented in SQLite.</span>
+
+<span class="sd">    .. note:: To change to the database implementation to MySQL, see the top of this file.</span>
+
+<span class="sd">    .. data:: TABLES</span>
+
+<span class="sd">        A list of all tables (including extended tables).</span>
+
+<span class="sd">    .. data:: EXTTABLES</span>
+
+<span class="sd">        A list of all the extended tables.</span>
+
+<span class="sd">    .. data:: EXT_MINYR</span>
+
+<span class="sd">       The year of the earliest named extended table. Previous entries are combined into the table &#39;extended_pre&#39;.</span>
+
+<span class="sd">    .. data:: EXT_MAXYR</span>
+
+<span class="sd">       The year of the latest defined extended table. This is calculated from the current year.</span>
+
+<span class="sd">    .. attribute:: latesttable</span>
+
+<span class="sd">        The name of the latest extended table.</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO:</span>
+    <span class="c1"># create latest table with up to two years of latest entries</span>
+    <span class="c1"># automatically calculate tables: ...2014,2015,extended</span>
+
+    <span class="n">EXT_MINYR</span><span class="o">=</span><span class="mi">2003</span><span class="p">;</span>
+    <span class="n">EXT_MAXYR</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
+    <span class="n">TABLES</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="s1">&#39;maps&#39;</span><span class="p">]</span>
+    <span class="n">EXTTABLES</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;extended_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+            <span class="p">([</span><span class="s1">&#39;pre&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">EXT_MINYR</span><span class="p">,</span><span class="n">EXT_MAXYR</span><span class="o">+</span><span class="mi">1</span><span class="p">)))]</span>
+    <span class="n">TABLES</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">EXTTABLES</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">=</span><span class="n">RawDb</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">db</span><span class="p">)</span> <span class="k">if</span> <span class="n">config</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latesttable</span><span class="o">=</span><span class="n">Db</span><span class="o">.</span><span class="n">EXTTABLES</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="Db.save"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">,</span><span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Save a :py:class:`dyfi.Event` or :py:class:`dyfi.Entry` object to the database table</span>
+<span class="sd">        :param obj: Data object</span>
+<span class="sd">        :returns: Success or failure</span>
+
+<span class="sd">        Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function.</span>
+
+<span class="sd">        For consistency, if the object is an `Entry` object, this will automagically overwrite the `table` attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
+            <span class="n">table</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">table</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Db.save: table not specified&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;extended&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getExtendedTablesByDatetime</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;time_now&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;event&#39;</span> <span class="ow">or</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">table</span><span class="o">=</span><span class="n">table</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">table</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Db.save: unsupported table&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Db.loadEvent"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.loadEvent">[docs]</a>    <span class="k">def</span> <span class="nf">loadEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Read database for event data for an event ID</span>
+<span class="sd">        :param str evid: event ID, e.g. &#39;us1000abcd&#39;</span>
+<span class="sd">        :returns: `dict` suitable for input to an :py:obj:`Event` instance</span>
+
+<span class="sd">        This is mostly a wrapper to the `RawDb` :py:meth:`query` method. This returns a `dict` with keys being columns of the `Event` table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">table</span><span class="o">=</span><span class="s1">&#39;event&#39;</span>
+        <span class="n">clause</span><span class="o">=</span><span class="s1">&#39;eventid=?&#39;</span>
+        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">evid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;Multiple events found, using only the first&#39;</span><span class="p">))</span>
+
+        <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="Db.loadMaps"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.loadMaps">[docs]</a>    <span class="k">def</span> <span class="nf">loadMaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Read database for a list of maps for an event ID</span>
+<span class="sd">        :param str evid: event ID, e.g. &#39;us1000abcd&#39;</span>
+<span class="sd">        :returns: list of rows suitable for input to a :py:obj:`Maps` instance</span>
+
+<span class="sd">        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.</span>
+
+<span class="sd">        Each item in the return list is a dict with keys</span>
+<span class="sd">        being columns to the `maps` table.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">table</span><span class="o">=</span><span class="s1">&#39;maps&#39;</span>
+        <span class="n">clause</span><span class="o">=</span><span class="s1">&#39;eventid=?&#39;</span>
+        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">evid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># We expect multiple rows</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="Db.loadEntries"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.loadEntries">[docs]</a>    <span class="k">def</span> <span class="nf">loadEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">startdatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">querytext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loadSuspect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Search the extended tables for entries matching a query</span>
+<span class="sd">        :param str evid: (optional) eventid</span>
+<span class="sd">        :param Event event: (optional) Event object</span>
+<span class="sd">        :param table: (optional) table or tables</span>
+<span class="sd">        :param startdatetime: (optional) datetime to start search</span>
+<span class="sd">        :param str querytext: (optional) clause(s)</span>
+<span class="sd">        :returns: list of entries suitable for aggregation</span>
+
+<span class="sd">        This is mostly a wrapper to the :py:obj:`rawDBSqlite` :py:obj:`query` object.</span>
+
+<span class="sd">        It also figures out which extended tables to search,</span>
+<span class="sd">        depending on the date of the event, using</span>
+<span class="sd">        :py:obj:`getExtendedTablesByDatetime`.</span>
+
+<span class="sd">        For valid values of parameter :py:attr:`table` see the :py:meth:`checkTables` method.</span>
+
+<span class="sd">        The optional query parameter is a string of SQL `WHERE` clauses</span>
+<span class="sd">        (e.g. &#39;suspect=0 OR suspect is null&#39;).</span>
+
+<span class="sd">        Each item in the return list is a `dict` of entries from the `extended` tables. An additional key `table` is added to each entry that contains the name of the source extended table (see :py:obj:`query`).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># First, figure out which tables to check</span>
+
+        <span class="k">if</span> <span class="n">table</span><span class="p">:</span>
+          <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkTables</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">startdatetime</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getExtendedTablesByDatetime</span><span class="p">(</span><span class="n">startdatetime</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getExtendedTablesByDatetime</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">eventdatetime</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Db: WARNING: db.loadEntries using latest table only&#39;</span><span class="p">)</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">latesttable</span>
+
+        <span class="c1"># Second, figure out which eventid to query</span>
+
+        <span class="n">myclauses</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">mysubs</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">if</span> <span class="n">querytext</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">querytext</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">evid</span><span class="p">:</span>
+            <span class="n">evid</span><span class="o">=</span><span class="n">event</span><span class="o">.</span><span class="n">eventid</span>
+
+        <span class="k">if</span> <span class="n">evid</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;eventid=?&#39;</span><span class="p">)</span>
+            <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evid</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">startdatetime</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;time_now&gt;=?&#39;</span><span class="p">)</span>
+            <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">startdatetime</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">loadSuspect</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(suspect=&quot;&quot; or suspect=0 or suspect is null)&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Finally, combine queries</span>
+
+        <span class="k">if</span> <span class="n">myclauses</span><span class="p">:</span>
+            <span class="n">querytext</span><span class="o">=</span><span class="s1">&#39; AND &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">myclauses</span><span class="p">)</span>
+
+        <span class="c1"># This will automagically create a &#39;table&#39; key for each entry</span>
+        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">querytext</span><span class="p">,</span><span class="n">mysubs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="Db.checkTables"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.checkTables">[docs]</a>    <span class="k">def</span> <span class="nf">checkTables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Check that the table or tables exist</span>
+<span class="sd">        :param table: Table or list of tables, see below</span>
+<span class="sd">        :returns: list of matching table names</span>
+
+<span class="sd">        The :attr:`table` parameter accepts one or more extended tables (comma-seperated string or list). Each table is either the table name, a year, or &#39;latest&#39; or &#39;all&#39; for extended tables.</span>
+
+<span class="sd">        The return value is a list of proper table names (&#39;2016&#39; will be converted to &#39;extended_2016&#39;, etc.) If any of the tables don&#39;t exist, a ValueError is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Db</span><span class="o">.</span><span class="n">EXTTABLES</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="n">tables</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">tables</span><span class="o">=</span><span class="p">[</span><span class="n">table</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tables</span><span class="o">=</span><span class="n">table</span>
+
+        <span class="n">outtables</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+                <span class="n">table</span><span class="o">=</span><span class="s1">&#39;extended_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;latest&#39;</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">latesttable</span>
+
+            <span class="k">if</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">Db</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
+                <span class="n">outtables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="s1">&#39;extended_&#39;</span><span class="o">+</span><span class="n">table</span> <span class="ow">in</span> <span class="n">Db</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
+                <span class="n">outtables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;extended_&#39;</span><span class="o">+</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Db: no such table &#39;</span><span class="o">+</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outtables</span></div>
+
+
+<div class="viewcode-block" id="Db.row2geojson"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.row2geojson">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">row2geojson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Convert a raw dictionary into a GeoJSON object</span>
+<span class="sd">        :param dict row: A `dict`, such as extracted from an `extended` table</span>
+<span class="sd">        :returns: :py:obj:`GeoJSON` object</span>
+
+<span class="sd">        This returns a `GeoJSON` object by extracting the latitude and longitude.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lat</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+        <span class="n">lon</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lat</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">lon</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Db: Unable to get lat/lon for this row&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">pt</span><span class="o">=</span><span class="n">geojson</span><span class="o">.</span><span class="n">Point</span><span class="p">((</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">))</span>
+        <span class="n">props</span><span class="o">=</span><span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;latitude&#39;</span> <span class="ow">or</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;longitude&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">val</span><span class="o">==</span><span class="s1">&#39;null&#39;</span> <span class="ow">or</span> <span class="n">val</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">props</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">val</span>
+        <span class="n">feature</span><span class="o">=</span><span class="n">geojson</span><span class="o">.</span><span class="n">Feature</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="n">pt</span><span class="p">,</span><span class="n">properties</span><span class="o">=</span><span class="n">props</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Db.getExtendedTablesByDatetime"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.getExtendedTablesByDatetime">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">getExtendedTablesByDatetime</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Get a list of extended tables for a given date</span>
+<span class="sd">        :param date: any date, e.g. &quot;2017-01-01&quot;</span>
+<span class="sd">        :returns: list of extended table names (extended_*)</span>
+
+<span class="sd">        Use this method to determine which extended tables</span>
+<span class="sd">        to search for entries associated to an event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">year</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="n">year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+          <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">year</span><span class="o">=</span><span class="kc">None</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="n">year</span><span class="o">=</span><span class="n">date</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="s1">&#39;year&#39;</span><span class="p">):</span>
+            <span class="n">year</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">year</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">year</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ERROR: getExtendedTablesByDatetime: Bad year in &#39;</span><span class="o">+</span><span class="n">date</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">year</span><span class="o">&lt;</span><span class="n">Db</span><span class="o">.</span><span class="n">EXT_MINYR</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Db</span><span class="o">.</span><span class="n">EXTTABLES</span>
+
+        <span class="k">return</span> <span class="n">Db</span><span class="o">.</span><span class="n">EXTTABLES</span><span class="p">[(</span><span class="n">year</span><span class="o">-</span><span class="n">Db</span><span class="o">.</span><span class="n">EXT_MINYR</span><span class="o">+</span><span class="mi">1</span><span class="p">)::]</span></div>
+
+
+<div class="viewcode-block" id="Db.timeago"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.timeago">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">timeago</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Compute a past datetime</span>
+<span class="sd">        :param int t: Time interval in minutes</span>
+<span class="sd">        :returns: :py:obj:`Datetime` object</span>
+
+<span class="sd">        Returns the datetime from :py:attr:`t` minutes ago.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">t0</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">tdelta</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">tnew</span><span class="o">=</span><span class="n">t0</span><span class="o">-</span><span class="n">tdelta</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">tnew</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">epochToString</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Turn epoch time into &#39;2017-01-01 12:00:00&#39;</span>
+
+        <span class="k">if</span> <span class="n">epoch</span><span class="p">:</span>
+            <span class="n">dt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span><span class="n">tz</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

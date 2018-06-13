@@ -1,0 +1,130 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dyfi.dyfiContainer &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.dyfiContainer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.config</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">.event</span> <span class="k">import</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">.entries</span> <span class="k">import</span> <span class="n">Entries</span>
+<span class="kn">from</span> <span class="nn">.filter</span> <span class="k">import</span> <span class="n">Filter</span>
+<span class="kn">from</span> <span class="nn">.products</span> <span class="k">import</span> <span class="n">Products</span>
+
+<div class="viewcode-block" id="DyfiContainer"><a class="viewcode-back" href="../../dyfi.html#dyfi.dyfiContainer.DyfiContainer">[docs]</a><span class="k">class</span> <span class="nc">DyfiContainer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Class for handling DyfiContainer objects</span>
+<span class="sd">    :param str evid: Event ID</span>
+<span class="sd">    :param str configfile: YAML file with configuration options (default `./cofig.yml`)</span>
+
+<span class="sd">    This implements a container for all DYFI data about a particular event: event data, entries, aggregated intensities, and products.</span>
+
+<span class="sd">    Creating an instance also initiates DYFI processing:</span>
+
+<span class="sd">    1. Load event data for this event ID from the database.</span>
+<span class="sd">    2. Load entries from the database, aggregate the entries, and filter them.</span>
+<span class="sd">    3. Create products from the data.</span>
+
+<span class="sd">    .. py:attribute:: event</span>
+
+<span class="sd">        A :py:obj:`dyfi.event.Event` object.</span>
+
+<span class="sd">    .. py:attribute:: entries</span>
+
+<span class="sd">        A :py:obj:`dyfi.entries.Entries` object.</span>
+
+<span class="sd">    .. py:attribute:: products</span>
+
+<span class="sd">        A :py:obj:`dyfi.products.Products` object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="n">configfile</span><span class="o">=</span><span class="s1">&#39;config.yml&#39;</span><span class="p">):</span>
+
+        <span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="n">configfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">=</span><span class="n">Event</span><span class="p">(</span><span class="n">evid</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">cdifilter</span><span class="o">=</span><span class="n">Filter</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span><span class="o">.</span><span class="n">filterFunction</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">=</span><span class="n">Entries</span><span class="p">(</span><span class="n">event</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span><span class="n">cdifilter</span><span class="o">=</span><span class="n">cdifilter</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">=</span><span class="n">Products</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">createAll</span><span class="p">()</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

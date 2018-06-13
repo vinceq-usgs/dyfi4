@@ -1,0 +1,1709 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module list &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Test Package" href="tests.html" />
+    <link rel="prev" title="rundyfi.py" href="app.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-list">
+<h1>Module list<a class="headerlink" href="#module-list" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-dyfi.aggregate">
+<span id="dyfi-aggregate"></span><h2>dyfi.aggregate<a class="headerlink" href="#module-dyfi.aggregate" title="Permalink to this headline">¶</a></h2>
+<p>Functions to aggregate lists of entries or <code class="xref py py-class docutils literal"><span class="pre">Entry</span></code> objects into geocoded boxes or ZIP code locations. (<em>Note</em>: ZIP codes not yet implemented)</p>
+<dl class="function">
+<dt id="dyfi.aggregate.aggregate">
+<code class="descname">aggregate</code><span class="sig-paren">(</span><em>entries</em>, <em>producttype</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#aggregate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Aggregate entries into geocoded boxes</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entries</strong> – <code class="xref py py-obj docutils literal"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal"><span class="pre">Entry</span></code> objects</li>
+<li><strong>producttype</strong> – The product type (zip, geo_1km, geo_10km)</li>
+<li><strong>debug</strong> (<em>bool</em>) – If true, store debugging info</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>GeoJSON</cite> <code class="xref py py-obj docutils literal"><span class="pre">FeatureCollection</span></code>, see below</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The return value is a <cite>GeoJSON</cite> <code class="xref py py-obj docutils literal"><span class="pre">FeatureCollection</span></code> with
+one feature for each aggregated location (geocoded block or
+ZIP code).  Each Feature in the <cite>GeoJSON</cite> FeatureCollection has an <cite>id</cite>
+attribute (the UTM string or ZIP code) and the following properties:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>location</td>
+<td>UTM string or ZIP code</td>
+</tr>
+<tr class="row-even"><td>center</td>
+<td>Center of this location, for plotting (<cite>GeoJSON Point</cite>)</td>
+</tr>
+<tr class="row-odd"><td>nresp</td>
+<td>number of responses in this location</td>
+</tr>
+<tr class="row-even"><td>intensity</td>
+<td>aggregated intensity for this location</td>
+</tr>
+</tbody>
+</table>
+<p>The <cite>FeatureCollection</cite> also has the following properties:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>name</td>
+<td>Same as <code class="xref py py-attr docutils literal"><span class="pre">producttype</span></code></td>
+</tr>
+<tr class="row-even"><td>id</td>
+<td>Same as <code class="xref py py-attr docutils literal"><span class="pre">producttype</span></code></td>
+</tr>
+<tr class="row-odd"><td>nresp</td>
+<td>Total number of responses from each valid location</td>
+</tr>
+<tr class="row-even"><td>maxint</td>
+<td>Maximum intensity from each valid location</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.getUtmFromCoordinates">
+<code class="descname">getUtmFromCoordinates</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em>, <em>span=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#getUtmFromCoordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.getUtmFromCoordinates" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Convert lat/lon coordinates to UTM string</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lat</strong> (<em>float</em>) – Latitude</li>
+<li><strong>lon</strong> (<em>float</em>) – Longitude</li>
+<li><strong>span</strong> – (optional) Size of the UTM box (see below)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">UTM string with the correct resolution</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Convert lat/lon coordinates into a UTM string using the <code class="xref py py-obj docutils literal"><span class="pre">UTM</span></code> package. If <code class="xref py py-obj docutils literal"><span class="pre">span</span></code> is specified, the output resolution is degraded via the <code class="xref py py-obj docutils literal"><span class="pre">floor</span></code> function.</p>
+<p><code class="xref py py-obj docutils literal"><span class="pre">span</span></code> accepts the values ‘geo_10km’, ‘geo_1km’, or the size of the UTM box in meters (should be a power of 10).</p>
+<p>This will NOT filter the location based on precision of the input coordinates.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.getUtmForEntry">
+<code class="descname">getUtmForEntry</code><span class="sig-paren">(</span><em>entry</em>, <em>span</em>, <em>check=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#getUtmForEntry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.getUtmForEntry" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Find the UTM location for an entry</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entry</strong> – The <code class="xref py py-obj docutils literal"><span class="pre">Entry</span></code> object to locate</li>
+<li><strong>span</strong> – Size of the UTM box (see below)</li>
+<li><strong>check</strong> – if true, check <cite>confidence</cite> key</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">UTM string with the correct resolution</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Compute the UTM block for an <code class="xref py py-obj docutils literal"><span class="pre">Entry</span></code> object using <a class="reference internal" href="#dyfi.aggregate.getUtmFromCoordinates" title="dyfi.aggregate.getUtmFromCoordinates"><code class="xref py py-func docutils literal"><span class="pre">getUtmFromCoordinates()</span></code></a>. The UTM coordinate resolution is degraded via the <code class="xref py py-obj docutils literal"><span class="pre">floor</span></code> function depending on the <code class="xref py py-obj docutils literal"><span class="pre">span</span></code> parameter.</p>
+<p><code class="xref py py-obj docutils literal"><span class="pre">span</span></code> accepts the values ‘geo_10km’, ‘geo_1km’, or the size of the UTM box in meters (should be a power of 10).</p>
+<p>If the <cite>check</cite> flag is true, check the <cite>confidence</cite> key of this entry, and return null if the derived precision is less than <cite>span</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.checkConfidence">
+<code class="descname">checkConfidence</code><span class="sig-paren">(</span><em>entry</em>, <em>span</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#checkConfidence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.checkConfidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>If entry.span is specified, use it to check against the geocoding span.
+Otherwise, use the length of the latitude and longitude strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.getUtmPolyFromString">
+<code class="descname">getUtmPolyFromString</code><span class="sig-paren">(</span><em>utm</em>, <em>span</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#getUtmPolyFromString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.getUtmPolyFromString" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Compute the (lat/lon) bounds and center from a UTM string</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>utm</strong> – A UTM string</li>
+<li><strong>span</strong> (<em>int</em>) – The size of the UTM box in meters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code>, see below</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Get the bounding box polygon and center point for a UTM string suitable for plotting.</p>
+<p>The return value has two keys:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>center</td>
+<td>A GeoJSON Point object</td>
+</tr>
+<tr class="row-even"><td>bounds</td>
+<td>A GeoJSON Polygon object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.myFloor">
+<code class="descname">myFloor</code><span class="sig-paren">(</span><em>x</em>, <em>multiple</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#myFloor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.myFloor" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Round down to a multiple of 10/100/1000…</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>float</em>) – A number</li>
+<li><strong>multiple</strong> (<em>int</em>) – Power of 10 indicating how many places to round</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This emulates the <cite>math.floor</cite> function but
+rounding down a positive power of 10 (i.e. 10, 100, 1000…)</p>
+<p>For example, myFloor(1975,100) returns 1900.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.aggregate.myCeil">
+<code class="descname">myCeil</code><span class="sig-paren">(</span><em>x</em>, <em>multiple</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/aggregate.html#myCeil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.aggregate.myCeil" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Round up to a multiple of 10/100/etc.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>float</em>) – A number</li>
+<li><strong>multiple</strong> (<em>int</em>) – Power of 10 indicating how many places to round</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This emulates the <cite>math.ceil</cite> function but
+rounding up a positive power of 10 (i.e. 10, 100, 1000…)</p>
+<p>For example, myCeil(1975,100) returns 2000.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.cdi">
+<span id="dyfi-cdi"></span><h2>dyfi.cdi<a class="headerlink" href="#module-dyfi.cdi" title="Permalink to this headline">¶</a></h2>
+<p>A collection of functions to compute and manipulate intensity. For details, see the <span class="xref std std-ref">Scientific Guide</span>.</p>
+<dl class="data">
+<dt id="dyfi.cdi.cdiWeights">
+<code class="descname">cdiWeights</code><a class="headerlink" href="#dyfi.cdi.cdiWeights" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dict of the CDI calculation indices and their relative weights.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.cdi.cdiDamageValues">
+<code class="descname">cdiDamageValues</code><a class="headerlink" href="#dyfi.cdi.cdiDamageValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>An OrderedDict of damage values and the d_text strings correspond to those values.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.cdi.calculate">
+<code class="descname">calculate</code><span class="sig-paren">(</span><em>entries</em>, <em>cwsOnly=False</em>, <em>fine=False</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/cdi.html#calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.cdi.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Calculate the intensity for one entry, or list of entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entries</strong> (<em>list</em>) – Single <code class="xref py py-class docutils literal"><span class="pre">Entry</span></code> object or list of entries in an aggregated area</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+<p>If given a single entry instead of list, calculate the decimal intensity for that entry.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Intensity is defined over an area, not a point. “Point intensities” should be used as estimates or for debugging only.</p>
+</div>
+<p>A computed value less than or equal to zero is considered intensity I (unfelt).
+A computed value greater than zero is considered at least intensity II (felt).
+Intensity is rounded off to the nearest 0.1 unit.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.cdi.getDamageFromText">
+<code class="descname">getDamageFromText</code><span class="sig-paren">(</span><em>entry</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/cdi.html#getDamageFromText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.cdi.getDamageFromText" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Convert a damage string to a damage value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entry</strong> – An <cite>Entry</cite> object or <cite>str</cite></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+<p>This function takes either an <cite>Entry</cite> object or an actual d_text string.
+Multiple damage strings (separated by whitespace) are allowed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.cdi.getFeltFromOther">
+<code class="descname">getFeltFromOther</code><span class="sig-paren">(</span><em>entry</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/cdi.html#getFeltFromOther"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.cdi.getFeltFromOther" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Return felt index value modified by other_felt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entry</strong> – An <cite>Entry</cite> object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+<p>Returns a modified ‘felt’ value when ‘other_felt’ is entered.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.config">
+<span id="dyfi-config"></span><h2>dyfi.config<a class="headerlink" href="#module-dyfi.config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.config.Config">
+<em class="property">class </em><code class="descname">Config</code><span class="sig-paren">(</span><em>configfile='./config.yml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.config.Config" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Handle DYFI configuration options</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>configfile</strong> (<em>str</em>) – YAML file with configuration options (default <cite>./cofig.yml</cite>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="dyfi.config.Config.sections">
+<code class="descname">sections</code><a class="headerlink" href="#dyfi.config.Config.sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict of configuration sections suitable for __iter__.</p>
+</dd></dl>
+
+<p>A general class to handle configuration options using a <cite>YAML</cite> config file.
+See the <a class="reference internal" href="implementation-guide.html#implementation-guide"><span class="std std-ref">Implementation Guide</span></a> for details.</p>
+<p>Usage:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dyfi</span> <span class="k">import</span> <span class="n">Config</span>
+<span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">()</span>
+<span class="n">config</span><span class="o">=</span><span class="n">Config</span><span class="p">(</span><span class="s1">&#39;./custom.yml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To access values:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dbconfigs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db</span> <span class="c1"># A hash of database configs</span>
+<span class="n">dbfiles</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span>
+<span class="n">eventdbfile</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">][</span><span class="s1">&#39;event&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Looping through config sections:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="c1"># prints a list of sections</span>
+</pre></div>
+</div>
+<p>Prettyprint all configs:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="c1"># prettyprints all configs</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.contents">
+<span id="dyfi-contents"></span><h2>dyfi.contents<a class="headerlink" href="#module-dyfi.contents" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.contents.Contents">
+<em class="property">class </em><code class="descname">Contents</code><span class="sig-paren">(</span><em>container</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/contents.html#Contents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.contents.Contents" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Create a <span class="xref std std-ref">contents.xml</span> file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>container</strong> – A <a class="reference internal" href="#module-dyfi.dyfiContainer" title="dyfi.dyfiContainer"><code class="xref py py-class docutils literal"><span class="pre">dyfi.dyfiContainer</span></code></a> object containing the event data</td>
+</tr>
+</tbody>
+</table>
+<p>The <span class="xref std std-ref">contents.xml</span> file is a list of DYFI products to be exported online. It is used by the USGS Earthquake Pages webserver to populate the DYFI page for this event. See the <a class="reference internal" href="implementation-guide.html#implementation-guide"><span class="std std-ref">Implementation Guide</span></a> for details.</p>
+<p>This module checks each member of <a class="reference internal" href="#dyfi.contents.Contents.PRODUCT_TYPES" title="dyfi.contents.Contents.PRODUCT_TYPES"><code class="xref py py-attr docutils literal"><span class="pre">PRODUCT_TYPES</span></code></a> and <a class="reference internal" href="#dyfi.contents.Contents.FORMAT_TYPES" title="dyfi.contents.Contents.FORMAT_TYPES"><code class="xref py py-attr docutils literal"><span class="pre">FORMAT_TYPES</span></code></a> to see which files exist in the event directory and uses that to populate <span class="xref std std-ref">contents.xml</span>.</p>
+<dl class="attribute">
+<dt id="dyfi.contents.Contents.PRODUCT_TYPES">
+<code class="descname">PRODUCT_TYPES</code><a class="headerlink" href="#dyfi.contents.Contents.PRODUCT_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <cite>OrderedDict</cite> of DYFI product types and the titles.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dyfi.contents.Contents.FORMAT_TYPES">
+<code class="descname">FORMAT_TYPES</code><a class="headerlink" href="#dyfi.contents.Contents.FORMAT_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <cite>OrderedDict</cite> of the available formats and their corresponding MIME types.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.contents.Contents.toXML">
+<code class="descname">toXML</code><span class="sig-paren">(</span><em>save=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/contents.html#Contents.toXML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.contents.Contents.toXML" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Create an XML file from this object</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>save</strong> (<em>bool</em>) – If <cite>True</cite>, save to file</li>
+<li><strong>filename</strong> (<em>str</em>) – Output file (default <cite>[data]/[evid]/contents.xml</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">If <cite>save</cite> is true, return the filename; otherwise, return the XML as text</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">contents</span><span class="o">=</span><span class="n">Contents</span><span class="p">(</span><span class="n">dyficontainer</span><span class="p">)</span>
+<span class="n">xmltext</span><span class="o">=</span><span class="n">contents</span><span class="o">.</span><span class="n">toXML</span><span class="p">()</span>           <span class="c1"># create text output</span>
+<span class="n">filename</span><span class="o">=</span><span class="n">contents</span><span class="o">.</span><span class="n">toXML</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># save to file</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.db">
+<span id="dyfi-db"></span><h2>dyfi.db<a class="headerlink" href="#module-dyfi.db" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.db.Db">
+<em class="property">class </em><code class="descname">Db</code><span class="sig-paren">(</span><em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Open a connection to access the DYFI database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> – (optional) <code class="xref py py-class docutils literal"><span class="pre">Config</span></code> object</td>
+</tr>
+</tbody>
+</table>
+<p>This connection is required to run all database queries.
+The database is currently implemented in SQLite.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To change to the database implementation to MySQL, see the top of this file.</p>
+</div>
+<dl class="data">
+<dt id="dyfi.db.Db.TABLES">
+<code class="descname">TABLES</code><a class="headerlink" href="#dyfi.db.Db.TABLES" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all tables (including extended tables).</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.db.Db.EXTTABLES">
+<code class="descname">EXTTABLES</code><a class="headerlink" href="#dyfi.db.Db.EXTTABLES" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all the extended tables.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.db.Db.EXT_MINYR">
+<code class="descname">EXT_MINYR</code><a class="headerlink" href="#dyfi.db.Db.EXT_MINYR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The year of the earliest named extended table. Previous entries are combined into the table ‘extended_pre’.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.db.Db.EXT_MAXYR">
+<code class="descname">EXT_MAXYR</code><a class="headerlink" href="#dyfi.db.Db.EXT_MAXYR" title="Permalink to this definition">¶</a></dt>
+<dd><p>The year of the latest defined extended table. This is calculated from the current year.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dyfi.db.Db.latesttable">
+<code class="descname">latesttable</code><a class="headerlink" href="#dyfi.db.Db.latesttable" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the latest extended table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.db.Db.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>obj</em>, <em>table=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.save" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Save a <code class="xref py py-class docutils literal"><span class="pre">dyfi.Event</span></code> or <code class="xref py py-class docutils literal"><span class="pre">dyfi.Entry</span></code> object to the database table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> – Data object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Success or failure</td>
+</tr>
+</tbody>
+</table>
+<p>Save this object to the database. This is mostly a stub to the <cite>RawDb</cite> <a class="reference internal" href="#dyfi.db.Db.save" title="dyfi.db.Db.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a> function.</p>
+<p>For consistency, if the object is an <cite>Entry</cite> object, this will automagically overwrite the <cite>table</cite> attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.db.Db.loadEvent">
+<code class="descname">loadEvent</code><span class="sig-paren">(</span><em>evid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.loadEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.loadEvent" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Read database for event data for an event ID</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>evid</strong> (<em>str</em>) – event ID, e.g. ‘us1000abcd’</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite> suitable for input to an <code class="xref py py-obj docutils literal"><span class="pre">Event</span></code> instance</td>
+</tr>
+</tbody>
+</table>
+<p>This is mostly a wrapper to the <cite>RawDb</cite> <code class="xref py py-meth docutils literal"><span class="pre">query()</span></code> method. This returns a <cite>dict</cite> with keys being columns of the <cite>Event</cite> table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.db.Db.loadMaps">
+<code class="descname">loadMaps</code><span class="sig-paren">(</span><em>evid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.loadMaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.loadMaps" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Read database for a list of maps for an event ID</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>evid</strong> (<em>str</em>) – event ID, e.g. ‘us1000abcd’</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of rows suitable for input to a <code class="xref py py-obj docutils literal"><span class="pre">Maps</span></code> instance</td>
+</tr>
+</tbody>
+</table>
+<p>This is mostly a wrapper to the <cite>RawDb</cite> <code class="xref py py-meth docutils literal"><span class="pre">query()</span></code> method.</p>
+<p>Each item in the return list is a dict with keys
+being columns to the <cite>maps</cite> table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.db.Db.loadEntries">
+<code class="descname">loadEntries</code><span class="sig-paren">(</span><em>evid=None</em>, <em>event=None</em>, <em>table=None</em>, <em>startdatetime=None</em>, <em>querytext=None</em>, <em>loadSuspect=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.loadEntries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.loadEntries" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Search the extended tables for entries matching a query</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>evid</strong> (<em>str</em>) – (optional) eventid</li>
+<li><strong>event</strong> (<a class="reference internal" href="#dyfi.event.Event" title="dyfi.event.Event"><em>Event</em></a>) – (optional) Event object</li>
+<li><strong>table</strong> – (optional) table or tables</li>
+<li><strong>startdatetime</strong> – (optional) datetime to start search</li>
+<li><strong>querytext</strong> (<em>str</em>) – (optional) clause(s)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list of entries suitable for aggregation</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This is mostly a wrapper to the <code class="xref py py-obj docutils literal"><span class="pre">rawDBSqlite</span></code> <code class="xref py py-obj docutils literal"><span class="pre">query</span></code> object.</p>
+<p>It also figures out which extended tables to search,
+depending on the date of the event, using
+<a class="reference internal" href="#dyfi.db.Db.getExtendedTablesByDatetime" title="dyfi.db.Db.getExtendedTablesByDatetime"><code class="xref py py-obj docutils literal"><span class="pre">getExtendedTablesByDatetime</span></code></a>.</p>
+<p>For valid values of parameter <code class="xref py py-attr docutils literal"><span class="pre">table</span></code> see the <a class="reference internal" href="#dyfi.db.Db.checkTables" title="dyfi.db.Db.checkTables"><code class="xref py py-meth docutils literal"><span class="pre">checkTables()</span></code></a> method.</p>
+<p>The optional query parameter is a string of SQL <cite>WHERE</cite> clauses
+(e.g. ‘suspect=0 OR suspect is null’).</p>
+<p>Each item in the return list is a <cite>dict</cite> of entries from the <cite>extended</cite> tables. An additional key <cite>table</cite> is added to each entry that contains the name of the source extended table (see <code class="xref py py-obj docutils literal"><span class="pre">query</span></code>).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.db.Db.checkTables">
+<code class="descname">checkTables</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.checkTables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.checkTables" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Check that the table or tables exist</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> – Table or list of tables, see below</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of matching table names</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="xref py py-attr docutils literal"><span class="pre">table</span></code> parameter accepts one or more extended tables (comma-seperated string or list). Each table is either the table name, a year, or ‘latest’ or ‘all’ for extended tables.</p>
+<p>The return value is a list of proper table names (‘2016’ will be converted to ‘extended_2016’, etc.) If any of the tables don’t exist, a ValueError is returned.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="dyfi.db.Db.row2geojson">
+<em class="property">classmethod </em><code class="descname">row2geojson</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.row2geojson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.row2geojson" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Convert a raw dictionary into a GeoJSON object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> (<em>dict</em>) – A <cite>dict</cite>, such as extracted from an <cite>extended</cite> table</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="xref py py-obj docutils literal"><span class="pre">GeoJSON</span></code> object</td>
+</tr>
+</tbody>
+</table>
+<p>This returns a <cite>GeoJSON</cite> object by extracting the latitude and longitude.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="dyfi.db.Db.getExtendedTablesByDatetime">
+<em class="property">classmethod </em><code class="descname">getExtendedTablesByDatetime</code><span class="sig-paren">(</span><em>date</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.getExtendedTablesByDatetime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.getExtendedTablesByDatetime" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Get a list of extended tables for a given date</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>date</strong> – any date, e.g. “2017-01-01”</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of extended table names (extended_*)</td>
+</tr>
+</tbody>
+</table>
+<p>Use this method to determine which extended tables
+to search for entries associated to an event.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="dyfi.db.Db.timeago">
+<em class="property">static </em><code class="descname">timeago</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/db.html#Db.timeago"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.db.Db.timeago" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Compute a past datetime</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>t</strong> (<em>int</em>) – Time interval in minutes</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="xref py py-obj docutils literal"><span class="pre">Datetime</span></code> object</td>
+</tr>
+</tbody>
+</table>
+<p>Returns the datetime from <code class="xref py py-attr docutils literal"><span class="pre">t</span></code> minutes ago.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.dyfiContainer">
+<span id="dyfi-dyficontainer"></span><h2>dyfi.dyfiContainer<a class="headerlink" href="#module-dyfi.dyfiContainer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.dyfiContainer.DyfiContainer">
+<em class="property">class </em><code class="descname">DyfiContainer</code><span class="sig-paren">(</span><em>evid</em>, <em>configfile='config.yml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/dyfiContainer.html#DyfiContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.dyfiContainer.DyfiContainer" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Class for handling DyfiContainer objects</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>evid</strong> (<em>str</em>) – Event ID</li>
+<li><strong>configfile</strong> (<em>str</em>) – YAML file with configuration options (default <cite>./cofig.yml</cite>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This implements a container for all DYFI data about a particular event: event data, entries, aggregated intensities, and products.</p>
+<p>Creating an instance also initiates DYFI processing:</p>
+<ol class="arabic simple">
+<li>Load event data for this event ID from the database.</li>
+<li>Load entries from the database, aggregate the entries, and filter them.</li>
+<li>Create products from the data.</li>
+</ol>
+<dl class="attribute">
+<dt id="dyfi.dyfiContainer.DyfiContainer.event">
+<code class="descname">event</code><a class="headerlink" href="#dyfi.dyfiContainer.DyfiContainer.event" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#dyfi.event.Event" title="dyfi.event.Event"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.event.Event</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dyfi.dyfiContainer.DyfiContainer.entries">
+<code class="descname">entries</code><a class="headerlink" href="#dyfi.dyfiContainer.DyfiContainer.entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#dyfi.entries.Entries" title="dyfi.entries.Entries"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.entries.Entries</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dyfi.dyfiContainer.DyfiContainer.products">
+<code class="descname">products</code><a class="headerlink" href="#dyfi.dyfiContainer.DyfiContainer.products" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#dyfi.products.Products" title="dyfi.products.Products"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.products.Products</span></code></a> object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.entries">
+<span id="dyfi-entries"></span><h2>dyfi.entries<a class="headerlink" href="#module-dyfi.entries" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.entries.Entries">
+<em class="property">class </em><code class="descname">Entries</code><span class="sig-paren">(</span><em>evid=None</em>, <em>event=None</em>, <em>startdatetime=None</em>, <em>cdifilter=None</em>, <em>rawentries=None</em>, <em>config=None</em>, <em>load=True</em>, <em>loadSuspect=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/entries.html#Entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.entries.Entries" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Handle a collection of entries and aggregation.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>evid</strong> (<em>str</em>) – (optional) event ID</li>
+<li><strong>event</strong> – (optional) <cite>Event</cite> object</li>
+<li><strong>startdatetime</strong> (<em>str</em>) – (optional) string of format ‘YYYY-MM-DD HH:MM:SS’</li>
+<li><strong>cdifilter</strong> – (optional) <cite>filter</cite> object for filtering data</li>
+<li><strong>rawentries</strong> (<em>list</em>) – (optional) list of raw data (e.g. table rows)</li>
+<li><strong>config</strong> – (optional) A <cite>Config</cite> object</li>
+<li><strong>load</strong> (<em>bool</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>An Event object or startdatetime is necessary for db.loadEntries
+to know which extended tables to search.</p>
+<dl class="data">
+<dt id="dyfi.entries.Entries.entries">
+<code class="descname">entries</code><a class="headerlink" href="#dyfi.entries.Entries.entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of <code class="xref py py-obj docutils literal"><span class="pre">Entry</span></code> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.entries.Entries.aggregate">
+<code class="descname">aggregate</code><span class="sig-paren">(</span><em>name</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/entries.html#Entries.aggregate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.entries.Entries.aggregate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Aggregate the entry data in this object</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – The name of this aggregation</li>
+<li><strong>default</strong> (<em>bool</em>) – If true, store debugging info in the output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <cite>GeoJSON</cite> <code class="xref py py-obj docutils literal"><span class="pre">FeatureCollection</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>A wrapper to the <a class="reference internal" href="#dyfi.entries.Entries.aggregate" title="dyfi.entries.Entries.aggregate"><code class="xref py py-obj docutils literal"><span class="pre">aggregate</span></code></a> module. The <code class="xref py py-attr docutils literal"><span class="pre">name</span></code> indicates the kind of aggregation (e.g. ‘geo_1km’ or ‘geo_10km’).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.entries.Entries.getTimes">
+<code class="descname">getTimes</code><span class="sig-paren">(</span><em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/entries.html#Entries.getTimes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.entries.Entries.getTimes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Create a list of entry times from a list of entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datatype</strong> (<em>str</em>) – Usually ‘time’</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dict of times data</td>
+</tr>
+</tbody>
+</table>
+<p>Used to create the Time vs. Responses graph. The return value is a dict with the following values:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>id</td>
+<td>‘numresp’</td>
+</tr>
+<tr class="row-even"><td>name</td>
+<td>Same as <code class="xref py py-attr docutils literal"><span class="pre">datatype</span></code></td>
+</tr>
+<tr class="row-odd"><td>data</td>
+<td>A sorted list of <code class="xref py py-obj docutils literal"><span class="pre">datetime</span></code> objects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.event">
+<span id="dyfi-event"></span><h2>dyfi.event<a class="headerlink" href="#module-dyfi.event" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.event.Event">
+<em class="property">class </em><code class="descname">Event</code><span class="sig-paren">(</span><em>event</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/event.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.event.Event" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Class for handling Event objects</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> – A <code class="xref py py-class docutils literal"><span class="pre">dyfi.Event</span></code> object or event ID string</li>
+<li><strong>config</strong> – A <code class="xref py py-class docutils literal"><span class="pre">dyfiConfig</span></code> object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This contains the parameters of a particular earthquake referenced by the event ID. It requires an object that holds data from the Db.loadEvent method, or an event ID string (in which case it loads the event data from the database).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Access the data in this object with the keys in
+<a class="reference internal" href="#dyfi.event.Event.columns" title="dyfi.event.Event.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a> as attributes, e.g. <cite>event.evid</cite>,
+<cite>event.region</cite>, etc.</p>
+</div>
+<dl class="data">
+<dt id="dyfi.event.Event.columns">
+<code class="descname">columns</code><a class="headerlink" href="#dyfi.event.Event.columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A list of all the columns in the event table.</p>
+<dl class="attribute">
+<dt id="dyfi.event.Event.raw">
+<code class="descname">raw</code><a class="headerlink" href="#dyfi.event.Event.raw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A reference to the raw database output of the event data.</p>
+<dl class="classmethod">
+<dt id="dyfi.event.Event.update">
+<em class="property">classmethod </em><code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/event.html#Event.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.event.Event.update" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Save the contents of this Event object to the DB event table.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">none</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.graph">
+<span id="dyfi-graph"></span><h2>dyfi.graph<a class="headerlink" href="#module-dyfi.graph" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.graph.Graph">
+<em class="property">class </em><code class="descname">Graph</code><span class="sig-paren">(</span><em>name</em>, <em>event</em>, <em>data</em>, <em>config</em>, <em>eventDir=None</em>, <em>title=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Create a static graph</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>str</em>) – The filename to create</li>
+<li><strong>event</strong> (<a class="reference internal" href="#dyfi.event.Event" title="dyfi.event.Event"><em>Event</em></a>) – An Event object</li>
+<li><strong>mapparams</strong> (<em>dict</em>) – (optional) params from an eventMap</li>
+<li><strong>data</strong> (<em>dict</em>) – Aggregated data in GeoJSON format</li>
+<li><strong>config</strong> – (optional) A <cite>Config</cite> object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The data input should be the aggregated data from <a class="reference internal" href="#module-dyfi.aggregate" title="dyfi.aggregate"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.aggregate</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Each Graph instance creates its own <code class="xref py py-obj docutils literal"><span class="pre">self.rawdata</span></code> which is a deep copy of the <code class="xref py py-obj docutils literal"><span class="pre">data</span></code> object. This allows modifying the dataset without affecting the original.</p>
+</div>
+<dl class="data">
+<dt id="dyfi.graph.Graph.NBINS">
+<code class="descname">NBINS</code><a class="headerlink" href="#dyfi.graph.Graph.NBINS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of distance bins for the distance vs. intensity graph.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.graph.Graph.ipelist">
+<code class="descname">ipelist</code><a class="headerlink" href="#dyfi.graph.Graph.ipelist" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of IPEs from <a class="reference internal" href="#module-dyfi.ipes" title="dyfi.ipes"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.ipes</span></code></a> to plot on the distance vs. intensity graph.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.graph.Graph.graphLabels">
+<code class="descname">graphLabels</code><a class="headerlink" href="#dyfi.graph.Graph.graphLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict of titles, x labels, and y labels for each graph.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getDataDistance">
+<code class="descname">getDataDistance</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getDataDistance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getDataDistance" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Collect data for the intensity vs. distance graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Computes the datasets used for the intensity vs. distance graph using the data in <code class="xref py py-obj docutils literal"><span class="pre">rawdata</span></code>:</p>
+<ul class="simple">
+<li>Scatter data (from the data input)</li>
+<li>Mean and median in each distance bin</li>
+<li>IPE data plotted across the distance range (for each IPE)</li>
+</ul>
+<p>This populates the <code class="xref py py-attr docutils literal"><span class="pre">data</span></code> attribute of this instance with a <cite>dict</cite> with the following data:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>datasets</td>
+<td>The list of datasets</td>
+</tr>
+<tr class="row-even"><td>xlabel</td>
+<td>Label text</td>
+</tr>
+<tr class="row-odd"><td>ylabel</td>
+<td>Label text</td>
+</tr>
+<tr class="row-even"><td>title</td>
+<td>Title of this graph</td>
+</tr>
+</tbody>
+</table>
+<p>This also populates the <code class="xref py py-attr docutils literal"><span class="pre">params</span></code> attribute with the graph limits.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getScatterData">
+<code class="descname">getScatterData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getScatterData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getScatterData" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Computes scatterplot data from entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite>, see below</td>
+</tr>
+</tbody>
+</table>
+<p>Used by <a class="reference internal" href="#dyfi.graph.Graph.getDataDistance" title="dyfi.graph.Graph.getDataDistance"><code class="xref py py-meth docutils literal"><span class="pre">getDataDistance()</span></code></a>. Computes distance and intensity from each feature in <code class="xref py py-obj docutils literal"><span class="pre">self.rawdata</span></code> and outputs a <cite>dict</cite> with the following values:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>id</td>
+<td>‘scatterdata’</td>
+</tr>
+<tr class="row-even"><td>legend</td>
+<td>‘Aggregated [Event ID] data’</td>
+</tr>
+<tr class="row-odd"><td>class</td>
+<td>‘scatterplot1’</td>
+</tr>
+<tr class="row-even"><td>data</td>
+<td>List of points (see below)</td>
+</tr>
+</tbody>
+</table>
+<p>Each point in <code class="xref py py-obj docutils literal"><span class="pre">data</span></code> is a <cite>dict</cite> with x (distance) and y (intensity) for each feature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getIpeData">
+<code class="descname">getIpeData</code><span class="sig-paren">(</span><em>ipelist=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getIpeData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getIpeData" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Computes IPE estimates for this event</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> of data, see below</td>
+</tr>
+</tbody>
+</table>
+<p>Used by <a class="reference internal" href="#dyfi.graph.Graph.getDataDistance" title="dyfi.graph.Graph.getDataDistance"><code class="xref py py-meth docutils literal"><span class="pre">getDataDistance()</span></code></a>. Computes estimated curves for each IPE for this event (using the event magnitude). The output is a list of <cite>dict`s, one `dict</cite> for each IPE, with the following data:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>id</td>
+<td>‘ipe_[IPE name]’</td>
+</tr>
+<tr class="row-even"><td>legend</td>
+<td>IPE name</td>
+</tr>
+<tr class="row-odd"><td>class</td>
+<td>‘estimated_n’ where n is unique</td>
+</tr>
+<tr class="row-even"><td>data</td>
+<td>List of points (see below)</td>
+</tr>
+</tbody>
+</table>
+<p>Each point in <code class="xref py py-obj docutils literal"><span class="pre">data</span></code> is a <cite>dict</cite> with x (distance) and y (intensity) estimates across the plot range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getMeanMedianData">
+<code class="descname">getMeanMedianData</code><span class="sig-paren">(</span><em>scatterdata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getMeanMedianData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getMeanMedianData" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Computes mean and median data for entries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> of data, see below</td>
+</tr>
+</tbody>
+</table>
+<p>Used by <a class="reference internal" href="#dyfi.graph.Graph.getDataDistance" title="dyfi.graph.Graph.getDataDistance"><code class="xref py py-meth docutils literal"><span class="pre">getDataDistance()</span></code></a>. Computes mean and median data for the entries in each distance bin. The output is a list of <cite>dict</cite> objects, one for mean data and one for median data:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>id</td>
+<td>‘meanBinned’ or ‘medianBinned’</td>
+</tr>
+<tr class="row-even"><td>legend</td>
+<td>‘Mean’ or ‘Median intensity in bin</td>
+</tr>
+<tr class="row-odd"><td>class</td>
+<td>‘mean’ or ‘median’</td>
+</tr>
+<tr class="row-even"><td>data</td>
+<td>The mean or median datapoints</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getDistBins">
+<code class="descname">getDistBins</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getDistBins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getDistBins" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Computes the bins used for mean/median computation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> of bin boundary values</td>
+</tr>
+</tbody>
+</table>
+<p>Used by <a class="reference internal" href="#dyfi.graph.Graph.getMeanMedianData" title="dyfi.graph.Graph.getMeanMedianData"><code class="xref py py-meth docutils literal"><span class="pre">getMeanMedianData()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getTitle">
+<code class="descname">getTitle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getTitle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getTitle" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Gets a title from the <code class="xref py py-class docutils literal"><span class="pre">dyfi.Event</span></code> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>list</cite> (title, subtitle)</td>
+</tr>
+</tbody>
+</table>
+<p>The standard title has two lines:</p>
+<ul class="simple">
+<li>USGS DYFI: [event location]</li>
+<li>ID:[event ID]</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.getDataTime">
+<code class="descname">getDataTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getDataTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getDataTime" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Compute data for the responses vs. time graph</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p>Computes the response count and time after origin for each entry in <code class="xref py py-obj docutils literal"><span class="pre">rawdata</span></code>.</p>
+<p>This populates the <code class="xref py py-attr docutils literal"><span class="pre">data</span></code> attribute of this instance with a <cite>dict</cite> with the following data:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>datasets</td>
+<td>The time dataset</td>
+</tr>
+<tr class="row-even"><td>xlabel</td>
+<td>Label text</td>
+</tr>
+<tr class="row-odd"><td>ylabel</td>
+<td>Label text</td>
+</tr>
+<tr class="row-even"><td>title</td>
+<td>Title of this graph</td>
+</tr>
+<tr class="row-odd"><td>preferred_unit</td>
+<td>from <a class="reference internal" href="#dyfi.graph.Graph.getTimeBounds" title="dyfi.graph.Graph.getTimeBounds"><code class="xref py py-meth docutils literal"><span class="pre">getTimeBounds()</span></code></a></td>
+</tr>
+<tr class="row-even"><td>preferred_conversion</td>
+<td>from <a class="reference internal" href="#dyfi.graph.Graph.getTimeBounds" title="dyfi.graph.Graph.getTimeBounds"><code class="xref py py-meth docutils literal"><span class="pre">getTimeBounds()</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>eventid</td>
+<td>Event ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="dyfi.graph.Graph.getTimeBounds">
+<em class="property">static </em><code class="descname">getTimeBounds</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.getTimeBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.getTimeBounds" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Returns the correct time units for plotting</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>dict</cite>, see below</td>
+</tr>
+</tbody>
+</table>
+<p>Used by <a class="reference internal" href="#dyfi.graph.Graph.getDataTime" title="dyfi.graph.Graph.getDataTime"><code class="xref py py-meth docutils literal"><span class="pre">getDataTime()</span></code></a>. The output is a <cite>dict</cite> with these values:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>prefUnit</td>
+<td>‘minutes’ or ‘hours’ (for printing)</td>
+</tr>
+<tr class="row-even"><td>prefConversion</td>
+<td>60 or 3600</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.graph.Graph.toJSON">
+<code class="descname">toJSON</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/graph.html#Graph.toJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.graph.Graph.toJSON" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Convert data into a GeoJSON</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">prettyprinted string</td>
+</tr>
+</tbody>
+</table>
+<p>This prints the <code class="xref py py-obj docutils literal"><span class="pre">data</span></code> attribute of this object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.ipes">
+<span id="dyfi-ipes"></span><h2>dyfi.ipes<a class="headerlink" href="#module-dyfi.ipes" title="Permalink to this headline">¶</a></h2>
+<p>A collection of IPEs for plotting and filtering.</p>
+<dl class="function">
+<dt id="dyfi.ipes.aw2007ceus">
+<code class="descname">aw2007ceus</code><span class="sig-paren">(</span><em>mag</em>, <em>r</em>, <em>inverse=False</em>, <em>fine=False</em>, <em>enaCorrection=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/ipes.html#aw2007ceus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.ipes.aw2007ceus" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Estimate intensity given magnitude and distance</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mag</strong> (<em>float</em>) – Magnitude</li>
+<li><strong>r</strong> (<em>float</em>) – Epicentral distance</li>
+<li><strong>inverse</strong> (<em>bool</em>) – Compute the inverse function</li>
+<li><strong>fine</strong> (<em>bool</em>) – If false, intensities below 2 become 1</li>
+<li><strong>enaCorrection</strong> (<em>bool</em>) – If true, apply correction for Eastern North America</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Intensity; or, if <cite>inverse</cite> is true, magnitude</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implementation of Atkinson, Wald (2007).</p>
+<p>If <cite>inverse</cite> is true, then the first parameter is treated as intensity, and this returns the magnitude.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dyfi.ipes.aww2014">
+<code class="descname">aww2014</code><span class="sig-paren">(</span><em>mag</em>, <em>r</em>, <em>inverse=False</em>, <em>fine=False</em>, <em>enaCorrection=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/ipes.html#aww2014"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.ipes.aww2014" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Estimate intensity given magnitude and distance</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mag</strong> (<em>float</em>) – Magnitude</li>
+<li><strong>r</strong> (<em>float</em>) – Epicentral distance</li>
+<li><strong>inverse</strong> (<em>bool</em>) – Compute the inverse function</li>
+<li><strong>fine</strong> (<em>bool</em>) – If false, intensities below 2 become 1</li>
+<li><strong>enaCorrection</strong> (<em>bool</em>) – If true, apply correction for Eastern North America</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Intensity; or, if <cite>inverse</cite> is true, magnitude</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Implementation of Atkinson, Worden, Wald (2014). Earthquake Ground-Motion Prediction Equations for Eastern North America. See <a class="reference external" href="https://doi.org/10.1785/0120140178">https://doi.org/10.1785/0120140178</a></p>
+<p>If <cite>inverse</cite> is true, then the first parameter is treated as intensity, and this returns the magnitude.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.map">
+<span id="dyfi-map"></span><h2>dyfi.map<a class="headerlink" href="#module-dyfi.map" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.map.Map">
+<em class="property">class </em><code class="descname">Map</code><span class="sig-paren">(</span><em>name</em>, <em>event</em>, <em>data</em>, <em>config</em>, <em>eventDir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/map.html#Map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.map.Map" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Collects data to create a static map</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>str</em>) – Name for the map</li>
+<li><strong>event</strong> – A <code class="xref py py-class docutils literal"><span class="pre">dyfi.Event</span></code> object</li>
+<li><strong>data</strong> – Aggregated data in <cite>GeoJSON</cite> format</li>
+<li><strong>config</strong> – A <code class="xref py py-class docutils literal"><span class="pre">dyfiConfig</span></code> object</li>
+<li><strong>eventDir</strong> (<em>str</em>) – (optional) event directory (default <cite>data/[eventid]/</cite>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This handles the rendering of DYFI data (aggregated entries in GeoJSON format) into plottable data for <cite>Leaflet</cite>.</p>
+<dl class="method">
+<dt id="dyfi.map.Map.toGeoJSON">
+<code class="descname">toGeoJSON</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/map.html#Map.toGeoJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.map.Map.toGeoJSON" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Convert this map object into GeoJSON</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – (optional) filename</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">prettyprinted GeoJSON text</td>
+</tr>
+</tbody>
+</table>
+<p>This prints out the GeoJSON data used for the static images, not the actual GeoJSON data. Hence it’s only used for debugging.</p>
+<p>If <cite>filename</cite> is specified, the data is saved to that file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.map.Map.toImage">
+<code class="descname">toImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/map.html#Map.toImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.map.Map.toImage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Creates the PNG static image</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The resulting filename</td>
+</tr>
+</tbody>
+</table>
+<p>Calls <a class="reference internal" href="#dyfi.map.Map.GeoJSONtoImage" title="dyfi.map.Map.GeoJSONtoImage"><code class="xref py py-func docutils literal"><span class="pre">GeoJSONtoImage()</span></code></a> with the appropriate parameters. Normally, this is called during the processing of a <a class="reference internal" href="#dyfi.products.Product" title="dyfi.products.Product"><code class="xref py py-class docutils literal"><span class="pre">dyfi.products.Product</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="dyfi.map.Map.GeoJSONtoImage">
+<em class="property">static </em><code class="descname">GeoJSONtoImage</code><span class="sig-paren">(</span><em>inputdata</em>, <em>outputfile</em>, <em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/map.html#Map.GeoJSONtoImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.map.Map.GeoJSONtoImage" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Create a static image from a GeoJSON file</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inputdata</strong> – The input GeoJSON file (str) or GeoJSON object</li>
+<li><strong>outputfile</strong> (<em>str</em>) – The resulting PNG file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The resulting output file</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Creates the static image using Leaflet to render the map and a screenshot application. See the <span class="xref std std-ref">Creating static products</span> for details.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.products">
+<span id="dyfi-products"></span><h2>dyfi.products<a class="headerlink" href="#module-dyfi.products" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dyfi.products.Products">
+<em class="property">class </em><code class="descname">Products</code><span class="sig-paren">(</span><em>event</em>, <em>entries</em>, <em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/products.html#Products"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.products.Products" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Handle the generation of all the products</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> – A <a class="reference internal" href="#dyfi.event.Event" title="dyfi.event.Event"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.event.Event</span></code></a> object</li>
+<li><strong>entries</strong> – A <a class="reference internal" href="#dyfi.entries.Entries" title="dyfi.entries.Entries"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.entries.Entries</span></code></a> object</li>
+<li><strong>config</strong> – A <a class="reference internal" href="#dyfi.config.Config" title="dyfi.config.Config"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.config.Config</span></code></a> object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Create all the output files for an event. Each product is held in a <a class="reference internal" href="#dyfi.products.Product" title="dyfi.products.Product"><code class="xref py py-class docutils literal"><span class="pre">dyfi.products.Product</span></code></a> object, which also runs the required product generation methods.</p>
+<dl class="method">
+<dt id="dyfi.products.Products.createAll">
+<code class="descname">createAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/products.html#Products.createAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.products.Products.createAll" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Loop through all product types and create them</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">how many products were created</td>
+</tr>
+</tbody>
+</table>
+<p>This uses the list of products and parameters in the <code class="file docutils literal"><span class="pre">product.yml</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.products.Products.create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/products.html#Products.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.products.Products.create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Create a <a class="reference internal" href="#dyfi.products.Product" title="dyfi.products.Product"><code class="xref py py-class docutils literal"><span class="pre">Product</span></code></a> object and underlying product</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<em>dict</em>) – Set of parameters</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of products created</td>
+</tr>
+</tbody>
+</table>
+<p>Create a particular Product using the parameters in <cite>p</cite>. The following parameter keys are accepted in <cite>p</cite> (and are found in <code class="file docutils literal"><span class="pre">products.yml</span></code>):</p>
+<ul class="simple">
+<li>name</li>
+<li>dataset (geo_1km, geo_10km, time)</li>
+<li>format (geojson, png, json)</li>
+<li>type (map or graph)</li>
+</ul>
+<p>If the <cite>dataset</cite> parameter is specified (e.g. ‘geo’ or ‘time’), that dataset will be computed.</p>
+<p>If the ‘formatType’  is specified, the <a class="reference internal" href="#dyfi.products.Product" title="dyfi.products.Product"><code class="xref py py-class docutils literal"><span class="pre">Product</span></code></a> initializer will create the product as well (see <a class="reference internal" href="#dyfi.products.Product.create" title="dyfi.products.Product.create"><code class="xref py py-meth docutils literal"><span class="pre">Product.create()</span></code></a>).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dyfi.products.Product">
+<em class="property">class </em><code class="descname">Product</code><span class="sig-paren">(</span><em>parent</em>, <em>name</em>, <em>dataset=None</em>, <em>productType=None</em>, <em>productFormat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/products.html#Product"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.products.Product" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Handle the generation of a single product</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> – A <a class="reference internal" href="#dyfi.products.Products" title="dyfi.products.Products"><code class="xref py py-obj docutils literal"><span class="pre">Products</span></code></a> object</li>
+<li><strong>name</strong> (<em>str</em>) – The name of this product</li>
+<li><strong>dataset</strong> – See below</li>
+<li><strong>productType</strong> – See below</li>
+<li><strong>productFormat</strong> – See below</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Holds the output for particular product. This calls other product generators like <code class="xref py py-obj docutils literal"><span class="pre">Contents</span></code> and <code class="xref py py-obj docutils literal"><span class="pre">Map</span></code>.</p>
+<p>If the <cite>dataSet</cite> parameter is set, this will run whatever method is needed to process the raw data (for example, geocoded aggregation, or generating time series data.)</p>
+<p>If the <cite>productType</cite> parameter is set, this will create a <a class="reference internal" href="#dyfi.graph.Graph" title="dyfi.graph.Graph"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.graph.Graph</span></code></a> or <a class="reference internal" href="#dyfi.map.Map" title="dyfi.map.Map"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.map.Map</span></code></a> object from the processed data.</p>
+<p>If the <cite>productFormat</cite> parameter is set, this will run the appropriate <cite>create()</cite> method to make and save the file.</p>
+<dl class="method">
+<dt id="dyfi.products.Product.create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>productFormat</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/products.html#Product.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.products.Product.create" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopis:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dyfi.rawDbSqlite">
+<span id="dyfi-rawdbsqlite"></span><h2>dyfi.rawDbSqlite<a class="headerlink" href="#module-dyfi.rawDbSqlite" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rawdbsqlite">
+<h3>rawDbSqlite<a class="headerlink" href="#rawdbsqlite" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The database currently implemented in SQLite 3. Low-level database operations are separated into this module in case we wish to reimplement to MySQL (or another solution) in the future.</p>
+</div>
+<dl class="class">
+<dt id="dyfi.rawDbSqlite.RawDb">
+<em class="property">class </em><code class="descname">RawDb</code><span class="sig-paren">(</span><em>dbparams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Open a Sqlite connection.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dbparams</strong> – A configuration <cite>dict</cite>, usually the ‘db’ section of a <a class="reference internal" href="#dyfi.config.Config" title="dyfi.config.Config"><code class="xref py py-obj docutils literal"><span class="pre">dyfi.config.Config</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+<p>Handles raw database transactions.</p>
+<dl class="data">
+<dt id="dyfi.rawDbSqlite.RawDb.intcolumns">
+<code class="descname">intcolumns</code><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.intcolumns" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of database columns that must be converted to type <cite>int</cite>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="dyfi.rawDbSqlite.RawDb.floatcolumns">
+<code class="descname">floatcolumns</code><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.floatcolumns" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of database columns that must be converted to type <cite>float</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.getCursor">
+<code class="descname">getCursor</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.getCursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.getCursor" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Create a Sqlite3 cursor to a particular table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> (<em>str</em>) – Name of a single table</td>
+</tr>
+</tbody>
+</table>
+<p>This creates a Sqlite cursor, which is how Sqlite handles database transactions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>tables</em>, <em>clause</em>, <em>subs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.query" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Query the database, splitting multiple tables if necessary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tables</strong> – table or list of tables to query</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of rows returned by query</td>
+</tr>
+</tbody>
+</table>
+<p>Calls <a class="reference internal" href="#dyfi.rawDbSqlite.RawDb.querySingleTable" title="dyfi.rawDbSqlite.RawDb.querySingleTable"><code class="xref py py-meth docutils literal"><span class="pre">querySingleTable()</span></code></a> on each table, then concatenates the results into a single list.</p>
+<p>The <code class="xref py py-attr docutils literal"><span class="pre">tables</span></code> parameter accepts a single table or list of tables. No checking of table names is done at this step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.querySingleTable">
+<code class="descname">querySingleTable</code><span class="sig-paren">(</span><em>table</em>, <em>clause</em>, <em>subs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.querySingleTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.querySingleTable" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Query a single table of the database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> (<em>str</em>) – table to be queried</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of rows returned by query</td>
+</tr>
+</tbody>
+</table>
+<p>No checking of table names is done at this step.
+Automagically fills in the ‘table’ key of each item.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.updateRow">
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>table</em>, <em>subid</em>, <em>column</em>, <em>val</em>, <em>increment=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body"><p class="first">Update a table row</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>table</strong> (<em>str</em>) – table to be saved</li>
+<li><strong>subid</strong> (<em>str</em>) – primary key value</li>
+<li><strong>column</strong> (<em>str</em>) – column to be updated</li>
+<li><strong>val</strong> (<em>str</em>) – new value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">number of rows changed</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function is used to update a single row if the primary key is known (subid for extended tables, event ID for everything else.)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>table</em>, <em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.save" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Save an object to the specified table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> (<em>str</em>) – table to be saved</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of rows changed</td>
+</tr>
+</tbody>
+</table>
+<p>This saves an <cite>Event</cite> or <cite>Entry</cite> object to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.getColumns">
+<code class="descname">getColumns</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.getColumns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.getColumns" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Read columns from a database table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>table</strong> (<em>str</em>) – A database table to read</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of columns</td>
+</tr>
+</tbody>
+</table>
+<p>This is used to get the list of columns in table, so that the save function can save a row properly.</p>
+<p>This will also populate the <cite>columns</cite> attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dyfi.rawDbSqlite.RawDb.createTable">
+<code class="descname">createTable</code><span class="sig-paren">(</span><em>tablefile</em>, <em>table=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dyfi/rawDbSqlite.html#RawDb.createTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dyfi.rawDbSqlite.RawDb.createTable" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Synopsis:</th><td class="field-body">Create a database table from a template</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tablefile</strong> (<em>str</em>) – The name of the table file</td>
+</tr>
+</tbody>
+</table>
+<p>This creates a new table from a table template (the DYFI tables are implemented in Sqlite, one .sql file per table.) The template is a blank table file with the extension ‘.template’ in the same directory as the other Sqlite tables.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module list</a><ul>
+<li><a class="reference internal" href="#module-dyfi.aggregate">dyfi.aggregate</a></li>
+<li><a class="reference internal" href="#module-dyfi.cdi">dyfi.cdi</a></li>
+<li><a class="reference internal" href="#module-dyfi.config">dyfi.config</a></li>
+<li><a class="reference internal" href="#module-dyfi.contents">dyfi.contents</a></li>
+<li><a class="reference internal" href="#module-dyfi.db">dyfi.db</a></li>
+<li><a class="reference internal" href="#module-dyfi.dyfiContainer">dyfi.dyfiContainer</a></li>
+<li><a class="reference internal" href="#module-dyfi.entries">dyfi.entries</a></li>
+<li><a class="reference internal" href="#module-dyfi.event">dyfi.event</a></li>
+<li><a class="reference internal" href="#module-dyfi.graph">dyfi.graph</a></li>
+<li><a class="reference internal" href="#module-dyfi.ipes">dyfi.ipes</a></li>
+<li><a class="reference internal" href="#module-dyfi.map">dyfi.map</a></li>
+<li><a class="reference internal" href="#module-dyfi.products">dyfi.products</a></li>
+<li><a class="reference internal" href="#module-dyfi.rawDbSqlite">dyfi.rawDbSqlite</a><ul>
+<li><a class="reference internal" href="#rawdbsqlite">rawDbSqlite</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="app.html" title="previous chapter">rundyfi.py</a></li>
+      <li>Next: <a href="tests.html" title="next chapter">Test Package</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dyfi.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/dyfi.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

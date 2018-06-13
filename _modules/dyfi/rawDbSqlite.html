@@ -1,0 +1,381 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dyfi.rawDbSqlite &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.rawDbSqlite</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">rawDbSqlite</span>
+<span class="sd">===========</span>
+
+<span class="sd">.. note:: The database currently implemented in SQLite 3. Low-level database operations are separated into this module in case we wish to reimplement to MySQL (or another solution) in the future.</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="RawDb"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb">[docs]</a><span class="k">class</span> <span class="nc">RawDb</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Open a Sqlite connection.</span>
+<span class="sd">    :param dbparams: A configuration `dict`, usually the &#39;db&#39; section of a :py:obj:`dyfi.config.Config` object.</span>
+
+<span class="sd">    Handles raw database transactions.</span>
+
+<span class="sd">    .. data:: intcolumns</span>
+
+<span class="sd">        A list of database columns that must be converted to type `int`.</span>
+
+<span class="sd">    .. data:: floatcolumns</span>
+
+<span class="sd">        A list of database columns that must be converted to type `float`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">intcolumns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;nresponses&#39;</span><span class="p">,</span><span class="s1">&#39;newresponses&#39;</span><span class="p">]</span>
+    <span class="n">floatcolumns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span><span class="s1">&#39;lon&#39;</span><span class="p">,</span><span class="s1">&#39;mag&#39;</span><span class="p">,</span><span class="s1">&#39;depth&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;latitude&#39;</span><span class="p">,</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lat_offset&#39;</span><span class="p">,</span><span class="s1">&#39;lon_offset&#39;</span><span class="p">,</span><span class="s1">&#39;lat_span&#39;</span><span class="p">,</span><span class="s1">&#39;lon_span&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dbparams</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbfiles</span><span class="o">=</span><span class="n">dbparams</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursors</span><span class="o">=</span><span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectors</span><span class="o">=</span><span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">{}</span>
+
+<div class="viewcode-block" id="RawDb.getCursor"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.getCursor">[docs]</a>    <span class="k">def</span> <span class="nf">getCursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Create a Sqlite3 cursor to a particular table</span>
+<span class="sd">        :param str table: Name of a single table</span>
+
+<span class="sd">        This creates a Sqlite cursor, which is how Sqlite handles database transactions.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursors</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursors</span><span class="p">[</span><span class="n">table</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="n">tablefile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbfiles</span><span class="p">[</span><span class="s1">&#39;extended&#39;</span><span class="p">]</span>
+            <span class="n">tablefile</span><span class="o">=</span><span class="n">tablefile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;__EXTENDED__&#39;</span><span class="p">,</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbfiles</span><span class="p">:</span>
+            <span class="n">tablefile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbfiles</span><span class="p">[</span><span class="n">table</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;getCursor could not find table &#39;</span><span class="o">+</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tablefile</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RawDb: Creating table&#39;</span><span class="p">,</span><span class="n">tablefile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">createTable</span><span class="p">(</span><span class="n">tablefile</span><span class="p">,</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="n">connector</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">tablefile</span><span class="p">)</span>
+        <span class="n">connector</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RawDb: New cursor for&#39;</span><span class="p">,</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">cursor</span><span class="o">=</span><span class="n">connector</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursors</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">=</span><span class="n">cursor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectors</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">=</span><span class="n">connector</span>
+
+        <span class="k">return</span> <span class="n">cursor</span></div>
+
+
+<div class="viewcode-block" id="RawDb.query"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tables</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">subs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Query the database, splitting multiple tables if necessary</span>
+<span class="sd">        :param tables: table or list of tables to query</span>
+<span class="sd">        :returns: list of rows returned by query</span>
+
+<span class="sd">        Calls :py:meth:`querySingleTable` on each table, then concatenates the results into a single list.</span>
+
+<span class="sd">        The :py:attr:`tables` parameter accepts a single table or list of tables. No checking of table names is done at this step.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span><span class="o">=</span><span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">tables</span><span class="o">=</span><span class="n">tables</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+            <span class="n">tableresults</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">querySingleTable</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">subs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tableresults</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tableresults</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="RawDb.querySingleTable"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.querySingleTable">[docs]</a>    <span class="k">def</span> <span class="nf">querySingleTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">subs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Query a single table of the database</span>
+<span class="sd">        :param str table: table to be queried</span>
+<span class="sd">        :returns: list of rows returned by query</span>
+
+<span class="sd">        No checking of table names is done at this step.</span>
+<span class="sd">        Automagically fills in the &#39;table&#39; key of each item.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getCursor</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">query</span><span class="o">=</span><span class="s1">&#39;SELECT * FROM </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">table</span>
+        <span class="k">if</span> <span class="n">clause</span><span class="p">:</span>
+            <span class="n">query</span><span class="o">+=</span><span class="s1">&#39; WHERE </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">clause</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subs</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">subs</span><span class="o">=</span><span class="p">[</span><span class="n">subs</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">subs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;sqlite3 Operational error: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="n">results</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+
+            <span class="c1"># Sqlite data is a Row object, this is how you</span>
+            <span class="c1"># turn it into a dict:</span>
+            <span class="n">rowdict</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span><span class="n">row</span><span class="p">))</span>
+
+            <span class="c1"># Now convert certain columns to float or int</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">rowdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">intcolumns</span><span class="p">:</span>
+                    <span class="n">rowdict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">floatcolumns</span><span class="p">:</span>
+                    <span class="n">rowdict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+            <span class="c1"># Now make a list</span>
+            <span class="n">rowdict</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">table</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rowdict</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># results is now a list of dicts</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="RawDb.updateRow"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">,</span><span class="n">subid</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">val</span><span class="p">,</span><span class="n">increment</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Update a table row</span>
+<span class="sd">        :param str table: table to be saved</span>
+<span class="sd">        :param str subid: primary key value</span>
+<span class="sd">        :param str column: column to be updated</span>
+<span class="sd">        :param str val: new value</span>
+<span class="sd">        :returns: number of rows changed</span>
+
+<span class="sd">        This function is used to update a single row if the primary key is known (subid for extended tables, event ID for everything else.)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getCursor</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="n">primaryKey</span><span class="o">=</span><span class="s1">&#39;subid&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">primaryKey</span><span class="o">=</span><span class="s1">&#39;eventid&#39;</span>
+
+        <span class="k">if</span> <span class="n">increment</span><span class="p">:</span>
+            <span class="c1"># incrementing does not work if original value is null</span>
+            <span class="c1"># need to read the original column, then</span>
+            <span class="c1"># increment manually</span>
+
+            <span class="n">clause</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> = ?&#39;</span> <span class="o">%</span> <span class="n">primaryKey</span>
+            <span class="n">row</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">querySingleTable</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">subid</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">oldVal</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">oldVal</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">+=</span><span class="n">oldVal</span>
+
+        <span class="n">val</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">query</span><span class="o">=</span><span class="s1">&#39;UPDATE </span><span class="si">%s</span><span class="s1"> SET </span><span class="si">%s</span><span class="s1">=?&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">column</span><span class="p">)</span>
+        <span class="n">query</span><span class="o">+=</span><span class="s1">&#39; WHERE </span><span class="si">%s</span><span class="s1">=?&#39;</span> <span class="o">%</span> <span class="n">primaryKey</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,[</span><span class="n">val</span><span class="p">,</span><span class="n">subid</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connectors</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;sqlite3 Operational error: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">rowcount</span></div>
+
+
+<div class="viewcode-block" id="RawDb.save"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Save an object to the specified table</span>
+<span class="sd">        :param str table: table to be saved</span>
+<span class="sd">        :returns: list of rows changed</span>
+
+<span class="sd">        This saves an `Event` or `Entry` object to the database.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getCursor</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getColumns</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+        <span class="n">isDict</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span>
+
+        <span class="n">saveList</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isDict</span> <span class="ow">and</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="n">obj</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">isDict</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">column</span><span class="p">):</span>
+                <span class="n">val</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">column</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span><span class="o">=</span><span class="kc">None</span>
+
+            <span class="n">saveList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="n">query</span><span class="o">=</span><span class="s1">&#39;INSERT OR REPLACE INTO &#39;</span><span class="o">+</span><span class="n">table</span><span class="o">+</span><span class="s1">&#39; VALUES (</span><span class="si">%s</span><span class="s1">)&#39;</span>
+        <span class="n">query</span> <span class="o">%=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">saveList</span><span class="p">)))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="n">saveList</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connectors</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">rowcount</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">OperationalError</span><span class="p">,</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">IntegrityError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;sqlite3 Operational error: &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="RawDb.getColumns"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.getColumns">[docs]</a>    <span class="k">def</span> <span class="nf">getColumns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">table</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Read columns from a database table</span>
+<span class="sd">        :param str table: A database table to read</span>
+<span class="sd">        :returns: List of columns</span>
+
+<span class="sd">        This is used to get the list of columns in table, so that the save function can save a row properly.</span>
+
+<span class="sd">        This will also populate the `columns` attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">table</span><span class="p">]</span>
+
+        <span class="c1"># Cursor is saved, this won&#39;t open a duplicate cursor</span>
+        <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getCursor</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">table</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="nb">tuple</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">=</span><span class="n">columns</span>
+
+        <span class="k">return</span> <span class="n">columns</span></div>
+
+
+<div class="viewcode-block" id="RawDb.createTable"><a class="viewcode-back" href="../../dyfi.html#dyfi.rawDbSqlite.RawDb.createTable">[docs]</a>    <span class="k">def</span> <span class="nf">createTable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">tablefile</span><span class="p">,</span><span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :synopsis: Create a database table from a template</span>
+<span class="sd">        :param str tablefile: The name of the table file</span>
+
+<span class="sd">        This creates a new table from a table template (the DYFI tables are implemented in Sqlite, one .sql file per table.) The template is a blank table file with the extension &#39;.template&#39; in the same directory as the other Sqlite tables.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="n">templatefile</span><span class="o">=</span><span class="n">tablefile</span><span class="o">+</span><span class="s1">&#39;.template&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">tablefile</span><span class="p">:</span>
+            <span class="c1"># The template for all extended_* databases is</span>
+            <span class="c1"># .../extended.db.template</span>
+            <span class="n">templatefile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbfiles</span><span class="p">[</span><span class="s1">&#39;extended&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.template&#39;</span>
+            <span class="n">templatefile</span><span class="o">=</span><span class="n">templatefile</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;__EXTENDED__&#39;</span><span class="p">,</span><span class="s1">&#39;extended&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;RawDb.createTable: creating&#39;</span><span class="p">,</span><span class="n">tablefile</span><span class="p">,</span><span class="s1">&#39;from&#39;</span><span class="p">,</span><span class="n">templatefile</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">templatefile</span><span class="p">,</span><span class="n">tablefile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
+            <span class="n">connector</span><span class="o">=</span><span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">tablefile</span><span class="p">)</span>
+            <span class="n">connector</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
+            <span class="n">c</span><span class="o">=</span><span class="n">connector</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;ALTER TABLE extended RENAME TO &#39;</span><span class="o">+</span><span class="n">table</span><span class="p">)</span>
+            <span class="n">connector</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div></div>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

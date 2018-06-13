@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dyfi.thirdparty.utm.conversion &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.thirdparty.utm.conversion</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">.error</span> <span class="k">import</span> <span class="n">OutOfRangeError</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;to_latlon&#39;</span><span class="p">,</span> <span class="s1">&#39;from_latlon&#39;</span><span class="p">]</span>
+
+<span class="n">K0</span> <span class="o">=</span> <span class="mf">0.9996</span>
+
+<span class="n">E</span> <span class="o">=</span> <span class="mf">0.00669438</span>
+<span class="n">E2</span> <span class="o">=</span> <span class="n">E</span> <span class="o">*</span> <span class="n">E</span>
+<span class="n">E3</span> <span class="o">=</span> <span class="n">E2</span> <span class="o">*</span> <span class="n">E</span>
+<span class="n">E_P2</span> <span class="o">=</span> <span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">E</span><span class="p">)</span>
+
+<span class="n">SQRT_E</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">E</span><span class="p">)</span>
+<span class="n">_E</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">SQRT_E</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">SQRT_E</span><span class="p">)</span>
+<span class="n">_E2</span> <span class="o">=</span> <span class="n">_E</span> <span class="o">*</span> <span class="n">_E</span>
+<span class="n">_E3</span> <span class="o">=</span> <span class="n">_E2</span> <span class="o">*</span> <span class="n">_E</span>
+<span class="n">_E4</span> <span class="o">=</span> <span class="n">_E3</span> <span class="o">*</span> <span class="n">_E</span>
+<span class="n">_E5</span> <span class="o">=</span> <span class="n">_E4</span> <span class="o">*</span> <span class="n">_E</span>
+
+<span class="n">M1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">E</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">E2</span> <span class="o">/</span> <span class="mi">64</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">E3</span> <span class="o">/</span> <span class="mi">256</span><span class="p">)</span>
+<span class="n">M2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">E</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">E2</span> <span class="o">/</span> <span class="mi">32</span> <span class="o">+</span> <span class="mi">45</span> <span class="o">*</span> <span class="n">E3</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">M3</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span> <span class="o">*</span> <span class="n">E2</span> <span class="o">/</span> <span class="mi">256</span> <span class="o">+</span> <span class="mi">45</span> <span class="o">*</span> <span class="n">E3</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">M4</span> <span class="o">=</span> <span class="p">(</span><span class="mi">35</span> <span class="o">*</span> <span class="n">E3</span> <span class="o">/</span> <span class="mi">3072</span><span class="p">)</span>
+
+<span class="n">P2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_E</span> <span class="o">-</span> <span class="mf">27.</span> <span class="o">/</span> <span class="mi">32</span> <span class="o">*</span> <span class="n">_E3</span> <span class="o">+</span> <span class="mf">269.</span> <span class="o">/</span> <span class="mi">512</span> <span class="o">*</span> <span class="n">_E5</span><span class="p">)</span>
+<span class="n">P3</span> <span class="o">=</span> <span class="p">(</span><span class="mf">21.</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">_E2</span> <span class="o">-</span> <span class="mf">55.</span> <span class="o">/</span> <span class="mi">32</span> <span class="o">*</span> <span class="n">_E4</span><span class="p">)</span>
+<span class="n">P4</span> <span class="o">=</span> <span class="p">(</span><span class="mf">151.</span> <span class="o">/</span> <span class="mi">96</span> <span class="o">*</span> <span class="n">_E3</span> <span class="o">-</span> <span class="mf">417.</span> <span class="o">/</span> <span class="mi">128</span> <span class="o">*</span> <span class="n">_E5</span><span class="p">)</span>
+<span class="n">P5</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1097.</span> <span class="o">/</span> <span class="mi">512</span> <span class="o">*</span> <span class="n">_E4</span><span class="p">)</span>
+
+<span class="n">R</span> <span class="o">=</span> <span class="mi">6378137</span>
+
+<span class="n">ZONE_LETTERS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">84</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span><span class="mi">72</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">56</span><span class="p">,</span> <span class="s1">&#39;V&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">48</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">56</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mi">72</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="to_latlon"><a class="viewcode-back" href="../../../../dyfi.thirdparty.utm.html#dyfi.thirdparty.utm.conversion.to_latlon">[docs]</a><span class="k">def</span> <span class="nf">to_latlon</span><span class="p">(</span><span class="n">easting</span><span class="p">,</span> <span class="n">northing</span><span class="p">,</span> <span class="n">zone_number</span><span class="p">,</span> <span class="n">zone_letter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">northern</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">zone_letter</span> <span class="ow">and</span> <span class="n">northern</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;either zone_letter or northern needs to be set&#39;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">zone_letter</span> <span class="ow">and</span> <span class="n">northern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;set either zone_letter or northern, but not both&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">100000</span> <span class="o">&lt;=</span> <span class="n">easting</span> <span class="o">&lt;</span> <span class="mi">1000000</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;easting out of range (must be between 100.000 m and 999.999 m)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">northing</span> <span class="o">&lt;=</span> <span class="mi">10000000</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;northing out of range (must be between 0 m and 10.000.000 m)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">zone_number</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;zone number out of range (must be between 1 and 60)&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">zone_letter</span><span class="p">:</span>
+        <span class="n">zone_letter</span> <span class="o">=</span> <span class="n">zone_letter</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;C&#39;</span> <span class="o">&lt;=</span> <span class="n">zone_letter</span> <span class="o">&lt;=</span> <span class="s1">&#39;X&#39;</span> <span class="ow">or</span> <span class="n">zone_letter</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;zone letter out of range (must be between C and X)&#39;</span><span class="p">)</span>
+
+        <span class="n">northern</span> <span class="o">=</span> <span class="p">(</span><span class="n">zone_letter</span> <span class="o">&gt;=</span> <span class="s1">&#39;N&#39;</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">easting</span> <span class="o">-</span> <span class="mi">500000</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">northing</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">northern</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">-=</span> <span class="mi">10000000</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">K0</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">M1</span><span class="p">)</span>
+
+    <span class="n">p_rad</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu</span> <span class="o">+</span>
+             <span class="n">P2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span>
+             <span class="n">P3</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span>
+             <span class="n">P4</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)</span> <span class="o">+</span>
+             <span class="n">P5</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">mu</span><span class="p">))</span>
+
+    <span class="n">p_sin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">p_rad</span><span class="p">)</span>
+    <span class="n">p_sin2</span> <span class="o">=</span> <span class="n">p_sin</span> <span class="o">*</span> <span class="n">p_sin</span>
+
+    <span class="n">p_cos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">p_rad</span><span class="p">)</span>
+
+    <span class="n">p_tan</span> <span class="o">=</span> <span class="n">p_sin</span> <span class="o">/</span> <span class="n">p_cos</span>
+    <span class="n">p_tan2</span> <span class="o">=</span> <span class="n">p_tan</span> <span class="o">*</span> <span class="n">p_tan</span>
+    <span class="n">p_tan4</span> <span class="o">=</span> <span class="n">p_tan2</span> <span class="o">*</span> <span class="n">p_tan2</span>
+
+    <span class="n">ep_sin</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">E</span> <span class="o">*</span> <span class="n">p_sin2</span>
+    <span class="n">ep_sin_sqrt</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">E</span> <span class="o">*</span> <span class="n">p_sin2</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">R</span> <span class="o">/</span> <span class="n">ep_sin_sqrt</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">E</span><span class="p">)</span> <span class="o">/</span> <span class="n">ep_sin</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">_E</span> <span class="o">*</span> <span class="n">p_cos</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">c2</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">c</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">K0</span><span class="p">)</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span>
+    <span class="n">d3</span> <span class="o">=</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d</span>
+    <span class="n">d4</span> <span class="o">=</span> <span class="n">d3</span> <span class="o">*</span> <span class="n">d</span>
+    <span class="n">d5</span> <span class="o">=</span> <span class="n">d4</span> <span class="o">*</span> <span class="n">d</span>
+    <span class="n">d6</span> <span class="o">=</span> <span class="n">d5</span> <span class="o">*</span> <span class="n">d</span>
+
+    <span class="n">latitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_rad</span> <span class="o">-</span> <span class="p">(</span><span class="n">p_tan</span> <span class="o">/</span> <span class="n">r</span><span class="p">)</span> <span class="o">*</span>
+                <span class="p">(</span><span class="n">d2</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span>
+                 <span class="n">d4</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">p_tan2</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">c2</span> <span class="o">-</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">E_P2</span><span class="p">))</span> <span class="o">+</span>
+                 <span class="n">d6</span> <span class="o">/</span> <span class="mi">720</span> <span class="o">*</span> <span class="p">(</span><span class="mi">61</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">p_tan2</span> <span class="o">+</span> <span class="mi">298</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">45</span> <span class="o">*</span> <span class="n">p_tan4</span> <span class="o">-</span> <span class="mi">252</span> <span class="o">*</span> <span class="n">E_P2</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">c2</span><span class="p">))</span>
+
+    <span class="n">longitude</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span> <span class="o">-</span>
+                 <span class="n">d3</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p_tan2</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span>
+                 <span class="n">d5</span> <span class="o">/</span> <span class="mi">120</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">28</span> <span class="o">*</span> <span class="n">p_tan2</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">c2</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">E_P2</span> <span class="o">+</span> <span class="mi">24</span> <span class="o">*</span> <span class="n">p_tan4</span><span class="p">))</span> <span class="o">/</span> <span class="n">p_cos</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">latitude</span><span class="p">),</span>
+            <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span> <span class="o">+</span> <span class="n">zone_number_to_central_longitude</span><span class="p">(</span><span class="n">zone_number</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="from_latlon"><a class="viewcode-back" href="../../../../dyfi.thirdparty.utm.html#dyfi.thirdparty.utm.conversion.from_latlon">[docs]</a><span class="k">def</span> <span class="nf">from_latlon</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">force_zone_number</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="o">-</span><span class="mf">80.0</span> <span class="o">&lt;=</span> <span class="n">latitude</span> <span class="o">&lt;=</span> <span class="mf">84.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;latitude out of range (must be between 80 deg S and 84 deg N)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="o">-</span><span class="mf">180.0</span> <span class="o">&lt;=</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mf">180.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">OutOfRangeError</span><span class="p">(</span><span class="s1">&#39;northing out of range (must be between 180 deg W and 180 deg E)&#39;</span><span class="p">)</span>
+
+    <span class="n">lat_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+    <span class="n">lat_sin</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span>
+    <span class="n">lat_cos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span>
+
+    <span class="n">lat_tan</span> <span class="o">=</span> <span class="n">lat_sin</span> <span class="o">/</span> <span class="n">lat_cos</span>
+    <span class="n">lat_tan2</span> <span class="o">=</span> <span class="n">lat_tan</span> <span class="o">*</span> <span class="n">lat_tan</span>
+    <span class="n">lat_tan4</span> <span class="o">=</span> <span class="n">lat_tan2</span> <span class="o">*</span> <span class="n">lat_tan2</span>
+
+    <span class="k">if</span> <span class="n">force_zone_number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">zone_number</span> <span class="o">=</span> <span class="n">latlon_to_zone_number</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">zone_number</span> <span class="o">=</span> <span class="n">force_zone_number</span>
+
+    <span class="n">zone_letter</span> <span class="o">=</span> <span class="n">latitude_to_zone_letter</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+
+    <span class="n">lon_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+    <span class="n">central_lon</span> <span class="o">=</span> <span class="n">zone_number_to_central_longitude</span><span class="p">(</span><span class="n">zone_number</span><span class="p">)</span>
+    <span class="n">central_lon_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">central_lon</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">R</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">E</span> <span class="o">*</span> <span class="n">lat_sin</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">E_P2</span> <span class="o">*</span> <span class="n">lat_cos</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">lat_cos</span> <span class="o">*</span> <span class="p">(</span><span class="n">lon_rad</span> <span class="o">-</span> <span class="n">central_lon_rad</span><span class="p">)</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="n">a4</span> <span class="o">=</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="n">a5</span> <span class="o">=</span> <span class="n">a4</span> <span class="o">*</span> <span class="n">a</span>
+    <span class="n">a6</span> <span class="o">=</span> <span class="n">a5</span> <span class="o">*</span> <span class="n">a</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="p">(</span><span class="n">M1</span> <span class="o">*</span> <span class="n">lat_rad</span> <span class="o">-</span>
+             <span class="n">M2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">lat_rad</span><span class="p">)</span> <span class="o">+</span>
+             <span class="n">M3</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">lat_rad</span><span class="p">)</span> <span class="o">-</span>
+             <span class="n">M4</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">lat_rad</span><span class="p">))</span>
+
+    <span class="n">easting</span> <span class="o">=</span> <span class="n">K0</span> <span class="o">*</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span>
+                        <span class="n">a3</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">lat_tan2</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="n">a5</span> <span class="o">/</span> <span class="mi">120</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="mi">18</span> <span class="o">*</span> <span class="n">lat_tan2</span> <span class="o">+</span> <span class="n">lat_tan4</span> <span class="o">+</span> <span class="mi">72</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">58</span> <span class="o">*</span> <span class="n">E_P2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">500000</span>
+
+    <span class="n">northing</span> <span class="o">=</span> <span class="n">K0</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">lat_tan</span> <span class="o">*</span> <span class="p">(</span><span class="n">a2</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span>
+                                        <span class="n">a4</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">*</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="n">lat_tan2</span> <span class="o">+</span> <span class="mi">9</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                                        <span class="n">a6</span> <span class="o">/</span> <span class="mi">720</span> <span class="o">*</span> <span class="p">(</span><span class="mi">61</span> <span class="o">-</span> <span class="mi">58</span> <span class="o">*</span> <span class="n">lat_tan2</span> <span class="o">+</span> <span class="n">lat_tan4</span> <span class="o">+</span> <span class="mi">600</span> <span class="o">*</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">330</span> <span class="o">*</span> <span class="n">E_P2</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">latitude</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">northing</span> <span class="o">+=</span> <span class="mi">10000000</span>
+
+    <span class="k">return</span> <span class="n">easting</span><span class="p">,</span> <span class="n">northing</span><span class="p">,</span> <span class="n">zone_number</span><span class="p">,</span> <span class="n">zone_letter</span></div>
+
+
+<span class="k">def</span> <span class="nf">latitude_to_zone_letter</span><span class="p">(</span><span class="n">latitude</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">lat_min</span><span class="p">,</span> <span class="n">zone_letter</span> <span class="ow">in</span> <span class="n">ZONE_LETTERS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">latitude</span> <span class="o">&gt;=</span> <span class="n">lat_min</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">zone_letter</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">latlon_to_zone_number</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">):</span>
+    <span class="k">if</span> <span class="mi">56</span> <span class="o">&lt;=</span> <span class="n">latitude</span> <span class="o">&lt;=</span> <span class="mi">64</span> <span class="ow">and</span> <span class="mi">3</span> <span class="o">&lt;=</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">32</span>
+
+    <span class="k">if</span> <span class="mi">72</span> <span class="o">&lt;=</span> <span class="n">latitude</span> <span class="o">&lt;=</span> <span class="mi">84</span> <span class="ow">and</span> <span class="n">longitude</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">31</span>
+        <span class="k">elif</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mi">21</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">33</span>
+        <span class="k">elif</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mi">33</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">35</span>
+        <span class="k">elif</span> <span class="n">longitude</span> <span class="o">&lt;=</span> <span class="mi">42</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">37</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">((</span><span class="n">longitude</span> <span class="o">+</span> <span class="mi">180</span><span class="p">)</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">zone_number_to_central_longitude</span><span class="p">(</span><span class="n">zone_number</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">zone_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">-</span> <span class="mi">180</span> <span class="o">+</span> <span class="mi">3</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

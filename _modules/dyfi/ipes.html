@@ -1,0 +1,201 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dyfi.ipes &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dyfi.ipes</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    A collection of IPEs for plotting and filtering.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="c1"># AWW 2007 (Central/Eastern US)</span>
+
+<div class="viewcode-block" id="aw2007ceus"><a class="viewcode-back" href="../../dyfi.html#dyfi.ipes.aw2007ceus">[docs]</a><span class="k">def</span> <span class="nf">aw2007ceus</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">enaCorrection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Estimate intensity given magnitude and distance</span>
+<span class="sd">    :param float mag: Magnitude</span>
+<span class="sd">    :param float r: Epicentral distance</span>
+<span class="sd">    :param bool inverse: Compute the inverse function</span>
+<span class="sd">    :param bool fine: If false, intensities below 2 become 1</span>
+<span class="sd">    :param bool enaCorrection: If true, apply correction for Eastern North America</span>
+<span class="sd">    :returns: Intensity; or, if `inverse` is true, magnitude</span>
+
+<span class="sd">    Implementation of Atkinson, Wald (2007).</span>
+
+<span class="sd">    If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">11.72</span><span class="p">,</span><span class="mf">2.36</span><span class="p">,</span><span class="mf">0.1155</span><span class="p">,</span><span class="o">-</span><span class="mf">0.44</span><span class="p">,</span><span class="o">-</span><span class="mf">0.002044</span><span class="p">,</span><span class="mf">2.31</span><span class="p">,</span><span class="o">-</span><span class="mf">0.479</span><span class="p">)</span>
+    <span class="n">h</span><span class="o">=</span><span class="mi">17</span>
+    <span class="n">rt</span><span class="o">=</span><span class="mi">80</span>
+
+    <span class="n">R</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">h</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">B</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="n">rt</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+    <span class="n">logr</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">R</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="c1">#ecorr=0</span>
+    <span class="c1">#if enaCorrection:</span>
+    <span class="c1">#    ecorr = 0.7 + 0.001*r + max(0,0.8*math.log(min(r,150)/50))</span>
+
+    <span class="k">if</span> <span class="n">inverse</span><span class="p">:</span>
+        <span class="n">ii</span><span class="o">=</span><span class="n">mag</span>
+        <span class="n">mag</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">return</span> <span class="n">mag</span>
+
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">mag</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">mag</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">logr</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">B</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">*</span><span class="n">mag</span><span class="o">*</span><span class="n">logr</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fine</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ii</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">ii</span> <span class="o">&lt;</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+        <span class="k">if</span> <span class="n">ii</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">ii</span></div>
+
+
+<span class="k">def</span> <span class="nf">aww2014ena</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">aww2014</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="n">inverse</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="n">fine</span><span class="p">,</span><span class="n">enaCorrection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">aww2014wna</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">aww2014</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="n">inverse</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="n">fine</span><span class="p">,</span><span class="n">enaCorrection</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="aww2014"><a class="viewcode-back" href="../../dyfi.html#dyfi.ipes.aww2014">[docs]</a><span class="k">def</span> <span class="nf">aww2014</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">enaCorrection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :synopsis: Estimate intensity given magnitude and distance</span>
+<span class="sd">    :param float mag: Magnitude</span>
+<span class="sd">    :param float r: Epicentral distance</span>
+<span class="sd">    :param bool inverse: Compute the inverse function</span>
+<span class="sd">    :param bool fine: If false, intensities below 2 become 1</span>
+<span class="sd">    :param bool enaCorrection: If true, apply correction for Eastern North America</span>
+<span class="sd">    :returns: Intensity; or, if `inverse` is true, magnitude</span>
+
+<span class="sd">    Implementation of Atkinson, Worden, Wald (2014). Earthquake Ground-Motion Prediction Equations for Eastern North America. See https://doi.org/10.1785/0120140178</span>
+
+<span class="sd">    If `inverse` is true, then the first parameter is treated as intensity, and this returns the magnitude.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.309</span><span class="p">,</span><span class="mf">1.864</span><span class="p">,</span><span class="o">-</span><span class="mf">1.672</span><span class="p">,</span><span class="o">-</span><span class="mf">0.00219</span><span class="p">,</span><span class="mf">1.77</span><span class="p">,</span><span class="o">-</span><span class="mf">0.383</span><span class="p">)</span>
+    <span class="n">R</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">14</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">B</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="mi">50</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+    <span class="n">logr</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">R</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="n">ecorr</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">if</span> <span class="n">enaCorrection</span><span class="p">:</span>
+        <span class="n">ecorr</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">+</span> <span class="mf">0.001</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.8</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span><span class="o">/</span><span class="mi">50</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">inverse</span><span class="p">:</span>
+        <span class="c1"># For inverse problem, input is intensity, output is mag</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="n">mag</span>
+        <span class="n">mag</span> <span class="o">=</span> <span class="p">(</span><span class="n">ii</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ecorr</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">logr</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">R</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">B</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">logr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mag</span>
+
+    <span class="n">mlogr</span> <span class="o">=</span> <span class="n">mag</span> <span class="o">*</span> <span class="n">logr</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">mag</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">logr</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">R</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">B</span> <span class="o">+</span> <span class="n">C</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">*</span><span class="n">mlogr</span> <span class="o">+</span> <span class="n">ecorr</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fine</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ii</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">ii</span> <span class="o">&lt;</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+        <span class="k">if</span> <span class="n">ii</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">ii</span></div>
+
+
+<span class="n">aww2014wna</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Atkinson, Worden, Wald 2014 (WNA)&#39;</span>
+<span class="n">aww2014ena</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Atkinson, Worden, Wald 2014 (ENA)&#39;</span>
+<span class="n">aw2007ceus</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Atkinson, Wald 2007 (Central/Eastern US)&#39;</span>
+
+<span class="c1"># Define this last since these functions must be defined first</span>
+<span class="n">ipelist</span><span class="o">=</span><span class="p">[</span> <span class="n">aww2014wna</span><span class="p">,</span><span class="n">aww2014ena</span><span class="p">,</span><span class="n">aw2007ceus</span> <span class="p">]</span>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,287 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Implementation Guide &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="rundyfi.py" href="app.html" />
+    <link rel="prev" title="Technical Guide" href="technical-guide.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="implementation-guide">
+<h1>Implementation Guide<a class="headerlink" href="#implementation-guide" title="Permalink to this headline">¶</a></h1>
+<p>The implementation of DYFI Version 4 features a number of changes from previous versions to bring it up-to-date with modern programming standards:</p>
+<ul class="simple">
+<li>Development is now in Github, an open-source repository.</li>
+<li>The codebase now uses Python in line with coding standards of other USGS earthquake products.</li>
+<li>Graphics rendering has moved from Generic Mapping Tools (GMT) to Leaflet rendering for map products, and D3 for graph products.</li>
+<li>The database is now implemented in Sqlite3 for its lighter resource footprint.</li>
+</ul>
+<div class="section" id="system-flowchart">
+<h2>System flowchart<a class="headerlink" href="#system-flowchart" title="Permalink to this headline">¶</a></h2>
+<p>The following diagram shows the ideal configuration for the DYFI system, including adjunct systems for data input and output. This CORE manual only concerns itself with the functionality of the backend server.</p>
+<p>Note the two independent inputs to the DYFI system: event triggers (which include earthquake origin information) and user responses (which may or may not be event-aware).</p>
+<img alt="_images/diagram_systems.svg" src="_images/diagram_systems.svg" /></div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>DYFI installation should be straightforward. Miniconda (<a class="reference external" href="https://conda.io">https://conda.io</a>) is the preferred package and environment manager. The included install script (<cite>install.sh</cite>) uses <em>conda</em> to install the required packages automatically.</p>
+<p>The file <cite>environment.yml</cite> file lists the DYFI dependencies.</p>
+<p>Python modules:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>apng</td>
+<td>&#160;</td>
+<td>For <code class="xref py py-obj docutils literal"><span class="pre">makemovie.py</span></code></td>
+</tr>
+<tr class="row-even"><td>codecov</td>
+<td>&#160;</td>
+<td>For debugging only</td>
+</tr>
+<tr class="row-odd"><td>defusedxml</td>
+<td>0.5.0+</td>
+<td>For creating <code class="xref py py-obj docutils literal"><span class="pre">contents.xml</span></code></td>
+</tr>
+<tr class="row-even"><td>geopy</td>
+<td>1.11.0+</td>
+<td>Use great_circle for filtering and graphing</td>
+</tr>
+<tr class="row-odd"><td>geojson</td>
+<td>1.3.3+</td>
+<td>For output products</td>
+</tr>
+<tr class="row-even"><td>numpy</td>
+<td>1.11.2</td>
+<td>Numerical manipulation in <code class="xref py py-obj docutils literal"><span class="pre">graph.py</span></code></td>
+</tr>
+<tr class="row-odd"><td>pytest</td>
+<td>&#160;</td>
+<td>For debugging only</td>
+</tr>
+<tr class="row-even"><td>pytest-cov</td>
+<td>&#160;</td>
+<td>For debugging only</td>
+</tr>
+<tr class="row-odd"><td>pyyaml</td>
+<td>&#160;</td>
+<td>For configuration files</td>
+</tr>
+<tr class="row-even"><td>sqlite</td>
+<td>&#160;</td>
+<td>Implements the DYFI database</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="additional-dependencies">
+<h2>Additional dependencies<a class="headerlink" href="#additional-dependencies" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>PhantomJS</strong> (<a class="reference external" href="http://phantomjs.org/">http://phantomjs.org/</a>) renders maps into static images (PNG). Normally, the <code class="file docutils literal"><span class="pre">install.sh</span></code> script installs this via <cite>conda</cite>.</li>
+<li><strong>Leaflet</strong> (<a class="reference external" href="http://leafletjs.com">http://leafletjs.com</a>) is used to render maps from GeoJSON-formatted data. DYFI installs Leaflet locally in the <cite>leaflet/inc</cite> directory. You can update those Leaflet components manually or use a CDN for the latest version (see the commented portion of the <cite>leaflet/viewer.html</cite> file for an example of invoking Leaflet via CDN.)</li>
+<li><strong>utm</strong> (<a class="reference external" href="https://pypi.python.org/pypi/utm">https://pypi.python.org/pypi/utm</a>) is a Python package for converting latitude/longitude coordinates into UTM (Universal Transverse Mercator) strings. DYFI includes a local version of this module in the directory <cite>dyfi/thirdparty/utm</cite>.</li>
+</ul>
+</div>
+<div class="section" id="configuration-file">
+<h2>Configuration file<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h2>
+<p>The DYFI4 configuration file <code class="file docutils literal"><span class="pre">config.yml</span></code> is in the YAML file format (<a class="reference external" href="http://yaml.org">http://yaml.org</a>).</p>
+<p>Most DYFI4 executables can be called with the –config flag to use another, custom configuration file (for testing, for example.)</p>
+<p>The file has five sections:</p>
+<ul class="simple">
+<li><em>db:</em> This describes the location and type of the DYFI database (see below).</li>
+<li><em>directories:</em> This has links to the data directories.<ul>
+<li><em>data:</em> This points to the output directories. The DYFI4 products for each event ID are stored here, under its own event ID subdirectory.</li>
+<li><em>leaflet:</em> This points to the directory where Leaflet processing is done. See <a class="reference internal" href="#generation-of-dynamic-and-static-image-maps"><span class="std std-ref">Generation of dynamic and static image maps</span></a>.</li>
+</ul>
+</li>
+<li><em>executables:</em> This lists various external programs used by DYFI. The <em>screenshot</em> line is used to call <cite>PhantomJS</cite> (see <a class="reference internal" href="#generation-of-dynamic-and-static-image-maps"><span class="std std-ref">Generation of dynamic and static image maps</span></a>). Do not change this unless you are modifying the static image generation process.</li>
+<li><em>products:</em> This is a link to <code class="file docutils literal"><span class="pre">lib/products.yml</span></code> which lists the supported output types and formats. The DYFI process iterates through this file to create its output products.</li>
+<li><em>filter:</em> This holds settings for filtering entries (to reject bogus or suspect ones). See <a class="reference internal" href="scientific-discussion.html#filtering-of-entries"><span class="std std-ref">Filtering of entries</span></a>.</li>
+</ul>
+</div>
+<div class="section" id="database-implementation">
+<h2>Database implementation<a class="headerlink" href="#database-implementation" title="Permalink to this headline">¶</a></h2>
+<p>The DYFI database is currently implemented as a Sqlite3 database. A sample set of databases is included with installation in <em>/tests/db/</em>.</p>
+<p>We recommend that the tables be placed in a directory such as <em>/db/</em>. To change the database location, modify the settings for each database file in <code class="file docutils literal"><span class="pre">config.yml</span></code> file under <em>db:files</em>. Each table is a separate file.</p>
+<p>For details on the various database tables see <a class="reference internal" href="technical-guide.html#input-streams"><span class="std std-ref">Input streams</span></a>.</p>
+<div class="section" id="event-table">
+<h3>Event table<a class="headerlink" href="#event-table" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>File</td>
+<td><code class="file docutils literal"><span class="pre">event.db</span></code></td>
+</tr>
+<tr class="row-even"><td>Table name</td>
+<td><em>event</em></td>
+</tr>
+</tbody>
+</table>
+<p>This table holds data for individual earthquake events; most importantly, event earthquake location and time. Each row corresponds to one event.</p>
+<p>This table is normally populated by event information from the USGS Comprehensive Earthquake Catalog, or ComCat (<a class="reference external" href="https://earthquake.usgs.gov/data/comcat/">https://earthquake.usgs.gov/data/comcat/</a>). This table holds data information for individual earthquake events.</p>
+<p>A sample table is included (beginning from 2015).</p>
+</div>
+<div class="section" id="extended-tables">
+<h3>Extended tables<a class="headerlink" href="#extended-tables" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>File</td>
+<td><code class="file docutils literal"><span class="pre">extended_NNNN.db</span></code></td>
+</tr>
+<tr class="row-even"><td>Table name</td>
+<td><em>extended_NNNN</em></td>
+</tr>
+</tbody>
+</table>
+<p>This table holds data for DYFI felt data. Each row corresponds to one user response. This table is populated from the DYFI Questionnaire (see <a class="reference external" href="https://earthquake.usgs.gov/data/dyfi/background.php">https://earthquake.usgs.gov/data/dyfi/background.php</a>).</p>
+<p>Because of the size of the DYFI response data (2 million+ responses as of 2018), each year of data is stored in a separate file. The files and tables are named <code class="file docutils literal"><span class="pre">extended_NNNN.db</span></code> and <em>extended_NNNN</em> where NNNN is the 4 digit year. The earliest provided year is 2003. Events before this are stored in the file <code class="file docutils literal"><span class="pre">extended_pre.db</span></code> in the table <em>extended_pre</em>.</p>
+<p>Sample extended tables for 2015 and 2016 are included, with personally identifiable information (PII) redacted.</p>
+</div>
+</div>
+<div class="section" id="generation-of-dynamic-and-static-image-maps">
+<h2>Generation of dynamic and static image maps<a class="headerlink" href="#generation-of-dynamic-and-static-image-maps" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <strong class="program">PhantomJS</strong> package must be installed to create static images. This is a change from the previous version of DYFI which used Generic Mapping Tools (GMT) for plotting and map generation.</p>
+</div>
+<p>DYFI uses PhantomJS to turn Leaflet-based maps into static images. This section outlines the procedure used by DYFI for creating these products. See individual module entries for details.</p>
+<ol class="arabic simple">
+<li>The <a class="reference internal" href="dyfi.html#module-dyfi.aggregate"><span class="std std-ref">Aggregate</span></a> module creates the aggregated data in GeoJSON format aggregated entries and the computed intensities.</li>
+<li>The <a class="reference internal" href="dyfi.html#module-dyfi.map"><span class="std std-ref">Map</span></a> class adds the event data (epicentral location and magnitude).</li>
+<li>The <code class="xref py py-func docutils literal"><span class="pre">Map.toImage</span></code> method saves the GeoJSON data into a temporary JavaScript file in the <code class="file docutils literal"><span class="pre">leaflet</span></code> directory. It also creates a temporary filename for the output (PNG) image.</li>
+<li><code class="xref py py-func docutils literal"><span class="pre">Map.toImage</span></code> calls the script <code class="file docutils literal"><span class="pre">leaflet/capture.js</span></code> and the temporary datafile as arguments.</li>
+<li>The <code class="file docutils literal"><span class="pre">leaflet/capture.js</span></code> script takes uses the file <code class="file docutils literal"><span class="pre">leaflet/viewer.html.template</span></code> as a template to create a temporary viewer HTML file. This HTML file will load the JavaScript data (step 3) directly as an inline script.</li>
+<li><code class="file docutils literal"><span class="pre">leaflet/capture.js</span></code> calls <strong class="program">PhantomJS</strong> on the viewer HTML and renders it into a static (PNG) image with the temporary output filename (step 3).</li>
+<li><code class="xref py py-func docutils literal"><span class="pre">Map.toImage</span></code> moves the temporary output into the correct event ID’s <code class="file docutils literal"><span class="pre">data</span></code> directory.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Rather than dynamically loading the event and response data, this method was chosen as the simplest, most robust way avoid CORS and other browser permission issues, and asynchronous loading problems with <strong class="program">PhantomJS</strong>.</p>
+</div>
+</div>
+<div class="section" id="auxiliary-processes">
+<h2>Auxiliary processes<a class="headerlink" href="#auxiliary-processes" title="Permalink to this headline">¶</a></h2>
+<p>The following topics are beyond the scope this CORE manual because they describe systems exclusive to the USGS. These topics will be described elsewhere.</p>
+<ul class="simple">
+<li>USGS Event Page integration</li>
+<li>USGS Product Distribution Layer, or PDL (<a class="reference external" href="https://usgs.github.io/pdl/">https://usgs.github.io/pdl/</a>)</li>
+<li>Event triggering</li>
+<li>Implementation of the questionnaire</li>
+<li>Transfer of user data to the backend servers</li>
+<li>Product distribution: PDL, Event Pages</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Implementation Guide</a><ul>
+<li><a class="reference internal" href="#system-flowchart">System flowchart</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#additional-dependencies">Additional dependencies</a></li>
+<li><a class="reference internal" href="#configuration-file">Configuration file</a></li>
+<li><a class="reference internal" href="#database-implementation">Database implementation</a><ul>
+<li><a class="reference internal" href="#event-table">Event table</a></li>
+<li><a class="reference internal" href="#extended-tables">Extended tables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generation-of-dynamic-and-static-image-maps">Generation of dynamic and static image maps</a></li>
+<li><a class="reference internal" href="#auxiliary-processes">Auxiliary processes</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="technical-guide.html" title="previous chapter">Technical Guide</a></li>
+      <li>Next: <a href="app.html" title="next chapter">rundyfi.py</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/implementation-guide.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/implementation-guide.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
