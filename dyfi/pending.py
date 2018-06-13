@@ -119,6 +119,7 @@ class Pending:
     def checkRunRecent(self,row):
 
         if not 'process_timestamp' in row or not row['process_timestamp']:
+            print('pending.checkRunRecent: WARNING: No process timestamp for event',ro['eventid'])
             return None
 
         age=self.db.stringToAge(row['process_timestamp'])
