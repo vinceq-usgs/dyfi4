@@ -47,6 +47,14 @@ class Filter:
         print('Filter: Using IPE',ipe)
 
 
+    @staticmethod
+    def dist(latlon1,latlon2,depth):
+            r=great_circle(latlon1,latlon2).kilometers
+            if depth:
+                r=math.sqrt(r**2+depth**2)
+            return r
+
+
     def filterFunction(self,addDistance=True):
         """
         Returns a function
@@ -60,14 +68,7 @@ class Filter:
         emag=self.event.mag
 
 
-        def dist(latlon1,latlon2,depth):
-            r=great_circle(latlon1,latlon2).kilometers
-            if edepth:
-                r=math.sqrt(r**2+edepth**2)
-            return r
-
-
-        # This is the function returned by filterFunction()
+       # This is the function returned by filterFunction()
         def func(entry,debug=False):
 
             # Get coordinates
@@ -81,7 +82,7 @@ class Filter:
                 raise ValueError('Cannot find coordinates')
 
             # Hypocentral distance
-            r=dist(epicenter,loccoords,edepth)
+            r=self.dist(epicenter,loccoords,edepth)
 
             if addDistance:
                 entry['properties']['dist']=round(r,1)

@@ -1,5 +1,8 @@
 import pytest
 
+testid='ci37511872'
+configfile='tests/testconfig.yml'
+
 rawentry={
     'felt':'1 yes',
     'other_felt':'0.36 some',
@@ -28,6 +31,53 @@ def test_cdi():
         testentry.cdiIndex('badindex')
     assert 'Invalid Entry index' in str(exception.value)
 
+
+def test_filter():
+  from dyfi import Config,Event,Filter
+
+  config=Config(configfile)
+  event=Event(testid,config=config)
+  filter=Filter(event,config=config,ipe='aww2014ena')
+
+  func=filter.filterFunction()
+  testentry=rawentry.copy()
+
+  with pytest.raises(ValueError) as exception:
+      func(testentry)
+  assert 'Cannot find coordinates' in str(exception.value)
+
+  config.__setattr__('nresp_do_not_filter',None)
+  p={
+      'center':{
+          'coordinates':(event.lon,event.lat),
+          'type':'Point'
+      },
+      'intensityFine':9,
+      'nresp':1
+  }
+  testentry['properties']=p
+
+  # Test nresponse no-filter setting
+  p['nresp']=99
+  assert func(testentry)==0
+  p['nresp']=1
+  assert func(testentry)==1
+
+  # Test if greater than max possible distance
+  p['center']['coordinates']=(0,0)
+  assert func(testentry)==2
+
+  # Test IPE high threshold setting
+  p['center']['coordinates']=(event.lon,event.lat)
+  testentry['stand']='9'
+  testentry['shelf']='9'
+  testentry['picture']='9'
+  testentry['d_text']='_move'
+  assert func(testentry)==1
+
+  # Test IPE low threshold setting
+  p['center']['coordinates']=(event.lon+20,event.lat)
+  assert func(testentry)==1
 
 
 def test_ipes():
