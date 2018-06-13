@@ -396,7 +396,7 @@ class Db:
     def getPendingEvents(self):
 
         table='event'
-        clause='newresponses>0 and not invisible order by cast(newresponses as int) desc'
+        clause='newresponses>0 and (invisible is null or invisible=0) order by cast(newresponses as int) desc'
         results=self.rawdb.query(table,clause)
 
         return results

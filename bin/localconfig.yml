@@ -14,6 +14,8 @@ directories:
     incoming: data/incoming
 
 executables:
+    push: bin/push.py --trigger
+    run: app/rundyfi.py
 
 products:
     file: lib/products.yml
@@ -24,5 +26,12 @@ pending:
 comcat:
     server: earthquake.usgs.gov
     urlbase: https://__SERVER__/fdsnws/event/1/query?
-    timeout: 1
+    timeout: 15
+
+# This assumes that you are using a PDL client to push web products, installed
+# in the subdirectory PDL. For more on PDL see https://usgs.github.io/pdl/.
+push:
+    datadir: data
+    pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
+    event_dataTemplate: bin/event_dataTemplate.yml
 
