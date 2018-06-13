@@ -6,10 +6,10 @@
 #
 #############################################
 
-MYHOST='dyfit'
+MYHOST='thishost'
 declare -a SERVERS
-SERVERS=(vinceq@igskahcgvmp1ct1.cr.usgs.gov vinceq@igskmncgvmp2ct1.cr.usgs.gov)
-INPUTDIR='/var/www/data/earthquake-dyfi-response/incoming.vm'$MYHOST
+SERVERS=(user@server1.com user@server2.com)
+INPUTDIR='/remotedirectory/incoming.'$MYHOST
 TIMEOUT=15
 DESTINATION=./data/incoming
 
@@ -26,5 +26,5 @@ do
     echo $($getcommand)
 done
 
-echo 'Entries in '$DESTINATION':'
+echo 'Files in '$DESTINATION':'
 echo $(ls -1 $DESTINATION | wc | awk '{print $1}')
