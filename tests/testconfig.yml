@@ -31,7 +31,7 @@ products:
 
 filter:
     maxdist: 5000
-    resps_do_not_filter: 50
+    nresp_do_not_filter: 50
     int_diff_threshold: 3
     int_low_threshold: 0
 
