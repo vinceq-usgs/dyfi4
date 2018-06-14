@@ -19,6 +19,12 @@ DYFI was developed to tap the abundant information available about earthquakes f
 
 This version (Version 4) is written in Python and is under development.
 
+For a scientific overview of the DYFI system, see:
+
+        Wald, David, Vincent Quitoriano, Charles Bruce Worden, Margaret Hopper, & James W. Dewey. "USGS “Did You Feel It?” Internet-based macroseismic intensity maps." Annals of Geophysics [Online], 54.6 (2011) 
+
+        DOI: https://doi.org/10.4401/ag-5354 
+
 Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
 
 Manual: https://vinceq-usgs.github.io/dyfi4/
