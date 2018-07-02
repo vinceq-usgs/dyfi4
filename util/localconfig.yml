@@ -15,7 +15,7 @@ directories:
     trashincoming: data/trashincoming
 
 executables:
-    push: bin/push.py --trigger
+    push: util/push.py --trigger
     run: app/rundyfi.py
 
 products:
@@ -34,5 +34,5 @@ comcat:
 push:
     datadir: data
     pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
-    event_dataTemplate: bin/event_dataTemplate.yml
+    event_dataTemplate: util/event_dataTemplate.yml
 

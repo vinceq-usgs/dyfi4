@@ -11,11 +11,14 @@ Foreach event:
 """
 
 import subprocess
+import sys
+import os
 
-from .config import Config
-from .db import Db
-from .event import Event
-from .comcat import Comcat
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
+from dyfi import Config,Db,Event
+
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+from modules.comcat import Comcat
 
 class Run:
 

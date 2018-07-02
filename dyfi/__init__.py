@@ -11,10 +11,4 @@ from .map import Map
 from .graph import Graph
 from .contents import Contents
 from .rawDbSqlite import RawDb
-
-# Modules used by auxiliary functions (outside of CORE)
 from .lock import Lock
-from .incoming import Incoming
-from .pending import Pending
-from .comcat import Comcat
-from .run import Run

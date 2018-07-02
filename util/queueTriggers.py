@@ -31,7 +31,7 @@ parser.add_argument(
     help='Test regime'
 )
 parser.add_argument(
-    '--configfile',action='store',default='bin/localconfig.yml',
+    '--configfile',action='store',default='util/localconfig.yml',
     help='Specify config file'
 )
 
@@ -40,7 +40,9 @@ def main(args):
 
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
     from dyfi import Lock
-    from dyfi import Pending
+
+    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+    from modules.pending import Pending
 
     if not args.check:
         Lock('queueTriggers',silent=True)

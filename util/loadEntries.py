@@ -36,14 +36,17 @@ parser.add_argument(
     help='Limit the number of files to process'
 )
 parser.add_argument(
-    '--configfile',action='store',default='./config.yml',
+    '--configfile',action='store',default='./util/localconfig.yml',
     help='Specify config file'
 )
 
 
 def main(args):
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Lock,Incoming,Config
+    from dyfi import Lock,Config
+    
+    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+    from modules.incoming import Incoming
 
     if not args.check:
         Lock('loadEntries')

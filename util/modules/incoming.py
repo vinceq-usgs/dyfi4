@@ -5,13 +5,18 @@ Incoming
 
 """
 
+import sys
 import os
 import urllib.parse
 
-from .db import Db
-from .event import Event
-from .entries import Entry
-from .cdi import calculate as CdiCalculate
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
+from dyfi import Db,Event,Entry
+from dyfi.cdi import calculate as CdiCalculate
+
+#from .db import Db
+#from .event import Event
+#from .entries import Entry
+#from .cdi import calculate as CdiCalculate
 
 class Incoming:
 

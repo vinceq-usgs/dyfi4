@@ -51,12 +51,13 @@ parser.add_argument(
 
 def main(args):
 
-    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-    from dyfi import Run
+#    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+    from modules.run import Run
 
     evid=args.evid
 
-    run=Run(configfile='./bin/localconfig.yml')
+    run=Run(configfile='./util/localconfig.yml')
 
     if args.raw:
         print('Getting raw comcat data only.')

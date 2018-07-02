@@ -10,10 +10,14 @@ Foreach event:
 
 """
 
-from .config import Config
-from .db import Db
-from .run import Run
-from .lock import Lock
+import sys
+import os
+
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+from dyfi import Config,Db,Lock
+
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+from modules.run import Run
 
 
 class Pending:
