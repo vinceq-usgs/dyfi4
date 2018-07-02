@@ -15,10 +15,11 @@ import sys
 import os
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
-from dyfi import Config,Db,Event
+from dyfi import Config,Event
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
 from modules.comcat import Comcat
+from modules.runDb import RunDb
 
 class Run:
 
@@ -27,7 +28,7 @@ class Run:
     def __init__(self,configfile):
 
         self.config=Config(configfile)
-        self.db=Db(self.config)
+        self.db=RunDb(self.config)
         self.duplicates=None
         self.event=None
 

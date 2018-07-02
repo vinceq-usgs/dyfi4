@@ -10,13 +10,11 @@ import os
 import urllib.parse
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
-from dyfi import Db,Event,Entry
+from dyfi import Event,Entry
 from dyfi.cdi import calculate as CdiCalculate
 
-#from .db import Db
-#from .event import Event
-#from .entries import Entry
-#from .cdi import calculate as CdiCalculate
+sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
+from modules.runDb import RunDb
 
 class Incoming:
 
@@ -79,7 +77,7 @@ class Incoming:
         self.verbose=verbose
         self.processed=0
         self.downloaded=0
-        self.db=Db(config)
+        self.db=RunDb(config)
 
         os.makedirs(config.directories['incoming'],exist_ok=True)
 
@@ -183,7 +181,7 @@ class Incoming:
         if 'time_now' not in data or not data['time_now']:
             print('WARNING: Incoming.readFile found no timestamp for',rawfile)
             return
-        data['time_now']=Db.epochToString(int(data['time_now']))
+        data['time_now']=RunDb.epochToString(int(data['time_now']))
 
         # 3. Rebase longitude
         data['longitude']=self.rebaseLongitude(data['longitude'])

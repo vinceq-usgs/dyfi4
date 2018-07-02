@@ -19,10 +19,6 @@ def test_db():
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-  # These functions are unused right now but maybe useful later
-
-  assert Db.timeago(60).year>2016
-  assert '2018' in Db.epochToString(1515565764)
 
   import datetime
   year = datetime.datetime.utcnow().year

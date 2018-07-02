@@ -14,10 +14,11 @@ import sys
 import os
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
-from dyfi import Config,Db,Lock
+from dyfi import Config,Lock
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
 from modules.run import Run
+from modules.runDb import RunDb
 
 
 class Pending:
@@ -27,7 +28,7 @@ class Pending:
         config=Config(configfile)
 
         self.configfile=configfile # Store this for Run
-        self.db=Db(config)
+        self.db=RunDb(config)
         self.conf=config.pending
         self.maxruns=maxruns
         self.events=[]
