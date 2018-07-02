@@ -19,10 +19,10 @@ def test_db():
   assert isinstance(raw['lon'],float)
   assert isinstance(raw['mag'],float)
 
-
   import datetime
   year = datetime.datetime.utcnow().year
   assert str(year) in Db.epochToString()
+  assert str(year) in Db.epochToString(datetime.datetime.utcnow().timestamp())
 
    # Test RawDb
 

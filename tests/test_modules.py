@@ -71,6 +71,10 @@ def test_event():
       event.setattr('badcolumn',1)
   assert 'Invalid column' in str(exception.value)
 
+  # Test a stub event
+  event=Event({'eventid':'testStub'},config=config)
+  assert event.isStub
+
 
 def test_entries():
   from dyfi import Config,Event,Entries,Db,aggregate
