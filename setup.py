@@ -8,6 +8,6 @@ setup(name='dyfi',
       author='Vince Quitoriano',
       author_email='vinceq@usgs.gov',
       url='',
-      packages=['dyfi','util/modules'],
+      packages=['app','util','dyfi','util/modules'],
       scripts=['app/rundyfi.py','app/makescreenshot.py','app/makemovie.py','util/queueTriggers.py','util/loadEntries.py','util/updateEvent.py']
 )
