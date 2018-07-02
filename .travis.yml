@@ -44,7 +44,7 @@ install:
   - pip install pytest-cov
 
 # command to run tests
-script: pytest --cov=dyfi 
+script: pytest --cov=dyfi --cov=cov=app --cov=util
 
 # Now run codecov
 after_success:
