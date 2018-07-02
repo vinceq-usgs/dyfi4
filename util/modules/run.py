@@ -15,11 +15,12 @@ import sys
 import os
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
-from dyfi import Config,Event
+from dyfi import Config
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
 from modules.comcat import Comcat
 from modules.runDb import RunDb
+from modules.runEvent import RunEvent
 
 class Run:
 
@@ -47,7 +48,7 @@ class Run:
             self.event='DELETED'
             return evid
 
-        event=Event.createFromContents(inputJson)
+        event=RunEvent.createFromContents(inputJson)
         self.event=event
         self.duplicates=self.event.duplicates
 
@@ -150,7 +151,7 @@ class Run:
 
         nMoved=0
         for dupid in self.duplicates:
-            dupevent=Event(dupid,missing_ok=True,config=self.config)
+            dupevent=RunEvent(dupid,missing_ok=True,config=self.config)
             print('Run.moveDuplicates: Trying event',dupid)
 
             # If the dup event doesn't yet exist, create a stub
