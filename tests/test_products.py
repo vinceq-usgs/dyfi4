@@ -9,16 +9,22 @@ import glob
 
 def test_products():
     import copy
-    from dyfi import Config,Event,Entries,Products,Product,Map,Graph
+    from dyfi import Config,DyfiContainer,Contents,Product,Map,Graph,Products
 
     shutil.rmtree('data/'+testid,ignore_errors=True)
 
     config=Config(configfile)
-    event=Event(testid,config=config)
-    entries=Entries(testid,config=config)
+    container=DyfiContainer(testid,configfile=configfile)
 
-    products=Products(event,entries,config)
-    assert str(products)=='Products:[]'
+    # Test getting contents XML directly
+    xmldata=Contents(container).toXML(save=False)
+    assert '<?xml' in xmldata
+
+    event=container.event
+    entries=container.entries
+    products=container.products
+
+    assert 'Products:[' in str(products)
 
     # Test product with no format
     assert Product(products,name='test',dataset='time')
@@ -92,4 +98,7 @@ def test_products():
     graph=Graph('plot_numresp',event=event,data=data,config=config,eventDir='test')
     assert graph.data['preferred_unit']=='minutes'
 
+    # Test blank Products
+    blankproducts=Products(event=event,entries=entries,config=config)
+    assert repr(blankproducts)=='Products:[]'
 
