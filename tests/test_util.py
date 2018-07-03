@@ -11,10 +11,19 @@ entryfile='entry.server.ci37511872.1.1'
 def test_util():
     import subprocess
     import shutil
+    import os
+
+    # Reset incoming directory
+    origDir='tests/orig.incoming'
+    incomingDir='tests/incoming'
+    for name in os.listdir(origDir):
+        fullname=os.path.join(origDir,name)
+        if (os.path.isfile(fullname)):
+            shutil.copy(fullname,incomingDir)
 
     # Test loadEntries.py
     status=subprocess.run(['util/loadEntries.py','--check'],stdout=subprocess.PIPE)
-    assert 'Got 1 responses in incoming' in str(status.stdout)
+    assert 'Got 3 responses in incoming' in str(status.stdout)
 
     status=subprocess.run(['util/loadEntries.py'],stdout=subprocess.PIPE)
     assert 'Processing' in str(status.stdout)
@@ -30,3 +39,5 @@ def test_util():
     status=subprocess.run(['util/queueTriggers.py','--maxruns','1'],stdout=subprocess.PIPE)
     assert 'Done with '+testid in str(status.stdout)
 
+    status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
+    assert 'Done with '+testid in str(status.stdout)
