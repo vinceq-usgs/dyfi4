@@ -23,8 +23,6 @@ def test_run():
     import subprocess
     status=subprocess.run(['app/rundyfi.py',testid])
     assert status
-    status=subprocess.run(['app/makemovie.py',testid,'10'])
-    assert status
     status=subprocess.run(['app/makescreenshot.py','data/'+testid+'/dyfi_geo_10km.geojson'])
     assert status
 

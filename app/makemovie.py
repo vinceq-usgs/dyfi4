@@ -24,15 +24,15 @@ parser.add_argument(
     help='Event ID'
 )
 parser.add_argument(
-    'tmax',type=int,nargs='?',default=60,
+    '--tmax',type=int,nargs='?',default=60,
     help='Length of movie in minutes (default 60)'
 )
 parser.add_argument(
-    'framelength',type=float,nargs='?',default=60,
+    '--framelength',type=float,nargs='?',default=60,
     help='Time of each frame, in seconds (default 60)'
 )
 parser.add_argument(
-    'type',type=str,nargs='?',default='geo_10km',
+    '--type',type=str,nargs='?',default='geo_10km',
     help='Type of aggregation (default geo_10km)'
 )
 
@@ -55,7 +55,7 @@ class Movie:
 
         config=Config()
         event=Event(evid,config=config)
-        entries=Entries(evid,config=config)
+        entries=Entries(event=event,config=config)
         totalcount=len(entries)
         print('Maximum',totalcount,'entries.')
         allentries=copy.deepcopy(entries.entries)
