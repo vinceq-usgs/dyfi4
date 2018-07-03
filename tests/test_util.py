@@ -7,15 +7,17 @@ from argparse import Namespace
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
-entryfile='entry.server.ci37511872.1.1'
+
 def test_util():
     import subprocess
     import shutil
     import os
 
-    # Reset incoming directory
+    # Create incoming directory
     origDir='tests/orig.incoming'
     incomingDir='tests/incoming'
+
+    os.makedirs(incomingDir,exist_ok=True)
     for name in os.listdir(origDir):
         fullname=os.path.join(origDir,name)
         if (os.path.isfile(fullname)):
