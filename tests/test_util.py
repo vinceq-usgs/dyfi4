@@ -13,10 +13,10 @@ def test_util():
     import shutil
     import os
 
-    # Create incoming directory
     origDir='tests/orig.incoming'
     incomingDir='tests/incoming'
 
+    # Create incoming directory
     os.makedirs(incomingDir,exist_ok=True)
     for name in os.listdir(origDir):
         fullname=os.path.join(origDir,name)
@@ -24,13 +24,12 @@ def test_util():
             shutil.copy(fullname,incomingDir)
 
     # Test loadEntries.py
-    print('orig has:')
-    print(os.listdir(origDir))
-    print('incoming has:')
-    print(os.listdir(incomingDir))
-
     status=subprocess.run(['util/loadEntries.py','--check'],stdout=subprocess.PIPE)
-    assert 'Got 3 responses in incoming' in str(status.stdout)
+    assert 'Got 4 responses in incoming' in str(status.stdout)
+
+    # Test maxfiles flag
+    status=subprocess.run(['util/loadEntries.py','--maxfiles','1'],stdout=subprocess.PIPE)
+    assert 'Processed 1 files, stopping.' in str(status.stdout)
 
     status=subprocess.run(['util/loadEntries.py'],stdout=subprocess.PIPE)
     assert 'Processing' in str(status.stdout)
