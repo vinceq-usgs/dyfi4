@@ -17,11 +17,11 @@ def test_dbentries():
 
   # Test loading specific table
   entries=db.loadEntries(evid=testid,table='extended_2016')
-  assert len(entries)==913
+  assert len(entries)>=913
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
-  assert len(entries)==913
+  assert len(entries)>=913
   entries=db.loadEntries(evid=testid,table='latest')
   assert len(entries)==0
 
