@@ -21,9 +21,15 @@ def test_lock():
 
 def test_run():
     import subprocess
-    status=subprocess.run(['app/rundyfi.py',testid])
-    assert status
-    status=subprocess.run(['app/makescreenshot.py','data/'+testid+'/dyfi_geo_10km.geojson'])
-    assert status
+
+    # Test rundyfi.py
+    status=subprocess.run(['app/rundyfi.py',testid],stdout=subprocess.PIPE)
+    assert 'Done with %s' % testid in str(status.stdout)
+
+    # Test makescreenshot.py
+    inputfile='data/%s/dyfi_geo_10km.geojson' % testid
+    outputfile='data/%s/screenshot.png' % testid
+    status=subprocess.run(['app/makescreenshot.py',inputfile,outputfile],stdout=subprocess.PIPE)
+    assert 'Created %s' % outputfile in str(status.stdout)
 
 

@@ -44,13 +44,10 @@ def main(args):
     inputfile=args.input
     outputfile=args.output
 
-    if Map.GeoJSONtoImage(inputfile,outputfile,Config(args.configfile)):
-      print('Success, created',outputfile)
-
-    else:
-        print('ERROR: Could not create',outputfile)
-
+    Map.GeoJSONtoImage(inputfile,outputfile,Config(args.configfile))
+    print('Created',outputfile)
     exit()
+
 
 if __name__=='__main__':
     args=parser.parse_args()
