@@ -22,14 +22,16 @@ def test_util():
             shutil.copy(fullname,incomingDir)
 
     # Test loadEntries.py
+    print('orig has:')
+    print(os.listdir(origDir))
+    print('incoming has:')
+    print(os.listdir(incomingDir))
+
     status=subprocess.run(['util/loadEntries.py','--check'],stdout=subprocess.PIPE)
     assert 'Got 3 responses in incoming' in str(status.stdout)
 
     status=subprocess.run(['util/loadEntries.py'],stdout=subprocess.PIPE)
     assert 'Processing' in str(status.stdout)
-
-    # Put entry file back in incoming
-    shutil.copy('tests/trashincoming/'+entryfile,'tests/incoming')
 
     # Test loadEntries.py
     status=subprocess.run(['util/queueTriggers.py','--check'],stdout=subprocess.PIPE)
@@ -41,3 +43,4 @@ def test_util():
 
     status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
     assert 'Done with '+testid in str(status.stdout)
+
