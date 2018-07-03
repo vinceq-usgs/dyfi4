@@ -79,7 +79,12 @@ class Incoming:
         self.downloaded=0
         self.db=RunDb(config)
 
-        os.makedirs(config.directories['incoming'],exist_ok=True)
+        # Python 3.5 still throws exception if this directory exists,
+        # need to catch it
+        try:
+            os.makedirs(config.directories['incoming'],exist_ok=True)
+        except FileExistsError:
+            pass
 
 
     def checkIncoming(self):
