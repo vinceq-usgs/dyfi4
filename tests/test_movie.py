@@ -11,8 +11,11 @@ def test_run():
     import subprocess
 
     shutil.rmtree('./movie',ignore_errors=True)
-    # 60 minute movie, each frame is 20 minutes
-    status=subprocess.run(['app/makemovie.py',testid,'--tmax','60','--framelength','1200'])
+    # 60 minute movie, each frame is 15 minutes
+    status=subprocess.run(['app/makemovie.py',testid,'--tmax','60','--framelength','900'])
     assert status
 
+    # Test when frames already exist
+    status=subprocess.run(['app/makemovie.py',testid,'--tmax','60','--framelength','1800'])
+    assert status
 

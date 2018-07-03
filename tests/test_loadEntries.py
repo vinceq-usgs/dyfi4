@@ -10,9 +10,14 @@ def test_dbentries():
   from dyfi import Db,Config,Event
 
   db=Db(Config(configfile))
+
+  # Test when loading without date, use latest table
+  entries=db.loadEntries(evid=testid)
+  assert len(entries)==0
+
+  # Test loading specific table
   entries=db.loadEntries(evid=testid,table='extended_2016')
   assert len(entries)==913
-
   entries=db.loadEntries(evid=testid,table='2015')
   assert len(entries)==0
   entries=db.loadEntries(evid=testid,table='all')
