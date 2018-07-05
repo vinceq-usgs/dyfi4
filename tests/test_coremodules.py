@@ -49,7 +49,7 @@ def test_event():
 
   geo=event.toGeoJSON()
   assert isinstance(geo,geojson.Feature)
-  assert geo.properties['mag']==3.0
+  assert geo.properties['mag']==2.98
 
   # Test attributes
   attr=event.eventdatetime
