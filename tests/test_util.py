@@ -39,9 +39,27 @@ def test_util():
     assert 'events to process.' in str(status.stdout)
     assert testid+' has' in str(status.stdout)
 
+    # Test queueTriggers.py
     status=subprocess.run(['util/queueTriggers.py','--maxruns','1'],stdout=subprocess.PIPE)
     assert 'Done with '+testid in str(status.stdout)
 
+    # Test updateEvent.py
+    status=subprocess.run(['util/updateEvent.py',testid,'--raw'],stdout=subprocess.PIPE)
+    assert '"id":"%s"' % testid in str(status.stdout)
+
+    status=subprocess.run(['util/updateEvent.py',testid],stdout=subprocess.PIPE)
+    assert 'Stopping, use --trigger to continue.' in str(status.stdout)
+
+    status=subprocess.run(['util/updateEvent.py',testid,'--file','tests/data/feedContents.raw'],stdout=subprocess.PIPE)
+    assert 'Saved %s with 0 newresponses' % testid in str(status.stdout)
+
+    status=subprocess.run(['util/updateEvent.py','us1000abcd'],stdout=subprocess.PIPE)
+    assert 'Could not get data for us1000abcd' in str(status.stdout)
+
+    status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.deleted'],stdout=subprocess.PIPE)
+    assert 'Got deleted eventid us1000abcd' in str(status.stdout)
+
     status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
     assert 'Done with '+testid in str(status.stdout)
+
 

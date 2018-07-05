@@ -54,7 +54,17 @@ class Comcat:
             print('Comcat.event: Malformed contents: '+e.msg)
             return None
 
+
         # check for error messages
+        status=Comcat.checkStatus(contents)
+        if status:
+           return status
+
+        return contents
+
+    @staticmethod
+    def checkStatus(contents):
+
         if 'metadata' in contents:
             meta=contents['metadata']
             if meta['status']==409 and 'deleted' in meta['error']:
@@ -62,5 +72,4 @@ class Comcat:
             if meta['status']==404 and 'Not Found' in meta['error']:
                 return 'NOT FOUND'
 
-        return contents
-
+        return None 

@@ -18,6 +18,11 @@ class RunEvent(Event):
         if not contents:
             return
 
+        if 'metadata' in contents:
+            meta=contents['metadata']
+            if 'error' in meta:
+                return meta['error']
+
         rawdata={'id':contents['id']}
 
         relevant=['place','time','mag','ids','net']

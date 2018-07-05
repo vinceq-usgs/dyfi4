@@ -36,7 +36,21 @@ class Run:
 
     def update(self,evid,raw=False,save=True,inputJson=None):
 
-        if not inputJson:
+        if raw:
+            if inputJson:
+                pass
+            else:
+                comcat=Comcat(config=self.config)
+                inputJson=comcat.event(evid,raw=raw)
+            print(inputJson)
+            return
+
+        if inputJson:
+            status=Comcat.checkStatus(inputJson)
+            if status:
+                inputJson=status
+
+        else:
             comcat=Comcat(config=self.config)
             inputJson=comcat.event(evid,raw=raw)
 

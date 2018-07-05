@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
 
-Usage: app/loadEntries.py --check --config [configfile]
+Usage: util/loadEntries.py --check --config [configfile]
 
 Looks for raw entry files in data/incoming
 Mostly stub to dyfi/incoming.py?
@@ -24,7 +24,7 @@ import os
 import os.path
 
 parser=argparse.ArgumentParser(
-    prog='app/loadEntries.py',
+    prog='util/loadEntries.py',
     description='Download incoming responses and save to extended table'
 )
 parser.add_argument(
