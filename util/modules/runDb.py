@@ -52,7 +52,7 @@ class RunDb(Db):
        return True
 
 
-    def setNewresponse(self,evid,value,increment):
+    def setNewresponse(self,evid,value,increment=False):
 
         # This will increment the newresponses column of an event.
         # If the event does not exist, a stub will be created
@@ -66,7 +66,7 @@ class RunDb(Db):
         if increment and event['newresponses']:
             try:
                 value+=int(event['newresponses'])
-            except(ValueError):
+            except(ValueError): # pragma: no cover
                 print('db.setNewresponse: WARNING: Could not parse old value for newresponses, ignoring')
 
         #print('db.setNewresponse: newresponses=%i, saving.' % value)
