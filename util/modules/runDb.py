@@ -41,7 +41,7 @@ class RunDb(Db):
 
        event=self.loadEvent(evid)
        if event or evid=='unknown':
-           raise RuntimeError('db.createStubEvent got existing event or "unknown"')
+           raise RuntimeError('RunDb.createStubEvent got existing or unknown event')
 
        createdtime=self.epochToString()
        stub={'table':'event','eventid':evid,'createdtime':createdtime}
@@ -52,7 +52,7 @@ class RunDb(Db):
        return True
 
 
-    def setNewresponse(self,evid,value,increment=False):
+    def setNewresponse(self,evid,value=1,increment=False):
 
         # This will increment the newresponses column of an event.
         # If the event does not exist, a stub will be created

@@ -1,4 +1,5 @@
 from argparse import Namespace
+import pytest
 
 testid='ci37511872'
 configfile='tests/testconfig.yml'
@@ -35,10 +36,19 @@ def test_runDb():
     interval=1 # minutes
     assert RunDb.timeago(interval)<datetime.datetime.now()
 
-    # This will create a stub
     db=RunDb(Config(configfile))
+
+    # Don't create unknown or existing stub
+    with pytest.raises(RuntimeError) as exception:
+        db.createStubEvent(testid,{})
+    assert 'RunDb.createStubEvent got existing or unknown event' in str(exception.value)
+    with pytest.raises(RuntimeError) as exception:
+        db.createStubEvent('unknown',{})
+    assert 'RunDb.createStubEvent got existing or unknown event' in str(exception.value)
+
+    # This will create a stub
     stubid='us1000abcd'
-    db.setNewresponse(stubid,value=0)
+    db.setNewresponse(stubid,value=1)
 
     # Update the stub
     db.setNewresponse(stubid,value=1,increment=True)
