@@ -67,13 +67,14 @@ def main(args):
     if args.file:
         print('Reading from file',args.file)
         with open(args.file,'r') as f:
-            triggerjson=json.load(f)
-        evid=run.update(evid,inputJson=triggerjson)
+            rawInput=f.read()
+        print('Updating %s with %s.' % (evid,args.file))
+        evid=run.update(evid,rawInput=rawInput)
         # This will populate run.duplicates if necessary
 
     if not args.noexternal and not args.file:
-        # Call comcat
         # This will populate run.duplicates if necessary
+        print('Updating %s from Comcat.' % evid)
         run.update(evid)
 
     if (run.event=='DELETED'):
@@ -83,7 +84,6 @@ def main(args):
         run.runEvent(evid,update=False,findDuplicates=True,norun=args.norun)
     else:
         print('Stopping, use --trigger to continue.')
-        exit()
 
     print('Done with updateEvent.py.')
     exit()

@@ -59,6 +59,9 @@ def test_util():
     status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.deleted'],stdout=subprocess.PIPE)
     assert 'Got deleted eventid us1000abcd' in str(status.stdout)
 
+    status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.badjson'],stdout=subprocess.PIPE)
+    assert 'Malformed contents' in str(status.stdout)
+
     status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
     assert 'Done with '+testid in str(status.stdout)
 

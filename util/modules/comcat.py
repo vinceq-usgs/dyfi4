@@ -4,13 +4,14 @@ import socket
 
 class Comcat:
 
-    def __init__(self,config):
+    def __init__(self,config,rawInput=None):
 
         conf=config.comcat
         self.config=conf
         self.baseUrl=conf['urlbase'].replace('__SERVER__',conf['server'])
         self.timeout=conf['timeout']
         self.error=None
+        self.raw=rawInput
 
 
     def query(self,query):
@@ -21,11 +22,11 @@ class Comcat:
         try:
             contents=urllib.request.urlopen(url,timeout=self.timeout).read().decode('utf8')
 
-        except urllib.error.URLError as e:
+        except urllib.error.URLError as e: # pragma: no cover
             self.error=e.reason
             contents=None
 
-        except socket.timeout:
+        except socket.timeout: # pragma: no cover
             print('WARNING: Request timed out.')
             self.error='timeout'
             contents=None
@@ -36,14 +37,16 @@ class Comcat:
 
     def event(self,evid,raw=False,includeSuperseded=False):
 
-        QUERY='format=geojson&includesuperseded=[SUPERCEDED]&eventid=[EVENTID]'
-        query=QUERY.replace('[EVENTID]',evid)
-        superseded='true' if includeSuperseded else 'false'
-        query=query.replace('[SUPERCEDED]',superseded)
+        if self.raw:
+            contents=self.raw
 
-        contents=self.query(query)
-        if not contents:
-            return
+        else:
+            QUERY='format=geojson&includesuperseded=[SUPERCEDED]&eventid=[EVENTID]'
+            query=QUERY.replace('[EVENTID]',evid)
+            superseded='true' if includeSuperseded else 'false'
+            query=query.replace('[SUPERCEDED]',superseded)
+
+            contents=self.query(query)
 
         if raw:
             return contents
@@ -53,7 +56,6 @@ class Comcat:
         except json.JSONDecodeError as e:
             print('Comcat.event: Malformed contents: '+e.msg)
             return None
-
 
         # check for error messages
         status=Comcat.checkStatus(contents)

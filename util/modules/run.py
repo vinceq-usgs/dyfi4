@@ -34,25 +34,14 @@ class Run:
         self.event=None
 
 
-    def update(self,evid,raw=False,save=True,inputJson=None):
+    def update(self,evid,raw=False,save=True,rawInput=None):
+
+        comcat=Comcat(config=self.config,rawInput=rawInput)
+        inputJson=comcat.event(evid,raw=raw)
 
         if raw:
-            if inputJson:
-                pass
-            else:
-                comcat=Comcat(config=self.config)
-                inputJson=comcat.event(evid,raw=raw)
             print(inputJson)
             return
-
-        if inputJson:
-            status=Comcat.checkStatus(inputJson)
-            if status:
-                inputJson=status
-
-        else:
-            comcat=Comcat(config=self.config)
-            inputJson=comcat.event(evid,raw=raw)
 
         if not inputJson or inputJson=='NOT FOUND':
             print('Run.update: Could not get data for',evid)

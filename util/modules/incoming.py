@@ -83,7 +83,7 @@ class Incoming:
         # need to catch it
         try:
             os.makedirs(config.directories['incoming'],exist_ok=True)
-        except FileExistsError:
+        except FileExistsError: # pragma: no cover
             pass
 
 
@@ -127,7 +127,7 @@ class Incoming:
 
         # Now save
         subid=db.save(entry)
-        if not subid:
+        if not subid: # pragma: no cover
             print('WARNING: Incoming.saveFile could not save',rawfile)
             return None
 
@@ -149,7 +149,8 @@ class Incoming:
         # and handling characters properly
         # but just in case, don't blindly accept keys
 
-        if '.json' in rawfile:
+        # JSON responses not yet implemented, do not test yet
+        if '.json' in rawfile: # pragma: no cover
             rawdata=json.decode(raw)
 
         else:
@@ -172,14 +173,10 @@ class Incoming:
         # Keys that require special processing
 
         # 1. Unknown evid and orig_id
-        if 'eventid' not in data:
+        if 'eventid' not in data or data['eventid'] is None or data['eventid']=='null':
             data['eventid']='unknown'
 
         evid=data['eventid']
-        if evid==None or evid=='null':
-            evid='unknown'
-            data['eventid']=evid
-
         data['orig_id']=evid
 
         # 2. Make sure time_now exists
