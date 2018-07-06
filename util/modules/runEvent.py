@@ -65,7 +65,7 @@ class RunEvent(Event):
 
     @classmethod
     def readDuplicatesFromContents(self,contents):
-        if 'ids' in contents['properties']:
+        if 'properties' in contents and 'ids' in contents['properties']:
             duptext=contents['properties']['ids']
         else:
             return

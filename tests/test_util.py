@@ -8,6 +8,7 @@ from argparse import Namespace
 testid='ci37511872'
 configfile='tests/testconfig.yml'
 
+
 def test_util():
     import subprocess
     import shutil
