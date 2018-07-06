@@ -27,8 +27,9 @@ class Pending:
 
         config=Config(configfile)
 
-        self.configfile=configfile # Store this for Run
-        self.db=RunDb(config)
+        self.config=config # Store this for Run
+
+        self.db=RunDb(config=config)
         self.conf=config.pending
         self.maxruns=maxruns
         self.events=[]
@@ -88,7 +89,7 @@ class Pending:
                 runevid=evid
             else:
                 print('Pending: loop processing %s with %i responses.' % (evid,newresponses))
-                run=Run(self.configfile)
+                run=Run(config=self.config)
                 runevid=run.runEvent(evid)
 
             finishedEvents.append(evid)

@@ -122,6 +122,7 @@ class Incoming:
             if event.good_id and evid!=event.good_id:
                 goodid=event.good_id
                 print('WARNING: switching evid from',evid,'to',goodid)
+                entry.orig_id=evid
                 evid=goodid
                 entry.eventid=goodid
 
@@ -172,7 +173,7 @@ class Incoming:
 
         # Keys that require special processing
 
-        # 1. Unknown evid and orig_id
+        # 1. Unknown evid
         if 'eventid' not in data or data['eventid'] is None or data['eventid']=='null':
             data['eventid']='unknown'
 

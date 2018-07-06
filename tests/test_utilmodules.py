@@ -2,7 +2,7 @@ from argparse import Namespace
 import pytest
 
 testid='ci37511872'
-configfile='tests/testconfig.yml'
+configfile='util/localconfig.yml'
 
 import sys
 import os
@@ -14,6 +14,7 @@ from dyfi import Config
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../util')))
 from modules.runEvent import RunEvent
 from modules.runDb import RunDb
+from modules.run import Run
 
 def test_runEvent():
 
@@ -55,5 +56,19 @@ def test_runDb():
 
     # Delete the stub
     db.deleteEvent(stubid)
+
+
+def test_run():
+
+    run=Run(Config(configfile))
+    with open('tests/data/feedContents.duplicate','r') as f:
+        dupdata=f.read()
+    assert run.update('se082311a',rawInput=dupdata)=='se609212'
+
+    run=Run(Config(configfile))
+    with open('tests/data/feedContents.deleted','r') as f:
+        deleteddata=f.read()
+    assert run.runEvent('us1234abcd',test=True)=='us1234abcd' 
+
 
 

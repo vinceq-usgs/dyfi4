@@ -14,8 +14,8 @@ import subprocess
 import sys
 import os
 
-sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
-from dyfi import Config
+#sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
+#from dyfi import Config
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
 from modules.comcat import Comcat
@@ -26,10 +26,10 @@ class Run:
 
     noOverwriteColumns=['nresponses','newresponses','ciim_version','process_timestamp','orig_id']
 
-    def __init__(self,configfile):
+    def __init__(self,config):
 
-        self.config=Config(configfile)
-        self.db=RunDb(self.config)
+        self.config=config
+        self.db=RunDb(config)
         self.duplicates=None
         self.event=None
 
@@ -37,6 +37,9 @@ class Run:
     def update(self,evid,raw=False,save=True,rawInput=None):
 
         comcat=Comcat(config=self.config,rawInput=rawInput)
+        if not comcat:
+            return
+
         inputJson=comcat.event(evid,raw=raw)
 
         if raw:
@@ -45,6 +48,7 @@ class Run:
 
         if not inputJson or inputJson=='NOT FOUND':
             print('Run.update: Could not get data for',evid)
+            self.event='DELETED'
             return evid
 
         if inputJson=='DELETED':
@@ -78,6 +82,7 @@ class Run:
 
         print('--------------------------------')
         event=self.event
+        authid=None
 
         # 1. Update self.event from Comcat or file (and save)
         if update:
@@ -91,6 +96,9 @@ class Run:
                 if not test:
                     self.db.deleteEvent(authid)
                 return authid
+
+        if not authid:
+            authid=evid
 
         # 2. If no update or update doesn't work, read database
         if not event:
@@ -112,7 +120,7 @@ class Run:
             return None
 
         # 2c. Check if stub
-        if event.isStub:
+        if event.isStub: # pragma: no cover
             print('Run.runEvent: Cannot run on stub event.')
             return None
 

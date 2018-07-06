@@ -45,19 +45,21 @@ parser.add_argument(
     help='Trigger this event'
 )
 parser.add_argument(
-    '--configfile',action='store',default='./config.yml',
+    '--configfile',action='store',default='util/localconfig.yml',
     help='Specify config file'
 )
 
 def main(args):
 
-#    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+    sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'..')))
+    from dyfi import Config
+
     sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'.')))
     from modules.run import Run
 
     evid=args.evid
 
-    run=Run(configfile='./util/localconfig.yml')
+    run=Run(Config(args.configfile))
 
     if args.raw:
         print('Getting raw comcat data only.')

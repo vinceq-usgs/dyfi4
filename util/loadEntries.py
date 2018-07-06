@@ -72,6 +72,9 @@ def main(args):
         count+=1
         print('Processing',file)
         # This will save file and increment newresponses
+        # This will also check the eventid in the Event table.
+        # If the event has a different goodid, this will change the
+        # entry ID accordingly
         entry=incoming.saveFile(file)
 
         if not entry:
