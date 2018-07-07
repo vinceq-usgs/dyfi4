@@ -100,7 +100,8 @@ class RunDb(Db):
 
     def deleteEvent(self,evid):
         event=self.loadEvent(evid)
-        if 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
+        # Don't clobber previous value of invisible
+        if event and 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
             self.rawdb.updateRow('event',evid,'invisible',1)
         return
 

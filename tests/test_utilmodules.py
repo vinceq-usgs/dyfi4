@@ -65,10 +65,3 @@ def test_run():
         dupdata=f.read()
     assert run.update('se082311a',rawInput=dupdata)=='se609212'
 
-    run=Run(Config(configfile))
-    with open('tests/data/feedContents.deleted','r') as f:
-        deleteddata=f.read()
-    assert run.runEvent('us1234abcd',test=True)=='us1234abcd' 
-
-
-

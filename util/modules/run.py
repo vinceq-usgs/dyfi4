@@ -37,9 +37,6 @@ class Run:
     def update(self,evid,raw=False,save=True,rawInput=None):
 
         comcat=Comcat(config=self.config,rawInput=rawInput)
-        if not comcat:
-            return
-
         inputJson=comcat.event(evid,raw=raw)
 
         if raw:
@@ -78,7 +75,7 @@ class Run:
         return event.eventid
 
 
-    def runEvent(self,evid,update=True,findDuplicates=True,test=False,norun=False):
+    def runEvent(self,evid,update=True,findDuplicates=True,test=False,norun=False,rawInput=None):
 
         print('--------------------------------')
         event=self.event
@@ -87,7 +84,7 @@ class Run:
         # 1. Update self.event from Comcat or file (and save)
         if update:
             print('Run.runEvent: Updating and saving this event.')
-            authid=self.update(evid)
+            authid=self.update(evid,rawInput=None)
             event=self.event
 
             # 1a. Check if Comcat gave delete or no ID
