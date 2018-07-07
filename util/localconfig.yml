@@ -17,7 +17,7 @@ directories:
     badincoming: tests/badincoming
 
 executables:
-    push: util/push.py --trigger
+#    push: util/push.py --trigger
     run: app/rundyfi.py
 
 products:

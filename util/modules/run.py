@@ -143,7 +143,7 @@ class Run:
             self.db.setNewresponse(evid,value=0,increment=False)
 
         # 6. export to web
-        if not norun:
+        if not norun and 'push' in self.config.executables:
             runCommand=self.config.executables['push'].split(' ')+[evid]
             subprocess.call(runCommand)
 
