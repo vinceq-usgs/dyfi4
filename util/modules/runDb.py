@@ -103,6 +103,8 @@ class RunDb(Db):
         # Don't clobber previous value of invisible
         if event and 'invisible' in event and (event['invisible']=='0' or not event['invisible']):
             self.rawdb.updateRow('event',evid,'invisible',1)
+        else:
+            self.createStubEvent(evid,{'invisible':1})
         return
 
 
