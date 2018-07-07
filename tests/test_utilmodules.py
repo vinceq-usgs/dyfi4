@@ -59,9 +59,13 @@ def test_runDb():
 
 
 def test_run():
-
+    dupid='se082311a'
+    goodid='se609212'
     run=Run(Config(configfile))
     with open('tests/data/feedContents.duplicate','r') as f:
         dupdata=f.read()
-    assert run.update('se082311a',rawInput=dupdata)=='se609212'
+    assert run.loadComcat(dupid,rawInput=dupdata)
+    assert run.update()==goodid
+    assert dupid in run.duplicates
+    assert run.runEvent()==goodid
 

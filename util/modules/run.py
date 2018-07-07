@@ -32,19 +32,19 @@ class Run:
         self.db=RunDb(config)
         self.duplicates=None
         self.event=None
+        self.evid=None
 
 
-    def update(self,evid,raw=False,save=True,rawInput=None):
+    def loadComcat(self,evid,rawInput=None,raw=False):
 
+        self.evid=evid
         comcat=Comcat(config=self.config,rawInput=rawInput)
-        inputJson=comcat.event(evid,raw=raw)
-
         if raw:
-            print(inputJson)
-            return
-
+            return comcat.event(evid,raw=True)
+            
+        inputJson=comcat.event(evid)
         if not inputJson or inputJson=='NOT FOUND':
-            print('Run.update: Could not get data for',evid)
+            print('Run.update: No data for',evid)
             self.event='DELETED'
             return evid
 
@@ -52,17 +52,36 @@ class Run:
             self.event='DELETED'
             return evid
 
+        if inputJson=='BAD':
+            self.event=None
+            return None
+
         event=RunEvent.createFromContents(inputJson)
         self.event=event
-        self.duplicates=self.event.duplicates
-
+        self.duplicates=event.duplicates
         if event.eventid!=evid:
+            self.evid=event.eventid
             print('WARNING! WARNING! WARNING!')
-            print('Event ID changed from %s to %s' % (evid,event.eventid))
+            print('Event ID changed from %s to %s' % (evid,self.evid))
             print('WARNING! WARNING! WARNING!')
+
+        return self.evid
+
+
+    def update(self,save=True):
+
+        event=self.event
+        if not event:
+            return
+
+        if event=='DELETED' or event=='NOT FOUND':
+            if save:
+                print('Run.update: Got',event,'- deleting from database',self.evid)
+                self.db.deleteEvent(self.evid)
+            return self.evid
 
         # Don't overwrite certain columns
-        originalData=self.db.loadEvent(evid)
+        originalData=self.db.loadEvent(self.evid)
         if originalData:
             for k in (self.noOverwriteColumns):
                 print('Setting',k,'to',originalData[k])
@@ -75,35 +94,23 @@ class Run:
         return event.eventid
 
 
-    def runEvent(self,evid,update=True,findDuplicates=True,test=False,norun=False,rawInput=None):
+    def runEvent(self,evid=None,findDuplicates=True,norun=False,rawInput=None):
 
         print('--------------------------------')
         event=self.event
-        authid=None
 
-        # 1. Update self.event from Comcat or file (and save)
-        if update:
-            print('Run.runEvent: Updating and saving this event.')
-            authid=self.update(evid,rawInput=None)
-            event=self.event
+        if not evid and not event:
+            raise RuntimeError('Run.runEvent: Called without evid or run.loadComcat')
 
-            # 1a. Check if Comcat gave delete or no ID
-            if event=='DELETED' or event=='NOT FOUND':
-                print('Run.runEvent: Got',event,'- deleting',authid)
-                if not test:
-                    self.db.deleteEvent(authid)
-                return authid
-
-        if not authid:
-            authid=evid
+        # 1. Check if Comcat gave delete or no ID
+        if event=='DELETED' or event=='NOT FOUND':
+            return
 
         # 2. If no update or update doesn't work, read database
-        if not event:
+        if evid and not event:
             raw=self.db.loadEvent(evid)
-            # No guarantee that self.duplicates exist (unless
-            # self.update() was run beforehand)
             if raw:
-                self.event=Event(raw)
+                self.event=RunEvent(raw)
                 event=self.event
 
         # 2a. Check if no data
@@ -111,37 +118,32 @@ class Run:
             print('Run.runEvent: No data found')
             return None
 
-        # 2b. Some other Comcat error
-        if isinstance(event,str):
-            print('Run.runEvent: Got',event,'for',authid,'ignoring.')
-            return None
+        evid=event.eventid
 
-        # 2c. Check if stub
+        # 2b. Check if stub
         if event.isStub: # pragma: no cover
             print('Run.runEvent: Cannot run on stub event.')
             return None
 
-       # 3. Update will populate event.duplicates
+        # 3. Need loadComcat() to populate self.duplicates
         if self.duplicates:
             print('Run.runEvent: Moving duplicates.')
-            if not test:
-                self.moveDuplicates()
+            self.moveDuplicates()
 
-        # 4. Create event products. At this point switch to authoritative id
-        evid=event.eventid
-        if not test and not norun:
+        # 4. Create event products
+        if not norun:
             self.db.updateEventVersion(evid)
             print('Run.runEvent: Creating products for',evid)
             runCommand=self.config.executables['run'].split(' ')+[evid]
             subprocess.call(runCommand)
 
         # 5. Set new responses to zero and increment version
-        print('Run.runEvent: Updating event parameters.')
-        if not test:
+        if not norun:
+            print('Run.runEvent: Updating event parameters.')
             self.db.setNewresponse(evid,value=0,increment=False)
 
         # 6. export to web
-        if not test:
+        if not norun:
             runCommand=self.config.executables['push'].split(' ')+[evid]
             subprocess.call(runCommand)
 
@@ -149,12 +151,11 @@ class Run:
 
 
     def moveDuplicates(self):
-        db=self.db
-        goodid=self.event.eventid
-
         if not self.duplicates:
             return
 
+        db=self.db
+        goodid=self.event.eventid
         print('Got duplicates:',self.duplicates)
 
         nMoved=0

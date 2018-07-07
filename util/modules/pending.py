@@ -90,7 +90,7 @@ class Pending:
             else:
                 print('Pending: loop processing %s with %i responses.' % (evid,newresponses))
                 run=Run(config=self.config)
-                runevid=run.runEvent(evid)
+                runevid=run.runEvent(evid=evid)
 
             finishedEvents.append(evid)
 

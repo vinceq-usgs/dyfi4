@@ -55,7 +55,7 @@ class Comcat:
             contents=json.loads(contents)
         except json.JSONDecodeError as e:
             print('Comcat.event: Malformed contents: '+e.msg)
-            return None
+            return 'BAD'
 
         # check for error messages
         status=Comcat.checkStatus(contents)

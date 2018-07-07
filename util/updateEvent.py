@@ -63,27 +63,32 @@ def main(args):
 
     if args.raw:
         print('Getting raw comcat data only.')
-        evid=run.update(evid,raw=True)
+        rawdata=run.loadComcat(evid,raw=True)
+        print(rawdata)
         exit()
 
     if args.file:
-        print('Reading from file',args.file)
+        print('Updating %s with %s.' % (evid,args.file))
         with open(args.file,'r') as f:
             rawInput=f.read()
-        print('Updating %s with %s.' % (evid,args.file))
-        evid=run.update(evid,rawInput=rawInput)
         # This will populate run.duplicates if necessary
+        run.loadComcat(evid,rawInput=rawInput)
+        newid=run.update()
 
     if not args.noexternal and not args.file:
-        # This will populate run.duplicates if necessary
         print('Updating %s from Comcat.' % evid)
-        run.update(evid)
+        # This will populate run.duplicates if necessary
+        run.loadComcat(evid)
+        newid=run.update()
 
     if (run.event=='DELETED'):
         print('Got deleted eventid',evid)
 
     if args.trigger:
-        run.runEvent(evid,update=False,findDuplicates=True,norun=args.norun)
+        if not newid:
+            print('WARNING: Could not get data, loading current Event data.')
+            newid=evid
+        run.runEvent(evid=newid,findDuplicates=True,norun=args.norun)
     else:
         print('Stopping, use --trigger to continue.')
 

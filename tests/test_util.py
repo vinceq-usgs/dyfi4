@@ -50,19 +50,20 @@ def test_util():
     status=subprocess.run(['util/updateEvent.py',testid],stdout=subprocess.PIPE)
     assert 'Stopping, use --trigger to continue.' in str(status.stdout)
 
-    status=subprocess.run(['util/updateEvent.py',testid,'--file','tests/data/feedContents.raw'],stdout=subprocess.PIPE)
+    status=subprocess.run(['util/updateEvent.py',testid,'--file','tests/data/feedContents.'+testid],stdout=subprocess.PIPE)
     assert 'Saved %s with 0 newresponses' % testid in str(status.stdout)
 
     status=subprocess.run(['util/updateEvent.py','us1000abcd'],stdout=subprocess.PIPE)
-    assert 'Could not get data for us1000abcd' in str(status.stdout)
+    assert 'Got deleted eventid us1000abcd' in str(status.stdout)
 
     status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.deleted'],stdout=subprocess.PIPE)
     assert 'Got deleted eventid us1000abcd' in str(status.stdout)
 
-    status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.badjson'],stdout=subprocess.PIPE)
+    status=subprocess.run(['util/updateEvent.py','us1000abcd','--file','tests/data/feedContents.badjson','--trigger'],stdout=subprocess.PIPE)
     assert 'Malformed contents' in str(status.stdout)
+    assert 'Cannot run on stub event' in str(status.stdout)
 
-    status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
-    assert 'Done with '+testid in str(status.stdout)
+#    status=subprocess.run(['util/updateEvent.py',testid,'--trigger'],stdout=subprocess.PIPE)
+#    assert 'Done with '+testid in str(status.stdout)
 
 
