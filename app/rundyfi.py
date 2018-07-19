@@ -44,7 +44,8 @@ def main(args):
     Lock('rundyfi.'+evid)
 
     container=DyfiContainer(evid,configfile=args.configfile)
-    Contents(container).toXML(save=True)
+    if container.entries:
+        Contents(container).toXML(save=True)
 
     print('Done with',evid)
     return container

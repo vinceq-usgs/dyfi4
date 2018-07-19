@@ -87,7 +87,10 @@ class Entry():
             elif val=='':
                 val=None
             else:
-                val=int(val)
+                try:
+                    val=int(val)
+                except ValueError:
+                    val=None
 
         return val
 

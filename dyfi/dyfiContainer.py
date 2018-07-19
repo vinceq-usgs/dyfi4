@@ -36,8 +36,14 @@ class DyfiContainer:
 
     def __init__(self,evid,configfile='config.yml'):
 
+        self.entries=None
+        self.products=None
+
         config=Config(configfile)
         self.event=Event(evid,config=config)
+        if self.event.isStub:
+            print('WARNING: Cannot run a stub event.')
+            return 
 
         cdifilter=Filter(event=self.event,config=config).filterFunction()
         self.entries=Entries(event=self.event,config=config,cdifilter=cdifilter)
