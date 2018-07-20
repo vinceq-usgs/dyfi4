@@ -383,7 +383,6 @@ class Graph:
 
 
 # Methods for plot_numresp
-# TODO: Put this in separate function
 
     def getDataTime(self):
         """
@@ -433,6 +432,10 @@ class Graph:
                 't_seconds':dTime,
                 't_absolute':time.strftime('%Y-%m-%dT%H:%M:%S')
             }
+
+            # Overwrite if the timestamp is the same
+            if d and d[-1]['t_seconds']==dTime:
+                del d[-1]
             d.append(pt)
 
         if len(d)<1:
