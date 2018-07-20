@@ -51,10 +51,11 @@ def main(args):
     if not args.check:
         Lock('loadEntries')
 
-    incoming=Incoming(Config(args.configfile))
+    config=Config(args.configfile)
+    incoming=Incoming(config)
     pendingFiles=incoming.checkIncoming()
     nfiles=len(pendingFiles)
-    print('loadEntries.py: Got',nfiles,'responses in incoming')
+    print('loadEntries.py: Got %s responses in %s' % (nfiles,config.directories['incoming']))
 
     if args.check:
         exit()

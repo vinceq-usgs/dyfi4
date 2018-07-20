@@ -118,12 +118,13 @@ class Run:
             print('Run.runEvent: No data found')
             return None
 
-        evid=event.eventid
-
         # 2b. Check if stub
         if event.isStub: # pragma: no cover
             print('Run.runEvent: Cannot run on stub event.')
             return None
+
+        # At this point, event should be populated
+        evid=event.eventid
 
         # 3. Need loadComcat() to populate self.duplicates
         if self.duplicates:
@@ -132,6 +133,7 @@ class Run:
 
         # 4. Create event products
         if not norun:
+            print('Updating event',evid)
             self.db.updateEventVersion(evid)
             print('Run.runEvent: Creating products for',evid)
             runCommand=self.config.executables['run'].split(' ')+[evid]

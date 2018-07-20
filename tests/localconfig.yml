@@ -12,9 +12,9 @@ db:
 
 # Test directories. For production, change to data/incoming etc.
 directories:        
-    incoming: data/incoming
-    trashincoming: data/trashincoming
-    badincoming: data/badincoming
+    incoming: tests/incoming
+    trashincoming: tests/trashincoming
+    badincoming: tests/badincoming
 
 executables:
 #    push: util/push.py --trigger

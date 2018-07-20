@@ -6,7 +6,7 @@ import shutil
 from argparse import Namespace
 
 testid='ci37511872'
-
+testconfig='tests/localconfig.yml'
 
 def test_util():
     import subprocess
@@ -24,14 +24,14 @@ def test_util():
             shutil.copy(fullname,incomingDir)
 
     # Test loadEntries.py
-    status=subprocess.run(['util/loadEntries.py','--check'],stdout=subprocess.PIPE)
-    assert 'Got 4 responses in incoming' in str(status.stdout)
+    status=subprocess.run(['util/loadEntries.py','--check','--config',testconfig],stdout=subprocess.PIPE)
+    assert 'Got 4 responses in %s' % incomingDir in str(status.stdout)
 
     # Test maxfiles flag
-    status=subprocess.run(['util/loadEntries.py','--maxfiles','1'],stdout=subprocess.PIPE)
+    status=subprocess.run(['util/loadEntries.py','--maxfiles','1','--config',testconfig],stdout=subprocess.PIPE)
     assert 'Processed 1 files, stopping.' in str(status.stdout)
 
-    status=subprocess.run(['util/loadEntries.py'],stdout=subprocess.PIPE)
+    status=subprocess.run(['util/loadEntries.py','--config',testconfig],stdout=subprocess.PIPE)
     assert 'Processing' in str(status.stdout)
 
     # Test loadEntries.py

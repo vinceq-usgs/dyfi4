@@ -16,7 +16,7 @@ db:
         maps: tests/db/maps.db
         extended: tests/db/__EXTENDED__.db
 
-directories:        
+directories:
     data: data
     leaflet: leaflet
 
