@@ -251,10 +251,10 @@ class RawDb:
 
         if 'extended' in table:
             return c.lastrowid
-        elif 'eventid' in obj:
-            return obj['eventid'] 
         elif hasattr(obj,'eventid'):
             return obj.eventid
+        elif 'eventid' in obj:
+            return obj['eventid'] 
         else:
             return True
 
