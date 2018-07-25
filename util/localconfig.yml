@@ -7,6 +7,7 @@ db:
     type: sqlite3
     files:
         event: tests/db/event.db
+        geonames: tests/db/geonames.db
         maps: tests/db/maps.db
         extended: tests/db/__EXTENDED__.db
 
@@ -30,6 +31,13 @@ comcat:
     server: earthquake.usgs.gov
     urlbase: https://__SERVER__/fdsnws/event/1/query?
     timeout: 15
+
+geoserve:
+    server: earthquake.usgs.gov
+    urlbase: https://__SERVER__/ws/geoserve/places.json?
+    timeout: 15
+
+# This assumes that you are using a PDL client to push web products, installed
 
 # This assumes that you are using a PDL client to push web products, installed
 # in the subdirectory PDL. For more on PDL see https://usgs.github.io/pdl/.

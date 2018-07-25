@@ -1,3 +1,5 @@
+# API to access USGS Comcat based on code by Mike Hearne (https://github.com/usgs/libcomcat)
+
 import urllib
 import json
 import socket
@@ -41,8 +43,8 @@ class Comcat:
             contents=self.raw
 
         else:
-            QUERY='format=geojson&includesuperseded=[SUPERCEDED]&eventid=[EVENTID]'
-            query=QUERY.replace('[EVENTID]',evid)
+            query='format=geojson&includesuperseded=[SUPERCEDED]&eventid=[EVENTID]'
+            query=query.replace('[EVENTID]',evid)
             superseded='true' if includeSuperseded else 'false'
             query=query.replace('[SUPERCEDED]',superseded)
 
@@ -75,3 +77,4 @@ class Comcat:
                 return 'NOT FOUND'
 
         return None 
+
