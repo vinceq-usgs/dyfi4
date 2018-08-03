@@ -126,7 +126,7 @@ ciim_time
 ---------
 
 Label:
-- Time of earthquake
+  - Time of earthquake
 
 This is a text field filled by the user. However, if this form is associated to a particular event ID, that event's origin time will be used instead.
 
@@ -134,7 +134,7 @@ fldSituation_felt
 -----------------
 
 Label:
-- Did you feel it?
+  - Did you feel it?
 
 Possible values:
   - 1 : Yes
@@ -144,7 +144,7 @@ fldSituation_situation
 ----------------------
 
 Label:
-- What was your situation during the earthquake?
+  - What was your situation during the earthquake?
 
 Possible values:
   - [null] : Not specified
@@ -158,7 +158,7 @@ fldSituation_sleep
 ------------------
 
 Label: 
-- Were you asleep?
+  - Were you asleep?
 
 Possible values:
   - [null]  : Not specified
@@ -170,7 +170,7 @@ fldSituation_others
 -------------------
 
 Label: 
-- Did others nearby feel it?
+  - Did others nearby feel it?
 
 Possible values:
   - [null]  : Not specified
@@ -183,7 +183,7 @@ fldExperience_shaking
 ---------------------
 
 Label: 
-- How would you describe the shaking?
+  - How would you describe the shaking?
 
 Possible values:
   - [null]  : Not specified
@@ -198,7 +198,7 @@ fldExperience_reaction
 ----------------------
 
 Label: 
-- How did you react?
+  - How did you react?
 
 Possible values:
   - [null]  : Not specified
@@ -213,7 +213,7 @@ fldExperience_response
 ----------------------
 
 Label: 
-- How did you respond?
+  - How did you respond?
 
 Possible values:
   - [null]  : Not specified
@@ -227,7 +227,7 @@ fldExperience_stand
 -------------------
 
 Label: 
-- Was it difficult to stand and/or walk?
+  - Was it difficult to stand and/or walk?
 
 Possible values:
   - [null]  : Not specified
@@ -238,7 +238,7 @@ fldEffects_doors
 ----------------
 
 Label: 
-- Did you notice any swinging of doors or other free-hanging objects?
+  - Did you notice any swinging of doors or other free-hanging objects?
 
 Possible values:
   - [null]  : Not specified
@@ -250,7 +250,7 @@ fldEffects_sounds
 -----------------
 
 Label: 
-- Did you hear creaking or other noises?
+  - Did you hear creaking or other noises?
 
 Possible values:
   - [null]  : Not specified
@@ -262,7 +262,7 @@ fldEffects_shelved
 ------------------
 
 Label: 
-- Did objects rattle, topple over, or fall off shelves?
+  - Did objects rattle, topple over, or fall off shelves?
 
 Possible values:
   - [null]  : Not specified
@@ -277,7 +277,7 @@ fldEffects_pictures
 -------------------
 
 Label: 
-- Did pictures on walls move or get knocked askew?
+  - Did pictures on walls move or get knocked askew?
 
 Possible values:
   - [null]  : Not specified
@@ -289,7 +289,7 @@ fldEffects_furniture
 --------------------
 
 Label: 
-- Did any furniture or appliances slide, topple over, or become displaced?
+  - Did any furniture or appliances slide, topple over, or become displaced?
 
 Possible values:
   - [null]  : Not specified
@@ -300,7 +300,7 @@ fldEffects_appliances
 ---------------------
 
 Label: 
-- Was a heavy appliance (refrigerator or range) affected?
+  - Was a heavy appliance (refrigerator or range) affected?
 
 Possible values:
   - [null]  : Not specified
@@ -314,7 +314,7 @@ fldEffects_walls
 ----------------
 
 Label: 
-- Were free-standing walls or fences damaged?
+  - Were free-standing walls or fences damaged?
 
 Possible values:
   - [null]  : Not specified
@@ -327,7 +327,7 @@ d_text
 ------
 
 Label: 
-- Was there any damage to the building?
+  - Was there any damage to the building?
 
 .. note::
 
