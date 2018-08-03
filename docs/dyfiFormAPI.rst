@@ -93,13 +93,6 @@ ciim_mapLat, ciim_mapLon
 
 Computed by the web form's geocoding algorithm, or manually entered by the user.
 
-ciim_time
----------
-
-Label: Time of earthquake
-
-This is a text field filled by the user. However, if this form is associated to a particular event ID, that event's origin time will be used instead.
-
 timestamp
 ---------
 
@@ -129,10 +122,19 @@ The following fields are filled in by the user.
 
   If a null value is an option, it will be the default. Null values are treated differently from '0' in the DYFI algorithm.
 
+ciim_time
+---------
+
+Label:
+- Time of earthquake
+
+This is a text field filled by the user. However, if this form is associated to a particular event ID, that event's origin time will be used instead.
+
 fldSituation_felt
 -----------------
 
-Label: Did you feel it?
+Label:
+- Did you feel it?
 
 Possible values:
   - 1 : Yes
@@ -141,7 +143,8 @@ Possible values:
 fldSituation_situation
 ----------------------
 
-Label: What was your situation during the earthquake?
+Label:
+- What was your situation during the earthquake?
 
 Possible values:
   - [null] : Not specified
@@ -154,7 +157,8 @@ Possible values:
 fldSituation_sleep
 ------------------
 
-Label: Were you asleep?
+Label: 
+- Were you asleep?
 
 Possible values:
   - [null]  : Not specified
@@ -165,7 +169,8 @@ Possible values:
 fldSituation_others
 -------------------
 
-Label: Did others nearby feel it?
+Label: 
+- Did others nearby feel it?
 
 Possible values:
   - [null]  : Not specified
@@ -177,7 +182,8 @@ Possible values:
 fldExperience_shaking
 ---------------------
 
-Label: How would you describe the shaking?
+Label: 
+- How would you describe the shaking?
 
 Possible values:
   - [null]  : Not specified
@@ -191,7 +197,8 @@ Possible values:
 fldExperience_reaction
 ----------------------
 
-Label: How did you react?
+Label: 
+- How did you react?
 
 Possible values:
   - [null]  : Not specified
@@ -205,7 +212,8 @@ Possible values:
 fldExperience_response
 ----------------------
 
-Label: How did you respond?
+Label: 
+- How did you respond?
 
 Possible values:
   - [null]  : Not specified
@@ -218,7 +226,8 @@ Possible values:
 fldExperience_stand
 -------------------
 
-Label: Was it difficult to stand and/or walk?
+Label: 
+- Was it difficult to stand and/or walk?
 
 Possible values:
   - [null]  : Not specified
@@ -228,7 +237,8 @@ Possible values:
 fldEffects_doors
 ----------------
 
-Label: Did you notice any swinging of doors or other free-hanging objects?
+Label: 
+- Did you notice any swinging of doors or other free-hanging objects?
 
 Possible values:
   - [null]  : Not specified
@@ -239,7 +249,8 @@ Possible values:
 fldEffects_sounds
 -----------------
 
-Label: Did you hear creaking or other noises?
+Label: 
+- Did you hear creaking or other noises?
 
 Possible values:
   - [null]  : Not specified
@@ -250,7 +261,8 @@ Possible values:
 fldEffects_shelved
 ------------------
 
-Label: Did objects rattle, topple over, or fall off shelves?
+Label: 
+- Did objects rattle, topple over, or fall off shelves?
 
 Possible values:
   - [null]  : Not specified
@@ -264,7 +276,8 @@ Possible values:
 fldEffects_pictures
 -------------------
 
-Label: Did pictures on walls move or get knocked askew?
+Label: 
+- Did pictures on walls move or get knocked askew?
 
 Possible values:
   - [null]  : Not specified
@@ -275,7 +288,8 @@ Possible values:
 fldEffects_furniture
 --------------------
 
-Label: Did any furniture or appliances slide, topple over, or become displaced?
+Label: 
+- Did any furniture or appliances slide, topple over, or become displaced?
 
 Possible values:
   - [null]  : Not specified
@@ -285,7 +299,8 @@ Possible values:
 fldEffects_appliances
 ---------------------
 
-Label: Was a heavy appliance (refrigerator or range) affected?
+Label: 
+- Was a heavy appliance (refrigerator or range) affected?
 
 Possible values:
   - [null]  : Not specified
@@ -298,7 +313,8 @@ Possible values:
 fldEffects_walls
 ----------------
 
-Label: Were free-standing walls or fences damaged?
+Label: 
+- Were free-standing walls or fences damaged?
 
 Possible values:
   - [null]  : Not specified
@@ -310,7 +326,8 @@ Possible values:
 d_text
 ------
 
-Label: Was there any damage to the building?
+Label: 
+- Was there any damage to the building?
 
 .. note::
 
