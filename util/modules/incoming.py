@@ -187,7 +187,8 @@ class Incoming:
         data['time_now']=RunDb.epochToString(int(data['time_now']))
 
         # 3. Rebase longitude
-        data['longitude']=self.rebaseLongitude(data['longitude'])
+        if 'longitude' in data:
+            data['longitude']=self.rebaseLongitude(data['longitude'])
 
         # 4. Calculate user_cdi
         entry=Entry(data)
