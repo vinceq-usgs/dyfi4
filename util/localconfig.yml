@@ -12,12 +12,12 @@ db:
 
 # Test directories. For production, change to data/incoming etc.
 directories:        
-    incoming: tests/incoming
-    trashincoming: tests/trashincoming
-    badincoming: tests/badincoming
+    incoming: data/incoming
+    trashincoming: data/trashincoming
+    badincoming: data/badincoming
 
 executables:
-#    push: util/push.py --trigger
+    push: bin/push.py --trigger
     run: app/rundyfi.py
 
 products:
@@ -36,5 +36,5 @@ comcat:
 push:
     datadir: data
     pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
-    event_dataTemplate: util/event_dataTemplate.yml
+    event_dataTemplate: bin/event_dataTemplate.yml
 
