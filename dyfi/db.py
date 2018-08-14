@@ -326,3 +326,18 @@ class Db:
 
         return dt.strftime('%Y-%m-%d %H:%M:%S')
 
+
+    def loadGeoname(self,utmstring):
+
+        table='geonames'
+        clause='utmstring=?'
+        results=self.rawdb.query(table,clause,utmstring)
+        if not results or len(results)==0:
+            return
+
+        if len(results)>1: # pragma: no cover
+            warnings.warn(UserWarning('Multiple UTM strings found, using only the first'))
+
+        results=results[0]
+        return results
+

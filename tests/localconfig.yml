@@ -7,18 +7,17 @@ db:
     type: sqlite3
     files:
         event: tests/db/event.db
-        geonames: tests/db/geonames.db
         maps: tests/db/maps.db
         extended: tests/db/__EXTENDED__.db
 
 # Test directories. For production, change to data/incoming etc.
 directories:        
-    incoming: data/incoming
-    trashincoming: data/trashincoming
-    badincoming: data/badincoming
+    incoming: tests/incoming
+    trashincoming: tests/trashincoming
+    badincoming: tests/badincoming
 
 executables:
-    push: bin/push.py --trigger
+#    push: util/push.py --trigger
     run: app/rundyfi.py
 
 products:
@@ -32,17 +31,10 @@ comcat:
     urlbase: https://__SERVER__/fdsnws/event/1/query?
     timeout: 15
 
-geoserve:
-    server: earthquake.usgs.gov
-    urlbase: https://__SERVER__/ws/geoserve/places.json?
-    timeout: 15
-
-# This assumes that you are using a PDL client to push web products, installed
-
 # This assumes that you are using a PDL client to push web products, installed
 # in the subdirectory PDL. For more on PDL see https://usgs.github.io/pdl/.
 push:
     datadir: data
     pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
-    event_dataTemplate: bin/event_dataTemplate.yml
+    event_dataTemplate: util/event_dataTemplate.yml
 

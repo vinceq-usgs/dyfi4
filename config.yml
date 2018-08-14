@@ -9,6 +9,7 @@ db:
         event: tests/db/event.db
         maps: tests/db/maps.db
         extended: tests/db/__EXTENDED__.db
+        geonames: tests/db/geonames.db
 
 directories:        
     data: data

@@ -251,8 +251,12 @@ class RawDb:
 
         if 'extended' in table:
             return c.lastrowid
+        elif hasattr(obj,'eventid'):
+            return obj.eventid
+        elif 'eventid' in obj:
+            return obj['eventid'] 
         else:
-            return obj['eventid'] if isDict else obj.eventid
+            return True
 
 
     def getColumns(self,table):
@@ -316,7 +320,7 @@ class RawDb:
     @staticmethod
     def validateTable(table):
 
-        if table=='event':
+        if table=='event' or table=='geonames':
             return True
         if table=='extended_pre':
             return True
