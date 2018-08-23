@@ -16,6 +16,7 @@ directories:
     incoming: data/incoming
     trashincoming: data/trashincoming
     badincoming: data/badincoming
+    flags: flags
 
 executables:
     push: bin/push.py --trigger

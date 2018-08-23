@@ -8,6 +8,7 @@ Incoming
 import sys
 import os
 import urllib.parse
+from shutil import copyfile
 
 sys.path.insert(0,os.path.abspath(os.path.join(os.path.dirname(__file__),'../..')))
 from dyfi import Event,Entry
@@ -85,6 +86,10 @@ class Incoming:
             os.makedirs(config.directories['incoming'],exist_ok=True)
         except FileExistsError: # pragma: no cover
             pass
+        try:
+            os.makedirs(config.directories['flags'],exist_ok=True)
+        except FileExistsError: # pragma: no cover
+            pass
 
 
     def checkIncoming(self):
@@ -145,6 +150,10 @@ class Incoming:
     def readFile(self,rawfile):
         with open(rawfile,'r') as f:
             raw=f.read()
+
+        # Copy latest file to flagDir
+        latestfile='%s/latest.entry' % self.config.directories['flags']
+        copyfile(rawfile,latestfile)
 
         # Trust that earthquake-dyfi-responses is doing its job
         # and handling characters properly
