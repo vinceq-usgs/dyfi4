@@ -35,14 +35,15 @@ class Run:
         self.evid=None
 
 
-    def loadComcat(self,evid,rawInput=None,raw=False):
+    def loadComcat(self,evid,rawInput=None,raw=False,saveToFile=None):
 
         self.evid=evid
         comcat=Comcat(config=self.config,rawInput=rawInput)
         if raw:
             return comcat.event(evid,raw=True)
             
-        inputJson=comcat.event(evid)
+        inputJson=comcat.event(evid,saveToFile=saveToFile)
+
         if not inputJson or inputJson=='NOT FOUND':
             print('Run.update: No data for',evid)
             self.event='DELETED'
@@ -76,7 +77,7 @@ class Run:
 
         if event=='DELETED' or event=='NOT FOUND':
             if save:
-                print('Run.update: Got',event,'- deleting from database',self.evid)
+                print('Run.update: Got',event,'- deleting %s from database' % self.evid)
                 self.db.deleteEvent(self.evid)
             return self.evid
 
@@ -84,8 +85,9 @@ class Run:
         originalData=self.db.loadEvent(self.evid)
         if originalData:
             for k in (self.noOverwriteColumns):
-                print('Setting',k,'to',originalData[k])
-                event.setattr(k,originalData[k])
+                if originalData[k] is not None:
+                    print('Setting',k,'to',originalData[k])
+                    event.setattr(k,originalData[k])
 
         if save:
             self.db.save(event)
