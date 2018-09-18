@@ -16,9 +16,10 @@ directories:
     incoming: data/incoming
     trashincoming: data/trashincoming
     badincoming: data/badincoming
+    flags: flags
 
 executables:
-#    push: util/push.py --trigger
+    push: bin/push.py --trigger
     run: app/rundyfi.py
 
 products:
@@ -44,5 +45,5 @@ geoserve:
 push:
     datadir: data
     pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
-    event_dataTemplate: util/event_dataTemplate.yml
+    event_dataTemplate: bin/event_dataTemplate.yml
 

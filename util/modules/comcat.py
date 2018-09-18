@@ -40,7 +40,7 @@ class Comcat:
         return contents
 
 
-    def event(self,evid,raw=False,includeSuperseded=False):
+    def event(self,evid,raw=False,includeSuperseded=False,saveToFile=None):
 
         if self.raw:
             contents=self.raw
@@ -52,6 +52,10 @@ class Comcat:
             query=query.replace('[SUPERCEDED]',superseded)
 
             contents=self.query(query)
+
+        if saveToFile:
+            with open(saveToFile,'w') as f:
+                f.write(contents)
 
         if raw:
             return contents

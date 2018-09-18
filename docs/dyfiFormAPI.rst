@@ -57,25 +57,25 @@ Example::
 Form-generated fields
 =====================
 
-The following fields are pre-filled values or populated by the form.
+The following fields are pre-filled values or populated by the form. Names in parentheses are the corresponding column names in the DYFI backend database (otherwise, the column name is identical.)
 
 eventid
 -------
 
 Filled in by the questionnaire template. If the user accesses the form via an event page, this will have the event ID. Otherwise, it should be 'unknown'.
 
-eventTime
----------
+eventTime (event_time)
+-----------------------
 
 Filled in by the questionnaire template. If the user accesses the form via an event page, this will have the event origin time (as a UNIX datetime string). Otherwise, it will be blank.
 
-ciim_mapAddress
----------------
+ciim_mapAddress (street)
+--------------------------
 
 If the user geolocates their location via a street address, that data is stored here.
 
-ciim_mapConfidence
-------------------
+ciim_mapConfidence (confidence)
+--------------------------------
 
 A measure the confidence of the geolocation method, computed by the web form's geocoding algorithm. 
 
@@ -88,17 +88,17 @@ Possible values:
 - 1 regional precision (~100 km)
 - 0 unknown or bad location
 
-ciim_mapLat, ciim_mapLon
-------------------------
+ciim_mapLat, ciim_mapLon (latitude, longitude)
+-------------------------------------------------
 
 Computed by the web form's geocoding algorithm, or manually entered by the user.
 
-timestamp
----------
+timestamp (time_now)
+----------------------
 
 The UNIX time (seconds since epoch) when this response was submitted. This is filled by the response subprocess (the script that handles incoming questionnaire form.)
 
-form_version
+form_version (version)
 ------------
 
 The version of the questionnaire online. This is updated only when the source is changed.
@@ -122,16 +122,16 @@ The following fields are filled in by the user.
 
   If a null value is an option, it will be the default. Null values are treated differently from '0' in the DYFI algorithm.
 
-ciim_time
----------
+ciim_time (usertime)
+------------------------
 
 Label:
   - Time of earthquake
-
+  
 This is a text field filled by the user. However, if this form is associated to a particular event ID, that event's origin time will be used instead.
 
-fldSituation_felt
------------------
+fldSituation_felt (felt)
+-------------------------
 
 Label:
   - Did you feel it?
@@ -140,8 +140,8 @@ Possible values:
   - 1 : Yes
   - 0 : No
 
-fldSituation_situation
-----------------------
+fldSituation_situation (situation)
+------------------------------------
 
 Label:
   - What was your situation during the earthquake?
@@ -154,8 +154,8 @@ Possible values:
   - veh_moving : In a moving vehicle
   - other : Other
 
-fldSituation_sleep
-------------------
+fldSituation_sleep (asleep)
+----------------------------
 
 Label: 
   - Were you asleep?
@@ -166,8 +166,8 @@ Possible values:
   - slept : Slept through it
   - woke : Woke up
 
-fldSituation_others
--------------------
+fldSituation_others (other_felt)
+----------------------------------
 
 Label: 
   - Did others nearby feel it?
@@ -179,8 +179,8 @@ Possible values:
   - 4 : Most felt it
   - 5 : Everyone/almost everyone felt it
 
-fldExperience_shaking
----------------------
+fldExperience_shaking (motion)
+-------------------------------
 
 Label: 
   - How would you describe the shaking?
@@ -194,8 +194,8 @@ Possible values:
   - 4 : Strong
   - 5 : Violent
 
-fldExperience_reaction
-----------------------
+fldExperience_reaction (reaction)
+----------------------------------
 
 Label: 
   - How did you react?
@@ -209,8 +209,8 @@ Possible values:
   - 4 : Very frightened
   - 5 : Extremely frightened
   
-fldExperience_response
-----------------------
+fldExperience_response (response)
+----------------------------------
 
 Label: 
   - How did you respond?
@@ -223,8 +223,8 @@ Possible values:
   - ran_outside : Ran outside
   - other : Other
 
-fldExperience_stand
--------------------
+fldExperience_stand (stand)
+----------------------------
 
 Label: 
   - Was it difficult to stand and/or walk?
@@ -234,8 +234,8 @@ Possible values:
   - 0 : No
   - 1 : Yes
   
-fldEffects_doors
-----------------
+fldEffects_doors (sway)
+------------------------
 
 Label: 
   - Did you notice any swinging of doors or other free-hanging objects?
@@ -246,8 +246,8 @@ Possible values:
   - 1 slight : Yes, slight swinging
   - 1 violent : Yes, violent swinging
 
-fldEffects_sounds
------------------
+fldEffects_sounds (creak)
+--------------------------
 
 Label: 
   - Did you hear creaking or other noises?
@@ -258,8 +258,8 @@ Possible values:
   - 1 slight : Yes, slight noise
   - 1 loud : Yes, loud noise
 
-fldEffects_shelved
-------------------
+fldEffects_shelved (shelf)
+----------------------------
 
 Label: 
   - Did objects rattle, topple over, or fall off shelves?
@@ -273,8 +273,8 @@ Possible values:
   - 2 many_toppled_or_fell : Many fell off
   - 3 everything : Nearly everything fell off
 
-fldEffects_pictures
--------------------
+fldEffects_pictures (picture)
+------------------------------
 
 Label: 
   - Did pictures on walls move or get knocked askew?
@@ -285,8 +285,8 @@ Possible values:
   - 1 did_not_fall : Yes, but did not fall
   - 1 some_fell : Yes, and some fell
 
-fldEffects_furniture
---------------------
+fldEffects_furniture (furniture)
+---------------------------------
 
 Label: 
   - Did any furniture or appliances slide, topple over, or become displaced?
@@ -296,8 +296,8 @@ Possible values:
   - 0 : No
   - 1 : Yes
 
-fldEffects_appliances
----------------------
+fldEffects_appliances (heavy_appliance)
+----------------------------------------
 
 Label: 
   - Was a heavy appliance (refrigerator or range) affected?
@@ -310,8 +310,8 @@ Possible values:
   - shifted_foot : Yes, shifted by a foot or more
   - overturned : Yes, overturned
 
-fldEffects_walls
-----------------
+fldEffects_walls (walls)
+-------------------------
 
 Label: 
   - Were free-standing walls or fences damaged?

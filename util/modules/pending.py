@@ -57,9 +57,10 @@ class Pending:
         processed=False
         finishedEvents=[]
 
+        print('Pending.loop: Starting.')
         while True:
             if maxruns and self.eventsRun>=maxruns:
-                print('Pending: %i events processed' % maxruns)
+                print('Pending.loop: %i events processed' % maxruns)
                 break
 
             # Refresh queue only if an event was run successfully
@@ -85,12 +86,14 @@ class Pending:
                 continue
 
             if test:
-                print('Pending: loop test:',evid)
+                print('Pending.loop: loop test:',evid)
                 runevid=evid
             else:
-                print('Pending: loop processing %s with %i responses.' % (evid,newresponses))
-                run=Run(config=self.config)
-                run.loadComcat(evid)
+                print('Pending.loop: loop processing %s with %i responses.' % (evid,newresponses))
+                config=self.config
+                run=Run(config)
+                latestpendingfile='%s/latest.pending' % config.directories['flags']
+                run.loadComcat(evid,saveToFile=latestpendingfile)
                 runevid=run.update()
                 if runevid:
                     runevid=run.runEvent(evid=runevid)
@@ -110,7 +113,8 @@ class Pending:
         if self.eventsRun:
             print('Pending.loop: No more events.')
         else:
-            print('.',end='',flush=True)
+            print('Pending.loop: No events found.')
+
         return True
 
 
