@@ -67,5 +67,6 @@ def test_run():
     assert run.loadComcat(dupid,rawInput=dupdata)
     assert run.update()==goodid
     assert dupid in run.duplicates
+
     assert run.runEvent()==goodid
 

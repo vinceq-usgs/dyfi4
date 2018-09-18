@@ -25,6 +25,7 @@ def test_util():
 
     # Test loadEntries.py
     status=subprocess.run(['util/loadEntries.py','--check','--config',testconfig],stdout=subprocess.PIPE)
+    print('Running loadEntries on',testconfig)
     assert 'Got 4 responses in %s' % incomingDir in str(status.stdout)
 
     # Test maxfiles flag
