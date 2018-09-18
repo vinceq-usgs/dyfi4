@@ -1,12 +1,15 @@
 # API to access USGS Comcat based on code by Mike Hearne (https://github.com/usgs/libcomcat)
 
-import urllib
+import urllib.request
 import json
 import socket
 
 class Comcat:
 
     def __init__(self,config,rawInput=None):
+
+        if isinstance(config,str):
+            raise ValueError('Comcat: need Config object, not str')
 
         conf=config.comcat
         self.config=conf
@@ -24,9 +27,9 @@ class Comcat:
         try:
             contents=urllib.request.urlopen(url,timeout=self.timeout).read().decode('utf8')
 
-        except urllib.error.URLError as e: # pragma: no cover
-            self.error=e.reason
-            contents=None
+#        except urllib.error.URLError as e: # pragma: no cover
+#            self.error=e.reason
+#            contents=None
 
         except socket.timeout: # pragma: no cover
             print('WARNING: Request timed out.')
