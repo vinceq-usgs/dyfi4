@@ -137,12 +137,10 @@ class Run:
         if not norun:
             print('Updating event',evid)
             self.db.updateEventVersion(evid)
+
             print('Run.runEvent: Creating products for',evid)
-            try: 
-                runCommand=self.config.executables['run'].split(' ')+[evid]
-                subprocess.call(runCommand)
-            except FileNotFoundError:
-                print('WARNING: Could not run the push command, ignoring push.')
+            runCommand=self.config.executables['run'].split(' ')+[evid]
+            subprocess.call(runCommand)
 
 
         # 5. Set new responses to zero and increment version
@@ -152,8 +150,11 @@ class Run:
 
         # 6. export to web
         if not norun and 'push' in self.config.executables:
-            runCommand=self.config.executables['push'].split(' ')+[evid]
-            subprocess.call(runCommand)
+            try: 
+                runCommand=self.config.executables['push'].split(' ')+[evid]
+                subprocess.call(runCommand)
+            except FileNotFoundError:
+                print('WARNING: No push command, ignoring.')
 
         return evid
 
