@@ -138,8 +138,12 @@ class Run:
             print('Updating event',evid)
             self.db.updateEventVersion(evid)
             print('Run.runEvent: Creating products for',evid)
-            runCommand=self.config.executables['run'].split(' ')+[evid]
-            subprocess.call(runCommand)
+            try: 
+                runCommand=self.config.executables['run'].split(' ')+[evid]
+                subprocess.call(runCommand)
+            except FileNotFoundError:
+                print('WARNING: Could not run the push command, ignoring push.')
+
 
         # 5. Set new responses to zero and increment version
         if not norun:
