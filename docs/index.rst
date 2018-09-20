@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-USGS Did You Feel It? (DYFI) Manual
+USGS Did You Feel It?® (DYFI) Manual
 ===================================
 
 Source code: https://github.com/vinceq-usgs/dyfi4/tree/core
