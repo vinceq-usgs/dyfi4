@@ -45,7 +45,7 @@ class Run:
         inputJson=comcat.event(evid,saveToFile=saveToFile)
 
         if not inputJson or inputJson=='NOT FOUND':
-            print('Run.update: No data for',evid)
+            print('Run.loadComcat: No data for',evid)
             self.event='DELETED'
             return evid
 
@@ -69,7 +69,7 @@ class Run:
         return self.evid
 
 
-    def update(self,save=True):
+    def updateEvent(self,save=True):
 
         event=self.event
         if not event:
@@ -77,7 +77,7 @@ class Run:
 
         if event=='DELETED' or event=='NOT FOUND':
             if save:
-                print('Run.update: Got',event,'- deleting %s from database' % self.evid)
+                print('Run.updateEvent: Got',event,'- deleting %s from database' % self.evid)
                 self.db.deleteEvent(self.evid)
             return self.evid
 
@@ -91,7 +91,7 @@ class Run:
 
         if save:
             self.db.save(event)
-            print('Run.update: Saved %s with %i newresponses' % (event.eventid,event.newresponses or 0))
+            print('Run.updateEvent: Saved %s with %i newresponses' % (event.eventid,event.newresponses or 0))
 
         return event.eventid
 

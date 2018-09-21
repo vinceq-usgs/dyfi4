@@ -94,7 +94,7 @@ class Pending:
                 run=Run(config)
                 latestpendingfile='%s/latest.pending' % config.directories['flags']
                 run.loadComcat(evid,saveToFile=latestpendingfile)
-                runevid=run.update()
+                runevid=run.updateEvent()
                 if runevid:
                     runevid=run.runEvent(evid=runevid)
 
