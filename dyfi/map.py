@@ -93,11 +93,12 @@ class Map:
         Calls :py:func:`GeoJSONtoImage` with the appropriate parameters. Normally, this is called during the processing of a :py:class:`dyfi.products.Product` object.
 
         """
-        dataName=self.data['name']
+        dataName=self.name
 
         outputfile='%s/dyfi_%s.png' % (self.dir,dataName)
-
+        print('Map.toImage() with filename',outputfile)
         return Map.GeoJSONtoImage(self.data,outputfile,self.config)
+
 
     @staticmethod
     def GeoJSONtoImage(inputdata,outputfile,config):
@@ -125,7 +126,7 @@ class Map:
             outputtext=json.dumps(inputdata,sort_keys=True,indent=2)
 
         tmpfilename=None
-        with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.', suffix='.js',dir=leafletdir,delete=False) as tmp:
             tmpfilename=tmp.name
             tmp.write('data='+outputtext+';\n')
 
@@ -145,6 +146,8 @@ class Map:
             for line in command]
         command.append(tmpfilename)
         command.append(tmpfilename+'.png')
+        if '_thumbnail' in outputfile:
+            command.append('-thumbnail')
 
         with open(leafletdir+'/log.stdout.txt','wb') as logOut,open(leafletdir+'/log.stderr.txt','wb') as logErr:
 
@@ -157,7 +160,7 @@ class Map:
                 raise RuntimeError('Something wrong with subprocess call!')
 
             shutil.move(tmpfilename+'.png',outputfile)
-            print('Map.GeoJSONtoImage: ...Done.')
+            print('Map.GeoJSONtoImage: ...Done, created',outputfile)
             os.remove(tmpfilename)
 
         return outputfile
