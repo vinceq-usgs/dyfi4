@@ -36,10 +36,10 @@ var tmpinput = "tmp.viewer." + system.pid + ".html";
 
 var html = fs.read(template).replace(/__DATAFILE__/g,input);
 if (thumbnail) {
-    html = html.replace(/__BASEMAP__/g,"0");
+    html = html.replace(/__THUMBNAIL__/g,"1");
 }
 else {
-    html = html.replace(/__BASEMAP__/g,"1");
+    html = html.replace(/__THUMBNAIL__/g,"0");
 }
 
 var f = fs.open(tmpinput,{mode:"w",charset:"UTF=8"});
@@ -50,9 +50,9 @@ f.close();
 
 var page = require("webpage").create();
 page.viewportSize = { width: viewportWidth, height: viewportHeight };
+page.evaluate(function() { document.body.bgColor = "white"; });
 
 //page.paperSize = { width: "612px", height: "684px", margin: "0px" };
-//page.evaluate(function() { document.body.bgColor = "white"; });
 
 if (thumbnail) {
     var clipLeft = Math.floor((viewportWidth - clipWidth)/2);
@@ -71,7 +71,7 @@ page.open(tmpinput,function(status) {
     page.render(output, {'quality': quality});
 
     // If we make it to this point, delete the temporary file
-    fs.remove(tmpinput);
+    //fs.remove(tmpinput);
     phantom.exit(1);
 });
 
