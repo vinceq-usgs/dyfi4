@@ -35,6 +35,7 @@ var tmpinput = "tmp.viewer." + system.pid + ".html";
 // reads a temporary data.js file
 
 var html = fs.read(template).replace(/__DATAFILE__/g,input);
+
 if (thumbnail) {
     html = html.replace(/__THUMBNAIL__/g,"1");
 }
@@ -71,7 +72,7 @@ page.open(tmpinput,function(status) {
     page.render(output, {'quality': quality});
 
     // If we make it to this point, delete the temporary file
-    //fs.remove(tmpinput);
+    fs.remove(tmpinput);
     phantom.exit(1);
 });
 
