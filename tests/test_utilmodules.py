@@ -68,5 +68,3 @@ def test_run():
     assert run.updateEvent()==goodid
     assert dupid in run.duplicates
 
-    assert run.runEvent()==goodid
-
