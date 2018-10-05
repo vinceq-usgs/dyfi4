@@ -62,7 +62,7 @@ class Products:
 
         - name
         - dataset (geo_1km, geo_10km, time)
-        - format (geojson, png, json)
+        - format (geojson, png, jpg, json)
         - type (map or graph)
 
         If the `dataset` parameter is specified (e.g. 'geo' or 'time'), that dataset will be computed.
@@ -200,11 +200,11 @@ class Product:
             else:
                 product=json.dumps(data)
 
-        elif productFormat=='png':
+        elif productFormat=='png' or productFormat=='jpg':
             if hasattr(data,'toImage'):
 
                 os.makedirs(self.dir,exist_ok=True)
-                data.toImage()
+                data.toImage(extension=productFormat)
                 product='FILE'
 
         if not product:

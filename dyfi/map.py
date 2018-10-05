@@ -84,7 +84,7 @@ class Map:
         return text
 
 
-    def toImage(self):
+    def toImage(self,extension='png'):
         """
 
         :synopsis: Creates the PNG static image
@@ -94,8 +94,9 @@ class Map:
 
         """
         dataName=self.name
-
-        outputfile='%s/dyfi_%s.png' % (self.dir,dataName)
+        print('Map.toImage:',dataName)
+        
+        outputfile='%s/dyfi_%s.%s' % (self.dir,dataName,extension)
         print('Map.toImage() with filename',outputfile)
         return Map.GeoJSONtoImage(self.data,outputfile,self.config)
 
@@ -112,6 +113,12 @@ class Map:
         Creates the static image using Leaflet to render the map and a screenshot application. See the :ref:`Creating static products` for details.
 
         """
+
+        # Output file can be .jpg or .png. Save this for temp filenames
+        if '.jpg' in outputfile:
+           extension='jpg'
+        else:
+          extension='png'
 
         leafletdir=config.directories['leaflet']
 
@@ -145,7 +152,7 @@ class Map:
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
         command.append(tmpfilename)
-        command.append(tmpfilename+'.png')
+        command.append('%s.%s' % (tmpfilename,extension))
         if '_thumbnail' in outputfile:
             command.append('-thumbnail')
 
@@ -159,7 +166,7 @@ class Map:
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
-            shutil.move(tmpfilename+'.png',outputfile)
+            shutil.move('%s.%s' % (tmpfilename,extension),outputfile)
             print('Map.GeoJSONtoImage: ...Done, created',outputfile)
             os.remove(tmpfilename)
 

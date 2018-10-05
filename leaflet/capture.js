@@ -9,14 +9,14 @@ var viewportWidth = 612;
 var viewportHeight = 584;
 var clipWidth = 200;
 var clipHeight = 200;
-var quality = 25;
+var quality = 65;
 
 var fs = require("fs");
 var system = require("system");
 
 var args = system.args;
 if (args.length < 3) {
-    console.log("Usage: phantomjs capture.js data.js output.png [-thumbnail]");
+    console.log("Usage: phantomjs capture.js data.js output.[png,jpg] [-thumbnail]");
     console.log("data.js: file that contains event GeoJSON data");
     console.log("output.png: output image file");
 
@@ -51,8 +51,7 @@ f.close();
 
 var page = require("webpage").create();
 page.viewportSize = { width: viewportWidth, height: viewportHeight };
-page.evaluate(function() { document.body.bgColor = "white"; });
-
+//page.evaluate(function() { document.body.bgColor = "white"; });
 //page.paperSize = { width: "612px", height: "684px", margin: "0px" };
 
 if (thumbnail) {

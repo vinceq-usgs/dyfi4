@@ -23,7 +23,7 @@
 - name: map_geo_10km_thumbnail
   dataset: geo_10km
   type: map
-  format: png
+  format: jpg
 
 - name: dyfi_plot_atten
   type: graph
