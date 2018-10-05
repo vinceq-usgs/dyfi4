@@ -86,7 +86,6 @@ class Run:
         if originalData:
             for k in (self.noOverwriteColumns):
                 if originalData[k] is not None:
-                    print('Setting',k,'to',originalData[k])
                     event.setattr(k,originalData[k])
 
         if save:
