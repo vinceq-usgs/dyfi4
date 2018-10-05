@@ -19,7 +19,7 @@ directories:
     flags: flags
 
 executables:
-    push: bin/push.py --trigger
+    push: util/push.py --trigger
     run: app/rundyfi.py
 
 products:

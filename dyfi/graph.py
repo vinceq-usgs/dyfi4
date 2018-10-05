@@ -177,7 +177,8 @@ class Graph:
 
             pt={
                 'x':float('%.1f' % x),
-                'y':loc.properties['intensity']
+                'y':loc.properties['intensity'],
+                'nresp':loc.properties['nresp'],
                 }
             xydata.append(pt)
 
@@ -192,7 +193,9 @@ class Graph:
             'id':'scatterdata',
             'legend':legend,
             'class':'scatterplot1',
-            'data':xydata
+            'data':xydata,
+            'totalnresp':rawdata.properties['nresp'],
+            'maxint':rawdata.properties['maxint']
             }
 
         return scatterdata

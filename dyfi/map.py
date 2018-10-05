@@ -84,7 +84,7 @@ class Map:
         return text
 
 
-    def toImage(self):
+    def toImage(self,extension='png'):
         """
 
         :synopsis: Creates the PNG static image
@@ -93,11 +93,13 @@ class Map:
         Calls :py:func:`GeoJSONtoImage` with the appropriate parameters. Normally, this is called during the processing of a :py:class:`dyfi.products.Product` object.
 
         """
-        dataName=self.data['name']
-
-        outputfile='%s/dyfi_%s.png' % (self.dir,dataName)
-
+        dataName=self.name
+        print('Map.toImage:',dataName)
+        
+        outputfile='%s/dyfi_%s.%s' % (self.dir,dataName,extension)
+        print('Map.toImage() with filename',outputfile)
         return Map.GeoJSONtoImage(self.data,outputfile,self.config)
+
 
     @staticmethod
     def GeoJSONtoImage(inputdata,outputfile,config):
@@ -112,6 +114,12 @@ class Map:
 
         """
 
+        # Output file can be .jpg or .png. Save this for temp filenames
+        if '.jpg' in outputfile:
+           extension='jpg'
+        else:
+          extension='png'
+
         leafletdir=config.directories['leaflet']
 
         # This creates a temporary JS file in ./leaflet which is just
@@ -125,7 +133,7 @@ class Map:
             outputtext=json.dumps(inputdata,sort_keys=True,indent=2)
 
         tmpfilename=None
-        with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.',suffix='.js',dir=leafletdir,delete=False) as tmp:
+        with tempfile.NamedTemporaryFile(mode='w',prefix='tmp.Map.', suffix='.js',dir=leafletdir,delete=False) as tmp:
             tmpfilename=tmp.name
             tmp.write('data='+outputtext+';\n')
 
@@ -144,7 +152,9 @@ class Map:
         command=[line.replace('__ABSPATH__',os.path.abspath(leafletdir))
             for line in command]
         command.append(tmpfilename)
-        command.append(tmpfilename+'.png')
+        command.append('%s.%s' % (tmpfilename,extension))
+        if '_thumbnail' in outputfile:
+            command.append('-thumbnail')
 
         with open(leafletdir+'/log.stdout.txt','wb') as logOut,open(leafletdir+'/log.stderr.txt','wb') as logErr:
 
@@ -156,8 +166,8 @@ class Map:
             except:
                 raise RuntimeError('Something wrong with subprocess call!')
 
-            shutil.move(tmpfilename+'.png',outputfile)
-            print('Map.GeoJSONtoImage: ...Done.')
+            shutil.move('%s.%s' % (tmpfilename,extension),outputfile)
+            print('Map.GeoJSONtoImage: ...Done, created',outputfile)
             os.remove(tmpfilename)
 
         return outputfile

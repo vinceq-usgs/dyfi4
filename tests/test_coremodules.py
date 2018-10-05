@@ -49,7 +49,7 @@ def test_event():
 
   geo=event.toGeoJSON()
   assert isinstance(geo,geojson.Feature)
-  assert geo.properties['mag']==2.98
+  assert geo.properties['mag']<=3.1
 
   # Test attributes
   attr=event.eventdatetime
@@ -67,9 +67,14 @@ def test_event():
 
   # Test setattr
   event.setattr('mag',9)
+  assert event.mag==9
   with pytest.raises(ValueError) as exception:
       event.setattr('badcolumn',1)
   assert 'Invalid column' in str(exception.value)
+
+  # Make sure we did not save the Magnitude 9 
+  event=Event(testid,config=config)
+  assert event.mag!=9
 
   # Test a stub event
   event=Event({'eventid':'testStub'},config=config)

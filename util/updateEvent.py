@@ -73,13 +73,13 @@ def main(args):
             rawInput=f.read()
         # This will populate run.duplicates if necessary
         run.loadComcat(evid,rawInput=rawInput)
-        newid=run.update()
+        newid=run.updateEvent()
 
     if not args.noexternal and not args.file:
         print('Updating %s from Comcat.' % evid)
         # This will populate run.duplicates if necessary
         run.loadComcat(evid)
-        newid=run.update()
+        newid=run.updateEvent()
 
     if (run.event=='DELETED'):
         print('Got deleted eventid',evid)

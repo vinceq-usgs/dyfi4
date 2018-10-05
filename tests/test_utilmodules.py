@@ -65,7 +65,6 @@ def test_run():
     with open('tests/data/feedContents.duplicate','r') as f:
         dupdata=f.read()
     assert run.loadComcat(dupid,rawInput=dupdata)
-    assert run.update()==goodid
+    assert run.updateEvent()==goodid
     assert dupid in run.duplicates
-    assert run.runEvent()==goodid
 

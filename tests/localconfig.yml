@@ -15,6 +15,7 @@ directories:
     incoming: tests/incoming
     trashincoming: tests/trashincoming
     badincoming: tests/badincoming
+    flags: flags
 
 executables:
 #    push: util/push.py --trigger
