@@ -39,8 +39,6 @@ geoserve:
     timeout: 15
 
 # This assumes that you are using a PDL client to push web products, installed
-
-# This assumes that you are using a PDL client to push web products, installed
 # in the subdirectory PDL. For more on PDL see https://usgs.github.io/pdl/.
 push:
     datadir: data
