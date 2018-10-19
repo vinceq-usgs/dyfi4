@@ -3,6 +3,9 @@
 
 import pytest
 import shutil
+import time
+import warnings
+
 from argparse import Namespace
 
 testid='ci37511872'
@@ -40,9 +43,19 @@ def test_util():
     assert 'events to process.' in str(status.stdout)
 
     # Test queueTriggers.py
-    status=subprocess.run(['util/queueTriggers.py','--maxruns','1'],stdout=subprocess.PIPE)
-    assert 'Done with ' in str(status.stdout)
-
+    success=False
+    for i in range(1,10):
+        print('Test queueTriggers.py try:',i)
+        status=subprocess.run(['util/queueTriggers.py','--maxruns','1'],stdout=subprocess.PIPE)
+        if 'Done with ' in str(status.stdout):
+            success=True
+            break
+        else:
+            time.sleep(10)
+                    
+    if not success:
+        warnings.warn('queueTriggers.py did not run properly. There may be something wrong, or it is already running and this test suite could not get a new lock.')
+ 
     # Test updateEvent.py
     status=subprocess.run(['util/updateEvent.py',testid,'--raw'],stdout=subprocess.PIPE)
     assert '"id":"%s"' % testid in str(status.stdout)
