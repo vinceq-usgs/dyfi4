@@ -38,7 +38,6 @@ movie/*.apng
 
 # These auxiliary commands are local server dependent (and not properly
 # generalized), don't export yet
-bin/localconfig.yml
 bin/get_entries_simple.sh
 bin/cron_getentries.sh
 bin/cron_trigger.sh

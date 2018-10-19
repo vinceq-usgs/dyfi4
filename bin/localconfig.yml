@@ -1,0 +1,19 @@
+# Sample localconfig.yml for the bin directory.
+# Used by makeAuxdata.py and push.py.
+#
+# Executables and tests must be run in the package root directory
+# Hence data directories, databases, etc. should be specified from package root 
+
+directories:
+    data: data
+
+aux:
+    auxcommand: bin/makeAuxdata.py
+    event_dataTemplate: lib/event_dataTemplate.yml
+
+# This assumes that you are using a PDL client to push web products, installed
+# in the subdirectory PDL. For more on PDL see https://usgs.github.io/pdl/.
+push:
+    datafile: event_data.xml
+    pushcommand: /usr/bin/java -jar ../pdl/ProductClient.jar --privateKey=../pdl/id_dsa --configFile=../pdl/config.ini
+
