@@ -1,0 +1,96 @@
+# This file is used to create event_data.xml, which is required
+# by the Event Pages.
+
+paramList: 
+   - eventid
+   - source
+   - region
+   - process_timestamp
+   - ciim_version
+   - code_version
+   - event_version
+   - magnitude
+   - latitude
+   - longitude
+   - depth
+   - event_timestamp
+   - localtime
+   - locationtext
+   - nresponses
+   - max_intensity
+   - citydb
+
+paramListConversion: {
+   magnitude: mag,
+   latitude: lat,
+   longitude: lon,
+   event_timestamp: eventdatetime,
+   localtime: eventlocaltime,
+   locationtext: loc
+}
+
+event_dataAttrs:
+    - eventid
+    - source
+    - network
+    - region
+    - process_timestamp
+    - ciim_version
+    - code_version
+    - event_version
+
+eventAttrs:
+    - magnitude
+    - latitude
+    - longitude
+    - depth
+    - event_timestamp
+    - localtime
+    - locationtext
+
+cdi_summaryAttrs:
+    - nresponses
+    - max_intensity
+
+productCategories: 
+    Maps:
+        - name: 'Geocoded Map 10km Aggregation'
+          description: 'Map of responses by geocoded location'
+# This is a hack for the current Event Pages. It looks for this particular
+# filename so we will need to replicate it. Note that we are faking the
+# PNG file with a .jpg extension but the browser won't complain.
+#         file: 'dyfi_geo_1km.png'
+          file: '__EVENT___ciim_geo.jpg'
+        - name: 'Geocoded Map 1km Aggregation'
+          description: 'Map of responses by geocoded location'
+          file: 'dyfi_geo_1km.png'
+    Plots: 
+        - name: 'Intensity vs. Distance'
+          description: 'Plot of Attenuation (fall-off) with distance for each intensity versus its distance from the hypocenter'
+          file: 'dyfi_plot_atten.json'
+        - name: 'Responses vs. Time'
+          description: 'Plot of total number of responses vs. time since event origin'
+          file: 'dyfi_plot_numresp.json'
+    Data:
+        -  name: 'Product List'
+           description: 'Available DYFI products for this event'
+           file: 'event_data.xml'
+        -  name: 'Geocoded Data 10km Aggregation'
+           description: 'Intensity data aggregated by 10km UTM blocks'
+           file: 'dyfi_geo_10km.geojson'
+        -  name: 'Geocoded Data 1km Aggregation'
+           description: 'Intensity data aggregated by 1km UTM blocks'
+           file: 'dyfi_geo_1km.geojson'
+
+formatTypes: {
+    'txt': 'text/plain',
+    'xml': 'text/xml',
+    'png': 'image/png',
+    'jpg': 'image/jpeg',
+    'pdf': 'application/pdf',
+    'ps': 'application/postscript',
+    'json': 'application/json',
+    'geojson': 'application/json',
+    'kmz': 'application/vnd.google-earth.kmz'
+}
+

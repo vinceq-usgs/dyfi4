@@ -141,19 +141,25 @@ class Run:
             runCommand=self.config.executables['run'].split(' ')+[evid]
             subprocess.call(runCommand)
 
+        if norun:
+            print('Run.runEvent: norun flag set, returning.')
+            return evid
 
+        # From this point on, assume we are pushing online
+        
         # 5. Set new responses to zero and increment version
-        if not norun:
-            print('Run.runEvent: Updating event parameters.')
-            self.db.setNewresponse(evid,value=0,increment=False)
+        print('Run.runEvent: Updating event parameters.')
+        self.db.setNewresponse(evid,value=0,increment=False)
 
         # 6. export to web
-        if not norun and 'push' in self.config.executables:
+        if 'push' in self.config.executables:
             try: 
                 runCommand=self.config.executables['push'].split(' ')+[evid]
                 subprocess.call(runCommand)
             except FileNotFoundError:
                 print('WARNING: No push command, ignoring.')
+        else:
+            print('Run.runEvent: Push command not set.')
 
         return evid
 
