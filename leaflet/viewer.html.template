@@ -78,14 +78,17 @@
 <script>
 	var map = L.map('map',{ zoomControl:false, attributionControl:false });
 
-    if (__THUMBNAIL__) { tileLink=''; } 
+    if (__THUMBNAIL__) { 
+            tileLink='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+    }
     else {
         if (0) {
             tileLink='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
         } else {
             tileLink='https://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}';
         }
-
+    }
+    if (tileLink) {
     	L.tileLayer(tileLink, {
 	    	maxZoom: 12,
             minZoom: 6,
@@ -159,7 +162,7 @@
         style: geocodedStyle,
         }).addTo(map);
 
-    if (eventEpicenter && !__THUMBNAIL__) {
+    if (eventEpicenter) {
         var latlng=eventEpicenter.geometry.coordinates;
         var lnlat={'lat':latlng['lng'],
             'lng':latlng['lat'],

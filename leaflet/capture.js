@@ -9,7 +9,7 @@ var viewportWidth = 612;
 var viewportHeight = 584;
 var clipWidth = 200;
 var clipHeight = 200;
-var quality = 65;
+var quality = 90;
 
 var fs = require("fs");
 var system = require("system");
