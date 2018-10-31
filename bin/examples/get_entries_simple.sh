@@ -9,7 +9,7 @@ SERVERS=(user@server1.com user@server2.com)
 INPUTDIR='/remotedirectory/incoming.'$MYHOST
 DESTINATION='./data/incoming'
 RSYNC_COMMAND='/usr/bin/rsync'
-RSYNC_OPTIONS='--verbose --exclude "tmp.*" --timeout=15 -ulpotgrz'
+RSYNC_OPTIONS='--verbose --exclude "tmp.*" --timeout=15 -ulpotgrz --remove-sent-files'
 
 
 for SERVER in "${SERVERS[@]}"
