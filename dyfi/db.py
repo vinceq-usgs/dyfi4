@@ -125,8 +125,8 @@ class Db:
 
 
     def loadEntries(self,evid=None,event=None,
-                    table=None,startdatetime=None,
-                    querytext=None,loadSuspect=False):
+                    table=None,startdatetime=None,enddatetime=None,
+                    timewindow=None,querytext=None,loadSuspect=False):
         """
 
         :synopsis: Search the extended tables for entries matching a query
@@ -134,6 +134,8 @@ class Db:
         :param Event event: (optional) Event object
         :param table: (optional) table or tables
         :param startdatetime: (optional) datetime to start search
+        :param enddatetime: (optional) datetime to end search
+        :param timewindow: (optional) time window in hours after startdatetime
         :param str querytext: (optional) clause(s)
         :returns: list of entries suitable for aggregation
 
@@ -184,6 +186,15 @@ class Db:
             myclauses.append('time_now>=?')
             mysubs.append(startdatetime)
 
+        if enddatetime:
+            myclauses.append('time_now<=?')
+            mysubs.append(enddatetime)
+
+        if timewindow:
+            myclauses.append('time_now<=datetime(?,?)')
+            mysubs.append(startdatetime)
+            mysubs.append('+%s hour' % timewindow)
+            
         if not loadSuspect:
             myclauses.append('(suspect="" or suspect=0 or suspect is null)')
 
@@ -193,6 +204,8 @@ class Db:
             querytext=' AND '.join(myclauses)
 
         # This will automagically create a 'table' key for each entry
+        print(querytext)
+        print(mysubs)
         results=self.rawdb.query(table,querytext,mysubs)
         return results
 

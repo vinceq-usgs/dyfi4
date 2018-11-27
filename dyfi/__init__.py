@@ -2,6 +2,7 @@ from .thirdparty import utm
 from .config import Config
 from .db import Db
 from .dyfiContainer import DyfiContainer
+from .associator import Associator
 from .event import Event
 from .entries import Entry,Entries
 from .filter import Filter
