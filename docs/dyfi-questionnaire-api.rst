@@ -1,4 +1,4 @@
-DYFI Form Responses API
+DYFI Questionnaire API
 ***********************
 
 (V0.3 updated 2018-08-03)
