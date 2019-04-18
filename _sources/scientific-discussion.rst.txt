@@ -3,14 +3,6 @@ Scientific Discussion
 
 A stub for the Scientific Discussion.
 
-For the latest scientific review of DYFI see:
-
-For a scientific overview of the DYFI system, see:
-
-        Wald, David, Vincent Quitoriano, Charles Bruce Worden, Margaret Hopper, & James W. Dewey. "USGS “Did You Feel It?” Internet-based macroseismic intensity maps." Annals of Geophysics [Online], 54.6 (2011) 
-
-        DOI: https://doi.org/10.4401/ag-5354
-
 Aggregation
 ===========
 

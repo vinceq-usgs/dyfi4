@@ -73,6 +73,9 @@ User responses
 
 DYFI maintains its own database table of earthquake user responses. An external mechanism is required to populate this database and possibly trigger the DYFI process when a possible earthquake has occured. 
 
+For developers who wish to send DYFI compatible data without going through the USGS questionnaire, see the :obj:`DYFI Questionnaire API`.
+
+
 For one possible method of triggering DYFI without an earthquake notification, see the BETA project `DYFI Autolocator <https://github.com/vinceq-usgs/autolocator>`.
 
 .. warning:: 

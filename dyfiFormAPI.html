@@ -1,0 +1,565 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>DYFI Form Responses API &#8212; DYFI V4 Manual</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="dyfi-form-responses-api">
+<h1>DYFI Form Responses API<a class="headerlink" href="#dyfi-form-responses-api" title="Permalink to this headline">¶</a></h1>
+<p>(V0.3 updated 2018-08-03)</p>
+<p>The DYFI4 backend accepts response files from the DYFI Questionnaire. Each file represents one user response. The backend supports files containing raw query strings (deprecated) and JSON data. The JSON format is described below.</p>
+<div class="section" id="filename">
+<h2>Filename<a class="headerlink" href="#filename" title="Permalink to this headline">¶</a></h2>
+<p>entry.[server].[eventid].[timestamp].[process_id].json</p>
+<p>Note that the filename is flexible. Only the ‘entry’ and ‘.json’ text is checked by the backend. However the naming convention makes it easier for the operator to troubleshoot issues.</p>
+<p>[server] should be some indication of the origin of the response (e.g. prod01, prod02, dev01, etc.)
+[eventid] should be the assumed event ID associated with this response, or ‘unknown’
+[timestamp] and [process_id] are for preventing namespace collisions.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The file must be a valid JSON file.</li>
+<li>Key values should be strings, not numeric.</li>
+<li>The DYFI algorithm treats ‘0’ responses differently from null responses. Null responses should be no value or the key will be missing entirely.</li>
+<li>The order of keys does not matter.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+        <span class="s1">&#39;ciim_mapAddress&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;null&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ciim_mapConfidence&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ciim_mapLat&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;33.62674894775717&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ciim_mapLon&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;-117.75911424010992&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ciim_time&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Mon, 02 Jul 2018 19:03:14 GMT&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;d_text&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;_tilesfell _masonryfell&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;eventTime&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Mon, 11 Jan 2016 03:13:52 GMT&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;eventid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ci37511872&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_appliances&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_doors&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_furniture&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_pictures&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_shelved&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldEffects_walls&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldExperience_reaction&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldExperience_response&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;no_action&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldExperience_shaking&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldSituation_felt&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldSituation_others&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldSituation_situation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;outside&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fldSituation_sleep&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;no&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;form_version&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1.5&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;language&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;server&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;9882eca4186b&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;timestamp&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;1452511332&#39;</span>
+        <span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-generated-fields">
+<h2>Form-generated fields<a class="headerlink" href="#form-generated-fields" title="Permalink to this headline">¶</a></h2>
+<p>The following fields are pre-filled values or populated by the form. Names in parentheses are the corresponding column names in the DYFI backend database (otherwise, the column name is identical.)</p>
+<div class="section" id="eventid">
+<h3>eventid<a class="headerlink" href="#eventid" title="Permalink to this headline">¶</a></h3>
+<p>Filled in by the questionnaire template. If the user accesses the form via an event page, this will have the event ID. Otherwise, it should be ‘unknown’.</p>
+</div>
+<div class="section" id="eventtime-event-time">
+<h3>eventTime (event_time)<a class="headerlink" href="#eventtime-event-time" title="Permalink to this headline">¶</a></h3>
+<p>Filled in by the questionnaire template. If the user accesses the form via an event page, this will have the event origin time (as a UNIX datetime string). Otherwise, it will be blank.</p>
+</div>
+<div class="section" id="ciim-mapaddress-street">
+<h3>ciim_mapAddress (street)<a class="headerlink" href="#ciim-mapaddress-street" title="Permalink to this headline">¶</a></h3>
+<p>If the user geolocates their location via a street address, that data is stored here.</p>
+</div>
+<div class="section" id="ciim-mapconfidence-confidence">
+<h3>ciim_mapConfidence (confidence)<a class="headerlink" href="#ciim-mapconfidence-confidence" title="Permalink to this headline">¶</a></h3>
+<p>A measure the confidence of the geolocation method, computed by the web form’s geocoding algorithm.</p>
+<p>Possible values:</p>
+<ul class="simple">
+<li>5 rooftop precision</li>
+<li>4 neighborhood precision (~100 m)</li>
+<li>3 block precision (~1 km)</li>
+<li>2 city precision (~10 km)</li>
+<li>1 regional precision (~100 km)</li>
+<li>0 unknown or bad location</li>
+</ul>
+</div>
+<div class="section" id="ciim-maplat-ciim-maplon-latitude-longitude">
+<h3>ciim_mapLat, ciim_mapLon (latitude, longitude)<a class="headerlink" href="#ciim-maplat-ciim-maplon-latitude-longitude" title="Permalink to this headline">¶</a></h3>
+<p>Computed by the web form’s geocoding algorithm, or manually entered by the user.</p>
+</div>
+<div class="section" id="timestamp-time-now">
+<h3>timestamp (time_now)<a class="headerlink" href="#timestamp-time-now" title="Permalink to this headline">¶</a></h3>
+<p>The UNIX time (seconds since epoch) when this response was submitted. This is filled by the response subprocess (the script that handles incoming questionnaire form.)</p>
+</div>
+<div class="section" id="form-version-version">
+<h3>form_version (version)<a class="headerlink" href="#form-version-version" title="Permalink to this headline">¶</a></h3>
+<p>The version of the questionnaire online. This is updated only when the source is changed.</p>
+</div>
+<div class="section" id="language">
+<h3>language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h3>
+<p>A code that specifies the language version used for the form. Supported values are ‘en’ (English) and ‘es’ (Spanish).</p>
+</div>
+<div class="section" id="server">
+<h3>server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h3>
+<p>A unique code that specifies the server that received the submitted form. (The server name should be hashed for security.)</p>
+</div>
+</div>
+<div class="section" id="user-entered-fields">
+<h2>User-entered fields<a class="headerlink" href="#user-entered-fields" title="Permalink to this headline">¶</a></h2>
+<p>The following fields are filled in by the user.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a null value is an option, it will be the default. Null values are treated differently from ‘0’ in the DYFI algorithm.</p>
+</div>
+<div class="section" id="ciim-time-usertime">
+<h3>ciim_time (usertime)<a class="headerlink" href="#ciim-time-usertime" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Time of earthquake</li>
+</ul>
+</dd>
+</dl>
+<p>This is a text field filled by the user. However, if this form is associated to a particular event ID, that event’s origin time will be used instead.</p>
+</div>
+<div class="section" id="fldsituation-felt-felt">
+<h3>fldSituation_felt (felt)<a class="headerlink" href="#fldsituation-felt-felt" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did you feel it?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>1 : Yes</li>
+<li>0 : No</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldsituation-situation-situation">
+<h3>fldSituation_situation (situation)<a class="headerlink" href="#fldsituation-situation-situation" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>What was your situation during the earthquake?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null] : Not specified</li>
+<li>inside : Inside a building</li>
+<li>outside : Outside a building</li>
+<li>veh_stopped : In a stopped vehicle</li>
+<li>veh_moving : In a moving vehicle</li>
+<li>other : Other</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldsituation-sleep-asleep">
+<h3>fldSituation_sleep (asleep)<a class="headerlink" href="#fldsituation-sleep-asleep" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Were you asleep?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>no : No</li>
+<li>slept : Slept through it</li>
+<li>woke : Woke up</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldsituation-others-other-felt">
+<h3>fldSituation_others (other_felt)<a class="headerlink" href="#fldsituation-others-other-felt" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did others nearby feel it?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>2 : No others felt it</li>
+<li>3 : Some felt it, most did not</li>
+<li>4 : Most felt it</li>
+<li>5 : Everyone/almost everyone felt it</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldexperience-shaking-motion">
+<h3>fldExperience_shaking (motion)<a class="headerlink" href="#fldexperience-shaking-motion" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>How would you describe the shaking?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : Not felt</li>
+<li>1 : Weak</li>
+<li>2 : Mild</li>
+<li>3 : Moderate</li>
+<li>4 : Strong</li>
+<li>5 : Violent</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldexperience-reaction-reaction">
+<h3>fldExperience_reaction (reaction)<a class="headerlink" href="#fldexperience-reaction-reaction" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>How did you react?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No reaction/not felt</li>
+<li>1 : Very little reaction</li>
+<li>2 : Excitement</li>
+<li>3 : Somewhat frightened</li>
+<li>4 : Very frightened</li>
+<li>5 : Extremely frightened</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldexperience-response-response">
+<h3>fldExperience_response (response)<a class="headerlink" href="#fldexperience-response-response" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>How did you respond?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>no_action : Took no action</li>
+<li>doorway : Moved to doorway</li>
+<li>duck : Dropped and covered</li>
+<li>ran_outside : Ran outside</li>
+<li>other : Other</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldexperience-stand-stand">
+<h3>fldExperience_stand (stand)<a class="headerlink" href="#fldexperience-stand-stand" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Was it difficult to stand and/or walk?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>1 : Yes</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-doors-sway">
+<h3>fldEffects_doors (sway)<a class="headerlink" href="#fldeffects-doors-sway" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did you notice any swinging of doors or other free-hanging objects?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>1 slight : Yes, slight swinging</li>
+<li>1 violent : Yes, violent swinging</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-sounds-creak">
+<h3>fldEffects_sounds (creak)<a class="headerlink" href="#fldeffects-sounds-creak" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did you hear creaking or other noises?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>1 slight : Yes, slight noise</li>
+<li>1 loud : Yes, loud noise</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-shelved-shelf">
+<h3>fldEffects_shelved (shelf)<a class="headerlink" href="#fldeffects-shelved-shelf" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did objects rattle, topple over, or fall off shelves?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>0 rattled_slightly : Rattled slightly</li>
+<li>0 rattled_loudly : Rattled loudly</li>
+<li>1 few_toppled_or_fell : A few toppled or fell off</li>
+<li>2 many_toppled_or_fell : Many fell off</li>
+<li>3 everything : Nearly everything fell off</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-pictures-picture">
+<h3>fldEffects_pictures (picture)<a class="headerlink" href="#fldeffects-pictures-picture" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did pictures on walls move or get knocked askew?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>1 did_not_fall : Yes, but did not fall</li>
+<li>1 some_fell : Yes, and some fell</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-furniture-furniture">
+<h3>fldEffects_furniture (furniture)<a class="headerlink" href="#fldeffects-furniture-furniture" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Did any furniture or appliances slide, topple over, or become displaced?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>1 : Yes</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-appliances-heavy-appliance">
+<h3>fldEffects_appliances (heavy_appliance)<a class="headerlink" href="#fldeffects-appliances-heavy-appliance" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Was a heavy appliance (refrigerator or range) affected?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>fell : Yes, some contents fell out</li>
+<li>shifted : Yes, shifted by inches</li>
+<li>shifted_foot : Yes, shifted by a foot or more</li>
+<li>overturned : Yes, overturned</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="fldeffects-walls-walls">
+<h3>fldEffects_walls (walls)<a class="headerlink" href="#fldeffects-walls-walls" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Were free-standing walls or fences damaged?</li>
+</ul>
+</dd>
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>[null]  : Not specified</li>
+<li>0 : No</li>
+<li>cracked : Yes, some were cracked</li>
+<li>fell_partial : Yes, some partially fell</li>
+<li>fell_complete : Yes, some fell completely</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="d-text">
+<h3>d_text<a class="headerlink" href="#d-text" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Label:</dt>
+<dd><ul class="first last simple">
+<li>Was there any damage to the building?</li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Multiple answers are possible here. If the user selects more than one, the values are concatenated into one string.</p>
+</div>
+<dl class="docutils">
+<dt>Possible values:</dt>
+<dd><ul class="first last simple">
+<li>_none : No Damage</li>
+<li>_crackmin : Hairline cracks in walls</li>
+<li>_crackwallfew : A few large cracks in walls</li>
+<li>_crackwallmany : Many large cracks in walls</li>
+<li>_tilesfell : Ceiling tiles or lighting fixtures fell</li>
+<li>_crackchim : Cracks in chimney</li>
+<li>_crackwindows : One or several cracked windows</li>
+<li>_brokenwindows : Many windows cracked or some broken out</li>
+<li>_masonryfell : Masonry fell from block or brick wall(s)</li>
+<li>_majoroldchim : Old chimney, major damage or fell down</li>
+<li>_majormodernchim : Modern chimney, major damage or fell down</li>
+<li>_tiltedwall : Outside wall(s) tilted over or collapsed completely</li>
+<li>_porch : Separation of porch, balcony, or other addition from building</li>
+<li>_move : Building permanently shifted over foundation</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">DYFI Form Responses API</a><ul>
+<li><a class="reference internal" href="#filename">Filename</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#form-generated-fields">Form-generated fields</a><ul>
+<li><a class="reference internal" href="#eventid">eventid</a></li>
+<li><a class="reference internal" href="#eventtime-event-time">eventTime (event_time)</a></li>
+<li><a class="reference internal" href="#ciim-mapaddress-street">ciim_mapAddress (street)</a></li>
+<li><a class="reference internal" href="#ciim-mapconfidence-confidence">ciim_mapConfidence (confidence)</a></li>
+<li><a class="reference internal" href="#ciim-maplat-ciim-maplon-latitude-longitude">ciim_mapLat, ciim_mapLon (latitude, longitude)</a></li>
+<li><a class="reference internal" href="#timestamp-time-now">timestamp (time_now)</a></li>
+<li><a class="reference internal" href="#form-version-version">form_version (version)</a></li>
+<li><a class="reference internal" href="#language">language</a></li>
+<li><a class="reference internal" href="#server">server</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#user-entered-fields">User-entered fields</a><ul>
+<li><a class="reference internal" href="#ciim-time-usertime">ciim_time (usertime)</a></li>
+<li><a class="reference internal" href="#fldsituation-felt-felt">fldSituation_felt (felt)</a></li>
+<li><a class="reference internal" href="#fldsituation-situation-situation">fldSituation_situation (situation)</a></li>
+<li><a class="reference internal" href="#fldsituation-sleep-asleep">fldSituation_sleep (asleep)</a></li>
+<li><a class="reference internal" href="#fldsituation-others-other-felt">fldSituation_others (other_felt)</a></li>
+<li><a class="reference internal" href="#fldexperience-shaking-motion">fldExperience_shaking (motion)</a></li>
+<li><a class="reference internal" href="#fldexperience-reaction-reaction">fldExperience_reaction (reaction)</a></li>
+<li><a class="reference internal" href="#fldexperience-response-response">fldExperience_response (response)</a></li>
+<li><a class="reference internal" href="#fldexperience-stand-stand">fldExperience_stand (stand)</a></li>
+<li><a class="reference internal" href="#fldeffects-doors-sway">fldEffects_doors (sway)</a></li>
+<li><a class="reference internal" href="#fldeffects-sounds-creak">fldEffects_sounds (creak)</a></li>
+<li><a class="reference internal" href="#fldeffects-shelved-shelf">fldEffects_shelved (shelf)</a></li>
+<li><a class="reference internal" href="#fldeffects-pictures-picture">fldEffects_pictures (picture)</a></li>
+<li><a class="reference internal" href="#fldeffects-furniture-furniture">fldEffects_furniture (furniture)</a></li>
+<li><a class="reference internal" href="#fldeffects-appliances-heavy-appliance">fldEffects_appliances (heavy_appliance)</a></li>
+<li><a class="reference internal" href="#fldeffects-walls-walls">fldEffects_walls (walls)</a></li>
+<li><a class="reference internal" href="#d-text">d_text</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/dyfiFormAPI.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018 USGS.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/dyfiFormAPI.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

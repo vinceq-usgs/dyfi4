@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Product Guide &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -31,13 +23,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="product-guide">
@@ -171,7 +164,7 @@
 </div>
 <div class="section" id="graph-products">
 <h2>Graph Products<a class="headerlink" href="#graph-products" title="Permalink to this headline">¶</a></h2>
-<p>Note that a static image is no longer provided by DYFI. The USGS Event Pages are expected to take this data and render it on a browser via the <code class="xref py py-obj docutils literal"><span class="pre">D3</span></code> visualization package.</p>
+<p>Note that a static image is no longer provided by DYFI. The USGS Event Pages are expected to take this data and render it on a browser via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">D3</span></code> visualization package.</p>
 <p>Instead, the graph data is packaged in a JSON file. Each dataset is stored in a <strong>dataset</strong> array (see details of each file below), along with the title and x and y axis labels for plotting.</p>
 <div class="section" id="distance-vs-intensity-datafile">
 <h3>Distance vs Intensity Datafile<a class="headerlink" href="#distance-vs-intensity-datafile" title="Permalink to this headline">¶</a></h3>
@@ -320,7 +313,7 @@
 </tbody>
 </table>
 <p>This dataset is used for comparing an IPE (Intensity Prediction Equation) to the actual DYFI data. The IPE used to compute the expected intensity for a typical earthquake of this magnitude, calculated at evenly spaced intervals for plotting.</p>
-<p>In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). This IPE may be changed in the future. For more on IPEs, see the <code class="xref py py-obj docutils literal"><span class="pre">Scientific</span> <span class="pre">Discussion</span></code>.</p>
+<p>In this case, the IPE is Atkinson, Worden, Wald 2014 (Western North America). This IPE may be changed in the future. For more on IPEs, see the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Scientific</span> <span class="pre">Discussion</span></code>.</p>
 </div>
 <div class="section" id="estimated-intensity-2">
 <h4>Estimated Intensity 2<a class="headerlink" href="#estimated-intensity-2" title="Permalink to this headline">¶</a></h4>
@@ -344,7 +337,7 @@
 </tr>
 </tbody>
 </table>
-<p>Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). this IPE may be changed in the future. For more on IPEs, see the <code class="xref py py-obj docutils literal"><span class="pre">Scientific</span> <span class="pre">Discussion</span></code>.</p>
+<p>Same as above, except the IPE used is Atkinson, Worden, Wald 2014 (Eastern North America). this IPE may be changed in the future. For more on IPEs, see the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Scientific</span> <span class="pre">Discussion</span></code>.</p>
 </div>
 </div>
 <div class="section" id="time-vs-responses-datafile">
@@ -381,6 +374,7 @@
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -428,12 +422,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -444,8 +440,8 @@
       &copy;2018 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/product-guide.rst.txt"

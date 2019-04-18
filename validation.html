@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Validation &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -30,13 +22,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="validation">
@@ -48,7 +41,7 @@ the algorithm as shown here:</p>
 David Jay Wald, Vincent Quitoriano, Charles Bruce Worden, Margaret Hopper, James W. Dewey.
 ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <p>To calculate a DYFI intensity, we first assign numerical values to individual answers to each question in the questionnaire. For each “community” (i.e., geocoded block), the numerical values assigned to each questionnaire are averaged. A weighted sum of the community values for each question, the “Community Weighted Sum”, is then computed based on the following equation:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">CWS</span> <span class="o">=</span> <span class="mi">5</span> <span class="n">x</span> <span class="s2">&quot;felt&quot;</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CWS</span> <span class="o">=</span> <span class="mi">5</span> <span class="n">x</span> <span class="s2">&quot;felt&quot;</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="o">+</span> <span class="mi">1</span> <span class="n">x</span> <span class="s2">&quot;motion&quot;</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
     <span class="o">+</span> <span class="mi">1</span> <span class="n">x</span> <span class="s2">&quot;reaction&quot;</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
     <span class="o">+</span> <span class="mi">2</span> <span class="n">x</span> <span class="s2">&quot;stand&quot;</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -61,19 +54,19 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </pre></div>
 </div>
 <p>The intensity is then computed as:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Intensity</span> <span class="o">=</span> <span class="o">|</span><span class="n">ln</span><span class="o">|</span><span class="p">(</span><span class="n">cws</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.3996</span> <span class="o">-</span> <span class="mf">4.3781</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Intensity</span> <span class="o">=</span> <span class="o">|</span><span class="n">ln</span><span class="o">|</span><span class="p">(</span><span class="n">cws</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.3996</span> <span class="o">-</span> <span class="mf">4.3781</span>
 </pre></div>
 </div>
 <div class="section" id="test-1-single-entry">
 <h2>Test 1. Single entry<a class="headerlink" href="#test-1-single-entry" title="Permalink to this headline">¶</a></h2>
 <p>An entry composed of a single ‘I felt it’ response, which results in a CWS of 5.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">5.0</span>
 </pre></div>
 </div>
 <p>For any ‘felt’ response, the minimum intensity is 2 (which corresponds to ‘felt’ on the MMI intensity scale).</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 <span class="go">2</span>
 </pre></div>
 </div>
@@ -81,21 +74,21 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <div class="section" id="test-2-multiple-indices">
 <h2>Test 2. Multiple indices<a class="headerlink" href="#test-2-multiple-indices" title="Permalink to this headline">¶</a></h2>
 <p>Entries with multiple questions answered, resulting in a higher intensity.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">8.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 <span class="go">2.7</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">18.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 <span class="go">5.4</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;picture&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;furniture&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;picture&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;furniture&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">37.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
@@ -145,17 +138,17 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </table>
 </div></blockquote>
 <p>If the user indicates that neither they nor others felt anything, then the ‘felt’ index is 0.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}))</span>
 <span class="go">0</span>
 </pre></div>
 </div>
 <p>If the user indicates that they felt the earthquake (felt index = 1) but no others felt it (other_felt = 2), the ‘felt’ index is changed to 0.36.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}))</span>
 <span class="go">0.36</span>
 </pre></div>
 </div>
 <p>‘other_felt’ values of 3 and higher overwrite the ‘felt’ value.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}))</span>
 <span class="go">0.72</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getFeltFromOther</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;other_felt&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">}))</span>
 <span class="go">1</span>
@@ -169,78 +162,78 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <p>The ‘damage’ index is populated by the user ticking on any number of boxes that indicate the damage they observe.  The following tests show the text string and damage value corresponding to each of the possible checkboxes on the questionnaire.</p>
 <blockquote>
 <div><p>No damage:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_none&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_none&#39;</span><span class="p">)</span>
 <span class="go">0</span>
 </pre></div>
 </div>
 <p>Hairline cracks in walls:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackmin&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackmin&#39;</span><span class="p">)</span>
 <span class="go">0.5</span>
 </pre></div>
 </div>
 <p>A few large cracks in walls:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwallfew&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwallfew&#39;</span><span class="p">)</span>
 <span class="go">0.75</span>
 </pre></div>
 </div>
 <p>Many large cracks in walls:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwallmany&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwallmany&#39;</span><span class="p">)</span>
 <span class="go">1</span>
 </pre></div>
 </div>
 <p>Ceiling tiles or lighting fixtures fell:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_tilesfell&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_tilesfell&#39;</span><span class="p">)</span>
 <span class="go">1</span>
 </pre></div>
 </div>
 <p>Cracks in chimney:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackchim&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackchim&#39;</span><span class="p">)</span>
 <span class="go">1</span>
 </pre></div>
 </div>
 <p>One or several cracked windows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwindows&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackwindows&#39;</span><span class="p">)</span>
 <span class="go">0.5</span>
 </pre></div>
 </div>
 <p>Many windows cracked or some broken out:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_brokenwindows&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_brokenwindows&#39;</span><span class="p">)</span>
 <span class="go">2</span>
 </pre></div>
 </div>
 <p>Masonry fell from block or brick wall(s):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_masonryfell&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_masonryfell&#39;</span><span class="p">)</span>
 <span class="go">2</span>
 </pre></div>
 </div>
 <p>Old chimney, major damage or fell down:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_majoroldchim&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_majoroldchim&#39;</span><span class="p">)</span>
 <span class="go">2</span>
 </pre></div>
 </div>
 <p>Modern chimney, major damage or fell down:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_majormodernchim&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_majormodernchim&#39;</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 <p>Outside wall(s) tilted over or collapsed completely:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_tiltedwall&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_tiltedwall&#39;</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 <p>Separation of porch, balcony, or other addition from building:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_porch&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_porch&#39;</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 <p>Building permanently shifted over foundation:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_move&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_move&#39;</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 </div></blockquote>
 <p>When multiple damage boxes are checked, the largest corresponding value is used.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackmin _crackwallfew _masonry _porch&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">getDamageFromText</span><span class="p">(</span><span class="s1">&#39;_crackmin _crackwallfew _masonry _porch&#39;</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
 </div>
@@ -249,7 +242,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <h2>Test 5. Multiple entries<a class="headerlink" href="#test-5-multiple-entries" title="Permalink to this headline">¶</a></h2>
 <p>When multiple entries are aggregated in a single location, the intensity is NOT merely the mean of intensities. Instead, the mean is calculated for each index of the CWS equation, before calculating the intensity.</p>
 <p>In this example, the CWS for two entries is calculated separately, and for the aggregate of the two.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry_1</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry_1</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entry_2</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;motion&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;stand&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;shelf&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_1</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_2</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">(5.0, 20.0)</span>
@@ -258,7 +251,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </pre></div>
 </div>
 <p>Now the intensities are calculated separately and for the aggregate. Note that the aggregate intensity is not the mean of the individual entry intensities.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_1</span><span class="p">),</span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_2</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_1</span><span class="p">),</span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_2</span><span class="p">)</span>
 <span class="go">(2, 5.8)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">([</span><span class="n">entry_1</span><span class="p">,</span><span class="n">entry_2</span><span class="p">])</span>
 <span class="go">4.2</span>
@@ -269,7 +262,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <h2>Test 6. Multiple entries with unanswered indices<a class="headerlink" href="#test-6-multiple-entries-with-unanswered-indices" title="Permalink to this headline">¶</a></h2>
 <p>When an entry does not have a value for an index (the user did not answer that particular portion of the questionnaire, i.e. a “null response”), then that questionnaire is not counted for that particular index.</p>
 <p>In the following example, the first entry does not have a ‘reaction’ value. Therefore, during aggregation, the reaction index only counts the value for the second entry.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry_1</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entry_1</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entry_2</span><span class="o">=</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;felt&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entry_1</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">5.0</span>
@@ -283,7 +276,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <div class="section" id="test-7-null-response-vs-no-response">
 <h2>Test 7. Null response vs no response<a class="headerlink" href="#test-7-null-response-vs-no-response" title="Permalink to this headline">¶</a></h2>
 <p>To show the difference between a null response and a “No” response, we set up the following example: 9 entries with ‘reaction’ indices set to null,  and one entry with a ‘reaction’ index of 1.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">=</span><span class="p">[]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">=</span><span class="p">[]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">}))</span>
@@ -292,7 +285,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </pre></div>
 </div>
 <p>We then set up a different set of 9 entries with ‘reaction’ indices set to 0, and one entry set to 1.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">=</span><span class="p">[]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">=</span><span class="p">[]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Entry</span><span class="p">({</span><span class="s1">&#39;reaction&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">}))</span>
@@ -307,13 +300,13 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 <p>The following is a comparison of DYFI products from Version 3 (the current live version) and the new Version 4. The test event is the 2016-09-03 M5.8 event near Pawnee, Oklahoma (USGS event ID us10006jxs).</p>
 <p>We compare the results of the 10km geocoded datasets, in particular the GeoJSON files. We assume that the latest version of DYFI4 was run to populate the data directory at ‘[root]/data/us10006jxs’. This test extracts the datafile ‘dyfi_geo_10km.geojson’ for that event. For comparison, a copy of the equivalent file from DYFI3 is stored at ‘[root]/tests/data/us10006jxs’ (last processed 30-03-2018).</p>
 <p>Both DYFI3 and DYFI4 runs are using the same input data with 61,961 raw entries.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">json_dyfi3</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../tests/data/us10006jxs/dyfi_geo_10km.geojson&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">json_dyfi4</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;../data/us10006jxs/dyfi_geo_10km.geojson&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>We parse the raw GeoJSON file for the DYFI4 dataset and extract the intensity at each location (which is indexed by the UTM geolocation string).</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dyfi4intensity</span><span class="o">=</span><span class="p">{}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dyfi4intensity</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">json_dyfi4</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">utmstring</span><span class="o">=</span><span class="n">location</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
 <span class="gp">... </span>    <span class="n">dyfi4intensity</span><span class="p">[</span><span class="n">utmstring</span><span class="p">]</span><span class="o">=</span><span class="n">location</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span>
@@ -323,7 +316,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </div>
 <p>We do the same for the DYFI3 dataset.</p>
 <p>Note that the old DYFI3 style UTM string is converted to the DYFI4 style string (e.g. ‘650000 3990000 11 S’) so that they can be compared directly.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dyfi3intensity</span><span class="o">=</span><span class="p">{}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dyfi3intensity</span><span class="o">=</span><span class="p">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">json_dyfi3</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">utmstring</span><span class="o">=</span><span class="n">location</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
 <span class="gp">... </span>    <span class="n">utmstring</span><span class="o">=</span><span class="n">dyfi3todyfi4format</span><span class="p">(</span><span class="n">utmstring</span><span class="p">)</span>
@@ -333,13 +326,13 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 </pre></div>
 </div>
 <p>Now we compare the locations at each dataset and make sure they are the same.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">commonLocations</span><span class="o">=</span><span class="n">dyfi3intensity</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">dyfi4intensity</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">commonLocations</span><span class="o">=</span><span class="n">dyfi3intensity</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">dyfi4intensity</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">commonLocations</span><span class="p">),</span><span class="s1">&#39;locations in common.&#39;</span><span class="p">)</span>
 <span class="go">There are 5204 locations in common.</span>
 </pre></div>
 </div>
 <p>Finally we compare the intensities computed at each location and make sure they are the same.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="o">=</span><span class="mi">0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="o">=</span><span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">utm</span> <span class="ow">in</span> <span class="n">commonLocations</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">dyfi3intensity</span><span class="p">[</span><span class="n">utm</span><span class="p">]</span><span class="o">==</span><span class="n">dyfi4intensity</span><span class="p">[</span><span class="n">utm</span><span class="p">]:</span>
 <span class="gp">... </span>        <span class="n">count</span><span class="o">+=</span><span class="mi">1</span>
@@ -352,6 +345,7 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -387,12 +381,14 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -403,8 +399,8 @@ ANNALS OF GEOPHYSICS, 54, 6, 2011; doi: 10.4401/ag-5354</div></blockquote>
       &copy;2018 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/validation.rst.txt"

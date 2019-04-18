@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>dyfi.contents &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -29,13 +21,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for dyfi.contents</h1><div class="highlight"><pre>
@@ -66,22 +59,23 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># TODO: Turn this into yaml file</span>
     <span class="n">PRODUCT_TYPES</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">((</span>
       <span class="p">(</span><span class="s2">&quot;_ciim&quot;</span><span class="p">,{</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI City Map&quot;</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;cityMap&quot;</span><span class="p">,</span>
             <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by city or ZIP code&quot;</span>
         <span class="p">}),</span>
-      <span class="p">(</span><span class="s2">&quot;_ciim_geo&quot;</span><span class="p">,{</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geocoded Map&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geoMap&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by geocoded location&quot;</span><span class="p">,</span>
-        <span class="p">}),</span>
-      <span class="p">(</span><span class="s2">&quot;_ciim_geocode&quot;</span><span class="p">,{</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Geocoded Map&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;geoMap&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;caption&quot;</span><span class="p">:</span><span class="s2">&quot;Map of responses by geocoded location&quot;</span><span class="p">,</span>
-        <span class="p">}),</span>
+<span class="c1">#      (&quot;_ciim_geo&quot;,{</span>
+<span class="c1">#            &quot;title&quot;:&quot;DYFI Geocoded Map&quot;,</span>
+<span class="c1">#            &quot;id&quot;:&quot;geoMap&quot;,</span>
+<span class="c1">#            &quot;caption&quot;:&quot;Map of responses by geocoded location&quot;,</span>
+<span class="c1">#        }),</span>
+<span class="c1">#      (&quot;_ciim_geocode&quot;,{</span>
+<span class="c1">#            &quot;title&quot;:&quot;DYFI Geocoded Map&quot;,</span>
+<span class="c1">#            &quot;id&quot;:&quot;geoMap&quot;,</span>
+<span class="c1">#            &quot;caption&quot;:&quot;Map of responses by geocoded location&quot;,</span>
+<span class="c1">#        }),</span>
       <span class="p">(</span><span class="s2">&quot;_ciim_zoom&quot;</span><span class="p">,{</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span><span class="s2">&quot;DYFI Zoom Map&quot;</span><span class="p">,</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="s2">&quot;zoomMap&quot;</span><span class="p">,</span>
@@ -200,8 +194,7 @@
             <span class="n">filenode</span><span class="o">=</span><span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">)</span>
             <span class="n">filenode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
             <span class="n">filenode</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
-            <span class="n">caption</span><span class="o">=</span><span class="n">filenode</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span>
-                <span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;caption&#39;</span><span class="p">))</span>
+            <span class="n">caption</span><span class="o">=</span><span class="n">filenode</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">xml</span><span class="o">.</span><span class="n">createElement</span><span class="p">(</span><span class="s1">&#39;caption&#39;</span><span class="p">))</span>
             <span class="n">caption</span><span class="o">.</span><span class="n">appendChild</span><span class="p">(</span><span class="n">xml</span><span class="o">.</span><span class="n">createCDATASection</span><span class="p">(</span><span class="n">pdata</span><span class="p">[</span><span class="s1">&#39;caption&#39;</span><span class="p">]))</span>
 
             <span class="n">found</span><span class="o">=</span><span class="p">[]</span>
@@ -267,6 +260,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -281,12 +275,14 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -297,8 +293,8 @@
       &copy;2018 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

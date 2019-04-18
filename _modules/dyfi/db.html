@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>dyfi.db &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -29,18 +21,19 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for dyfi.db</h1><div class="highlight"><pre>
 <span></span><span class="c1"># To use MySQL,</span>
-<span class="c1"># 1. change line 6 from .rawDbSqlite to .rawDbMysql</span>
+<span class="c1"># 1. change import from .rawDbSqlite to .rawDbMysql</span>
 <span class="c1"># 2. same for dyfi/__init__.py</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -111,24 +104,31 @@
 
 <span class="sd">        Save this object to the database. This is mostly a stub to the `RawDb` :py:obj:`save` function.</span>
 
+<span class="sd">        If the primary exists on this table (eventid or subid), this will rewrite the row. Otherwise, it will create a new row.</span>
+
 <span class="sd">        For consistency, if the object is an `Entry` object, this will automagically overwrite the `table` attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
-            <span class="n">table</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">table</span>
+        <span class="n">isDict</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
+                <span class="n">table</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">table</span>
+            <span class="k">elif</span> <span class="n">isDict</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">=</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Db.save: table not specified&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;extended&#39;</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getExtendedTablesByDatetime</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;time_now&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">time_now</span><span class="o">=</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;time_now&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">isDict</span> <span class="k">else</span> <span class="n">obj</span><span class="o">.</span><span class="n">time_now</span>
+            <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getExtendedTablesByDatetime</span><span class="p">(</span><span class="n">time_now</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">table</span><span class="o">==</span><span class="s1">&#39;event&#39;</span> <span class="ow">or</span> <span class="s1">&#39;extended&#39;</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s1">&#39;table&#39;</span><span class="p">):</span>
-                <span class="n">obj</span><span class="o">.</span><span class="n">table</span><span class="o">=</span><span class="n">table</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isDict</span><span class="p">:</span>
                 <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">table</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">table</span><span class="o">=</span><span class="n">table</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Db.save: unsupported table&#39;</span><span class="p">)</span></div>
@@ -158,33 +158,9 @@
         <span class="k">return</span> <span class="n">results</span></div>
 
 
-<div class="viewcode-block" id="Db.loadMaps"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.loadMaps">[docs]</a>    <span class="k">def</span> <span class="nf">loadMaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        :synopsis: Read database for a list of maps for an event ID</span>
-<span class="sd">        :param str evid: event ID, e.g. &#39;us1000abcd&#39;</span>
-<span class="sd">        :returns: list of rows suitable for input to a :py:obj:`Maps` instance</span>
-
-<span class="sd">        This is mostly a wrapper to the `RawDb` :py:meth:`query` method.</span>
-
-<span class="sd">        Each item in the return list is a dict with keys</span>
-<span class="sd">        being columns to the `maps` table.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">table</span><span class="o">=</span><span class="s1">&#39;maps&#39;</span>
-        <span class="n">clause</span><span class="o">=</span><span class="s1">&#39;eventid=?&#39;</span>
-        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">evid</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="c1"># We expect multiple rows</span>
-        <span class="k">return</span> <span class="n">results</span></div>
-
-
 <div class="viewcode-block" id="Db.loadEntries"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.loadEntries">[docs]</a>    <span class="k">def</span> <span class="nf">loadEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">startdatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">querytext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loadSuspect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                    <span class="n">table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">startdatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">enddatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">timewindow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">querytext</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">loadSuspect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :synopsis: Search the extended tables for entries matching a query</span>
@@ -192,6 +168,8 @@
 <span class="sd">        :param Event event: (optional) Event object</span>
 <span class="sd">        :param table: (optional) table or tables</span>
 <span class="sd">        :param startdatetime: (optional) datetime to start search</span>
+<span class="sd">        :param enddatetime: (optional) datetime to end search</span>
+<span class="sd">        :param timewindow: (optional) time window in hours after startdatetime</span>
 <span class="sd">        :param str querytext: (optional) clause(s)</span>
 <span class="sd">        :returns: list of entries suitable for aggregation</span>
 
@@ -242,6 +220,15 @@
             <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;time_now&gt;=?&#39;</span><span class="p">)</span>
             <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">startdatetime</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">enddatetime</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;time_now&lt;=?&#39;</span><span class="p">)</span>
+            <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">enddatetime</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">timewindow</span><span class="p">:</span>
+            <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;time_now&lt;=datetime(?,?)&#39;</span><span class="p">)</span>
+            <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">startdatetime</span><span class="p">)</span>
+            <span class="n">mysubs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;+</span><span class="si">%s</span><span class="s1"> hour&#39;</span> <span class="o">%</span> <span class="n">timewindow</span><span class="p">)</span>
+            
         <span class="k">if</span> <span class="ow">not</span> <span class="n">loadSuspect</span><span class="p">:</span>
             <span class="n">myclauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(suspect=&quot;&quot; or suspect=0 or suspect is null)&#39;</span><span class="p">)</span>
 
@@ -251,6 +238,8 @@
             <span class="n">querytext</span><span class="o">=</span><span class="s1">&#39; AND &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">myclauses</span><span class="p">)</span>
 
         <span class="c1"># This will automagically create a &#39;table&#39; key for each entry</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">querytext</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">mysubs</span><span class="p">)</span>
         <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">querytext</span><span class="p">,</span><span class="n">mysubs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -339,6 +328,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">date</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ERROR: getExtendedTablesByDateTime: Got blank date&#39;</span><span class="p">)</span>
+
         <span class="n">year</span><span class="o">=</span><span class="kc">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
           <span class="k">try</span><span class="p">:</span>
@@ -360,22 +352,14 @@
         <span class="k">return</span> <span class="n">Db</span><span class="o">.</span><span class="n">EXTTABLES</span><span class="p">[(</span><span class="n">year</span><span class="o">-</span><span class="n">Db</span><span class="o">.</span><span class="n">EXT_MINYR</span><span class="o">+</span><span class="mi">1</span><span class="p">)::]</span></div>
 
 
-<div class="viewcode-block" id="Db.timeago"><a class="viewcode-back" href="../../dyfi.html#dyfi.db.Db.timeago">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">timeago</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">updateEventResponses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="n">nresponses</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">maxint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-<span class="sd">        :synopsis: Compute a past datetime</span>
-<span class="sd">        :param int t: Time interval in minutes</span>
-<span class="sd">        :returns: :py:obj:`Datetime` object</span>
-
-<span class="sd">        Returns the datetime from :py:attr:`t` minutes ago.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">t0</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-        <span class="n">tdelta</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-        <span class="n">tnew</span><span class="o">=</span><span class="n">t0</span><span class="o">-</span><span class="n">tdelta</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">tnew</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">nresponses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="s1">&#39;nresponses&#39;</span><span class="p">,</span><span class="n">nresponses</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updated&#39;</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="s1">&#39;nresponses to&#39;</span><span class="p">,</span><span class="n">nresponses</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">maxint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="s1">&#39;max_intensity&#39;</span><span class="p">,</span><span class="n">maxint</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updated&#39;</span><span class="p">,</span><span class="n">evid</span><span class="p">,</span><span class="s1">&#39;max_intensity to&#39;</span><span class="p">,</span><span class="n">maxint</span><span class="p">)</span>
 
 
     <span class="nd">@staticmethod</span>
@@ -387,11 +371,27 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">loadGeoname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">utmstring</span><span class="p">):</span>
+
+        <span class="n">table</span><span class="o">=</span><span class="s1">&#39;geonames&#39;</span>
+        <span class="n">clause</span><span class="o">=</span><span class="s1">&#39;utmstring=?&#39;</span>
+        <span class="n">results</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rawdb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span><span class="n">clause</span><span class="p">,</span><span class="n">utmstring</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;Multiple UTM strings found, using only the first&#39;</span><span class="p">))</span>
+
+        <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">results</span></div>
 
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -406,12 +406,14 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -422,8 +424,8 @@
       &copy;2018 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

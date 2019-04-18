@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>dyfi.aggregate &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '2.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
@@ -29,13 +21,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <h1>Source code for dyfi.aggregate</h1><div class="highlight"><pre>
@@ -161,12 +154,6 @@
 
         <span class="n">thiscdi</span><span class="o">=</span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span><span class="n">cwsOnly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span>
         <span class="n">thiscdiFine</span><span class="o">=</span><span class="n">cdi</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span><span class="n">fine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-            <span class="n">debugInfo</span><span class="o">=</span><span class="n">thiscdi</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span>
-            <span class="n">debugTotal</span><span class="o">=</span><span class="n">thiscdi</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span>
-            <span class="n">debugRawcdi</span><span class="o">=</span><span class="n">thiscdi</span><span class="p">[</span><span class="s1">&#39;rawcdi&#39;</span><span class="p">]</span>
-            <span class="n">thiscdi</span><span class="o">=</span><span class="n">thiscdi</span><span class="p">[</span><span class="s1">&#39;cdi&#39;</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="n">thiscdi</span><span class="o">&gt;</span><span class="n">maxcdi</span><span class="p">:</span>
             <span class="n">maxcdi</span><span class="o">=</span><span class="n">thiscdi</span>
 
@@ -182,15 +169,15 @@
             <span class="p">}</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-            <span class="n">pt</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">debugInfo</span>
-            <span class="n">pt</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">debugTotal</span>
-            <span class="n">pt</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;rawcdi&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">debugRawcdi</span>
+        <span class="c1"># HACK: USGS Event Pages look for different names for these properties.</span>
+        <span class="n">pt</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;cdi&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">thiscdi</span>
+        <span class="n">pt</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;UTM:(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">location</span>
 
         <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span>
 
     <span class="n">featurecollection</span><span class="o">=</span><span class="n">geojson</span><span class="o">.</span><span class="n">FeatureCollection</span><span class="p">(</span>
         <span class="nb">id</span><span class="o">=</span><span class="n">producttype</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">producttype</span><span class="p">,</span>
         <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
         <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
             <span class="s1">&#39;nresp&#39;</span><span class="p">:</span><span class="n">totalresp</span><span class="p">,</span>
@@ -198,7 +185,6 @@
         <span class="p">}</span>
     <span class="p">)</span>
 
-    <span class="n">featurecollection</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="n">producttype</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aggregate: </span><span class="si">%i</span><span class="s1"> pts into </span><span class="si">%i</span><span class="s1"> locations, maxint=</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span>
           <span class="p">(</span><span class="n">npts</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">),</span><span class="n">maxcdi</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">featurecollection</span></div>
@@ -288,7 +274,7 @@
 <div class="viewcode-block" id="checkConfidence"><a class="viewcode-back" href="../../dyfi.html#dyfi.aggregate.checkConfidence">[docs]</a><span class="k">def</span> <span class="nf">checkConfidence</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span><span class="n">span</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">    If entry.span is specified, use it to check against the geocoding span.</span>
+<span class="sd">    If entry confidence is specified, use it to check against the geocoding span.</span>
 <span class="sd">    Otherwise, use the length of the latitude and longitude strings.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -360,15 +346,15 @@
     <span class="c1"># Rounding needed otherwise lat/lon coordinates are arbitrarily long</span>
 
     <span class="n">ebound</span><span class="o">=</span><span class="n">zone</span><span class="o">*</span><span class="mi">6</span><span class="o">-</span><span class="mi">180</span>
-    <span class="n">wbound</span><span class="o">=</span><span class="n">ebound</span><span class="o">-</span><span class="mi">6</span>
+    <span class="c1">#wbound=ebound-6</span>
 
     <span class="k">def</span> <span class="nf">_reverse</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span><span class="n">eastborder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">=</span><span class="n">tup</span>
         <span class="k">if</span> <span class="n">eastborder</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&gt;</span><span class="n">ebound</span><span class="p">:</span>
             <span class="n">x</span><span class="o">=</span><span class="n">ebound</span>
-        <span class="k">elif</span> <span class="n">x</span><span class="o">&lt;</span><span class="n">wbound</span><span class="p">:</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">wbound</span>
+        <span class="c1">#elif x&lt;wbound:</span>
+        <span class="c1">#    x=wbound</span>
         <span class="n">x</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">PRECISION</span><span class="p">)</span>
         <span class="n">y</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">PRECISION</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
@@ -478,6 +464,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -492,12 +479,14 @@
 </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -508,8 +497,8 @@
       &copy;2018 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 
