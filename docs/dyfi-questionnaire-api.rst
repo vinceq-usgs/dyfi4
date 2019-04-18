@@ -1,5 +1,5 @@
-DYFI Form Responses API V0.3
-****************************
+DYFI Form Responses API
+***********************
 
 (V0.3 updated 2018-08-03)
 
