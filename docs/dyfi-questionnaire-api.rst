@@ -12,16 +12,18 @@ entry.[server].[eventid].[timestamp].[process_id].json
 
 Note that the filename is flexible. Only the ‘entry’ and ‘.json’ text is checked by the backend. However the naming convention makes it easier for the operator to troubleshoot issues.
 
-[server] should be some indication of the origin of the response (e.g. prod01, prod02, dev01, etc.)
+[server] should be some indication of the origin of the response (e.g. prod01, prod02, dev01, etc.) It can be hashed or encoded, as long as it is unique.
+
 [eventid] should be the assumed event ID associated with this response, or ‘unknown’
-[timestamp] and [process_id] are for preventing namespace collisions.
+
+[timestamp] and [process_id] are for preventing namespace collisions. You can use any method to guarantee uniqueness.
 
 Contents
 ========
 
 - The file must be a valid JSON file. 
 - Key values should be strings, not numeric.
-- The DYFI algorithm treats ‘0’ responses differently from null responses. Null responses should be no value or the key will be missing entirely.
+- The DYFI algorithm treats ‘0’ (zero) value responses differently from null responses. Null responses should be no value (''), or 'null', or the key should not exist.
 - The order of keys does not matter.
 
 Example::
@@ -106,7 +108,7 @@ The version of the questionnaire online. This is updated only when the source is
 language
 --------
 
-A code that specifies the language version used for the form. Supported values are 'en' (English) and 'es' (Spanish).
+A code that specifies the language version used for the form. Curently supported values are 'en' (English) and 'es' (Spanish). This is for statistical purposes only.
 
 server
 ------

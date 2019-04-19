@@ -9,12 +9,12 @@ However, web-based contributions also pose considerable challenges compared to t
 
 For a scientific overview of the DYFI system, see: 
 
-    Wald, D.J., V. Quitoriano, C.B. Worden, M. Hopper, and J. W. Dewey (2012). USGS “Did You Feel It?” Internet-based Macroseismic Intensity Maps. Annals of Geophysics, 54, No. 6, 2011; doi: 10.4401/ag-5354
+    Wald, D.J., V. Quitoriano, C.B. Worden, M. Hopper, and J. W. Dewey (2011). USGS “Did You Feel It?” Internet-based Macroseismic Intensity Maps. Annals of Geophysics, 54, No. 6. doi: 10.4401/ag-5354
 
 Organization of this manual
 ...........................
 
-This Manual is split into five parts.
+This Manual is split into several parts.
 
 - For an explanation of the products and formats produced by DYFI suitable for end-product users, see the :doc:`Product Guide <product-guide>`.
 
@@ -23,6 +23,8 @@ This Manual is split into five parts.
 - For an in-depth look at DYFI architecture and operations, see the :doc:`Technical Guide <technical-guide>`.
 
 - For notes on the implemention of DYFI (and possible guidance on installing it on your own system), see the :doc:`Implementation Guide <implementation-guide>`.
+
+- For the formatting of questionnaire entries, in case you wish to create a separate questionnaire, see the :doc:`DYFI Questionnaire API <dyfi-questionnaire-api>`.
 
 - Code documentation can be found in the :doc:`Program List <modules>`.
 
