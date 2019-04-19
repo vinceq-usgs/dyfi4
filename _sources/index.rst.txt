@@ -21,7 +21,11 @@ Contents
    scientific-discussion.rst
    technical-guide.rst
    implementation-guide.rst
-   dyfi-questionnaire-api.rst
+
+.. toctree::
+    :maxdepth: 1
+
+    dyfi-questionnaire-api.rst
 
 Commands and modules
 --------------------

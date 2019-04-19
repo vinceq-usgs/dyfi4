@@ -41,16 +41,16 @@
 <h2>Filename<a class="headerlink" href="#filename" title="Permalink to this headline">¶</a></h2>
 <p>entry.[server].[eventid].[timestamp].[process_id].json</p>
 <p>Note that the filename is flexible. Only the ‘entry’ and ‘.json’ text is checked by the backend. However the naming convention makes it easier for the operator to troubleshoot issues.</p>
-<p>[server] should be some indication of the origin of the response (e.g. prod01, prod02, dev01, etc.)
-[eventid] should be the assumed event ID associated with this response, or ‘unknown’
-[timestamp] and [process_id] are for preventing namespace collisions.</p>
+<p>[server] should be some indication of the origin of the response (e.g. prod01, prod02, dev01, etc.) It can be hashed or encoded, as long as it is unique.</p>
+<p>[eventid] should be the assumed event ID associated with this response, or ‘unknown’</p>
+<p>[timestamp] and [process_id] are for preventing namespace collisions. You can use any method to guarantee uniqueness.</p>
 </div>
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>The file must be a valid JSON file.</li>
 <li>Key values should be strings, not numeric.</li>
-<li>The DYFI algorithm treats ‘0’ responses differently from null responses. Null responses should be no value or the key will be missing entirely.</li>
+<li>The DYFI algorithm treats ‘0’ (zero) value responses differently from null responses. Null responses should be no value (‘’), or ‘null’, or the key should not exist.</li>
 <li>The order of keys does not matter.</li>
 </ul>
 <p>Example:</p>
@@ -126,7 +126,7 @@
 </div>
 <div class="section" id="language">
 <h3>language<a class="headerlink" href="#language" title="Permalink to this headline">¶</a></h3>
-<p>A code that specifies the language version used for the form. Supported values are ‘en’ (English) and ‘es’ (Spanish).</p>
+<p>A code that specifies the language version used for the form. Curently supported values are ‘en’ (English) and ‘es’ (Spanish). This is for statistical purposes only.</p>
 </div>
 <div class="section" id="server">
 <h3>server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h3>
