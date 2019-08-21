@@ -35,6 +35,7 @@ log.*
 tests/db/*
 event.db
 movie/*.apng
+flags/
 
 # These auxiliary commands are local server dependent (and not properly
 # generalized), don't export yet
@@ -43,4 +44,3 @@ bin/cron_getentries.sh
 bin/cron_trigger.sh
 bin/restore_db.sh
 bin/cron_*
-
