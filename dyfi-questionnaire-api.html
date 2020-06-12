@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>DYFI Questionnaire API &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="rundyfi.py" href="app.html" />
@@ -35,7 +34,10 @@
             
   <div class="section" id="dyfi-questionnaire-api">
 <h1>DYFI Questionnaire API<a class="headerlink" href="#dyfi-questionnaire-api" title="Permalink to this headline">¶</a></h1>
-<p>(V0.3 updated 2018-08-03)</p>
+<ul class="simple">
+<li><p>V0.4 2020-06-01: Add support for _other fields</p></li>
+<li><p>V0.3 2019-04-18: Change title to questionnaire API, attach to DYFI manual</p></li>
+</ul>
 <p>The DYFI4 backend accepts response files from the DYFI Questionnaire. Each file represents one user response. The backend supports files containing raw query strings (deprecated) and JSON data. The JSON format is described below.</p>
 <div class="section" id="filename">
 <h2>Filename<a class="headerlink" href="#filename" title="Permalink to this headline">¶</a></h2>
@@ -48,10 +50,10 @@
 <div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>The file must be a valid JSON file.</li>
-<li>Key values should be strings, not numeric.</li>
-<li>The DYFI algorithm treats ‘0’ (zero) value responses differently from null responses. Null responses should be no value (‘’), or ‘null’, or the key should not exist.</li>
-<li>The order of keys does not matter.</li>
+<li><p>The file must be a valid JSON file.</p></li>
+<li><p>Key values should be strings, not numeric.</p></li>
+<li><p>The DYFI algorithm treats ‘0’ (zero) value responses differently from null responses. Null responses should be no value (‘’), or ‘null’, or the key should not exist.</p></li>
+<li><p>The order of keys does not matter.</p></li>
 </ul>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -104,12 +106,12 @@
 <p>A measure the confidence of the geolocation method, computed by the web form’s geocoding algorithm.</p>
 <p>Possible values:</p>
 <ul class="simple">
-<li>5 rooftop precision</li>
-<li>4 neighborhood precision (~100 m)</li>
-<li>3 block precision (~1 km)</li>
-<li>2 city precision (~10 km)</li>
-<li>1 regional precision (~100 km)</li>
-<li>0 unknown or bad location</li>
+<li><p>5 rooftop precision</p></li>
+<li><p>4 neighborhood precision (~100 m)</p></li>
+<li><p>3 block precision (~1 km)</p></li>
+<li><p>2 city precision (~10 km)</p></li>
+<li><p>1 regional precision (~100 km)</p></li>
+<li><p>0 unknown or bad location</p></li>
 </ul>
 </div>
 <div class="section" id="ciim-maplat-ciim-maplon-latitude-longitude">
@@ -137,15 +139,14 @@
 <h2>User-entered fields<a class="headerlink" href="#user-entered-fields" title="Permalink to this headline">¶</a></h2>
 <p>The following fields are filled in by the user.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If a null value is an option, it will be the default. Null values are treated differently from ‘0’ in the DYFI algorithm.</p>
+<p class="admonition-title">Note</p>
+<p>If a null value is an option, it will be the default. Null values are treated differently from ‘0’ in the DYFI algorithm.</p>
 </div>
 <div class="section" id="ciim-time-usertime">
 <h3>ciim_time (usertime)<a class="headerlink" href="#ciim-time-usertime" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Time of earthquake</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Time of earthquake</p></li>
 </ul>
 </dd>
 </dl>
@@ -153,320 +154,306 @@
 </div>
 <div class="section" id="fldsituation-felt-felt">
 <h3>fldSituation_felt (felt)<a class="headerlink" href="#fldsituation-felt-felt" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did you feel it?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did you feel it?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>1 : Yes</li>
-<li>0 : No</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>1 : Yes</p></li>
+<li><p>0 : No</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldsituation-situation-situation">
 <h3>fldSituation_situation (situation)<a class="headerlink" href="#fldsituation-situation-situation" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>What was your situation during the earthquake?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>What was your situation during the earthquake?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null] : Not specified</li>
-<li>inside : Inside a building</li>
-<li>outside : Outside a building</li>
-<li>veh_stopped : In a stopped vehicle</li>
-<li>veh_moving : In a moving vehicle</li>
-<li>other : Other</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null] : Not specified</p></li>
+<li><p>inside : Inside a building</p></li>
+<li><p>outside : Outside a building</p></li>
+<li><p>veh_stopped : In a stopped vehicle</p></li>
+<li><p>veh_moving : In a moving vehicle</p></li>
+<li><p>other : Other</p></li>
 </ul>
 </dd>
 </dl>
 </div>
+<div class="section" id="fldsituation-situation-other-situation">
+<h3>fldSituation_situation_other (situation)<a class="headerlink" href="#fldsituation-situation-other-situation" title="Permalink to this headline">¶</a></h3>
+<p>If this field is not blank, it will overwrite the ‘situation’ field.</p>
+</div>
 <div class="section" id="fldsituation-sleep-asleep">
 <h3>fldSituation_sleep (asleep)<a class="headerlink" href="#fldsituation-sleep-asleep" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Were you asleep?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Were you asleep?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>no : No</li>
-<li>slept : Slept through it</li>
-<li>woke : Woke up</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>no : No</p></li>
+<li><p>slept : Slept through it</p></li>
+<li><p>woke : Woke up</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldsituation-others-other-felt">
 <h3>fldSituation_others (other_felt)<a class="headerlink" href="#fldsituation-others-other-felt" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did others nearby feel it?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did others nearby feel it?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>2 : No others felt it</li>
-<li>3 : Some felt it, most did not</li>
-<li>4 : Most felt it</li>
-<li>5 : Everyone/almost everyone felt it</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>2 : No others felt it</p></li>
+<li><p>3 : Some felt it, most did not</p></li>
+<li><p>4 : Most felt it</p></li>
+<li><p>5 : Everyone/almost everyone felt it</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldexperience-shaking-motion">
 <h3>fldExperience_shaking (motion)<a class="headerlink" href="#fldexperience-shaking-motion" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>How would you describe the shaking?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>How would you describe the shaking?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : Not felt</li>
-<li>1 : Weak</li>
-<li>2 : Mild</li>
-<li>3 : Moderate</li>
-<li>4 : Strong</li>
-<li>5 : Violent</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : Not felt</p></li>
+<li><p>1 : Weak</p></li>
+<li><p>2 : Mild</p></li>
+<li><p>3 : Moderate</p></li>
+<li><p>4 : Strong</p></li>
+<li><p>5 : Violent</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldexperience-reaction-reaction">
 <h3>fldExperience_reaction (reaction)<a class="headerlink" href="#fldexperience-reaction-reaction" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>How did you react?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>How did you react?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No reaction/not felt</li>
-<li>1 : Very little reaction</li>
-<li>2 : Excitement</li>
-<li>3 : Somewhat frightened</li>
-<li>4 : Very frightened</li>
-<li>5 : Extremely frightened</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No reaction/not felt</p></li>
+<li><p>1 : Very little reaction</p></li>
+<li><p>2 : Excitement</p></li>
+<li><p>3 : Somewhat frightened</p></li>
+<li><p>4 : Very frightened</p></li>
+<li><p>5 : Extremely frightened</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldexperience-response-response">
 <h3>fldExperience_response (response)<a class="headerlink" href="#fldexperience-response-response" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>How did you respond?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>How did you respond?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>no_action : Took no action</li>
-<li>doorway : Moved to doorway</li>
-<li>duck : Dropped and covered</li>
-<li>ran_outside : Ran outside</li>
-<li>other : Other</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>no_action : Took no action</p></li>
+<li><p>doorway : Moved to doorway</p></li>
+<li><p>duck : Dropped and covered</p></li>
+<li><p>ran_outside : Ran outside</p></li>
+<li><p>other : Other</p></li>
 </ul>
 </dd>
 </dl>
 </div>
+<div class="section" id="fldexperience-response-other-response">
+<h3>fldExperience_response_other (response)<a class="headerlink" href="#fldexperience-response-other-response" title="Permalink to this headline">¶</a></h3>
+<p>If this field is not blank, it will overwrite the ‘response’ field.</p>
+</div>
 <div class="section" id="fldexperience-stand-stand">
 <h3>fldExperience_stand (stand)<a class="headerlink" href="#fldexperience-stand-stand" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Was it difficult to stand and/or walk?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Was it difficult to stand and/or walk?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>1 : Yes</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>1 : Yes</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-doors-sway">
 <h3>fldEffects_doors (sway)<a class="headerlink" href="#fldeffects-doors-sway" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did you notice any swinging of doors or other free-hanging objects?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did you notice any swinging of doors or other free-hanging objects?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>1 slight : Yes, slight swinging</li>
-<li>1 violent : Yes, violent swinging</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>1 slight : Yes, slight swinging</p></li>
+<li><p>1 violent : Yes, violent swinging</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-sounds-creak">
 <h3>fldEffects_sounds (creak)<a class="headerlink" href="#fldeffects-sounds-creak" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did you hear creaking or other noises?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did you hear creaking or other noises?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>1 slight : Yes, slight noise</li>
-<li>1 loud : Yes, loud noise</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>1 slight : Yes, slight noise</p></li>
+<li><p>1 loud : Yes, loud noise</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-shelved-shelf">
 <h3>fldEffects_shelved (shelf)<a class="headerlink" href="#fldeffects-shelved-shelf" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did objects rattle, topple over, or fall off shelves?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did objects rattle, topple over, or fall off shelves?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>0 rattled_slightly : Rattled slightly</li>
-<li>0 rattled_loudly : Rattled loudly</li>
-<li>1 few_toppled_or_fell : A few toppled or fell off</li>
-<li>2 many_toppled_or_fell : Many fell off</li>
-<li>3 everything : Nearly everything fell off</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>0 rattled_slightly : Rattled slightly</p></li>
+<li><p>0 rattled_loudly : Rattled loudly</p></li>
+<li><p>1 few_toppled_or_fell : A few toppled or fell off</p></li>
+<li><p>2 many_toppled_or_fell : Many fell off</p></li>
+<li><p>3 everything : Nearly everything fell off</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-pictures-picture">
 <h3>fldEffects_pictures (picture)<a class="headerlink" href="#fldeffects-pictures-picture" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did pictures on walls move or get knocked askew?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did pictures on walls move or get knocked askew?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>1 did_not_fall : Yes, but did not fall</li>
-<li>1 some_fell : Yes, and some fell</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>1 did_not_fall : Yes, but did not fall</p></li>
+<li><p>1 some_fell : Yes, and some fell</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-furniture-furniture">
 <h3>fldEffects_furniture (furniture)<a class="headerlink" href="#fldeffects-furniture-furniture" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Did any furniture or appliances slide, topple over, or become displaced?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Did any furniture or appliances slide, topple over, or become displaced?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>1 : Yes</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>1 : Yes</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-appliances-heavy-appliance">
 <h3>fldEffects_appliances (heavy_appliance)<a class="headerlink" href="#fldeffects-appliances-heavy-appliance" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Was a heavy appliance (refrigerator or range) affected?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Was a heavy appliance (refrigerator or range) affected?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>fell : Yes, some contents fell out</li>
-<li>shifted : Yes, shifted by inches</li>
-<li>shifted_foot : Yes, shifted by a foot or more</li>
-<li>overturned : Yes, overturned</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>fell : Yes, some contents fell out</p></li>
+<li><p>shifted : Yes, shifted by inches</p></li>
+<li><p>shifted_foot : Yes, shifted by a foot or more</p></li>
+<li><p>overturned : Yes, overturned</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="fldeffects-walls-walls">
 <h3>fldEffects_walls (walls)<a class="headerlink" href="#fldeffects-walls-walls" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Were free-standing walls or fences damaged?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Were free-standing walls or fences damaged?</p></li>
 </ul>
 </dd>
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>[null]  : Not specified</li>
-<li>0 : No</li>
-<li>cracked : Yes, some were cracked</li>
-<li>fell_partial : Yes, some partially fell</li>
-<li>fell_complete : Yes, some fell completely</li>
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>[null]  : Not specified</p></li>
+<li><p>0 : No</p></li>
+<li><p>cracked : Yes, some were cracked</p></li>
+<li><p>fell_partial : Yes, some partially fell</p></li>
+<li><p>fell_complete : Yes, some fell completely</p></li>
 </ul>
 </dd>
 </dl>
 </div>
 <div class="section" id="d-text">
 <h3>d_text<a class="headerlink" href="#d-text" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>Label:</dt>
-<dd><ul class="first last simple">
-<li>Was there any damage to the building?</li>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Was there any damage to the building?</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Multiple answers are possible here. If the user selects more than one, the values are concatenated into one string.</p>
+<p class="admonition-title">Note</p>
+<p>Multiple answers are possible here. If the user selects more than one, the values are concatenated into one string.</p>
 </div>
-<dl class="docutils">
-<dt>Possible values:</dt>
-<dd><ul class="first last simple">
-<li>_none : No Damage</li>
-<li>_crackmin : Hairline cracks in walls</li>
-<li>_crackwallfew : A few large cracks in walls</li>
-<li>_crackwallmany : Many large cracks in walls</li>
-<li>_tilesfell : Ceiling tiles or lighting fixtures fell</li>
-<li>_crackchim : Cracks in chimney</li>
-<li>_crackwindows : One or several cracked windows</li>
-<li>_brokenwindows : Many windows cracked or some broken out</li>
-<li>_masonryfell : Masonry fell from block or brick wall(s)</li>
-<li>_majoroldchim : Old chimney, major damage or fell down</li>
-<li>_majormodernchim : Modern chimney, major damage or fell down</li>
-<li>_tiltedwall : Outside wall(s) tilted over or collapsed completely</li>
-<li>_porch : Separation of porch, balcony, or other addition from building</li>
-<li>_move : Building permanently shifted over foundation</li>
+<dl class="simple">
+<dt>Possible values:</dt><dd><ul class="simple">
+<li><p>_none : No Damage</p></li>
+<li><p>_crackmin : Hairline cracks in walls</p></li>
+<li><p>_crackwallfew : A few large cracks in walls</p></li>
+<li><p>_crackwallmany : Many large cracks in walls</p></li>
+<li><p>_tilesfell : Ceiling tiles or lighting fixtures fell</p></li>
+<li><p>_crackchim : Cracks in chimney</p></li>
+<li><p>_crackwindows : One or several cracked windows</p></li>
+<li><p>_brokenwindows : Many windows cracked or some broken out</p></li>
+<li><p>_masonryfell : Masonry fell from block or brick wall(s)</p></li>
+<li><p>_majoroldchim : Old chimney, major damage or fell down</p></li>
+<li><p>_majormodernchim : Modern chimney, major damage or fell down</p></li>
+<li><p>_tiltedwall : Outside wall(s) tilted over or collapsed completely</p></li>
+<li><p>_porch : Separation of porch, balcony, or other addition from building</p></li>
+<li><p>_move : Building permanently shifted over foundation</p></li>
 </ul>
 </dd>
 </dl>
+</div>
+<div class="section" id="comments">
+<h3>comments:<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h3>
+<dl class="simple">
+<dt>Label:</dt><dd><ul class="simple">
+<li><p>Additional comments</p></li>
+</ul>
+</dd>
+</dl>
+<p>This is a text field filled by the user. This value may be examined by third party researchers and we strongly recommend that users are warned not to put personally identifiable information (PII) in this field.</p>
 </div>
 </div>
 </div>
@@ -478,46 +465,37 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">DYFI Questionnaire API</a><ul>
-<li><a class="reference internal" href="#filename">Filename</a></li>
-<li><a class="reference internal" href="#contents">Contents</a></li>
-<li><a class="reference internal" href="#form-generated-fields">Form-generated fields</a><ul>
-<li><a class="reference internal" href="#eventid">eventid</a></li>
-<li><a class="reference internal" href="#eventtime-event-time">eventTime (event_time)</a></li>
-<li><a class="reference internal" href="#ciim-mapaddress-street">ciim_mapAddress (street)</a></li>
-<li><a class="reference internal" href="#ciim-mapconfidence-confidence">ciim_mapConfidence (confidence)</a></li>
-<li><a class="reference internal" href="#ciim-maplat-ciim-maplon-latitude-longitude">ciim_mapLat, ciim_mapLon (latitude, longitude)</a></li>
-<li><a class="reference internal" href="#timestamp-time-now">timestamp (time_now)</a></li>
-<li><a class="reference internal" href="#form-version-version">form_version (version)</a></li>
-<li><a class="reference internal" href="#language">language</a></li>
-<li><a class="reference internal" href="#server">server</a></li>
+<h1 class="logo"><a href="index.html">USGS Did You Feel It? (DYFI)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to Did You Feel It? (DYFI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product-guide.html">Product Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific-discussion.html">Scientific Discussion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical-guide.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation-guide.html">Implementation Guide</a></li>
 </ul>
-</li>
-<li><a class="reference internal" href="#user-entered-fields">User-entered fields</a><ul>
-<li><a class="reference internal" href="#ciim-time-usertime">ciim_time (usertime)</a></li>
-<li><a class="reference internal" href="#fldsituation-felt-felt">fldSituation_felt (felt)</a></li>
-<li><a class="reference internal" href="#fldsituation-situation-situation">fldSituation_situation (situation)</a></li>
-<li><a class="reference internal" href="#fldsituation-sleep-asleep">fldSituation_sleep (asleep)</a></li>
-<li><a class="reference internal" href="#fldsituation-others-other-felt">fldSituation_others (other_felt)</a></li>
-<li><a class="reference internal" href="#fldexperience-shaking-motion">fldExperience_shaking (motion)</a></li>
-<li><a class="reference internal" href="#fldexperience-reaction-reaction">fldExperience_reaction (reaction)</a></li>
-<li><a class="reference internal" href="#fldexperience-response-response">fldExperience_response (response)</a></li>
-<li><a class="reference internal" href="#fldexperience-stand-stand">fldExperience_stand (stand)</a></li>
-<li><a class="reference internal" href="#fldeffects-doors-sway">fldEffects_doors (sway)</a></li>
-<li><a class="reference internal" href="#fldeffects-sounds-creak">fldEffects_sounds (creak)</a></li>
-<li><a class="reference internal" href="#fldeffects-shelved-shelf">fldEffects_shelved (shelf)</a></li>
-<li><a class="reference internal" href="#fldeffects-pictures-picture">fldEffects_pictures (picture)</a></li>
-<li><a class="reference internal" href="#fldeffects-furniture-furniture">fldEffects_furniture (furniture)</a></li>
-<li><a class="reference internal" href="#fldeffects-appliances-heavy-appliance">fldEffects_appliances (heavy_appliance)</a></li>
-<li><a class="reference internal" href="#fldeffects-walls-walls">fldEffects_walls (walls)</a></li>
-<li><a class="reference internal" href="#d-text">d_text</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DYFI Questionnaire API</a></li>
 </ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.html">rundyfi.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makemovie-py">makemovie.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makescreenshot-py">makescreenshot.py</a></li>
 </ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dyfi.html">Module list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Validation</a></li>
 </ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -527,35 +505,34 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/dyfi-questionnaire-api.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018 USGS.
+      &copy;2020 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/dyfi-questionnaire-api.rst.txt"

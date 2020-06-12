@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>dyfi.entries &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -33,9 +32,9 @@
             
   <h1>Source code for dyfi.entries</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">from</span> <span class="nn">.aggregate</span> <span class="k">import</span> <span class="n">aggregate</span>
-<span class="kn">from</span> <span class="nn">.db</span> <span class="k">import</span> <span class="n">Db</span>
-<span class="kn">from</span> <span class="nn">.entry</span> <span class="k">import</span> <span class="n">Entry</span>
+<span class="kn">from</span> <span class="nn">.aggregate</span> <span class="kn">import</span> <span class="n">aggregate</span>
+<span class="kn">from</span> <span class="nn">.db</span> <span class="kn">import</span> <span class="n">Db</span>
+<span class="kn">from</span> <span class="nn">.entry</span> <span class="kn">import</span> <span class="n">Entry</span>
 
 <div class="viewcode-block" id="Entries"><a class="viewcode-back" href="../../dyfi.html#dyfi.entries.Entries">[docs]</a><span class="k">class</span> <span class="nc">Entries</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -58,7 +57,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">startdatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cdifilter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">rawentries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">loadSuspect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">evid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">startdatetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cdifilter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">rawentries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">loadSuspect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">evid</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">evid</span><span class="o">=</span><span class="n">evid</span>
@@ -150,22 +149,22 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
 
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span><span class="o">=</span><span class="s1">&#39;[Entries: evid:</span><span class="si">%s</span><span class="s1">, responses:</span><span class="si">%i</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">evid</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">text</span>
 
 
     <span class="c1"># TODO: Make this into GeoJSON representation</span>
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">:</span>
           <span class="n">text</span><span class="o">+=</span><span class="nb">repr</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
@@ -180,7 +179,39 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">USGS Did You Feel It? (DYFI)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to Did You Feel It? (DYFI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../product-guide.html">Product Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../scientific-discussion.html">Scientific Discussion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technical-guide.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../implementation-guide.html">Implementation Guide</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dyfi-questionnaire-api.html">DYFI Questionnaire API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../app.html">rundyfi.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../app.html#makemovie-py">makemovie.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../app.html#makescreenshot-py">makescreenshot.py</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dyfi.html">Module list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tests.html">Test Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../validation.html">Validation</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
@@ -190,27 +221,33 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018 USGS.
+      &copy;2020 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 

@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Product Guide &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Scientific Discussion" href="scientific-discussion.html" />
@@ -43,68 +42,68 @@
 <p>These are text files in GeoJSON format (see <a class="reference external" href="http://geojson.org/">http://geojson.org/</a>). Each file is a GeoJSON <cite>FeatureCollection</cite> where each <cite>Feature</cite> represents a UTM block area of either 1km or 10km size. This makes it easy to compare intensities at the same locations for different events.</p>
 <p>Each <cite>Feature</cite> in the <cite>FeatureCollection</cite> represents one aggregated location (geocode block). For more information see <a class="reference internal" href="scientific-discussion.html#aggregation"><span class="std std-ref">Aggregation</span></a>.</p>
 <p>Each <cite>Feature</cite> containts the following properties:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="14%" />
-<col width="86%" />
+<col style="width: 14%" />
+<col style="width: 86%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>type</td>
-<td><strong>Feature</strong></td>
+<tbody>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p><strong>Feature</strong></p></td>
 </tr>
-<tr class="row-even"><td>id</td>
-<td>The UTM string for this location</td>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>The UTM string for this location</p></td>
 </tr>
-<tr class="row-odd"><td>location</td>
-<td>Same as <em>id</em></td>
+<tr class="row-odd"><td><p>location</p></td>
+<td><p>Same as <em>id</em></p></td>
 </tr>
-<tr class="row-even"><td>nresp</td>
-<td>The number of individual responses contributing to this block</td>
+<tr class="row-even"><td><p>nresp</p></td>
+<td><p>The number of individual responses contributing to this block</p></td>
 </tr>
-<tr class="row-odd"><td>intensity</td>
-<td>The aggregated intensity computed from these responses</td>
+<tr class="row-odd"><td><p>intensity</p></td>
+<td><p>The aggregated intensity computed from these responses</p></td>
 </tr>
-<tr class="row-even"><td>center</td>
-<td>A GeoJSON <cite>Point</cite> object indicating the center of this block</td>
+<tr class="row-even"><td><p>center</p></td>
+<td><p>A GeoJSON <cite>Point</cite> object indicating the center of this block</p></td>
 </tr>
 </tbody>
 </table>
 <p>In addition, the <cite>FeatureCollection</cite> object has its own keys and properties:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="22%" />
-<col width="78%" />
+<col style="width: 22%" />
+<col style="width: 78%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>name</td>
-<td>The aggregation size (1km or 10 km)</td>
+<tbody>
+<tr class="row-odd"><td><p>name</p></td>
+<td><p>The aggregation size (1km or 10 km)</p></td>
 </tr>
-<tr class="row-even"><td>id</td>
-<td>same</td>
+<tr class="row-even"><td><p>id</p></td>
+<td><p>same</p></td>
 </tr>
-<tr class="row-odd"><td>type</td>
-<td>FeatureCollection</td>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>FeatureCollection</p></td>
 </tr>
-<tr class="row-even"><td>features</td>
-<td>array of location Features, see below</td>
+<tr class="row-even"><td><p>features</p></td>
+<td><p>array of location Features, see below</p></td>
 </tr>
-<tr class="row-odd"><td>properties</td>
-<td>see below</td>
+<tr class="row-odd"><td><p>properties</p></td>
+<td><p>see below</p></td>
 </tr>
 </tbody>
 </table>
 <p>The <cite>FeatureCollection</cite> properties are:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>nresp</td>
-<td>The number of individual responses in the dataset for this file</td>
+<tbody>
+<tr class="row-odd"><td><p>nresp</p></td>
+<td><p>The number of individual responses in the dataset for this file</p></td>
 </tr>
-<tr class="row-even"><td>maxint</td>
-<td>The largest intensity value among aggregated locations</td>
+<tr class="row-even"><td><p>maxint</p></td>
+<td><p>The largest intensity value among aggregated locations</p></td>
 </tr>
 </tbody>
 </table>
@@ -118,29 +117,29 @@
 <p>These PNG files are graphical representations of the GeoJSON data. There is one static image for each version of the aggregation (1 km and 10 km). The aggregated blocks are plotted with colors corresponding to intensity; the color scale is the same used by previous versions.</p>
 <p>In addition to the GeoJSON, we include the following data on the map legend:</p>
 <ul class="simple">
-<li>Event ID</li>
-<li>Event information (magnitude, date/time)</li>
-<li>Maximum intensity</li>
-<li>Number of entries represented in the database (note that some entries might be off-map)</li>
-<li>The basemap from OpenStreetMaps (<a class="reference external" href="https://www.openstreetmap.org/">https://www.openstreetmap.org/</a>)</li>
+<li><p>Event ID</p></li>
+<li><p>Event information (magnitude, date/time)</p></li>
+<li><p>Maximum intensity</p></li>
+<li><p>Number of entries represented in the database (note that some entries might be off-map)</p></li>
+<li><p>The basemap from OpenStreetMaps (<a class="reference external" href="https://www.openstreetmap.org/">https://www.openstreetmap.org/</a>)</p></li>
 </ul>
 <p><strong>New in DYFI Version 4</strong></p>
 <p>While the previous version of DYFI used Generic Mapping Tools (GMT) for static map creation, DYFI now uses <cite>Leaflet</cite> for map generation. See <cite>Creation of static images</cite> for details.</p>
 <p>DYFI now has the the ability to plot the intensity data with different levels of transparency, depending on how many entries (not including filtered or suspect entries) which were used in computing the intensity in a particular aggregated block. This provides an intuitive sense of where the DYFI data is most robust (solid colored blocks) and where the intensity is uncertain because there are fewer data points in that location (transparent blocks).</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="41%" />
-<col width="59%" />
+<col style="width: 41%" />
+<col style="width: 59%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Number of entries</td>
-<td>Opacity level (1=solid)</td>
+<tbody>
+<tr class="row-odd"><td><p>Number of entries</p></td>
+<td><p>Opacity level (1=solid)</p></td>
 </tr>
-<tr class="row-even"><td>&lt;1</td>
-<td>0.3</td>
+<tr class="row-even"><td><p>&lt;1</p></td>
+<td><p>0.3</p></td>
 </tr>
-<tr class="row-odd"><td>10+</td>
-<td>1.0</td>
+<tr class="row-odd"><td><p>10+</p></td>
+<td><p>1.0</p></td>
 </tr>
 </tbody>
 </table>
@@ -151,9 +150,9 @@
 <p>KML (Keyhole Markup Language) is a file format used to display geographic data in an Earth browser such as Google Earth. The <em>.kmz</em> extension means that the data has been zipped (compressed). For more information see <a class="reference external" href="https://developers.google.com/kml/">https://developers.google.com/kml/</a>.</p>
 <p>This KML dataset contains three layers:</p>
 <ul class="simple">
-<li>epicenter data (latitude/longitude/event time)</li>
-<li>the 1km aggregated dataset</li>
-<li>the 10km aggregated datast</li>
+<li><p>epicenter data (latitude/longitude/event time)</p></li>
+<li><p>the 1km aggregated dataset</p></li>
+<li><p>the 10km aggregated datast</p></li>
 </ul>
 </div>
 <div class="section" id="xml">
@@ -173,23 +172,23 @@
 <p>In addition to the aggregated data (i.e. “real world” data), this file includes the mean and median of the data at various distance bins, for plotting; and “expected” intensities based on various Intensity Prediction Equations.</p>
 <div class="section" id="aggregated-data">
 <h4>Aggregated data<a class="headerlink" href="#aggregated-data" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="18%" />
-<col width="82%" />
+<col style="width: 18%" />
+<col style="width: 82%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>class</td>
-<td>scatterplot1</td>
+<tbody>
+<tr class="row-odd"><td><p>class</p></td>
+<td><p>scatterplot1</p></td>
 </tr>
-<tr class="row-even"><td>data</td>
-<td>epicentral distance, intensity</td>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>epicentral distance, intensity</p></td>
 </tr>
-<tr class="row-odd"><td>id</td>
-<td>scatterdata</td>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>scatterdata</p></td>
 </tr>
-<tr class="row-even"><td>legend</td>
-<td>Aggregated geo_10km data</td>
+<tr class="row-even"><td><p>legend</p></td>
+<td><p>Aggregated geo_10km data</p></td>
 </tr>
 </tbody>
 </table>
@@ -197,48 +196,48 @@
 </div>
 <div class="section" id="mean-of-aggregated-data">
 <h4>Mean of aggregated data<a class="headerlink" href="#mean-of-aggregated-data" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col style="width: 16%" />
+<col style="width: 84%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>class</td>
-<td>mean</td>
+<tbody>
+<tr class="row-odd"><td><p>class</p></td>
+<td><p>mean</p></td>
 </tr>
-<tr class="row-even"><td>data</td>
-<td>see below</td>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>see below</p></td>
 </tr>
-<tr class="row-odd"><td>id</td>
-<td>meanBinned</td>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>meanBinned</p></td>
 </tr>
-<tr class="row-even"><td>legend</td>
-<td>Mean intensity in bin</td>
+<tr class="row-even"><td><p>legend</p></td>
+<td><p>Mean intensity in bin</p></td>
 </tr>
 </tbody>
 </table>
 <p>For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the mean value and standard deviation of the intensities of all aggregated blocks inside the bin. Each point (bin) has the following data:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>min_x</td>
-<td>The minimum distance of this bin</td>
+<tbody>
+<tr class="row-odd"><td><p>min_x</p></td>
+<td><p>The minimum distance of this bin</p></td>
 </tr>
-<tr class="row-even"><td>max_x</td>
-<td>The maximum distance of this bin</td>
+<tr class="row-even"><td><p>max_x</p></td>
+<td><p>The maximum distance of this bin</p></td>
 </tr>
-<tr class="row-odd"><td>x</td>
-<td>The log mean distance of this bin (for plotting)</td>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>The log mean distance of this bin (for plotting)</p></td>
 </tr>
-<tr class="row-even"><td>y</td>
-<td>The mean of the intensities of all blocks in this bin</td>
+<tr class="row-even"><td><p>y</p></td>
+<td><p>The mean of the intensities of all blocks in this bin</p></td>
 </tr>
-<tr class="row-odd"><td>stdev</td>
-<td>The standard deviation of the intensities</td>
+<tr class="row-odd"><td><p>stdev</p></td>
+<td><p>The standard deviation of the intensities</p></td>
 </tr>
 </tbody>
 </table>
@@ -246,45 +245,45 @@
 </div>
 <div class="section" id="median-of-aggregated-data">
 <h4>Median of aggregated data<a class="headerlink" href="#median-of-aggregated-data" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="18%" />
-<col width="82%" />
+<col style="width: 18%" />
+<col style="width: 82%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>class</td>
-<td>median</td>
+<tbody>
+<tr class="row-odd"><td><p>class</p></td>
+<td><p>median</p></td>
 </tr>
-<tr class="row-even"><td>data</td>
-<td>see below</td>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>see below</p></td>
 </tr>
-<tr class="row-odd"><td>id</td>
-<td>medianBinned</td>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>medianBinned</p></td>
 </tr>
-<tr class="row-even"><td>legend</td>
-<td>Median intensity in bin</td>
+<tr class="row-even"><td><p>legend</p></td>
+<td><p>Median intensity in bin</p></td>
 </tr>
 </tbody>
 </table>
 <p>For this dataset, the aggregated data is binned together into bins of equal log distance. Each datapoint in this dataset represents a distance bin.  Within each bin, we compute the median value of the intensities of all aggregated blocks inside the bin. Each point (bin) has the following data:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>min_x</td>
-<td>The minimum distance of this bin</td>
+<tbody>
+<tr class="row-odd"><td><p>min_x</p></td>
+<td><p>The minimum distance of this bin</p></td>
 </tr>
-<tr class="row-even"><td>max_x</td>
-<td>The maximum distance of this bin</td>
+<tr class="row-even"><td><p>max_x</p></td>
+<td><p>The maximum distance of this bin</p></td>
 </tr>
-<tr class="row-odd"><td>x</td>
-<td>The log mean distance of this bin (for plotting)</td>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>The log mean distance of this bin (for plotting)</p></td>
 </tr>
-<tr class="row-even"><td>y</td>
-<td>The median of the intensities of all blocks in this bin</td>
+<tr class="row-even"><td><p>y</p></td>
+<td><p>The median of the intensities of all blocks in this bin</p></td>
 </tr>
 </tbody>
 </table>
@@ -292,23 +291,23 @@
 </div>
 <div class="section" id="estimated-intensity-1">
 <h4>Estimated Intensity 1<a class="headerlink" href="#estimated-intensity-1" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>class</td>
-<td>estimated_1</td>
+<tbody>
+<tr class="row-odd"><td><p>class</p></td>
+<td><p>estimated_1</p></td>
 </tr>
-<tr class="row-even"><td>data</td>
-<td>x,y pairs of distance and intensity</td>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>x,y pairs of distance and intensity</p></td>
 </tr>
-<tr class="row-odd"><td>id</td>
-<td>ipe_aww2014_wna</td>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>ipe_aww2014_wna</p></td>
 </tr>
-<tr class="row-even"><td>legend</td>
-<td>Atkinson, Worden, Wald 2014 (WNA)</td>
+<tr class="row-even"><td><p>legend</p></td>
+<td><p>Atkinson, Worden, Wald 2014 (WNA)</p></td>
 </tr>
 </tbody>
 </table>
@@ -317,23 +316,23 @@
 </div>
 <div class="section" id="estimated-intensity-2">
 <h4>Estimated Intensity 2<a class="headerlink" href="#estimated-intensity-2" title="Permalink to this headline">¶</a></h4>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>class</td>
-<td>estimated_2</td>
+<tbody>
+<tr class="row-odd"><td><p>class</p></td>
+<td><p>estimated_2</p></td>
 </tr>
-<tr class="row-even"><td>data</td>
-<td>x,y pairs of distance and intensity</td>
+<tr class="row-even"><td><p>data</p></td>
+<td><p>x,y pairs of distance and intensity</p></td>
 </tr>
-<tr class="row-odd"><td>id</td>
-<td>ipe_aww2014_ena</td>
+<tr class="row-odd"><td><p>id</p></td>
+<td><p>ipe_aww2014_ena</p></td>
 </tr>
-<tr class="row-even"><td>legend</td>
-<td>Atkinson, Worden, Wald 2014 (ENA)</td>
+<tr class="row-even"><td><p>legend</p></td>
+<td><p>Atkinson, Worden, Wald 2014 (ENA)</p></td>
 </tr>
 </tbody>
 </table>
@@ -346,23 +345,23 @@
 <p>This file is a history of the DYFI entries submitted as a function of time after the event. The <strong>x</strong> axis in each dataset is the cumulative number of entries adn the <strong>y</strong> axis is the number of minutes or hours after the event (depending on the age of the event).</p>
 <p>There is only one dataset included in this JSON file, called <em>data</em>. Each point represents a single entry, arranged in chronological order, with the following information.</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="15%" />
-<col width="85%" />
+<col style="width: 15%" />
+<col style="width: 85%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>t_absolute</td>
-<td>the timestamp when this entry was received</td>
+<tbody>
+<tr class="row-odd"><td><p>t_absolute</p></td>
+<td><p>the timestamp when this entry was received</p></td>
 </tr>
-<tr class="row-even"><td>t_seconds</td>
-<td>number of seconds between t_absolute and the event</td>
+<tr class="row-even"><td><p>t_seconds</p></td>
+<td><p>number of seconds between t_absolute and the event</p></td>
 </tr>
-<tr class="row-odd"><td>x</td>
-<td><strong>t_seconds</strong> scaled by the preferred unit</td>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p><strong>t_seconds</strong> scaled by the preferred unit</p></td>
 </tr>
-<tr class="row-even"><td>y</td>
-<td>cumulative number of responses</td>
+<tr class="row-even"><td><p>y</p></td>
+<td><p>cumulative number of responses</p></td>
 </tr>
 </tbody>
 </table>
@@ -379,31 +378,42 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Product Guide</a><ul>
-<li><a class="reference internal" href="#dynamic-map-products">Dynamic Map Products</a></li>
-<li><a class="reference internal" href="#static-map-products">Static Map Products</a><ul>
-<li><a class="reference internal" href="#jpeg">JPEG</a></li>
-<li><a class="reference internal" href="#kml">KML</a></li>
-<li><a class="reference internal" href="#xml">XML</a></li>
+<h1 class="logo"><a href="index.html">USGS Did You Feel It? (DYFI)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to Did You Feel It? (DYFI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Product Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dynamic-map-products">Dynamic Map Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#static-map-products">Static Map Products</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graph-products">Graph Products</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#graph-products">Graph Products</a><ul>
-<li><a class="reference internal" href="#distance-vs-intensity-datafile">Distance vs Intensity Datafile</a><ul>
-<li><a class="reference internal" href="#aggregated-data">Aggregated data</a></li>
-<li><a class="reference internal" href="#mean-of-aggregated-data">Mean of aggregated data</a></li>
-<li><a class="reference internal" href="#median-of-aggregated-data">Median of aggregated data</a></li>
-<li><a class="reference internal" href="#estimated-intensity-1">Estimated Intensity 1</a></li>
-<li><a class="reference internal" href="#estimated-intensity-2">Estimated Intensity 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific-discussion.html">Scientific Discussion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technical-guide.html">Technical Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation-guide.html">Implementation Guide</a></li>
 </ul>
-</li>
-<li><a class="reference internal" href="#time-vs-responses-datafile">Time vs Responses Datafile</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dyfi-questionnaire-api.html">DYFI Questionnaire API</a></li>
 </ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.html">rundyfi.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makemovie-py">makemovie.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makescreenshot-py">makescreenshot.py</a></li>
 </ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dyfi.html">Module list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Validation</a></li>
 </ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -413,35 +423,34 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/product-guide.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018 USGS.
+      &copy;2020 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/product-guide.rst.txt"

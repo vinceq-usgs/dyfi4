@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Technical Guide &#8212; DYFI V4 Manual</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Implementation Guide" href="implementation-guide.html" />
@@ -39,8 +38,8 @@
 <h2>Process flowchart<a class="headerlink" href="#process-flowchart" title="Permalink to this headline">¶</a></h2>
 <p>The following diagram shows the flowchart for the creation of DYFI products. Object classes and methods are explained in the <a class="reference internal" href="modules.html"><span class="doc">Module List</span></a>.</p>
 <img alt="_images/diagram_flowchart.svg" src="_images/diagram_flowchart.svg" /><div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">In the above diagrams, items shown in <strong>red</strong> contain or transfer personally identifiable information (PII). Care must be taken to make sure that data in these sections are properly handled.</p>
+<p class="admonition-title">Warning</p>
+<p>In the above diagrams, items shown in <strong>red</strong> contain or transfer personally identifiable information (PII). Care must be taken to make sure that data in these sections are properly handled.</p>
 </div>
 </div>
 <div class="section" id="input-streams">
@@ -49,107 +48,107 @@
 <h3>Earthquake events<a class="headerlink" href="#earthquake-events" title="Permalink to this headline">¶</a></h3>
 <p>DYFI maintains its own database table of earthquake events. An external mechanism is required to populate this database and trigger the DYFI process after an earthquake.</p>
 <p>In the event table, each earthquake is described by a separate row. The event data is described below.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="22%" />
-<col width="78%" />
+<col style="width: 22%" />
+<col style="width: 78%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Column</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Column</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td>eventid</td>
-<td>USGS event ID, usually 10 characters; primary key</td>
+<tr class="row-even"><td><p>eventid</p></td>
+<td><p>USGS event ID, usually 10 characters; primary key</p></td>
 </tr>
-<tr class="row-odd"><td>mag</td>
-<td>Magnitude</td>
+<tr class="row-odd"><td><p>mag</p></td>
+<td><p>Magnitude</p></td>
 </tr>
-<tr class="row-even"><td>lat</td>
-<td>Epicentral latitude</td>
+<tr class="row-even"><td><p>lat</p></td>
+<td><p>Epicentral latitude</p></td>
 </tr>
-<tr class="row-odd"><td>lon</td>
-<td>Epicentral longitude</td>
+<tr class="row-odd"><td><p>lon</p></td>
+<td><p>Epicentral longitude</p></td>
 </tr>
-<tr class="row-even"><td>depth</td>
-<td>Hypocentral depth</td>
+<tr class="row-even"><td><p>depth</p></td>
+<td><p>Hypocentral depth</p></td>
 </tr>
-<tr class="row-odd"><td>region</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>region</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>source</td>
-<td>2 letter network code</td>
+<tr class="row-even"><td><p>source</p></td>
+<td><p>2 letter network code</p></td>
 </tr>
-<tr class="row-odd"><td>mainshock</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>mainshock</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>loc</td>
-<td>Text description of the location (e.g. “9km ENE of San Simeon, CA”)</td>
+<tr class="row-even"><td><p>loc</p></td>
+<td><p>Text description of the location (e.g. “9km ENE of San Simeon, CA”)</p></td>
 </tr>
-<tr class="row-odd"><td>nresponses</td>
-<td>Number of DYFI responses attached to this event</td>
+<tr class="row-odd"><td><p>nresponses</p></td>
+<td><p>Number of DYFI responses attached to this event</p></td>
 </tr>
-<tr class="row-even"><td>eventdatetime</td>
-<td>Earthquake event time in YYYY-MM-DD HH:MM:SS format</td>
+<tr class="row-even"><td><p>eventdatetime</p></td>
+<td><p>Earthquake event time in YYYY-MM-DD HH:MM:SS format</p></td>
 </tr>
-<tr class="row-odd"><td>createdtime</td>
-<td>Time that this row was last created or updated</td>
+<tr class="row-odd"><td><p>createdtime</p></td>
+<td><p>Time that this row was last created or updated</p></td>
 </tr>
-<tr class="row-even"><td>newresponses</td>
-<td>Number of DYFI responses for this event since the last time this was run</td>
+<tr class="row-even"><td><p>newresponses</p></td>
+<td><p>Number of DYFI responses for this event since the last time this was run</p></td>
 </tr>
-<tr class="row-odd"><td>run_flag</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>run_flag</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>citydb</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>citydb</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>zipdb</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>zipdb</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>ciim_version</td>
-<td>Incremented whenever <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> runs</td>
+<tr class="row-even"><td><p>ciim_version</p></td>
+<td><p>Incremented whenever <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> runs</p></td>
 </tr>
-<tr class="row-odd"><td>code_version</td>
-<td>Current version of DYFI when this event was last run</td>
+<tr class="row-odd"><td><p>code_version</p></td>
+<td><p>Current version of DYFI when this event was last run</p></td>
 </tr>
-<tr class="row-even"><td>process_timestamp</td>
-<td>Time when <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> was last run</td>
+<tr class="row-even"><td><p>process_timestamp</p></td>
+<td><p>Time when <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> was last run</p></td>
 </tr>
-<tr class="row-odd"><td>max_intensity</td>
-<td>Maximum computed intensity</td>
+<tr class="row-odd"><td><p>max_intensity</p></td>
+<td><p>Maximum computed intensity</p></td>
 </tr>
-<tr class="row-even"><td>sent_email</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>sent_email</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>event_version</td>
-<td>Event information version (from ComCat)</td>
+<tr class="row-odd"><td><p>event_version</p></td>
+<td><p>Event information version (from ComCat)</p></td>
 </tr>
-<tr class="row-even"><td>orig_id</td>
-<td>Original USGS event ID</td>
+<tr class="row-even"><td><p>orig_id</p></td>
+<td><p>Original USGS event ID</p></td>
 </tr>
-<tr class="row-odd"><td>eventlocaltime</td>
-<td>Event local time (from ComCat)</td>
+<tr class="row-odd"><td><p>eventlocaltime</p></td>
+<td><p>Event local time (from ComCat)</p></td>
 </tr>
-<tr class="row-even"><td>invisible</td>
-<td>see below</td>
+<tr class="row-even"><td><p>invisible</p></td>
+<td><p>see below</p></td>
 </tr>
-<tr class="row-odd"><td>good_id</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>good_id</p></td>
+<td><p>obsolete</p></td>
 </tr>
 </tbody>
 </table>
 <p>All columns are Sqlite text fields.</p>
 <ul class="simple">
-<li><em>newresponses</em> is updated by the backend whenever a new user response is processed, and is reset to zero whenever the <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> runs. This is how the backend knows when <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> should be triggered.</li>
-<li><em>orig_id</em> is initially the same as <em>eventid</em>. This allows the</li>
+<li><p><em>newresponses</em> is updated by the backend whenever a new user response is processed, and is reset to zero whenever the <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> runs. This is how the backend knows when <code class="xref py py-obj docutils literal notranslate"><span class="pre">rundyfi.py</span></code> should be triggered.</p></li>
+<li><p><em>orig_id</em> is initially the same as <em>eventid</em>. This allows the</p></li>
 </ul>
 <p>first event ID to be archived in case the event ID is manually changed.</p>
 <ul class="simple">
-<li><em>invisible</em> is set to true when an event is no longer valid, and DYFI products are no longer applicable. Examples are bogus, duplicate, or non-authoritative events. These events will not be exported, and responses will not be automatically associated to them. (They may still be run manually.)</li>
+<li><p><em>invisible</em> is set to true when an event is no longer valid, and DYFI products are no longer applicable. Examples are bogus, duplicate, or non-authoritative events. These events will not be exported, and responses will not be automatically associated to them. (They may still be run manually.)</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.</p>
+<p class="admonition-title">Note</p>
+<p>Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.</p>
 </div>
 </div>
 <div class="section" id="user-responses">
@@ -158,194 +157,194 @@
 <p>For developers who wish to send DYFI compatible data without going through the USGS questionnaire, see the <code class="xref py py-obj docutils literal notranslate"><span class="pre">DYFI</span> <span class="pre">Questionnaire</span> <span class="pre">API</span></code>.</p>
 <p>For one possible method of triggering DYFI without an earthquake notification, see the BETA project <cite>DYFI Autolocator &lt;https://github.com/vinceq-usgs/autolocator&gt;</cite>.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">User reponses have the possibility of containing PII (Personally Identifiable Information) data. In particular, the fields <em>name</em>, <em>street</em>, <em>phone</em>, <em>email</em>, and <em>comments</em> ask for PII data; but all user-filled fields have the potential of taking PII data. Make sure that this table, and data transfer mechanisms that access it, are secure.</p>
+<p class="admonition-title">Warning</p>
+<p>User reponses have the possibility of containing PII (Personally Identifiable Information) data. In particular, the fields <em>name</em>, <em>street</em>, <em>phone</em>, <em>email</em>, and <em>comments</em> ask for PII data; but all user-filled fields have the potential of taking PII data. Make sure that this table, and data transfer mechanisms that access it, are secure.</p>
 </div>
 <p>In the response table (called ‘extended table’ for historic reasons), each user response is described by a separate row. The response data is described below.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="22%" />
-<col width="78%" />
+<col style="width: 22%" />
+<col style="width: 78%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Column</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Column</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td>subid</td>
-<td>(Integer) unique primary key for each row</td>
+<tr class="row-even"><td><p>subid</p></td>
+<td><p>(Integer) unique primary key for each row</p></td>
 </tr>
-<tr class="row-odd"><td>eventid</td>
-<td>Event ID that this response is associated to</td>
+<tr class="row-odd"><td><p>eventid</p></td>
+<td><p>Event ID that this response is associated to</p></td>
 </tr>
-<tr class="row-even"><td>orig_id</td>
-<td>Original event ID when response was processed</td>
+<tr class="row-even"><td><p>orig_id</p></td>
+<td><p>Original event ID when response was processed</p></td>
 </tr>
-<tr class="row-odd"><td>suspect</td>
-<td>Flag for responses that are bogus or outliers</td>
+<tr class="row-odd"><td><p>suspect</p></td>
+<td><p>Flag for responses that are bogus or outliers</p></td>
 </tr>
-<tr class="row-even"><td>region</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>region</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>usertime</td>
-<td>DYFI Felt Report, see below</td>
+<tr class="row-odd"><td><p>usertime</p></td>
+<td><p>DYFI Felt Report, see below</p></td>
 </tr>
-<tr class="row-even"><td>time_now</td>
-<td>Time this reply was submitted in YYYY-MM-DD HH:MM:SS format</td>
+<tr class="row-even"><td><p>time_now</p></td>
+<td><p>Time this reply was submitted in YYYY-MM-DD HH:MM:SS format</p></td>
 </tr>
-<tr class="row-odd"><td>latitude</td>
-<td>User latitude</td>
+<tr class="row-odd"><td><p>latitude</p></td>
+<td><p>User latitude</p></td>
 </tr>
-<tr class="row-even"><td>longitude</td>
-<td>User longitude</td>
+<tr class="row-even"><td><p>longitude</p></td>
+<td><p>User longitude</p></td>
 </tr>
-<tr class="row-odd"><td>geo_source</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>geo_source</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>zip</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>zip</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>zip_4</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>zip_4</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>city</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>city</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>admin_region</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>admin_region</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>country</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>country</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>street</td>
-<td>DYFI Felt Report, see below</td>
+<tr class="row-odd"><td><p>street</p></td>
+<td><p>DYFI Felt Report, see below</p></td>
 </tr>
-<tr class="row-even"><td>name</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>email</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>email</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>phone</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>phone</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>situation</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>situation</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>building</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>building</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>asleep</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>asleep</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>felt</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>felt</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>other_felt</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>other_felt</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>motion</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>motion</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>duration</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>duration</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>reaction</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>reaction</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>response</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>response</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>stand</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>stand</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>sway</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>sway</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>creak</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>creak</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>shelf</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>shelf</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>picture</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>picture</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>furniture</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>furniture</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>heavy_appliance</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>heavy_appliance</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>walls</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>walls</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>slide_1_foot</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>slide_1_foot</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>d_text</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>d_text</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>damage</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>damage</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>building_details</td>
-<td>DYFI Felt Report</td>
+<tr class="row-odd"><td><p>building_details</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>comments</td>
-<td>DYFI Felt Report</td>
+<tr class="row-even"><td><p>comments</p></td>
+<td><p>DYFI Felt Report</p></td>
 </tr>
-<tr class="row-odd"><td>user_cdi</td>
-<td>Computed from DYFI Felt Report</td>
+<tr class="row-odd"><td><p>user_cdi</p></td>
+<td><p>Computed from DYFI Felt Report</p></td>
 </tr>
-<tr class="row-even"><td>city_latitude</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>city_latitude</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>city_longitude</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>city_longitude</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>city_population</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>city_population</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>zip_latitude</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>zip_latitude</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>zip_longitude</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>zip_longitude</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>location</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>location</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>tzoffset</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>tzoffset</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>confidence</td>
-<td>Estimate of geocoding confidence, see below</td>
+<tr class="row-odd"><td><p>confidence</p></td>
+<td><p>Estimate of geocoding confidence, see below</p></td>
 </tr>
-<tr class="row-even"><td>version</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-odd"><td>citydb</td>
-<td>obsolete</td>
+<tr class="row-odd"><td><p>citydb</p></td>
+<td><p>obsolete</p></td>
 </tr>
-<tr class="row-even"><td>cityid</td>
-<td>obsolete</td>
+<tr class="row-even"><td><p>cityid</p></td>
+<td><p>obsolete</p></td>
 </tr>
 </tbody>
 </table>
 <p>All columns are Sqlite text fields unless indicated otherwise.</p>
 <ul class="simple">
-<li>Columns marked <strong>DYFI Felt Report</strong> are populated from the online form.</li>
-<li><em>orig_id</em> is initially copied from <em>eventid</em>. For responses that were not originally attached to an event (“unassociated entries”), both fields would have the value “unknown”. When this entry is associated to an event or updated to a different ID, this field will show the original value.</li>
-<li><em>suspect</em> is set automatically by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Entry</span></code> module when the entry is suspected to be bogus or an outlier. The operator may also manually flag entries this way.</li>
-<li><em>time_now</em> is set by the DYFI Felt Report submit function. This is the time used for associating entries.</li>
-<li><em>usertime</em> is filled in by the user. It is not automatically parsed; it is for the operator’s information only.</li>
-<li><em>latitude</em> and <em>longitude</em> are automatically filled in by the geocoding function of they DYFI Felt Report.</li>
-<li><em>confidence</em> is an estimate from the geocoding function of the precision of the latitude and longitude output. See <cite>Geocoding</cite> for details.</li>
-<li><em>user_cdi</em> is the value computed by the form the user’s intensity (only), with no aggregation. It is a quick way to look for outlier entries, but it is not used in DYFI computation.</li>
+<li><p>Columns marked <strong>DYFI Felt Report</strong> are populated from the online form.</p></li>
+<li><p><em>orig_id</em> is initially copied from <em>eventid</em>. For responses that were not originally attached to an event (“unassociated entries”), both fields would have the value “unknown”. When this entry is associated to an event or updated to a different ID, this field will show the original value.</p></li>
+<li><p><em>suspect</em> is set automatically by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Entry</span></code> module when the entry is suspected to be bogus or an outlier. The operator may also manually flag entries this way.</p></li>
+<li><p><em>time_now</em> is set by the DYFI Felt Report submit function. This is the time used for associating entries.</p></li>
+<li><p><em>usertime</em> is filled in by the user. It is not automatically parsed; it is for the operator’s information only.</p></li>
+<li><p><em>latitude</em> and <em>longitude</em> are automatically filled in by the geocoding function of they DYFI Felt Report.</p></li>
+<li><p><em>confidence</em> is an estimate from the geocoding function of the precision of the latitude and longitude output. See <cite>Geocoding</cite> for details.</p></li>
+<li><p><em>user_cdi</em> is the value computed by the form the user’s intensity (only), with no aggregation. It is a quick way to look for outlier entries, but it is not used in DYFI computation.</p></li>
 </ul>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.</p>
+<p class="admonition-title">Note</p>
+<p>Obsolete columns are for compatibility with DYFI3 only. They will be removed in a future release.</p>
 </div>
 </div>
 </div>
@@ -364,19 +363,42 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Technical Guide</a><ul>
-<li><a class="reference internal" href="#process-flowchart">Process flowchart</a></li>
-<li><a class="reference internal" href="#input-streams">Input streams</a><ul>
-<li><a class="reference internal" href="#earthquake-events">Earthquake events</a></li>
-<li><a class="reference internal" href="#user-responses">User responses</a></li>
+<h1 class="logo"><a href="index.html">USGS Did You Feel It? (DYFI)</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to Did You Feel It? (DYFI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product-guide.html">Product Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scientific-discussion.html">Scientific Discussion</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Technical Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#process-flowchart">Process flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-streams">Input streams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dyfi-products">DYFI products</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#dyfi-products">DYFI products</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation-guide.html">Implementation Guide</a></li>
 </ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dyfi-questionnaire-api.html">DYFI Questionnaire API</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.html">rundyfi.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makemovie-py">makemovie.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html#makescreenshot-py">makescreenshot.py</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dyfi.html">Module list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Validation</a></li>
+</ul>
+
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -386,35 +408,34 @@
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/technical-guide.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018 USGS.
+      &copy;2020 USGS.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/technical-guide.rst.txt"
