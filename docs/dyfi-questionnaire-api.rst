@@ -1,7 +1,8 @@
 DYFI Questionnaire API
 ***********************
 
-(V0.3 updated 2018-08-03)
+V0.4 2020-06-01: Add support for _other fields
+V0.3 2019-04-18: Change title to questionnaire API, attach to DYFI manual
 
 The DYFI4 backend accepts response files from the DYFI Questionnaire. Each file represents one user response. The backend supports files containing raw query strings (deprecated) and JSON data. The JSON format is described below.
 
@@ -156,6 +157,11 @@ Possible values:
   - veh_moving : In a moving vehicle
   - other : Other
 
+fldSituation_situation_other (situation)
+------------------------------------
+
+If this field is not blank, it will overwrite the 'situation' field.
+
 fldSituation_sleep (asleep)
 ----------------------------
 
@@ -224,6 +230,11 @@ Possible values:
   - duck : Dropped and covered
   - ran_outside : Ran outside
   - other : Other
+
+fldExperience_response_other (response)
+----------------------------------
+
+If this field is not blank, it will overwrite the 'response' field.
 
 fldExperience_stand (stand)
 ----------------------------
@@ -351,7 +362,13 @@ Possible values:
   - _porch : Separation of porch, balcony, or other addition from building
   - _move : Building permanently shifted over foundation
 
+comments:
+---------
 
+Label: 
+  - Additional comments
+
+This is a text field filled by the user. This value may be examined by third party researchers and we strongly recommend that users are warned not to put personally identifiable information (PII) in this field.
 
 
 
